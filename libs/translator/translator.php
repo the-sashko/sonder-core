@@ -1,5 +1,5 @@
 <?php
-    trait translator {
+    class translatorLib {
 
         const DEFAULT_LANGUAGE = 'en';
 

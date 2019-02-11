@@ -4,7 +4,7 @@
 		trate for working with images
 	*/
 
-	trait Image {
+	class ImageLib {
 		var $imageFile; // image file absolute path (on server)
 		var $imageName = 'image'; // image file name
 		var $imageDir; // image directory absolute path (on server)

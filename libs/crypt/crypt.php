@@ -4,7 +4,7 @@
 	 * summary
 	 */
 
-	trait Crypt
+	class CryptLib
 	{
 		/**
 		 * summary

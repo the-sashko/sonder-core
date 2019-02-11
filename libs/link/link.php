@@ -1,5 +1,5 @@
 <?php
-	trait Link {
+	class LinkLib {
 		function parseLink(string $text = '') : string {
 			$text = preg_replace_callback("/(https|http)\:\/\/(.*?)(\s|$)/su",[$this,'makeLinkShortCode'],$text);
 			return $text;

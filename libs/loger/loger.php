@@ -1,5 +1,5 @@
 <?php
-	trait Loger
+	class LogerLib
 	{
 		public function log(
 			string $message = '',

@@ -3,7 +3,7 @@
 	/**
 	 * summary
 	 */
-	trait Mail
+	class MailLib
 	{
 
 		/**

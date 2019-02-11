@@ -4,7 +4,7 @@
 		trait for rendering HTML pages
 	*/
 
-	trait Templater
+	class TemplaterLib
 	{
 
 		/*

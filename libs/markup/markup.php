@@ -19,7 +19,8 @@
 			>Text equal [q]Text[/q]
 			>><ID of post> equal [Reply:<ID of post>]
 	*/
-	trait Markup{
+	class MarkupLib
+	{
 		public function normalizeSyntax(string $text = '') : string {
 			$text = str_replace('&gt;','>',$text);
 			$text = preg_replace('/~~(.*?)~~/su','[s]$1[/s]',$text);

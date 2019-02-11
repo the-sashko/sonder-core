@@ -4,7 +4,7 @@
 	 * summary
 	 */
 
-	trait Security
+	class SecurityLib
 	{
 
 		/**

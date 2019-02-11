@@ -1,5 +1,5 @@
 <?php
-	trait GeoIP {
+	class GeoIPLib {
 
 		/**
 		 * summary

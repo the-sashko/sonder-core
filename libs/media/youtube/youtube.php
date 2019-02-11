@@ -1,5 +1,5 @@
 <?php
-	trait Youtube {
+	class YoutubeLib {
 		public function parseYoutubeID(string $text = '') : string {
 			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch(\s)(.*?)$/su','$1https://www.youtube.com$4$5',$text);
 			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch$/su','$1https://www.youtube.com$4',$text);

@@ -30,6 +30,23 @@ class CommonCore
 
         return $modelInstance;
     }
+
+    /**
+    * Get Library Instance By Name
+    *
+    * @param string $lib Name Of Library
+    * @return object Insnace Of Library
+    */
+    public function initLib(string $lib = '') : Object
+    {
+        $libClass = "{$lib}Lib";
+
+        if (!class_exists($libClass)) {
+            throw new Exception("Library {$lib} Is Missing!");
+        }
+
+        return new $libClass();
+    }
 }
 
 ?>
