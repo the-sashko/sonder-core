@@ -1,10 +1,16 @@
 <?php
-class BaseApp {
+class App {
 
-    public function init() : void
+    use Router;
+
+    public function __construct()
     {
         $this->_redirect();
         $this->_replaceURI();
+    }
+
+    public function run() : void
+    {
         list(
             $controller,
             $action,
@@ -12,15 +18,11 @@ class BaseApp {
             $page
         ) = $this->_parseURI();
 
-        $param = (string) $param;
-        $page = (int) $page;
-
         if (!$this->_isControllerExist($controller)) {
             $this->_error();
         }
 
-        require_once __DIR__.'/common/autoload.php';
-        require_once __DIR__.'/controllers/'.$controller.'.php';
+        $this->_autoLoad($controller);
 
         $controller = new $controller(
             $param,
@@ -30,9 +32,10 @@ class BaseApp {
 
         try {
             $controller->$action();
-        } catch (Exception $err) {
-            $this->_error();
+        } catch (\Exception $exp) {
+            $this->_exception($exp);
         }
+
         exit(0);
     }
 
@@ -40,7 +43,7 @@ class BaseApp {
     {
         $uri = $_SERVER['REQUEST_URI'];
 
-        // To-Do Redirect Rules
+        $this->routeRedirect($uri);
     }
 
     private function _replaceURI() : void
@@ -51,7 +54,7 @@ class BaseApp {
             $uri = '/';
         }
 
-        // To-Do Rewrites Rules
+        $uri = $this->routeRewrite($uri);
 
         $_SERVER['REQUEST_URI'] = $uri;
     }
@@ -99,6 +102,9 @@ class BaseApp {
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
         $action = 'action'.mb_convert_case($action, MB_CASE_TITLE);
 
+        $param = (string) $param;
+        $page = (int) $page;
+
         return [
             $controller,
             $action,
@@ -109,12 +115,24 @@ class BaseApp {
 
     private function _isControllerExist(string $controller = '') : bool
     {
-        return is_file(__DIR__.'/controllers/'.$controller.'.php');
+        return is_file(__DIR__.'/../controllers/'.$controller.'.php');
     }
 
     private function _error() : void
     {
         header('Location: /error/404/', true, 302);
+        exit(0);
+    }
+
+    private function _autoLoad(string $controller = '') : void
+    {
+        require_once __DIR__.'/autoload.php';
+        require_once __DIR__.'/../controllers/'.$controller.'.php';
+    }
+
+    private function _exception(Exception $exp) : void
+    {
+        echo $exp->getMessage();
         exit(0);
     }
 }

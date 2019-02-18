@@ -1,92 +1,69 @@
 <?php
 
-	/*
-		trait for rendering HTML pages
-	*/
+class TemplaterLib
+{
+	const TEMPLATE_DIR = __DIR__.'/../../../res/tpl/';
 
-	class TemplaterLib
-	{
+    public $scope = 'site';
 
-		/*
-			Proority of definition variable data (from low to hight):
+    public function render(
+        string $template = 'main',
+        array $dataParams = [],
+        int $ttl = 0
+    ) : void
+    {
 
-			1. Data from config files
+        $GLOBALS['templateDir'] = static::TEMPLATE_DIR;
 
-			2. Data from common controller array
+        if (!isset($GLOBALS['templateParams'])) {
+            $GLOBALS['templateParams'] = [];
+        }
 
-			2. Data sending to render function
-		*/
+        $GLOBALS['templateParams'] = $dataParams;
+        $GLOBALS['templateScope'] = $this->scope;
+        $GLOBALS['templateTTL'] = $ttl;
+        $template = strlen($template)>0?$template:'main';
 
-		public function render(
-			string $template = 'main',
-			array $dataParams = [],
-			int $ttl = 0
-		) : void
-		{
-			if (!isset($this->_templateDir)) {
-				throw new Exception('Variable _templateDir is not set');
-			}
+        if ($ttl>0) {
 
-			$GLOBALS['templateDir'] = $this->_templateDir;
+            $currSlug = $_SERVER['REQUEST_URI'];
+            $currSlug = str_replace('/','_', $currSlug);
+            $currSlug = preg_replace('/(^_)|(_$)/su','',$currSlug);
+            $tplCacheDir = static::TEMPLATE_DIR.$currSlug;
 
-			if (!isset($GLOBALS['templateParams'])) {
-				$GLOBALS['templateParams'] = [];
-			}
+            if(!is_dir($tplCacheDir)){
+                mkdir($tplCacheDir);
+                chmod($tplCacheDir,0775);
+            }
 
-			foreach ($this->configData['main'] as $idx => $configItem) {
-				$GLOBALS['templateParams'][$idx] = $configItem;
-			}
+            $tplCacheDir = $tplCacheDir.'/'.$this->scope;
+            if(!is_dir($tplCacheDir)){
+                mkdir($tplCacheDir);
+                chmod($tplCacheDir,0775);
+            }
 
-			foreach ($this->commonData as $idx => $commonItem) {
-				$GLOBALS['templateParams'][$idx] = $commonItem;
-			}
-	
-			foreach ($dataParams as $idx => $dataParamItem) {
-				$GLOBALS['templateParams'][$idx] = $dataParamItem;
-			}
+            $tplCacheDir = "{$tplCacheDir}/{$template}";
+            if(!is_dir($tplCacheDir)){
+                mkdir($tplCacheDir);
+                chmod($tplCacheDir,0775);
+            }
 
-			$GLOBALS['templateScope'] = $this->templateScope;
-			$GLOBALS['templateTTL'] = $ttl;
-			$template = strlen($template)>0?$template:'main';
+            $GLOBALS['templateCacheDir'] = $tplCacheDir;
+        }
 
-			if ($ttl>0) {
+        foreach($GLOBALS['templateParams'] as $param => $value) {
+            $$param = $value;
+        }
 
-				$currSlug = $_SERVER['REQUEST_URI'];
-				$currSlug = str_replace('/','_', $currSlug);
-				$currSlug = preg_replace('/(^_)|(_$)/su','',$currSlug);
-				$tplCacheDir = $this->_templateDir.$currSlug;
+        if (
+        	!file_exists(static::TEMPLATE_DIR.$this->scope.'/index.tpl')
+        ) {
+        	throw new Exception('Template "'.$this->scope.'" Missing');
+        }
 
-				if(!is_dir($tplCacheDir)){
-					mkdir($tplCacheDir);
-					chmod($tplCacheDir,0775);
-				}
+        include_once(static::TEMPLATE_DIR.$this->scope.'/index.tpl');
 
-				$tplCacheDir = $tplCacheDir.'/'.$this->templateScope;
-				if(!is_dir($tplCacheDir)){
-					mkdir($tplCacheDir);
-					chmod($tplCacheDir,0775);
-				}
-
-				$tplCacheDir = "{$tplCacheDir}/{$template}";
-				if(!is_dir($tplCacheDir)){
-					mkdir($tplCacheDir);
-					chmod($tplCacheDir,0775);
-				}
-
-				$GLOBALS['templateCacheDir'] = $tplCacheDir;
-			}
-
-			foreach($GLOBALS['templateParams'] as $param => $value) {
-				$$param = $value;
-			}
-
-			include_once(
-				$this->_templateDir.$this->templateScope.'/index.tpl'
-			);
-
-			if(!$this->pageCache){
-				die();
-			}
-		}
-	}
+        exit(0);
+    }
+}
 ?>

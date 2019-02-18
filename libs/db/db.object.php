@@ -47,11 +47,11 @@ class DBObjectClass
         array  $values = []
     ) : bool
     {
-        $columns = $this->_prepare=InsertColumns($columns);
+        $columns = $this->_prepareInsertColumns($columns);
         $values = $this->_prepareInsertValues($values);
 
         $sql = "
-            INSERT INTO `{$table}`
+            INSERT INTO \"{$table}\"
             {$columns}
             VALUES {$values}; 
         ";
@@ -63,7 +63,7 @@ class DBObjectClass
      */
     public function update(
         string $table     = '',
-        array  $colums    = [],
+        array  $columns    = [],
         array  $values    = [],
         string $condition = 'false'
     ) : bool
@@ -71,7 +71,7 @@ class DBObjectClass
         $updateValues = $this->_prepareUpdateValues($columns, $values);
 
         $sql = "
-            UPDATE `{$table}`
+            UPDATE \"{$table}\"
             SET {$updateValues}
             WHERE {$condition}; 
         ";
@@ -99,13 +99,13 @@ class DBObjectClass
             $updateValues = $this->_prepareMultipleUpdateValues($item);
             if (isset($item[$conditionColumn])) {
                 $conditionValue = $item[$conditionColumn];
-                $condition = "`$conditionColumn` = '{$conditionValue}'";
+                $condition = "\"$conditionColumn\" = '{$conditionValue}'";
             } else {
                 $condition = 'false';
             }
             $sql = "
                 {$sql}
-                UPDATE `{$table}`
+                UPDATE \"{$table}\"
                 SET {$updateValues}
                 WHERE {$condition}; 
             ";
@@ -126,10 +126,10 @@ class DBObjectClass
     ) : bool
     {
         $sql = "
-            DELETE FROM `{$table}`
+            DELETE FROM \"{$table}\"
             WHERE {$condition};
         ";
-        return $this->query($sql, $this->score);
+        return $this->query($sql, $this->scope);
     }
 
     /**
@@ -201,8 +201,8 @@ class DBObjectClass
      */
     private function _prepareInsertColumns(array $columns) : string
     {
-        $columns = implode("`,`", $columns);
-        $columns = "(`{$columns}`)";
+        $columns = implode("\",\"", $columns);
+        $columns = "(\"{$columns}\")";
         return $columns;
     }
 
@@ -220,9 +220,9 @@ class DBObjectClass
             return '';
         }
 
-        foreach ($colums as $idx => $column) {
+        foreach ($columns as $idx => $column) {
             $value = $values[$idx];
-            $updateValues[] = "`{$column}` = '{$value}'";
+            $updateValues[] = "\"{$column}\" = '{$value}'";
         }
 
         $updateValues = implode(',', $updateValues);
@@ -241,7 +241,7 @@ class DBObjectClass
 
         foreach ($values as $idx => $value) {
             $value = $values[$idx];
-            $updateValues[] = "`{$idx}` = '{$value}'";
+            $updateValues[] = "\"{$idx}\" = '{$value}'";
         }
 
         $updateValues = implode(',', $updateValues);

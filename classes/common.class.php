@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Parrent Class For All Controllers And Models
+ * Parent Class For All Controllers And Models
  */
 class CommonCore
 {
@@ -14,18 +13,23 @@ class CommonCore
     public function initModel(string $model = '') : ModelCore
     {
         $modelsDir = __DIR__.'/../../models';
+        $modelClass = mb_convert_case($model, MB_CASE_TITLE);
 
-        if (!is_file("{$modelsDir}/{$model}/{$model}.php")) {
-            throw new Exception("Missing {$model} Model!");
+        if (!file_exists("{$modelsDir}/{$model}/{$model}.php")) {
+            throw new Exception("Missing {$modelClass} Model!");
         }
 
         require_once("{$modelsDir}/{$model}/{$model}.php");
-        $modelInstance = new $model();
-        $modelInstance->setConfigData();
+        $modelInstance = new $modelClass();
 
-        if (is_file("{$modelsDir}/{$model}/{$model}Object.php")) {
-            require_once("{$modelsDir}/{$model}/{$model}Object.php");
-            $modelInstance->setObject("{$model}Object");
+        if (file_exists("{$modelsDir}/{$model}/{$model}.object.php")) {
+            require_once("{$modelsDir}/{$model}/{$model}.object.php");
+            $modelInstance->setObject("{$modelClass}Object");
+        }
+
+        if (file_exists("{$modelsDir}/{$model}/{$model}.vo.php")) {
+            require_once("{$modelsDir}/{$model}/{$model}.vo.php");
+            $modelInstance->setValuesObjectClass("{$modelClass}VO");
         }
 
         return $modelInstance;
@@ -46,6 +50,25 @@ class CommonCore
         }
 
         return new $libClass();
+    }
+
+    /**
+    * Get Config Data By Config File Name
+    *
+    * @param string $configName Name Of Config File
+    * @return array Data From Config File
+    */
+    public function initConfig(string $configName = '') : array
+    {
+        $configPath = __DIR__."/../../config/{$configName}.json";
+
+        if (!file_exists($configPath)) {
+            throw new Exception("Config File {$configName} Missing");
+        }
+
+        $configJSON = file_get_contents($configPath);
+
+        return (array) json_decode($configJSON, true);
     }
 }
 

@@ -144,13 +144,13 @@ trait DB
         $config = $this->config;
 
         $type = isset($config['type']) ? $config['type'] : 'mysql';
-        $charset = isset($config['charset']) ? $config['charset'] : 'utf8';
         $host = isset($config['host']) ? $config['host'] : 'localhost';
+        $port = isset($config['port']) ? $config['port'] : '5433';
         $db = isset($config['db']) ? $config['db'] : 'default';
         $user = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
 
-        $dsn = "{$type}:host={$host};dbname={$db};charset={$charset}";
+        $dsn = "{$type}:host={$host};port={$port};dbname={$db}";
 
         return [$dsn, $user, $password];
     }
