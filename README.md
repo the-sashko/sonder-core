@@ -4,6 +4,7 @@ Some useful PHP tools
 # Recommend File Structure On Project
 
 `/private/
+
  |
  |---/common/ (dir with this framework)
  |
