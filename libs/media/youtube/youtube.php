@@ -110,12 +110,12 @@
 			$idVideo = explode('#',$idVideo)[0];
 			$idVideo = explode('&',$idVideo)[0];
 			$idVideo = explode('?',$idVideo)[0];
-			if(is_file(getcwd()."/../protected/common/lib/media/youtube/cache/_{$idVideo}.dat")){
-				$content = file_get_contents(getcwd()."/../protected/common/lib/media/youtube/cache/_{$idVideo}.dat");
+			if(is_file(__DIR__."/lib/media/youtube/cache/_{$idVideo}.dat")){
+				$content = file_get_contents(__DIR__."/lib/media/youtube/cache/_{$idVideo}.dat");
 				$content = base64_decode($content);
 			} else {
 				$content = file_get_contents("https://www.youtube.com/get_video_info?video_id={$idVideo}");
-				file_put_contents(getcwd()."/../protected/common/lib/media/youtube/cache/_{$idVideo}.dat",base64_encode($content));
+				file_put_contents(__DIR__."/lib/media/youtube/cache/_{$idVideo}.dat",base64_encode($content));
 			}
 			parse_str($content, $content);
 			return $content;
@@ -124,8 +124,8 @@
 			$idVideo = explode('#',$idVideo)[0];
 			$idVideo = explode('&',$idVideo)[0];
 			$idVideo = explode('?',$idVideo)[0];
-			if(is_file(getcwd()."/../protected/common/lib/media/youtube/res/img/{$idVideo}.jpg")){
-				return getcwd()."/../protected/common/lib/media/youtube/res/img/{$idVideo}.jpg";
+			if(is_file(__DIR__."/lib/media/youtube/res/img/{$idVideo}.jpg")){
+				return __DIR__."/lib/media/youtube/res/img/{$idVideo}.jpg";
 			}
 			try{
 				$content = file_get_contents("https://img.youtube.com/vi/{$idVideo}/maxresdefault.jpg");
@@ -173,8 +173,8 @@
 				$content = false;
 			}
 			if($content!=false){
-				file_put_contents(getcwd()."/../protected/common/lib/media/youtube/res/img/{$idVideo}.jpg",$content);
-				return getcwd()."/../protected/common/lib/media/youtube/res/img/{$idVideo}.jpg";
+				file_put_contents(__DIR__."/lib/media/youtube/res/img/{$idVideo}.jpg",$content);
+				return __DIR__."/lib/media/youtube/res/img/{$idVideo}.jpg";
 			} else {
 				return '';
 			}

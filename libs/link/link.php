@@ -10,8 +10,8 @@
 		}
 		function getWebPageMetaData(string $URL = '') : array {
 			$URLHash = hash('sha512',$URL).'_'.hash('md5',$URL);
-			if(is_file(getcwd()."/../protected/common/lib/link/cache/_{$URLHash}.dat")){
-				$metaDataJSON = file_get_contents(getcwd()."/../protected/common/lib/link/cache/_{$URLHash}.dat");
+			if(is_file(__DIR__."/cache/_{$URLHash}.dat")){
+				$metaDataJSON = file_get_contents(__DIR__."/cache/_{$URLHash}.dat");
 				$metaData = json_decode($metaDataJSON,true);
 				$metaData['URL'] = isset($metaData['URL'])?base64_decode($metaData['URL']):'#';
 				$metaData['title'] = isset($metaData['title'])?$metaData['title']:'&nbsp;';
@@ -172,7 +172,7 @@
 					'image' => $image
 				];
 				$metaDataJSON = json_encode($metaData);
-				file_put_contents(getcwd()."/../protected/common/lib/link/cache/_{$URLHash}.dat",$metaDataJSON);
+				file_put_contents(__DIR__."/cache/_{$URLHash}.dat",$metaDataJSON);
 				$metaData['URL'] = base64_decode($metaData['URL']);
 			}
 			return $metaData;
