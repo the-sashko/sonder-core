@@ -106,5 +106,25 @@ class ModelObjectCore extends DBObjectClass
         return $selectedColumns;
     }
 
+    /**
+     * summary
+     */
+    public function getMaxID(string $table = '') : int
+    {
+        $sql = "
+            SELECT
+                MAX(\"id\") AS max_id
+            FROM \"{$table}\"
+            GROUP BY \"id\";
+        ";
+        $res = $this->get($sql, false, self::DB_DEFAULT_TTL);
+
+        if (!array_key_exists('max_id', $res)) {
+            return 0;
+        }
+
+        return (int) $res['max_id'];
+    }
+
 }
 ?>

@@ -2,17 +2,19 @@
 class ControllerCore extends CommonCore {
 
     public $post = [];
+    public $URLParam = '';
     public $commonData = [];
     public $configData = [];
     public $templaterScope  = 'site';
 
     public function __construct(
-        string $param    = '',
+        string $URLParam = '',
         array  $postData = [],
         int    $page     = 1
     )
     {
         session_start();
+        $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
         $this->_escapeSessionData();
         $this->_setFlashSessionData();
@@ -46,6 +48,13 @@ class ControllerCore extends CommonCore {
         ];
 
         $_SESSION = array_map($escapeMethod, $_SESSION);
+    }
+
+    private function _setURLParam(string $URLParam = '') : void
+    {
+        $securityLib = $this->initLib('security');
+
+        $this->URLParam = $securityLib->escapeInput($URLParam);
     }
 
     private function _setFlashSessionData()

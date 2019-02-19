@@ -120,7 +120,7 @@ class App {
 
     private function _error() : void
     {
-        header('Location: /error/404/', true, 302);
+        header('Location: /', true, 302);
         exit(0);
     }
 

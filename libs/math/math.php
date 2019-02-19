@@ -1,5 +1,5 @@
 <?php
-class MathLib extends AnotherClass
+class MathLib
 {
     public function dec2base64(int $decimal = 0, $base = 64) : string
     {
@@ -30,8 +30,8 @@ class MathLib extends AnotherClass
 
         while ($decimal > 0) {
             $remainder = $decimal % $base;
-            $decimal = ($decimal - $remainder) / $base
-            $result = static::SHORT_CODE_ALPHABET[$remainder].$resulte;
+            $decimal = ($decimal - $remainder) / $base;
+            $result = $digitalAlphabet[$remainder].$result;
         }
 
         return $result;
