@@ -121,7 +121,7 @@ class ControllerCore extends CommonCore {
         $templater->render($template, $dataParams, $ttl);
     }
 
-    private function _CRUDList(string $modelName = '') : void
+    public function CRUDList(string $modelName = '') : void
     {
         $model = $this->initModel($modelName);
         $modelVOs = $model->getByPage($this->page);
@@ -131,13 +131,13 @@ class ControllerCore extends CommonCore {
         ]);
     }
 
-    private function _CRUDCreate(string $modelName = '') : void
+    public function CRUDCreate(string $modelName = '') : void
     {
         $formAction = '_'.$modelName.'Form';
         $this->$formAction;
     }
 
-    private function _CRUDUpdate(string $modelName = '') : void
+    public function CRUDUpdate(string $modelName = '') : void
     {
         $id = (int) $this->param;
 
@@ -152,7 +152,7 @@ class ControllerCore extends CommonCore {
         $this->$formAction($modelVO);
     }
 
-    private function _CRUDDelete(
+    public function CRUDDelete(
         string $modelName = '',
         string $redirectURL = '/'
     ) : void

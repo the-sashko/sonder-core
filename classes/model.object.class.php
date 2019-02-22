@@ -187,12 +187,12 @@ class ModelObjectCore extends DBObjectClass
      */
     private function _prepareQueryLimit(array $limit = []) : string
     {
-        if (strlen($limit) != 2) {
+        if (count($limit) != 2) {
             return '';
         }
 
-        $offset = (int) $limit[0];
-        $limit = (int) $limit[1];
+        $limit = (int) $limit[0];
+        $offset = (int) $limit[1];
 
         if ($offset < 0) {
             throw new Exception("Invalid SQL OFFSET Value");

@@ -1,76 +1,75 @@
 <?php
-    trait Validator
+trait Validator
+{
+    public function isValid($value = NULL, string $type = '') : bool
     {
-        public function isValid($value = NULL, string $type = '') : bool
-        {
-            $value = (string) $value;
-            $validatorAction = '_isValid'.
-                               mb_convert_case($type, MB_CASE_TITLE);
-            return $this->$validatorAction($value);
+        $value = (string) $value;
+        $validatorAction = '_isValid'.
+                           mb_convert_case($type, MB_CASE_TITLE);
+        return $this->$validatorAction($value);
+    }
+
+    private function _isValidMoney(string $value = '') : bool
+    {
+        return preg_match('/^([0-9]+)(\,|\.)([0-9]{2})$/su', $value);
+    }
+
+    private function _isValidTitle(string $value = '') : bool
+    {
+        return strlen($value) < 255 && strlen(trim($value)) > 0;
+    }
+
+    private function _isValidID(string $value = '') : bool
+    {
+        if (!preg_match('/^([0-9]+)$/su', $value)) {
+            return false;
         }
 
-        private function _isValidMoney(string $value = '') : bool
-        {
-            return preg_match('/^([0-9]+)(\,|\.)([0-9]{2})$/su', $value);
+        $value = (int) $value;
+
+        return $value > 0;
+    }
+
+    private function _isValidEmail(string $value = '') : bool
+    {
+        return preg_match('/^(.*?)\@(.*?)\.(.*?)$/su', $value);
+    }
+
+    private function _isValidDomain(string $value = '') : bool
+    {
+        return preg_match('/^([0-9a-z\.\-]+)\.([a-z]+)$/su', $value);
+    }
+
+    private function _isValidURL(string $value = '') : bool
+    {
+        return preg_match(
+            '/^((http)|(https)):\/\/(([0-9a-z\.\-]+)\.([a-z]+))(.*?)$/su',
+            $value
+        );
+    }
+
+    private function _isValidAge(string $value = '') : bool
+    {
+        if (!preg_match('/^([0-9]+)$/su', $value)) {
+            return false;
         }
 
-        private function _isValidTitle(string $value = '') : bool
-        {
-            return strlen($value) < 255 && strlen(trim($value)) > 0;
+        $value = (int) $value;
+
+        return $value > 0 && $value < 100;
+    }
+
+    private function _isValidSlug(string $value = '') : bool
+    {
+        if (preg_match('/^(.*?)\-\-(.*?)$/su', $value)) {
+            return false;
         }
 
-        private function _isValidID(string $value = '') : bool
-        {
-            if (!preg_match('/^([0-9]+)$/su', $value)) {
-                return false;
-            }
-
-            $value = (int) $value;
-
-            return $value > 0;
+        if (preg_match('/(^\-(.*?)$)|(^(.*?)\-$)/su', $value)) {
+            return false;
         }
 
-        private function _isValidEmail(string $value = '') : bool
-        {
-            return preg_match('/^(.*?)\@(.*?)\.(.*?)$/su', $value);
-        }
-
-        private function _isValidDomain(string $value = '') : bool
-        {
-            return preg_match('/^([0-9a-z\.\-]+)\.([a-z]+)$/su', $value);
-        }
-
-        private function _isValidURL(string $value = '') : bool
-        {
-            return preg_match(
-                '/^((http)|(https)):\/\/(([0-9a-z\.\-]+)\.([a-z]+))(.*?)$/su',
-                $value
-            );
-        }
-
-        private function _isValidAge(string $value = '') : bool
-        {
-            if (!preg_match('/^([0-9]+)$/su', $value)) {
-                return false;
-            }
-
-            $value = (int) $value;
-
-            return $value > 0 && $value < 100;
-        }
-
-        private function _isValidSlug(string $value = '') : bool
-        {
-            if (preg_match('/^(.*?)\-\-(.*?)$/su', $value)) {
-                return false;
-            }
-
-            if (preg_match('/(^\-(.*?)$)|(^(.*?)\-$)/su', $value)) {
-                return false;
-            }
-
-            return preg_match('/^([0-9a-z\-]+)$/su', $value);
-        }
+        return preg_match('/^([0-9a-z\-]+)$/su', $value);
     }
 }
 ?>
