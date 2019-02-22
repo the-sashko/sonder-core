@@ -120,5 +120,49 @@ class ControllerCore extends CommonCore {
 
         $templater->render($template, $dataParams, $ttl);
     }
+
+    private function _CRUDList(string $modelName = '') : void
+    {
+        $model = $this->initModel($modelName);
+        $modelVOs = $model->getByPage($this->page);
+
+        $this->render($modelName.'/list', [
+            $modelName => $modelVOs
+        ]);
+    }
+
+    private function _CRUDCreate(string $modelName = '') : void
+    {
+        $formAction = '_'.$modelName.'Form';
+        $this->$formAction;
+    }
+
+    private function _CRUDUpdate(string $modelName = '') : void
+    {
+        $id = (int) $this->param;
+
+        $model = $this->initModel($modelName);
+        $modelVO = $model->getByID($id);
+
+        if (!$modelVO->has('id')) {
+            throw new Exception('Invalid Model ID');
+        }
+
+        $formAction = '_'.$modelName.'Form';
+        $this->$formAction($modelVO);
+    }
+
+    private function _CRUDDelete(
+        string $modelName = '',
+        string $redirectURL = '/'
+    ) : void
+    {
+        $id = (int) $this->param;
+
+        $model = $this->initModel($modelName);
+        $model->removeByID($id);
+
+        $this->redirect($redirectURL);
+    }
 }
 ?>

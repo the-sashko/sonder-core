@@ -6,6 +6,9 @@ class DBObjectClass
 {
     use DB;
 
+    const DB_CONFIG_PATH = __DIR__.'/../../../config/db.json';
+    const DB_CACHE_DIR = __DIR__.'/../../../res/cache/db/';
+    const DB_DEFAULT_LIMIT = 10000;
     const DB_DEFAULT_TTL = 60*60*24*30*6;
 
     public $scope = 'default';
