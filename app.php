@@ -30,11 +30,55 @@ class App {
             $page
         );
 
+        if (!$this->_isValidControllerAction($controller, $action)) {
+            $this->_error();
+        }
+            
         try {
+            set_error_handler([$this, 'errorHandler']);
             $controller->$action();
         } catch (\Exception $exp) {
             $this->_exception($exp);
         }
+
+        exit(0);
+    }
+
+    public function errorHandler(
+        int    $errCode,
+        string $errMessage,
+        string $errFile,
+        int    $errLine
+    ) : void {
+        $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
+            if (!array_key_exists('file', $debugBacktraceStep)) {
+                $debugBacktrace[$idx] = '...';
+            }
+
+            $debugBacktrace[$idx] = $debugBacktraceStep['file'];
+
+            if (array_key_exists('line', $debugBacktraceStep)) {
+                $debugBacktrace[$idx] = $debugBacktrace[$idx].
+                                        ' ('.$debugBacktraceStep['line'].')';
+            }
+        }
+
+        $debugBacktraceStr = implode(' -> ', array_reverse($debugBacktrace));
+        $logMessage = "Error [$errCode]: $errMessage. ".
+                      "File: $errFile ($errLine). ".
+                      "Trace: $errFile ($debugBacktraceStr)";
+
+        (new ErrorLib)->displayError(
+            $errCode,
+            $errMessage,
+            $errFile,
+            $errLine,
+            $debugBacktrace
+        );
+
+        (new LogerLib)->logError($logMessage);
 
         exit(0);
     }
@@ -115,7 +159,25 @@ class App {
 
     private function _isControllerExist(string $controller = '') : bool
     {
-        return is_file(__DIR__.'/../controllers/'.$controller.'.php');
+        return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
+    }
+
+    private function _isValidControllerAction(
+        ControllerCore $controller,
+        string $action
+    ) : bool
+    {
+        if (!method_exists($controller, $action)) {
+            return false;
+        }
+
+        $reflection = new ReflectionMethod($controller, $action);
+
+        if (!$reflection->isPublic()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function _error() : void
@@ -132,7 +194,12 @@ class App {
 
     private function _exception(Exception $exp) : void
     {
-        echo $exp->getMessage();
+        $expMessage = $exp->getMessage();
+
+        (new ErrorLib)->displayException($expMessage);
+
+        (new LogerLib)->logError($expMessage);
+
         exit(0);
     }
 }

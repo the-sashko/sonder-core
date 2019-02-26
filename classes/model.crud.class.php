@@ -4,14 +4,25 @@
  */
 abstract class ModelCRUDCore extends ModelCore
 {
-    public function getByID(int $id = -1) : array
+    public function getByID(int $id = -1) : ValuesObject
     {
-        return $this->object->getByID($id);
+        $values = $this->object->getByID(
+            $this->object->getDefaultTableName(),
+            $id
+        );
+
+        return $this->getVO($values);
     }
 
     public function getByPage(int $page = 1) : array
     {
-        return $this->object->getAllByPage($page);
+        $values = $this->object->getAllByPage(
+            $this->object->getDefaultTableName(),
+            [],
+            $page
+        );
+
+        return $this->getVOArray($values);
     }
 
     abstract public function create(array $data = []) : array;
@@ -23,7 +34,10 @@ abstract class ModelCRUDCore extends ModelCore
 
     public function removeByID(int $id = -1) : bool
     {
-        return $this->object->removeByID($id);
+        return $this->object->removeByID(
+            $this->object->getDefaultTableName(),
+            $id
+        );
     }
 }
 ?>

@@ -6,6 +6,7 @@ class ControllerCore extends CommonCore {
     public $commonData = [];
     public $configData = [];
     public $templaterScope  = 'site';
+    public $page = 1;
 
     public function __construct(
         string $URLParam = '',
@@ -16,6 +17,7 @@ class ControllerCore extends CommonCore {
         session_start();
         $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
+        $this->_setPage($page);
         $this->_escapeSessionData();
         $this->_setFlashSessionData();
         $this->_initConfigs();
@@ -31,6 +33,11 @@ class ControllerCore extends CommonCore {
         ];
 
         $this->post = array_map($escapeMethod, $postData);
+    }
+
+    private function _setPage(int $page = 1) : void
+    {
+        $this->page = $page < 1 ? 1 : $page;
     }
 
     private function _initConfigs() : void
@@ -131,15 +138,33 @@ class ControllerCore extends CommonCore {
         ]);
     }
 
-    public function CRUDCreate(string $modelName = '') : void
+    public function CRUDCreate(
+        string $modelName = '',
+        string $redirectURI = '/'
+    ) : void
     {
-        $formAction = '_'.$modelName.'Form';
-        $this->$formAction;
+        $message = NULL;
+
+        $model = $this->initModel($modelName);
+
+        if (count($this->post) > 0) {
+            list($res, $message) = $model->create($this->post);
+            if ($res) {
+                redirect($redirectURI);
+            } 
+        }
+
+        $formAction = $modelName.'Form';
+        $this->$formAction(NULL, $message);
     }
 
-    public function CRUDUpdate(string $modelName = '') : void
+    public function CRUDUpdate(
+        string $modelName = '',
+        string $redirectURI = '/'
+    ) : void
     {
-        $id = (int) $this->param;
+        $message = NULL;
+        $id = (int) $this->URLParam;
 
         $model = $this->initModel($modelName);
         $modelVO = $model->getByID($id);
@@ -148,21 +173,30 @@ class ControllerCore extends CommonCore {
             throw new Exception('Invalid Model ID');
         }
 
-        $formAction = '_'.$modelName.'Form';
-        $this->$formAction($modelVO);
+        if (count($this->post) > 0) {
+            list($res, $message) = $model->updateByID($this->post, $id);
+            if ($res) {
+                redirect($redirectURI);
+            } 
+        }
+
+        $formAction = $modelName.'Form';
+        $this->$formAction($modelVO, $message);
     }
 
     public function CRUDDelete(
         string $modelName = '',
-        string $redirectURL = '/'
+        string $redirectURI = '/'
     ) : void
     {
-        $id = (int) $this->param;
-
+        $id = (int) $this->URLParam;
         $model = $this->initModel($modelName);
-        $model->removeByID($id);
 
-        $this->redirect($redirectURL);
+        if (!$model->removeByID($id)) {
+            throw new Exception("Erorror While Removing {$modelName} #{$id}");
+        }
+
+        $this->redirect($redirectURI);
     }
 }
 ?>

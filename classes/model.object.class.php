@@ -5,6 +5,21 @@
 class ModelObjectCore extends DBObjectClass
 {
     public $itemsOnPage = 10;
+    public $defaultTableName = NULL;
+
+    /**
+     * summary
+     */
+    public function getDefaultTableName() : string
+    {
+        $defaultTableName = (string) $this->defaultTableName;
+
+        if (strlen($defaultTableName) < 1) {
+            throw new Exception('Default DB Is Missing Or Has Bad Format');
+        }
+
+        return $this->defaultTableName;
+    }
 
     /**
      * summary
@@ -68,7 +83,6 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $selectedColumns = $this->_prepareSelectedColums($selectedColumns);
         $limit      = $this->_getQueryLimitByPage($page);
 
         return $this->getByCondition(
@@ -105,7 +119,7 @@ class ModelObjectCore extends DBObjectClass
     public function getOneByCondition(
         string $table           = '',
         array  $selectedColumns = [],
-        string $condition       = 'false',
+        string $condition       = 'true',
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {

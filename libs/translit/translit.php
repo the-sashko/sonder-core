@@ -30,7 +30,7 @@
             );
         }
 
-        public function string2slug(string $inputString = '') : string
+        public function getSlug(string $inputString = '') : string
         {
             $inputString = $this->cyr2lat($inputString);
             $inputString = mb_convert_case($inputString, MB_CASE_LOWER);
