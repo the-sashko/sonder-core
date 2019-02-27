@@ -1,9 +1,8 @@
 <?php
-trait Validator
+class ValidatorLib
 {
-    public function isValid($value = NULL, string $type = '') : bool
+    public function isValid(string $value = NULL, string $type = '') : bool
     {
-        $value = (string) $value;
         $validatorAction = '_isValid'.
                            mb_convert_case($type, MB_CASE_TITLE);
         return $this->$validatorAction($value);
@@ -16,7 +15,7 @@ trait Validator
 
     private function _isValidTitle(string $value = '') : bool
     {
-        return strlen($value) < 255 && strlen(trim($value)) > 0;
+        return strlen($value) < 255 && strlen(trim($value)) > 3;
     }
 
     private function _isValidID(string $value = '') : bool
@@ -61,6 +60,10 @@ trait Validator
 
     private function _isValidSlug(string $value = '') : bool
     {
+        if (!$this->_isValidTitle($value)) {
+            return false;
+        }
+
         if (preg_match('/^(.*?)\-\-(.*?)$/su', $value)) {
             return false;
         }

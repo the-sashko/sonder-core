@@ -81,12 +81,15 @@ class ControllerCore extends CommonCore {
         $_SESSION['flash_data'] = [];
     }
 
-    public function redirect(string $URL = '', int $code = 302) : void
+    public function redirect(
+        string $URL = '',
+        bool $isPermanent = false
+    ) : void
     {
         $URL = strlen($URL) > 0 ? $URL : '/';
-        $code = $code >= 300 && $code <= 308 ? $code : 302;
+        $code = $isPermanent ? 301 : 302;
 
-        header("Location: {$URL}",true,$code);
+        header("Location: {$URL}", true, $code);
         exit(0);
     }
 
@@ -150,7 +153,7 @@ class ControllerCore extends CommonCore {
         if (count($this->post) > 0) {
             list($res, $message) = $model->create($this->post);
             if ($res) {
-                redirect($redirectURI);
+                $this->redirect($redirectURI);
             } 
         }
 
@@ -176,7 +179,7 @@ class ControllerCore extends CommonCore {
         if (count($this->post) > 0) {
             list($res, $message) = $model->updateByID($this->post, $id);
             if ($res) {
-                redirect($redirectURI);
+                $this->redirect($redirectURI);
             } 
         }
 
@@ -193,7 +196,7 @@ class ControllerCore extends CommonCore {
         $model = $this->initModel($modelName);
 
         if (!$model->removeByID($id)) {
-            throw new Exception("Erorror While Removing {$modelName} #{$id}");
+            throw new Exception("Error While Removing {$modelName} #{$id}");
         }
 
         $this->redirect($redirectURI);

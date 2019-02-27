@@ -117,7 +117,7 @@ class ModelCore extends CommonCore
             $condition
         );
 
-        if (!count($modelValue) > 0) {
+        if (!count($value) > 0) {
             return $slug;
         }
 
