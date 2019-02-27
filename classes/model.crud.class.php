@@ -25,10 +25,8 @@ abstract class ModelCRUDCore extends ModelCore
         return $this->getVOArray($values);
     }
 
-    abstract public function create(array $data = []) : array;
-
-    abstract public function updateByID(
-        array $data = [],
+    abstract public function formHandler(
+        array $formData = [],
         int $id = -1
     ) : array;
 

@@ -66,12 +66,34 @@ class DBObjectClass
      */
     public function update(
         string $table     = '',
-        array  $columns    = [],
+        array  $columns   = [],
         array  $values    = [],
         string $condition = 'false'
     ) : bool
     {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
+
+        $sql = "
+            UPDATE \"{$table}\"
+            SET {$updateValues}
+            WHERE {$condition}; 
+        ";
+
+        return $this->query($sql, $this->scope);
+    }
+
+    /**
+     * summary
+     */
+    public function updateByID(
+        string $table     = '',
+        array  $columns   = [],
+        array  $values    = [],
+        int    $id        = -1
+    ) : bool
+    {
+        $updateValues = $this->_prepareUpdateValues($columns, $values);
+        $condition = "\"id\" = {$id}";
 
         $sql = "
             UPDATE \"{$table}\"

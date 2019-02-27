@@ -136,5 +136,36 @@ class ModelCore extends CommonCore
 
         return $this->_getUniqSlug($slug, $id);
     }
+
+    public function formatTitle(string $title = '') : string
+    {
+        $title = preg_replace('/\s+/su', ' ', $title);
+        $title = preg_replace('/(^\s)|(\s$)/su', '', $title);
+
+        return $title;
+    }
+
+    public function formatSlug(string $slug = '') : string
+    {
+        $slug = preg_replace('/\s+/su', '', $slug);
+        $slug = mb_convert_case($slug, MB_CASE_LOWER);
+
+        return $slug;
+    }
+
+    public function formatURL(string $url = '') : string
+    {
+        $url = preg_replace('/\s+/su', '', $url);
+
+        if (!preg_match('/^((http)|(https))\:\/\/(.*?)$/su', $url)) {
+            $url = 'http://'.$url;
+        }
+
+        if (strlen($url) < 10) {
+            $url = '';
+        }
+
+        return $url;
+    }
 }
 ?>

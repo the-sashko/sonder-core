@@ -96,7 +96,7 @@ trait DB
             try{
                 $res = (bool) $pdo->query($sql);
                 $pdo = NULL;
-                $this->_removeCache();
+                $this->_removeCache($scope);
                 return $res;
             } catch (PDOException $error){
                 echo "
@@ -230,7 +230,7 @@ trait DB
     private function _removeCache(string $scope = '') : void
     {
         if (is_dir($this::DB_CACHE_DIR.$scope)) {
-            foreach(scandir($this::DB_CACHE_DIR) as $fileItem){
+            foreach(scandir($this::DB_CACHE_DIR.$scope) as $fileItem){
                 if(
                     $fileItem!='.' &&
                     $fileItem!='..' &&
