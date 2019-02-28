@@ -47,16 +47,40 @@ class ModelObjectCore extends DBObjectClass
         $queryLimit      = $this->_prepareQueryLimit($limit);
 
         $isMultiple = $limit == 1;
-        $distinct = $isMultiple ? '' : 'DISTINCT';
 
         $sql = "
-            SELECT {$distinct}
+            SELECT
                 {$selectedColumns}    
             FROM \"{$table}\"
             WHERE {$condition}
             {$queryLimit};
         ";
-        return $this->get($sql, $isMultiple, $ttl);
+
+        return $this->get($sql, true, $ttl);
+    }
+
+    /**
+     * summary
+     */
+    public function getOneByCondition(
+        string $table           = '',
+        array  $selectedColumns = [],
+        string $condition       = 'true',
+        int    $ttl             = self::DB_DEFAULT_TTL
+    ) : array
+    {
+        $selectedColumns = $this->_prepareSelectedColums($selectedColumns);
+
+        $sql = "
+            SELECT
+                {$selectedColumns}    
+            FROM \"{$table}\"
+            WHERE {$condition}
+            OFFSET 0
+            LIMIT 1;
+        ";
+
+        return $this->get($sql, false, $ttl);
     }
 
     /**
@@ -83,7 +107,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $limit      = $this->_getQueryLimitByPage($page);
+        $limit = $this->_getQueryLimitByPage($page);
 
         return $this->getByCondition(
             $table,
@@ -116,25 +140,6 @@ class ModelObjectCore extends DBObjectClass
     /**
      * summary
      */
-    public function getOneByCondition(
-        string $table           = '',
-        array  $selectedColumns = [],
-        string $condition       = 'true',
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
-        return $this->getByCondition(
-            $table,
-            $selectedColumns,
-            $condition,
-            [1, 0],
-            $ttl
-        );
-    }
-
-    /**
-     * summary
-     */
     public function getByID(
         string $table = '',
         int    $id    = -1,
@@ -157,7 +162,7 @@ class ModelObjectCore extends DBObjectClass
     public function removeByID(string $table = '', int $id = -1) : bool
     {
         $condition = "\"id\" = {$id}";
-        return $this->remove($sql, $condition);
+        return $this->remove($table, $condition);
     }
 
     /**

@@ -137,7 +137,7 @@ class ControllerCore extends CommonCore {
         $modelVOs = $model->getByPage($this->page);
 
         $this->render($modelName.'/list', [
-            $modelName => $modelVOs
+            $modelName.'List' => $modelVOs
         ]);
     }
 
@@ -151,7 +151,7 @@ class ControllerCore extends CommonCore {
         $model = $this->initModel($modelName);
 
         if (count($this->post) > 0) {
-            list($res, $message) = $model->create($this->post);
+            list($res, $message) = $model->formHandler($this->post);
             if ($res) {
                 $this->redirect($redirectURI);
             } 
@@ -177,7 +177,7 @@ class ControllerCore extends CommonCore {
         }
 
         if (count($this->post) > 0) {
-            list($res, $message) = $model->updateByID($this->post, $id);
+            list($res, $message) = $model->formHandler($this->post, $id);
             if ($res) {
                 $this->redirect($redirectURI);
             } 
