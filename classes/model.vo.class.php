@@ -11,7 +11,7 @@ class ValuesObject
     public function get(string $valueName = '')
     {
         if (!$this->has($valueName)) {
-            throw new Exception("Value {$valueName}");
+            throw new Exception("Value {$valueName} Not Found");
         }
 
         return $this->data[$valueName];

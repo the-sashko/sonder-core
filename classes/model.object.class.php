@@ -93,7 +93,30 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        return getByCondition($table, $selectedColumns, $condition, [], $ttl);
+        return $this->getByCondition(
+            $table,
+            $selectedColumns,
+            $condition,
+            [],
+            $ttl
+        );
+    }
+
+    /**
+     * summary
+     */
+    public function getAll(
+        string $table           = '',
+        array  $selectedColumns = [],
+        int    $ttl             = self::DB_DEFAULT_TTL
+    ) : array
+    {
+        return $this->getAllByCondition(
+            $table,
+            $selectedColumns,
+            'true',
+            $ttl
+        );
     }
 
     /**

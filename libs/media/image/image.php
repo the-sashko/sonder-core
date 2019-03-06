@@ -1,196 +1,231 @@
 <?php
+class ImageLib
+{
+    var $imageFile;
+    var $imageDir;
+    var $imageName = 'image';
+    var $sizes = [
+        'thumbnail' => [
+            'height' => 64,
+            'width' => 64,
+            'low_quality' => true,
+            'prefix' => 'thumb'
+        ],
+        'post' => [
+            'height' => NULL,
+            'width' => 200,
+            'low_quality' => false,
+            'prefix' => 'p'
+        ]
+    ];
 
-	/*
-		trate for working with images
-	*/
+    public function setImage(
+        string $imageFile = '',
+        string $imageDir = '',
+        string $imageName = '',
+        array  $sizes = []
+    ) : void
+    {
+        if (!strlen($imageDir) > 0) {
+            $imageDir = getcwd();
+        }
 
-	class ImageLib {
-		var $imageFile; // image file absolute path (on server)
-		var $imageName = 'image'; // image file name
-		var $imageDir; // image directory absolute path (on server)
-		var $sizes = [ // sizes of image for resizing
-			'thumbnail' => [
-				'height' => 64, // height number of pixels or NULL of autoscale it
-				'width' => 64, // width number of pixels or NULL of autoscale it
-				'low_quality' => true, // save image in very low quality
-				'prefix' => 'thumb' // prefix of resized file
-			],
-			'post' => [
-				'height' => NULL,
-				'width' => 200,
-				'low_quality' => false,
-				'prefix'=>'p'
-			]
-		];
+        $this->imageDir = $imageDir;
 
-		/*
-			Load image data
-			$imageFile - relative path (on server)
-			$imageName -  image name
-			$imageDir - absolute path (on server) of directory that contain image with previews
-		*/
+        if (strlen($imageFile) > 0) {
+            $this->imageFile = "{$imageDir}/{$imageFile}";
+        }
 
-		public function imageLoad(string $imageFile = '', string $imageName = '', string $imageDir = '') : void{
-			/*
-				if image directory not set or enpty - set it as current work directory
-			*/
-			if(!strlen($imageDir)>0){
-				$imageDir = getcwd();
-			}
-			
-			/*
-				make relative path of file global and set up all input data as common variables
-			*/
+        if (strlen($imageName) > 0) {
+            $this->imageName = $imageName;
+        }
 
-			$this->imageDir = $imageDir;
-			if(strlen($imageFile)>0){
-				$this->imageFile = "{$imageDir}/{$imageFile}";
-			}
-			if(strlen($imageName)>0){
-				$this->imageName = $imageName;
-			}
-		}
+        if (!count($sizes) > 0) {
+            throw new Exception('Image Sizes Not Set');
+        }
 
-		/*
-			resizing image
-			$sizes - list of sizes (should be exit in $this->sizes array) that must be generated for current files
-		*/
+        $this->sizes = $sizes;
+    }
 
-		public function imageGen(array $sizes = []) : void{
+    public function imageGen(array $sizes = []) : void
+    {
+        foreach($sizes as $size){
+            $this->_imageResize($size);
+        }
+    }
 
-			/*
-				iterating over input sizes array
-			*/
+    private function _imageResize(string $size = '') : void
+    {
+        $size = $this->_getImageSize($size);
+        $imageObject = $this->_getImageObject();
 
-			if(count($sizes)>0){
-				foreach($sizes as $size){
-					if(isset($this->sizes[$size])){
+        $originWidth = (int) $imageObject->getImageGeometry()['width'];
+        $originHeight = (int) $imageObject->getImageGeometry()['height'];
 
-						$size = $this->sizes[$size]; // load data from sizes list
-						$imgObj = new Imagick(); // new Imagick instance
-						$imgObj->readImage($this->imageFile); // read image from file
-						$imgObj->setImageFormat("png"); // set default format of output image
-						$originalWidth = $imgObj->getImageGeometry()['width']; // set width of original image
-						$originalHeight = $imgObj->getImageGeometry()['height']; // set height of original image
-						if($size['width'] == NULL || $size['height'] == NULL){
+        if ($size['width'] == NULL || $size['height'] == NULL) {
+            $size = $this->_calculateSize($size, $originWidth, $originHeight);
+        } else {
+            $imageObject = $this->_changeImageRatio(
+                $imageObject,
+                $size,
+                $originWidth,
+                $originHeight
+            );
+        }
 
-							/*
-								if width or height of output image not set - calculating it
-							*/
+        $imageObject->resizeImage(
+            $size['width'],
+            $size['height'],
+            Imagick::FILTER_LANCZOS,
+            1
+        );
 
-							if($size['width'] == NULL){
+        $this->_saveImage($imageObject, $size['prefix'], $size['low_quality']);
 
-								/*
-									calculating width if it not set
-								*/
+        $imageObject->clear();
+        $imageObject->destroy();
+    }
 
-								$size['width'] = ($originalWidth/$originalHeight)*intval($size['height']);
-								$size['width'] = (int)$size['width'];
-							} else {
+    private function _getImageSize(string $size = '') : array
+    {
+        if (!array_key_exists($size, $this->sizes)) {
+            throw new Exception("Invalid Image Size \"{$size}\"");
+        }
 
-								/*
-									calculating height if it not set
-								*/
+        return $this->sizes[$size];
+    }
 
-								$size['height'] = ($originalHeight/$originalWidth)*intval($size['width']);
-								$size['height'] = (int)$size['height'];
-							}
-						} else {
+    private function _getImageObject() : Object
+    {
+        $imageObject = new \Imagick();
+        $imageObject->readImage($this->imageFile);
+        $imageObject->setImageFormat("png");
 
-							/*
-								if width or height of output image set - if first we need crop input image for new proportions
-							*/
+        return $imageObject;
+    }
 
-							$newWidth = (int)$originalWidth;
+    private function _calculateSize(
+        array $size = [],
+        int $originWidth = 0,
+        int $originHeight = 0
+    ) : array
+    {
+        $size['width'] = (int) $size['width'];
+        $size['height'] = (int) $size['height'];
 
-							/*
-								calculating height of output image by proportions of input image
-							*/
+        if ($size['width'] < 1 && $size['height'] < 1) {
+            throw new Exception("Image Size \"{$size}\" Have Bad Format");
+        }
 
-							$newHeight = (intval($size['height'])/intval($size['width']))*$newWidth;
-							$newHeight = (int)$newHeight;
+        if ($originWidth < 1 || $originHeight < 1) {
+            throw new Exception('Input Image Have Bad Format');
+        }
 
+        if ($size['width'] < 1) {
+            $size['width'] = ($originWidth / $originHeight) * $size['height'];
+            $size['width'] = (int) $size['width'];
 
-							/*
-								calculating width of output image by proportions of input image, if the height was bigger than defined
-							*/
-							if($newHeight>$originalHeight){
-								$newHeight = (int)$originalHeight;
-								$newWidth = (intval($size['width'])/intval($size['height']))*$newHeight;
-								$newWidth = (int)$newWidth;
-							}
+            return $size;
+        }
 
-							/*
-								cuting image sizes if it bigger that we need
-							*/
+        $size['height'] = ($originHeight / $originWidth) * $size['width'];
+        $size['height'] = (int) $size['height'];
 
-							if($newWidth<$originalWidth){
-								$x = intval(($originalWidth-$newWidth)/2);
-							} else {
-								$x = 0;
-							}
-							if($newHeight<$originalHeight){
-								$y = intval(($originalHeight-$newHeight)/2);
-							} else {
-								$y = 0;
-							}
+        return $size;
+    }
 
-							/*
-								also we need reduce height and width by some pixel(s) for fixing false round fload data into integer
-							*/
+    private function _changeImageRatio(
+        Object $imageObject = NULL,
+        array $size = NULL,
+        int $originWidth = 0,
+        int $originHeight = 0
+    ) : Object
+    {
+        $size['width'] = (int) $size['width'];
+        $size['height'] = (int) $size['height'];
 
-							$x = $x>0?$x+1:0;
-							$y = $y>0?$y+1:0;
+        if ($size['width'] < 1 && $size['height'] < 1) {
+            throw new Exception("Image Size \"{$size}\" Have Bad Format");
+        }
 
-							/*
-								Croping image
-							*/
+        if ($originWidth < 1 || $originHeight < 1) {
+            throw new Exception('Input Image Have Bad Format');
+        }
 
-							$imgObj->cropImage($newWidth,$newHeight,$x,$y);
-						}
-						$imgObj->resizeImage($size['width'],$size['height'],Imagick::FILTER_LANCZOS,1);//resize image
-						if($size['low_quality']){
+        if ($imageObject == NULL) {
+            throw new Exception('Image Object Missing');
+        }
 
-							/*
-								if seting low quality - set format as gif and reduce quality to 10%
-							*/
+        $newWidth = $originWidth;
+        $newHeight = (int) ($size['height'] / $size['width']) * $newWidth;
 
-							$imgObj->setImageFormat("gif");
-							$imgObj->setImageCompression(Imagick::COMPRESSION_ZIP);
-							$imgObj->setImageCompressionQuality(10);
+        if ($newHeight > $originHeight) {
+            $newHeight = $originHeight;
+            $newWidth = (int) ($size['width'] / $size['height']) * $newHeight;
+        }
 
-							/*
-								saving file and set correct rights
-							*/
+        if ($newWidth < $originWidth) {
+            $positionX = (int) (($originWidth-$newWidth) / 2);
+        } else {
+            $positionX = 0;
+        }
 
-							$imgObj->writeImage("{$this->imageDir}/{$this->imageName}-{$size['prefix']}.gif");
-							chmod("{$this->imageDir}/{$this->imageName}-{$size['prefix']}.gif",0755);
-						} else {
+        if ($newHeight < $originHeight) {
+            $positionY = (int) (($originHeight-$newHeight) / 2);
+        } else {
+            $positionY = 0;
+        }
 
-							/*
-								if seting normal quality - reduce quality to 90%
-							*/
+        $positionX = $positionX > 0 ? $positionX + 1 : 0;
+        $positionY = $positionY > 0 ? $positionY + 1 : 0;
 
-							$imgObj->setImageCompression(Imagick::COMPRESSION_ZIP);
-							$imgObj->setImageCompressionQuality(90);
+        $imageObject->cropImage($newWidth, $newHeight, $positionX, $positionY);
 
-							/*
-								saving file and set correct rights
-							*/
+        return $imageObject;
+    }
 
-							$imgObj->writeImage("{$this->imageDir}/{$this->imageName}-{$size['prefix']}.png");
-							chmod("{$this->imageDir}/{$this->imageName}-{$size['prefix']}.png",0755);
-						}
+    private function _saveImage(
+        Object $imageObject = NULL,
+        string $prefix = '',
+        bool $isLowQuality = false
+    ) : void
+    {
+        if (strlen($prefix) < 1) {
+            throw new Exception('Image File Prefix Has Bad Format');
+        }
 
-						/*
-							clear and destroy Imagick instance for memory optimization
-						*/
+        if ($imageObject == NULL) {
+            throw new Exception('Image Object Missing');
+        }
 
-						$imgObj->clear();
-						$imgObj->destroy();
-					}
-				}
-			}
-		}
-	}
+        if ($isLowQuality) {
+            $imageObject->setImageFormat("gif");
+            $imageObject->setImageCompressionQuality(10);
+            $imageFilePath = $this->_getImageFilePath($prefix, 'gif');
+        } else {
+            $imageObject->setImageCompressionQuality(90);
+            $imageFilePath = $this->_getImageFilePath($prefix, 'png');
+        }
+
+        $imageObject->setImageCompression(Imagick::COMPRESSION_ZIP);
+        $imageObject->writeImage($imageFilePath);
+        chmod($imageFilePath, 0755);
+    }
+
+    private function _getImageFilePath(
+        string $prefix = '',
+        string $extension = 'png'
+    ) : string
+    {
+        if (strlen($prefix) < 1) {
+            throw new Exception('Image File Prefix Has Bad Format');
+        }
+
+        if (strlen($extension) < 1) {
+            throw new Exception('Image File extension Has Bad Format');
+        }
+
+        return $this->imageDir.'/'.$this->imageName.'-'.$prefix.'.'.$extension;
+    }
+}
 ?>

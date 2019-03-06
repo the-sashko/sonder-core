@@ -55,9 +55,9 @@ class App {
         foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
             if (!array_key_exists('file', $debugBacktraceStep)) {
                 $debugBacktrace[$idx] = '...';
+            } else {
+                $debugBacktrace[$idx] = $debugBacktraceStep['file'];
             }
-
-            $debugBacktrace[$idx] = $debugBacktraceStep['file'];
 
             if (array_key_exists('line', $debugBacktraceStep)) {
                 $debugBacktrace[$idx] = $debugBacktrace[$idx].

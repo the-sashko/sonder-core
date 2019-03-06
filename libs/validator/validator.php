@@ -15,7 +15,7 @@ class ValidatorLib
 
     private function _isValidTitle(string $value = '') : bool
     {
-        return strlen($value) < 255 && strlen(trim($value)) > 3;
+        return strlen($value) <= 255 && strlen(trim($value)) >= 3;
     }
 
     private function _isValidID(string $value = '') : bool

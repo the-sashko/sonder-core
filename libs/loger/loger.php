@@ -98,12 +98,12 @@
 
             if (!file_exists($logFileName)) {
                 touch($logFileName);
-                chmod($logFileName, 0755);
+                chmod($logFileName, 0775);
             }
 
             if (!is_file($logFileName)) {
                 touch($logFileName);
-                chmod($logFileName, 0755);
+                chmod($logFileName, 0775);
             }
 
             $this->_rotateLogFiles($type);

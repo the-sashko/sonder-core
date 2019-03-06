@@ -145,6 +145,19 @@ class ModelCore extends CommonCore
         return $title;
     }
 
+    public function formatText(string $text = '') : string
+    {
+        $text = preg_replace('/\n+/su', "\n", $text);
+        $text = preg_replace('/\n+/su', '<br>', $text);
+        $text = preg_replace('/\s+/su', ' ', $text);
+        $text = preg_replace('/(\<br\>\s)|(\s\<br\>)/su', '<br>', $text);
+        $text = preg_replace('/\<br\>/su', "\n", $text);
+        $text = preg_replace('/\n+/su', "\n", $text);
+        $text = preg_replace('/(^\s)|(\s$)/su', '', $text);
+
+        return $text;
+    }
+
     public function formatSlug(string $slug = '') : string
     {
         $slug = preg_replace('/\s+/su', '', $slug);
