@@ -75,7 +75,8 @@ class App {
             $errMessage,
             $errFile,
             $errLine,
-            $debugBacktrace
+            $debugBacktrace,
+            OUTPUT_FORMAT_JSON
         );
 
         (new LogerLib)->logError($logMessage);
@@ -196,7 +197,7 @@ class App {
     {
         $expMessage = $exp->getMessage();
 
-        (new ErrorLib)->displayException($expMessage);
+        (new ErrorLib)->displayException($expMessage, OUTPUT_FORMAT_JSON);
 
         (new LogerLib)->logError($expMessage);
 

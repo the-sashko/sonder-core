@@ -101,7 +101,7 @@
         private function _displayJSONException(string $expMessage) : bool
         {
             $output = [];
-            
+            $output['status'] = 'error';
             $output['data'] = [
                 'message' => $expMessage
             ];

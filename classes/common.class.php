@@ -19,6 +19,10 @@ class CommonCore
             throw new Exception("Missing {$modelClass} Model!");
         }
 
+        if (file_exists("{$modelsDir}/{$model}/{$model}.form.php")) {
+            require_once("{$modelsDir}/{$model}/{$model}.form.php");
+        }
+
         require_once("{$modelsDir}/{$model}/{$model}.php");
         $modelInstance = new $modelClass();
 

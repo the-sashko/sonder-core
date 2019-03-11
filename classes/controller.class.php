@@ -7,6 +7,7 @@ class ControllerCore extends CommonCore {
     public $configData = [];
     public $templaterScope  = 'site';
     public $page = 1;
+    public $isOutputJSON = false;
 
     public function __construct(
         string $URLParam = '',
@@ -21,6 +22,12 @@ class ControllerCore extends CommonCore {
         $this->_escapeSessionData();
         $this->_setFlashSessionData();
         $this->_initConfigs();
+        $this->_setOutputType();
+    }
+
+    private function _setOutputType() : void
+    {
+        define('OUTPUT_FORMAT_JSON', $this->isOutputJSON);
     }
 
     private function _setPostData(array $postData = []) : void

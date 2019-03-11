@@ -8,6 +8,7 @@ class ModelCore extends CommonCore
 
     public $object        = null;
     public $voClassName   = null;
+    public $form          = null;
     public $configData    = [];
 
     /**
@@ -145,6 +146,13 @@ class ModelCore extends CommonCore
         return $title;
     }
 
+    public function formatEmail(string $email = '') : string
+    {
+        $email = preg_replace('/\s+/su', '', $email);
+
+        return $email;
+    }
+
     public function formatText(string $text = '') : string
     {
         $text = preg_replace('/\n+/su', "\n", $text);
@@ -179,6 +187,35 @@ class ModelCore extends CommonCore
         }
 
         return $url;
+    }
+
+    public function getByID(int $id = -1) : ValuesObject
+    {
+        $values = $this->object->getByID(
+            $this->object->getDefaultTableName(),
+            $id
+        );
+
+        return $this->getVO($values);
+    }
+
+    public function getByPage(int $page = 1) : array
+    {
+        $values = $this->object->getAllByPage(
+            $this->object->getDefaultTableName(),
+            [],
+            $page
+        );
+
+        return $this->getVOArray($values);
+    }
+
+    public function removeByID(int $id = -1) : bool
+    {
+        return $this->object->removeByID(
+            $this->object->getDefaultTableName(),
+            $id
+        );
     }
 }
 ?>
