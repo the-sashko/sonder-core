@@ -53,6 +53,7 @@ class ModelObjectCore extends DBObjectClass
                 {$selectedColumns}    
             FROM \"{$table}\"
             WHERE {$condition}
+            ORDER BY \"id\" DESC
             {$queryLimit};
         ";
 

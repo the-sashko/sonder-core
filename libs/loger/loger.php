@@ -3,20 +3,20 @@
     {
         public function log(
             string $message = '',
-            string $type = 'default'
+            string $logType = 'default'
         ) : bool
         {
             if (strlen($message) < 3) {
                 return false;
             }
 
-            if (strlen($type) < 3) {
+            if (strlen($logType) < 3) {
                 return false;
             }
 
             $dateString = date('[Y-m-d H:i:s]');
-            $message = "\n{$dateString} {$message}";
-            $logFileName = $this->_getLogFileName($type);
+            $message = "{$dateString} {$message}\n";
+            $logFileName = $this->_getLogFileName($logType);
 
             return $this->_writeToLogFile($message, $logFileName);
         }
@@ -61,15 +61,15 @@
             return true;
         }
 
-        private function _rotateLogFiles(string $type = 'default') : bool
+        private function _rotateLogFiles(string $logType = 'default') : bool
         {
-            if (strlen($type) < 3) {
-                $type = 'default';
+            if (strlen($logType) < 3) {
+                $logType = 'default';
             }
 
             $oldYear = strval(intval(date('Y'))-1);
-            $logDir = $this->_getLogDir();
-            $oldLogFileName = $logDir.'/'.$type.
+            $logDir = $this->_getLogDir($logType);
+            $oldLogFileName = $logDir.'/'.$logType.
                            '-'.$oldYear.'-'.date('m').'-'.date('d').'.log';
 
             if (!file_exists($oldLogFileName)) {
@@ -85,15 +85,25 @@
             return true;
         }
 
-        private function _getLogFileName(string $type = 'default') : string
+        private function _getLogFileName(string $logType = 'default') : string
         {
-            if (strlen($type) < 3) {
-                $type = 'default';
+            if (strlen($logType) < 3) {
+                $logType = 'default';
             }
 
-            $logDir = $this->_getLogDir();
+            $logDir = $this->_getLogDir($logType);
 
-            $logFileName = $logDir.'/'.$type.
+            if (!file_exists($logDir)) {
+                mkdir($logDir);
+                chmod($logDir, 0775);
+            }
+
+            if (!is_dir($logDir)) {
+                mkdir($logDir);
+                chmod($logDir, 0775);
+            }
+
+            $logFileName = $logDir.'/'.$logType.
                            '-'.date('Y').'-'.date('m').'-'.date('d').'.log';
 
             if (!file_exists($logFileName)) {
@@ -106,14 +116,14 @@
                 chmod($logFileName, 0775);
             }
 
-            $this->_rotateLogFiles($type);
+            $this->_rotateLogFiles($logType);
 
             return $logFileName;
         }
 
-        private function _getLogDir() : string
+        private function _getLogDir(string $logType = 'default') : string
         {
-            return __DIR__.'/../../../res/logs';
+            return __DIR__.'/../../../res/logs/'.$logType;
         }
     }
 ?>
