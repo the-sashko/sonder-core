@@ -14,6 +14,11 @@ class RedisLib
         $this->client = new Predis\Client($settings);
     }
 
+    public function __destruct()
+    {
+        $this->client->disconnect();
+    }
+
     private function _getSettings() : array
     {
         $settings = $this->_getRedisConfig();

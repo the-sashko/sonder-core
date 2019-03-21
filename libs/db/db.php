@@ -4,24 +4,59 @@
  * Trait for working with database
  */
 
-trait DB
+class DB
 {
+    public $dbConfig = [];
+    public $dbInstance = NULL;
+    public $dbCache = NULL;
+
+    public function initDB(array $config = []) : void
+    {
+        $this->config = $config;
+        $this->_setDBCache();
+    }
+
+    public function _setDBInstance() : void
+    {
+        list(
+            $dsn,
+            $user,
+            $password
+        ) = $this->_getDBCredentials();
+
+        $this->dbInstance = $this->_dbConnect($dsn, $user, $password);
+    }
+
+    public function __destruct()
+    {
+        $this->dbInstance = NULL;
+    }
 
     /**
      * summary
      */
-    private function _dbConnect() : PDO
+    private function _setDBCache() : void
     {
-        list($dsn, $user, $password) = $this->_getDBConnetionData();
+        $cacheProvider = $this->_getDBCacheProvider();
+        $this->dbCache = new DBCache($cacheProvider);
+    }
 
+    /**
+     * summary
+     */
+    private function _dbConnect(
+        string $dsn = '',
+        string $user = '',
+        string $password = ''
+    ) : PDO
+    {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ];
 
         try{
-            $pdo = new PDO($dsn, $user, $password, $options);
-            return $pdo;
+            return new PDO($dsn, $user, $password, $options);
         } catch (PDOException $error){
             $error = "
                 Could not connect to database!
@@ -39,43 +74,30 @@ trait DB
         int    $ttl   = -1
     ) : array
     {
-        $scope = $scope != '' ? $scope : 'default';
-        $cacheFilePath = $this->_getCacheFilePath($sql, $scope);
+        $res = $this->dbCache->get($sql, $scope, $ttl);
 
-        if($ttl>0){
-            $res = $this->_getDataFromCache($cacheFilePath);
-            if (count($res) > 0) {
-                return $res;
-            }
+        if (count($res) > 0) {
+            return $res;
         }
 
-        $pdo = $this->_dbConnect();
+        if($this->dbInstance == NULL){
+            $this->_setDBInstance();
+        }
 
-        if($pdo === 0){
-            $pdo = NULL;
-            return [];
-        } else {
-            try{
-                $res = $pdo->query($sql);
-                $pdo = NULL;
-                $res = (array) $res->fetchALL();
-                if($ttl>0){
-                    $this->_setDataFromCache(
-                        $res,
-                        $cacheFilePath,
-                        $scope,
-                        $ttl
-                    );
-                }
-                return $res;
-            } catch (PDOException $error){
-                $error = "
-                    SQL query failed!
-                    Error: \"{$error->getMessage()}\"
-                    Query: \"{$sql}\"
-                ";
-                $this->_dbError($error);
-            }
+        try{
+            $res = $this->dbInstance->query($sql);
+            $res = (array) $res->fetchALL();
+
+            $this->dbCache->set($sql, $res, $scope, $ttl);
+
+            return $res;
+        } catch (PDOException $error){
+            $error = "
+                SQL query failed!
+                Error: \"{$error->getMessage()}\"
+                Query: \"{$sql}\"
+            ";
+            $this->_dbError($error);
         }
     }
 
@@ -88,24 +110,24 @@ trait DB
     ) : bool
     {
         $scope = $scope != '' ? $scope : 'default';
-        $pdo = $this->_dbConnect();
-        if($pdo === 0){
-            $pdo = NULL;
-            return false;
-        } else {
-            try{
-                $res = (bool) $pdo->query($sql);
-                $pdo = NULL;
-                $this->_removeCache($scope);
-                return $res;
-            } catch (PDOException $error){
-                echo "
-                    SQL query failed!
-                    Error: \"{$error->getMessage()}\"
-                    Query: \"{$sql}\"
-                ";
-                $this->_dbError($error);
-            }
+
+        if($this->dbInstance == NULL){
+            $this->_setDBInstance();
+        }
+
+        try{
+            $res = (bool) $this->dbInstance->query($sql);
+
+            $this->dbCache->flush($scope);
+
+            return $res;
+        } catch (PDOException $error){
+            $error = "
+                SQL query failed!
+                Error: \"{$error->getMessage()}\"
+                Query: \"{$sql}\"
+            ";
+            $this->_dbError($error);
         }
     }
 
@@ -139,7 +161,7 @@ trait DB
     /**
      * summary
      */
-    private function _getDBConnetionData() : array
+    private function _getDBCredentials() : array
     {
         $config = $this->config;
 
@@ -149,7 +171,7 @@ trait DB
         $db = isset($config['db']) ? $config['db'] : 'default';
         $user = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
-
+        
         $dsn = "{$type}:host={$host};port={$port};dbname={$db}";
 
         return [$dsn, $user, $password];
@@ -158,88 +180,13 @@ trait DB
     /**
      * summary
      */
-    private function _getCacheFilePath(
-        string $sql = '',
-        string $scope = ''
-    ) : string
+    private function _getDBCacheProvider() : string
     {
-        $hash = hash('md5', $sql).
-                hash('sha512', $sql).
-                hash('md5', $scope.$sql);
-        return $this::DB_CACHE_DIR.$scope.'/'.$hash;
-    }
-
-    /**
-     * summary
-     */
-    private function _getDataFromCache(string $cacheFilePath = '') : array
-    {
-        $res = [];
-
-        if (is_file($cacheFilePath)) {
-            $cacheData = file_get_contents($cacheFilePath);
-            $cacheData = json_decode($cacheData,true);
-            if(
-                isset($cacheData['time']) &&
-                intval($cacheData['time']) > time() &&
-                isset($cacheData['content'])
-            ){
-                $res = base64_decode($cacheData['content']);
-                $res = json_decode($res,true);
-            } else {
-                unlink($cacheFilePath);
-            }
+        if (!array_key_exists('cache_provider', $this->config)) {
+            return 'mock';
         }
 
-        return $res;
-    }
-
-    /**
-     * summary
-     */
-    private function _setDataFromCache(
-        array  $res           = [],
-        string $cacheFilePath = '',
-        string $scope         = '',
-        int    $ttl           = -1
-    ) : void
-    {
-        $content = base64_encode(json_encode($res));
-
-        $cacheData = [
-            'time' => time()+$ttl,
-            'content' => $content
-        ];
-
-        if(is_file($cacheFilePath)){
-            unlink($cacheFilePath);
-        }
-
-        if(!is_dir($this::DB_CACHE_DIR.$scope)){
-            mkdir($this::DB_CACHE_DIR.$scope);
-            chmod($this::DB_CACHE_DIR.$scope, 0775);
-        }
-
-        file_put_contents($cacheFilePath, json_encode($cacheData));
-        chmod($cacheFilePath, 0775);
-    }
-
-    /**
-     * summary
-     */
-    private function _removeCache(string $scope = '') : void
-    {
-        if (is_dir($this::DB_CACHE_DIR.$scope)) {
-            foreach(scandir($this::DB_CACHE_DIR.$scope) as $fileItem){
-                if(
-                    $fileItem!='.' &&
-                    $fileItem!='..' &&
-                    is_file($this::DB_CACHE_DIR.$scope.'/'.$fileItem)
-                ){
-                    unlink($this::DB_CACHE_DIR.$scope.'/'.$fileItem);
-                }
-            }
-        }
+        return (string) $this->config['cache_provider'];
     }
 
     /**
@@ -255,23 +202,20 @@ trait DB
      */
     private function _transaction(string $transactionSQL = '') : bool
     {
-        $pdo = $this->_dbConnect();
-        if($pdo === 0){
-            $pdo = NULL;
-            return false;
-        } else {
-            try{
-                $res = (bool) $pdo->query($transactionSQL);
-                $pdo = NULL;
-                return $res;
-            } catch (PDOException $error){
-                echo "
-                    SQL query failed!
-                    Error: \"{$error->getMessage()}\"
-                    Query: \"{$sql}\"
-                ";
-                $this->_dbError($error);
-            }
+        if($this->dbInstance == NULL){
+            $this->_setDBInstance();
+        }
+
+        try{
+            $res = (bool) $this->dbInstance->query($transactionSQL);
+            return $res;
+        } catch (PDOException $error){
+            $error = "
+                SQL query failed!
+                Error: \"{$error->getMessage()}\"
+                Query: \"{$sql}\"
+            ";
+            $this->_dbError($error);
         }
     }
 }
