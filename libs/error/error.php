@@ -1,25 +1,16 @@
 <?php
-    class ErrorLib
-    {
-        public function displayError(
-            int    $errCode,
-            string $errMessage,
-            string $errFile,
-            int    $errLine,
-            array  $debugBacktrace = [],
-            bool   $isJSONOutput = false
-        ) : bool {
-            if (!$isJSONOutput) {
-                return $this->_displayHTMLError(
-                    $errCode,
-                    $errMessage,
-                    $errFile,
-                    $errLine,
-                    $debugBacktrace
-                );
-            }
-
-            return $this->_displayJSONError(
+class ErrorLib
+{
+    public function displayError(
+        int    $errCode,
+        string $errMessage,
+        string $errFile,
+        int    $errLine,
+        array  $debugBacktrace = [],
+        bool   $isJSONOutput = false
+    ) : bool {
+        if (!$isJSONOutput) {
+            return $this->_displayHTMLError(
                 $errCode,
                 $errMessage,
                 $errFile,
@@ -28,88 +19,97 @@
             );
         }
 
-        private function _displayHTMLError(
-            int    $errCode,
-            string $errMessage,
-            string $errFile,
-            int    $errLine,
-            array  $debugBacktrace
-        ) : bool {
-            $isDisplay = (bool) ini_get('display_errors');
+        return $this->_displayJSONError(
+            $errCode,
+            $errMessage,
+            $errFile,
+            $errLine,
+            $debugBacktrace
+        );
+    }
 
-            if (!$isDisplay) {
-                echo 'Internal Server Error!';
-                return false;
-            }
+    private function _displayHTMLError(
+        int    $errCode,
+        string $errMessage,
+        string $errFile,
+        int    $errLine,
+        array  $debugBacktrace
+    ) : bool {
+        $isDisplay = (bool) ini_get('display_errors');
 
-            include __DIR__.'/tpl/error.tpl';
-            return true;
+        if (!$isDisplay) {
+            echo 'Internal Server Error!';
+            return false;
         }
 
-        private function _displayJSONError(
-            int    $errCode,
-            string $errMessage,
-            string $errFile,
-            int    $errLine,
-            array  $debugBacktrace
-        ) : bool {
-            $output = [];
-            $isDisplay = (bool) ini_get('display_errors');
+        include __DIR__.'/tpl/error.tpl';
+        return true;
+    }
 
-            $output['status'] = 'error';
-            $output['data'] = [];
+    private function _displayJSONError(
+        int    $errCode,
+        string $errMessage,
+        string $errFile,
+        int    $errLine,
+        array  $debugBacktrace
+    ) : bool {
+        $output = [];
+        $isDisplay = (bool) ini_get('display_errors');
 
-            $output['data']['message'] = 'Internal Server Error!';
+        $output['status'] = 'error';
+        $output['data'] = [];
 
-            if ($isDisplay) {
-                $output['data']['error'] = [
-                    'code'    => $errCode,
-                    'message' => $errMessage
-                ];
+        $output['data']['message'] = 'Internal Server Error!';
 
-                $output['data']['file'] = [
-                    'file' => $errFile,
-                    'line' => $errLine
-                ];
-
-                $output['data']['trace'] = $debugBacktrace;
-            }
-
-            header('Content-Type: application/json');
-            echo json_encode($output);
-
-            return true;
-        }
-
-        public function displayException(
-            string $expMessage,
-            bool   $isJSONOutput = false
-        ) : bool {
-            if (!$isJSONOutput) {
-                return $this->_displayHTMLException($expMessage);
-            }
-
-            return $this->_displayJSONException($expMessage);
-        }
-
-        private function _displayHTMLException(string $expMessage) : bool
-        {
-            include __DIR__.'/tpl/exception.tpl';
-            return true;
-        }
-
-        private function _displayJSONException(string $expMessage) : bool
-        {
-            $output = [];
-            $output['status'] = 'error';
-            $output['data'] = [
-                'message' => $expMessage
+        if ($isDisplay) {
+            $output['data']['error'] = [
+                'code'    => $errCode,
+                'message' => $errMessage
             ];
 
-            header('Content-Type: application/json');
-            echo json_encode($output);
+            $output['data']['file'] = [
+                'file' => $errFile,
+                'line' => $errLine
+            ];
 
-            return true;
+            $output['data']['trace'] = $debugBacktrace;
         }
+
+        header('Content-Type: application/json');
+        echo json_encode($output);
+
+        return true;
     }
+
+    public function displayException(
+        string $expMessage,
+        bool   $isJSONOutput = false
+    ) : bool {
+        if (!$isJSONOutput) {
+            return $this->_displayHTMLException($expMessage);
+        }
+
+        return $this->_displayJSONException($expMessage);
+    }
+
+    private function _displayHTMLException(string $expMessage) : bool
+    {
+        include __DIR__.'/tpl/exception.tpl';
+        return true;
+    }
+
+    private function _displayJSONException(string $expMessage) : bool
+    {
+        $output = [];
+        $output['status'] = 'error';
+        $output['data'] = [
+            'message' => $expMessage
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($output);
+
+        return true;
+    }
+}
 ?>
