@@ -1,3 +1,6 @@
 [submodule "libs/redis/vendor"]
 	path = libs/redis/vendor
 	url = https://github.com/nrk/predis.git
+[submodule "libs/share/twitter/vendor"]
+	path = libs/share/twitter/vendor
+	url = https://github.com/jublo/codebird-php.git
