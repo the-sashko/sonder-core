@@ -27,11 +27,9 @@ class GeoIPLib {
         return $this->escapeInput($ip);
     }
 
-    public function getIPHash() string
+    public function getIPHash() : string
     {
-        $ip = $this->getIP();
-
-        return $this->hash('sha256', $ip);
+        return hash('sha256', $this->getIP());
     }
 
     /*public function getGeodata($ip = '0.0.0.0') : string {
