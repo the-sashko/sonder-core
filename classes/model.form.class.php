@@ -18,7 +18,7 @@ class ModelFormCore
      */
     public function getSlug(string $input = '', int $id = -1) : string
     {
-        $translit  = $this->initLib('translit');
+        $translit  = $this->initPlugin('translit');
         $slug = $translit->getSlug($input);
         return $this->_getUniqSlug($slug, $id);
     }

@@ -7,7 +7,7 @@ class CronControllerCore extends ControllerCore
             throw new Exception('Invalid Token');
         }
 
-        $loger = $this->initLib('loger');
+        $logger = $this->initPlugin('logger');
 
         $cron = $this->initModel('cron');
 
@@ -17,17 +17,17 @@ class CronControllerCore extends ControllerCore
             $method = $cronJob->getAction();
             $cronJob->setTimeNextExec();
             try {
-                $res = $loger->log('Job '.$method.' Start', 'cron');
+                $res = $logger->log('Job '.$method.' Start', 'cron');
                 $this->$method();
                 $cronJob->setLastExecStatus(true);
                 $cronJob->setErrorMessage('');
-                $loger->log('Job '.$method.' Done', 'cron');
+                $logger->log('Job '.$method.' Done', 'cron');
             } catch (Exception $exp) {
                 $message = $exp->getMessage();
                 $cronJob->setErrorMessage($message);
                 $cronJob->setLastExecStatus(false);
-                $loger->logError($message, false);
-                $loger->log('Job '.$method.' Fail', 'cron');
+                $logger->logError($message, false);
+                $logger->log('Job '.$method.' Fail', 'cron');
             }
             $cron->updateByVO($cronJob);
         }

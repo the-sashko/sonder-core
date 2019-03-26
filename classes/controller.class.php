@@ -33,10 +33,10 @@ class ControllerCore extends CommonCore {
 
     private function _setPostData(array $postData = []) : void
     {
-        $securityLib = $this->initLib('security');
+        $securityPlugin = $this->initPlugin('security');
 
         $escapeMethod = [
-            $securityLib,
+            $securityPlugin,
             'escapeInput'
         ];
 
@@ -55,10 +55,10 @@ class ControllerCore extends CommonCore {
 
     private function _escapeSessionData() : void
     {
-        $securityLib = $this->initLib('security');
+        $securityPlugin = $this->initPlugin('security');
 
         $escapeMethod = [
-            $securityLib,
+            $securityPlugin,
             'escapeInput'
         ];
 
@@ -67,9 +67,9 @@ class ControllerCore extends CommonCore {
 
     private function _setURLParam(string $URLParam = '') : void
     {
-        $securityLib = $this->initLib('security');
+        $securityPlugin = $this->initPlugin('security');
 
-        $this->URLParam = $securityLib->escapeInput($URLParam);
+        $this->URLParam = $securityPlugin->escapeInput($URLParam);
     }
 
     private function _setFlashSessionData()
@@ -145,13 +145,13 @@ class ControllerCore extends CommonCore {
             $dataParams['meta']
         );
 
-        $breadcrumbs = $this->initLib('breadcrumbs');
+        $breadcrumbs = $this->initPlugin('breadcrumbs');
 
         $dataParams['breadcrumbs'] = $breadcrumbs->getHTML(
                                         $dataParams['pagePath']
                                      );
 
-        $templater = $this->initLib('templater');
+        $templater = $this->initPlugin('templater');
 
         $templater->scope = $this->templaterScope;
 

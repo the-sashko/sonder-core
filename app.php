@@ -70,7 +70,7 @@ class App {
                       "File: $errFile ($errLine). ".
                       "Trace: $errFile ($debugBacktraceStr)";
 
-        (new ErrorLib)->displayError(
+        (new ErrorPlugin)->displayError(
             $errCode,
             $errMessage,
             $errFile,
@@ -79,7 +79,7 @@ class App {
             OUTPUT_FORMAT_JSON
         );
 
-        (new LogerLib)->logError($logMessage);
+        (new LoggerPlugin)->logError($logMessage);
 
         exit(0);
     }
@@ -198,9 +198,9 @@ class App {
     {
         $expMessage = $exp->getMessage();
 
-        (new ErrorLib)->displayException($expMessage, OUTPUT_FORMAT_JSON);
+        (new ErrorPlugin)->displayException($expMessage, OUTPUT_FORMAT_JSON);
 
-        (new LogerLib)->logError($expMessage);
+        (new LoggerPlugin)->logError($expMessage);
 
         exit(0);
     }

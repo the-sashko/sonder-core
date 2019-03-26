@@ -40,20 +40,20 @@ class CommonCore
     }
 
     /**
-    * Get Library Instance By Name
+    * Get Plugin Instance By Name
     *
-    * @param string $lib Name Of Library
-    * @return object Insnace Of Library
+    * @param string $plugin Name Of Plugin
+    * @return object Insnace Of Plugin
     */
-    public function initLib(string $lib = '') : Object
+    public function initPlugin(string $plugin = '') : Object
     {
-        $libClass = "{$lib}Lib";
+        $pluginClass = "{$plugin}Plugin";
 
-        if (!class_exists($libClass)) {
-            throw new Exception("Library {$lib} Is Missing!");
+        if (!class_exists($pluginClass)) {
+            throw new Exception("Plugin {$plugin} Is Missing!");
         }
 
-        return new $libClass();
+        return new $pluginClass();
     }
 
     /**
