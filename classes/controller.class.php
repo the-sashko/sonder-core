@@ -1,5 +1,6 @@
 <?php
 class ControllerCore extends CommonCore {
+    const PAGE_TITLE_SEPARATOR = ' / ';
 
     public $post = [];
     public $URLParam = '';
@@ -131,6 +132,25 @@ class ControllerCore extends CommonCore {
             $dataParams[$idx] = $value;
         }
 
+        if (!array_key_exists('pagePath', $dataParams)) {
+            $dataParams['pagePath'] = [];
+        }
+
+        if (!array_key_exists('meta', $dataParams)) {
+            $dataParams['meta'] = [];
+        }
+
+        $dataParams['meta'] = $this->_getMetaParams(
+            $dataParams['pagePath'],
+            $dataParams['meta']
+        );
+
+        $breadcrumbs = $this->initLib('breadcrumbs');
+
+        $dataParams['breadcrumbs'] = $breadcrumbs->getHTML(
+                                        $dataParams['pagePath']
+                                     );
+
         $templater = $this->initLib('templater');
 
         $templater->scope = $this->templaterScope;
@@ -207,6 +227,79 @@ class ControllerCore extends CommonCore {
         }
 
         $this->redirect($redirectURI);
+    }
+
+    public function actionError()
+    {
+        //;
+    }
+
+    private function _getMetaParams(
+        array $pagePath = [],
+        array $meta = []
+    ) : array
+    {
+        $metaData = $this->initConfig('seo');
+        $mainConfigData = $this->initConfig('main');
+
+        if (array_key_exists('description', $meta)) {
+            $metaData['description'] = $meta['description'];
+        }
+
+        if (array_key_exists('image', $meta)) {
+            $metaData['image'] = $meta['image'];
+        }
+
+        $metaData['image'] = $mainConfigData['site_protocol'].'://'.
+                             $mainConfigData['site_domain'].
+                             $metaData['image'];
+
+        $metaData['title'] = $mainConfigData['site_name'];
+        $metaData['site_name'] = $mainConfigData['site_name'];
+        $metaData['site_slogan'] = $mainConfigData['site_slogan'];
+        $metaData['locale'] = $mainConfigData['site_locale'];
+
+        $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
+
+        $metaData['copyright'] = '&copy; '.$metaData['site_name'];
+
+        if (date('Y') != $launchYear) {
+            $metaData['copyright'] = $metaData['copyright'].' '.
+                                     $launchYear.'-'.date('Y');
+        } else {
+            $metaData['copyright'] = $metaData['copyright'].' '.date('Y');
+        }
+
+        if (count($pagePath) > 0) {
+            $metaData['title'] = $metaData['title'].
+                                 static::PAGE_TITLE_SEPARATOR.
+                                 $this->_getTitleByPagePath($pagePath);
+        }
+
+        if (!array_key_exists('canonical_url', $meta)) {
+            if (
+                array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
+                strlen($_SERVER['REAL_REQUEST_URI']) > 0
+            ) {
+                $meta['canonical_url'] = $_SERVER['REAL_REQUEST_URI'];
+            } else {
+                $meta['canonical_url'] = '/';
+            }
+        }
+
+        $metaData['canonical_url'] = $mainConfigData['site_protocol'].'://'.
+                                     $mainConfigData['site_domain'].
+                                     $meta['canonical_url'];
+
+        return $metaData;
+    }
+
+    private function _getTitleByPagePath(array $pagePath = []) : string
+    {
+        $pagePath = array_reverse($pagePath);
+        $pagePath = array_values($pagePath);
+
+        return implode(static::PAGE_TITLE_SEPARATOR, $pagePath);
     }
 }
 ?>

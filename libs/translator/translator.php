@@ -8,13 +8,9 @@
         public function translate(string $word = '') : string {
             $langCode = $this->userLanguageCode;
 
-            $dictFile = __DIR__.'/dict/{$langCode}.json';
+            $dictFile = __DIR__."/dict/{$langCode}.json";
 
-            if(!file_exists($dictFile)){
-                return $word;
-            }
-
-            if(!is_file($dictFile)){
+            if (!file_exists($dictFile) || !is_file($dictFile)) {
                 return $word;
             }
 
@@ -28,14 +24,22 @@
             return $word;
         }
 
-        public function setUserLanguage() : void
+        public function setUserLanguage(string $languageCode = '') : void
         {
             $this->userLanguageCode = $this->_getUserLanguageCodeFromSession();
+
+            if (strlen($languageCode) > 0) {
+                $this->userLanguageCode = $languageCode;
+            }
         }
 
         private function _getUserLanguageCodeFromSession() {
             if (!array_key_exists('user_lang_code', $_SESSION)) {
-                return self::DEFAULT_LANGUAGE;
+                if (defined('DEFAULT_LANGUAGE')) {
+                    return DEFAULT_LANGUAGE;
+                } else {
+                    return self::DEFAULT_LANGUAGE;
+                }
             }
 
             $langCode = $_SESSION['user_lang_code'];
