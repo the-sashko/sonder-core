@@ -1,5 +1,6 @@
 <?php
-class App {
+class App
+{
 
     use Router;
 
