@@ -1,183 +1,277 @@
 <?php
-	class YoutubePlugin {
-		public function parseYoutubeID(string $text = '') : string {
-			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch(\s)(.*?)$/su','$1https://www.youtube.com$4$5',$text);
-			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch$/su','$1https://www.youtube.com$4',$text);
+class YoutubePlugin
+{
+    const LINK_REGEXP = '/^(.*?)(https|http)\:\/\/'.
+                        '(m\.youtube|www\.youtube|youtube)\.com\/'.
+                        'watch(.*?)(\s(.*?)$|$)/su';
 
-			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtu|www\.youtu|youtu)\.be\/(\s)(.*?)$/su','$1https://www.youtube.com$4$5',$text);
-			$text = preg_replace('/^(.*?)(https|http)\:\/\/(m\.youtu|www\.youtu|youtu)\.be\/$/su','$1https://www.youtube.com$4',$text);
+    const SHORT_LINK_REGEXP = '/(.*?)(https|http)\:\/\/'.
+                              '(m\.youtu|www\.youtu|youtu)\.be\/'.
+                              '(.*?)(\s(.*?)$|$)/su';
 
-			if(
-				preg_match('/^(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch(.*?)$/su',$text)
-			){
-				$idVideo = '';
-				$timeVideo = '';
-				$link = preg_replace('/(.*?)(https|http)\:\/\/(m\.youtube|www\.youtube|youtube)\.com\/watch(.*?)(\s(.*?)$|$)/su','$2://$3.com/watch$4',$text);
-				$linkParts = explode('#',$link)[0];
-				$linkParts = explode('?',$linkParts);
-				$linkParts = end($linkParts);
-				$linkParts = explode('/',$linkParts);
-				$linkParts = end($linkParts);
-				$linkParts = explode('&',$linkParts);
-				foreach ($linkParts as $linkPart) {
-					$linkPart = explode('=',$linkPart);
-					if(count($linkPart)>1){
-						if($linkPart[0]=='v'&&strlen($linkPart[1])>0){
-							$idVideo = $linkPart[1];
-						}
-						if($linkPart[0]=='t'&&strlen($linkPart[1])>0){
-							$timeVideo = $linkPart[1];
-						}
-					}
-				}
-				$idVideo = trim($idVideo);
-				if(strlen($idVideo)>0){
-					$timeVideo = trim($timeVideo);
-					if(strlen($timeVideo)>0){
-						$timeVideo = preg_match('/^([0-9]+)$/su',$timeVideo)?"{$timeVideo}s":$timeVideo;
-						$idVideo = "{$idVideo}?t={$timeVideo}";
-					}
-					$text = str_replace($link,'[Youtube:'.$idVideo.']',$text);
-				} else {
-					$text = str_replace($link,'https://www.youtube.com',$text);
-				}
-				$text = $this->parseYoutubeID($text);
-			}
-			if(
-				preg_match('/^(.*?)(https|http)\:\/\/(m\.youtu|www\.youtu|youtu)\.be\/(.*?)$/su',$text)
-			){
-				$idVideo = '';
-				$timeVideo = '';
-				$link = preg_replace('/(.*?)(https|http)\:\/\/(m\.youtu|www\.youtu|youtu)\.be\/(.*?)(\s(.*?)$|$)/su','$2://$3.be/$4',$text);
-				$linkParts = explode('#',$link)[0];
-				$linkParts = explode('/',$linkParts);
-				$linkParts = end($linkParts);
-				$linkParts = str_replace('?','&',$linkParts);
-				$linkParts = explode('&',$linkParts);
-				foreach ($linkParts as $linkPart) {
-					$linkPart = explode('=',$linkPart);
-					if(count($linkPart)>1){
-						if($linkPart[0]=='v'&&strlen($linkPart[1])>0&&strlen(trim($idVideo))<1){
-							$idVideo = $linkPart[1];
-						}
-						if($linkPart[0]=='t'&&strlen($linkPart[1])>0){
-							$timeVideo = $linkPart[1];
-						}
-					} elseif(count($linkPart)==1) {
-						$idVideo = $linkPart[0];
-					}
-				}
-				$idVideo = trim($idVideo);
-				if(strlen($idVideo)>0){
-					$timeVideo = trim($timeVideo);
-					if(strlen($timeVideo)>0){
-						$timeVideo = preg_match('/^([0-9]+)$/su',$timeVideo)?"{$timeVideo}s":$timeVideo;
-						$idVideo = "{$idVideo}?t={$timeVideo}";
-					}
-					$text = str_replace($link,"[Youtube:{$idVideo}]",$text);
-				} else {
-					$text = str_replace($link,'https://www.youtube.com',$text);
-				}
-				$text = $this->parseYoutubeID($text);
-			}
-			return $text;
-		}
-		public function parseYoutubeShortCode(string $text = '') : string {
-			if(
-				preg_match('/^(.*?)\[Youtube:(.*?)\](.*?)$/su',$text)
-			){
-				$idVideo = preg_replace('/^(.*?)\[Youtube:(.*?)\](.*?)$/su','$2',$text);
-				$youtubeURL = "https://www.youtube.com/watch?v={$idVideo}";
-				$videoData = $this->getVideoMetaData($idVideo);
-				$videoTitle = isset($videoData['title'])&&strlen(trim($videoData['title']))>0?$videoData['title']:'Youtube video';
-				$videoTitle = preg_replace('/\s+/su',' ', $videoTitle);
-				$videoTitle = preg_replace('/(^\s|\s$)/su','',$videoTitle);
-				//$idVideoEmbed = preg_match('/(.*?)\?t=(.*?)/su',$idVideo)?$idVideo.'&':$idVideo.'?';
-				/*$text = str_replace("[Youtube:{$idVideo}]","
-					<div>
-						<a href=\"#\" onclick=\"document.getElementById('youtube_player_{$idVideo}').style.display='block';\">{$videoTitle}</a>
-					</div>
-					<div class=\"youtube_player\" id=\"youtube_player_{$idVideo}\" style=\"display:none;\">
-						<iframe src=\"https://www.youtube.com/embed/{$idVideoEmbed}rel=0controls=1&showinfo=0\" frameborder=\"0\" allowfullscreen=\"\"></iframe>
-					</div>", $text);*/
-				$text = str_replace("[Youtube:{$idVideo}]","<a href=\"{$youtubeURL}\" class=\"post_media_link post_content_link_youtube\"><i class=\"fab fa-youtube\"></i>&nbsp;{$videoTitle}</a>", $text);
-				$text = $this->parseYoutubeShortCode($text);
-				//$text = $this->parseYoutubeID($text);
-			}
-			return $text;
-		}
-		public function getVideoMetaData(string $idVideo = '') : array {
-			$idVideo = explode('#',$idVideo)[0];
-			$idVideo = explode('&',$idVideo)[0];
-			$idVideo = explode('?',$idVideo)[0];
-			if(is_file(__DIR__."/cache/_{$idVideo}.dat")){
-				$content = file_get_contents(__DIR__."/cache/_{$idVideo}.dat");
-				$content = base64_decode($content);
-			} else {
-				$content = file_get_contents("https://www.youtube.com/get_video_info?video_id={$idVideo}");
-				file_put_contents(__DIR__."/cache/_{$idVideo}.dat",base64_encode($content));
-			}
-			parse_str($content, $content);
-			return $content;
-		}
-		public function getVideoThumbnail(string $idVideo = '') : string {
-			$idVideo = explode('#',$idVideo)[0];
-			$idVideo = explode('&',$idVideo)[0];
-			$idVideo = explode('?',$idVideo)[0];
-			if(is_file(__DIR__."/res/img/{$idVideo}.jpg")){
-				return __DIR__."/res/img/{$idVideo}.jpg";
-			}
-			try{
-				$content = file_get_contents("https://img.youtube.com/vi/{$idVideo}/maxresdefault.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/sddefault.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/hqdefault.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/mqdefault.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/default.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/0.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/1.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/2.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			try{
-				$content = $content!=false?$content:file_get_contents("https://img.youtube.com/vi/{$idVideo}/3.jpg");
-			}catch(Exception $except){
-				$content = false;
-			}
-			if($content!=false){
-				file_put_contents(__DIR__."/res/img/{$idVideo}.jpg",$content);
-				return __DIR__."/res/img/{$idVideo}.jpg";
-			} else {
-				return '';
-			}
-		}
-	}
+    const SHORTCODE_REGEXP = '/^(.*?)\[Youtube:(.*?)\](.*?)$/su';
+
+    public function parseYoutubeURL(string $text = '') : string
+    {
+        $text = $this->_normalizeURL($text);
+
+        if (
+            !preg_match(static::LINK_REGEXP, $text) &&
+            !preg_match(static::SHORT_LINK_REGEXP, $text)
+        ) {
+            return $text;
+        }
+
+        $text = $this->_parseYoutubeFullURL($text);
+        $text = $this->_parseYoutubeShortURL($text);
+
+        return $this->parseYoutubeURL($text);
+    }
+
+    public function parseYoutubeShortCode(string $text = '') : string
+    {
+        if (!preg_match(static::SHORTCODE_REGEXP, $text)) {
+            return $text;
+        }
+
+        $videoID = preg_replace(static::SHORTCODE_REGEXP, '$2', $text);
+
+        $youtubeURL = "https://www.youtube.com/watch?v={$videoID}";
+
+        $title = $this->_getTitleByID($videoID);
+
+        $text = str_replace(
+            "[Youtube:{$videoID}]",
+            "<a href=\"{$youtubeURL}\"".
+            "class=\"post_media_link post_content_link_youtube\">".
+            "<i class=\"fab fa-youtube\"></i>&nbsp;{$videoTitle}".
+            "</a>",
+            $text
+        );
+
+        return $this->parseYoutubeShortCode($text);
+    }
+
+    public function getThumbnailByID(string $videoID = '') : string
+    {
+        $videoID = $this->_sanitizeVideoID($videoID);
+
+        $thumbnailLocalPath = __DIR__."/res/img/{$videoID}.jpg";
+
+        if (file_exists($thumbnailLocalPath) && is_file($thumbnailLocalPath)) {
+            return $thumbnailLocalPath;
+        }
+
+        $thumbnailContent = $this->_getThumbnailContent($videoID);
+
+        if (strlen($thumbnailContent) > 0) {
+            file_put_contents($thumbnailLocalPath, $thumbnailContent);
+
+            return $thumbnailLocalPath;
+        }
+
+        return __DIR__."/res/img/default.jpg";
+    }
+
+    public function _getMetaData(string $videoID = '') : array
+    {
+        $videoID = $this->_sanitizeVideoID($videoID);
+
+        $cacheFilePath = __DIR__."/cache/_{$videoID}.dat";
+
+        if(!file_exists($cacheFilePath) || !file_exists($cacheFilePath)){
+            $metaDataURL = "https://www.youtube.com/".
+                           "get_video_info?video_id={$videoID}";
+            $metaData = file_get_contents ($metaDataURL);
+            file_put_contents($cacheFilePath, base64_encode($metaData));
+        } else {
+            $metaData = file_get_contents($cacheFilePath);
+            $metaData = base64_decode($metaData);
+        }
+
+        parse_str($metaData, $metaData);
+
+        return $metaData;
+    }
+
+    private function _sanitizeVideoID(string $videoID = '') : string
+    {
+        $videoID = explode('#', $videoID)[0];
+        $videoID = explode('&', $videoID)[0];
+        return explode('?', $videoID)[0];
+    }
+
+    private function _getThumbnailURLs(string $videoID = '') : array
+    {
+        return [
+            "https://img.youtube.com/vi/{$videoID}/maxresdefault.jpg",
+            "https://img.youtube.com/vi/{$videoID}/hqdefault.jpg",
+            "https://img.youtube.com/vi/{$videoID}/mqdefault.jpg",
+            "https://img.youtube.com/vi/{$videoID}/default.jpg",
+            "https://img.youtube.com/vi/{$videoID}/sddefault.jpg",
+            "https://img.youtube.com/vi/{$videoID}/2.jpg",
+            "https://img.youtube.com/vi/{$videoID}/3.jpg",
+            "https://img.youtube.com/vi/{$videoID}/1.jpg",
+            "https://img.youtube.com/vi/{$videoID}/0.jpg"
+        ];
+    }
+
+    private function _getThumbnailContent(string $videoID = '') : string
+    {
+        $thumbnailURLs = $this->_getThumbnailURLs($videoID);
+
+        $thumbnailContent = false;
+
+        foreach ($thumbnailURLs as $thumbnailURL) {
+
+            if ($thumbnailContent != false) {
+                break;
+            }
+            
+            try {
+                $content = file_get_contents($thumbnailURL);
+            } catch(Exception $except) {
+                $content = false;
+            }
+        }
+
+        return (string) $thumbnailContent;
+    }
+
+    private function _getTitleByID(string $videoID = '') : string
+    {
+        $title = _t('Youtube Video');
+
+        $metaData = $this->_getMetaData($videoID);
+
+        if (!isset($metaData['title']) || strlen(trim($metaData['title']))>0) {
+            return $title;
+        }
+
+        $title = preg_replace('/\s+/su', ' ', $metaData['title']);
+
+        return preg_replace('/(^\s|\s$)/su', '', $title);
+    }
+
+    private function _normalizeURL(string $text = '') : string
+    {
+        $text = preg_replace(
+            '/^(.*?)(https|http)\:\/\/'.
+            '(m\.youtube|www\.youtube|youtube)\.com\/watch(\s)(.*?)$/su',
+            '$1https://www.youtube.com$4$5',
+            $text
+        );
+
+        $text = preg_replace(
+            '/^(.*?)(https|http)\:\/\/'.
+            '(m\.youtube|www\.youtube|youtube)\.com\/watch$/su',
+            '$1https://www.youtube.com$4',
+            $text
+        );
+
+        $text = preg_replace(
+            '/^(.*?)(https|http)\:\/\/'.
+            '(m\.youtu|www\.youtu|youtu)\.be\/(\s)(.*?)$/su',
+            '$1https://www.youtube.com$4$5',
+            $text
+        );
+
+        $text = preg_replace(
+            '/^(.*?)(https|http)\:\/\/'.
+            '(m\.youtu|www\.youtu|youtu)\.be\/$/su',
+            '$1https://www.youtube.com$4',
+            $text
+        );
+
+        return $text;
+    }
+
+    private function _parseYoutubeFullURL(string $text = '') : string
+    {
+        $url = preg_replace(static::LINK_REGEXP, '$2://$3.com/watch$4', $text);
+
+        $videoID = $this->_getVideoIDFromURL($url);
+
+        if (!strlen($videoID) > 0) {
+            return str_replace($url, 'https://www.youtube.com', $text);
+        }
+
+        return str_replace($url, '[Youtube:'.$videoID.']', $text);
+    }
+
+    private function _parseYoutubeShortURL(string $text = '') : string
+    {
+        $url = preg_replace(static::SHORT_LINK_REGEXP, '$2://$3.be/$4', $text);
+        
+        $videoID = $this->_getVideoIDFromURL($url);
+
+        if (!strlen($videoID) > 0) {
+            return str_replace($url, 'https://www.youtube.com', $text);
+        }
+
+        return str_replace($url, '[Youtube:'.$videoID.']', $text);
+    }
+
+    private function _getURLParams(string $url = '') : array
+    {
+        $urlParams = trim($urlParams);
+        $urlParams = explode('#', $url)[0];
+        $urlParams = explode('/', $urlParams);
+        $urlParams = end($urlParams);
+        $urlParams = str_replace('?', '&', $urlParams);
+        return explode('&', $urlParams);
+    }
+
+    private function _getVideoIDFromURL(string $url = '') : string
+    {
+        $videoID = '';
+
+        $urlParams = $this->_getURLParams($url);
+
+        if (
+            count($urlParams) == 1 &&
+            preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
+            $urlParams[0] != 'watch';
+        ) {
+            $videoID = $urlParams[0];
+        }
+
+        foreach ($urlParams as $urlParam) {
+            if (preg_match('/^v\=(.*?)$/su', $urlParam)) {
+                $videoID = preg_replace('/^v\=(.*?)$/su', '$1', $urlParam);
+            }         
+        }
+
+        if (!strlen($videoID) > 0) {
+            return $videoID;
+        }
+
+        return $videoID.$this->_getTimeParamFromURL($url);
+    }
+
+    private function _getTimeParamFromURL(string $url = '') : string
+    {
+        $urlParams = $this->_getURLParams($url);
+
+        foreach ($urlParams as $urlParam) {
+            if (preg_match('/^t\=(.*?)$/su', $urlParam)) {
+                continue;
+            }
+
+            $time = preg_replace('/^t\=(.*?)$/su', '$1', $urlParam);
+
+            if (!strlen($time) > 0) {
+                return '';
+            }
+
+            if (preg_match('/^([0-9]+)$/su', $time)) {
+                $time = $time.'s';
+            }
+
+            return $time.'?t='.$time;
+        }
+
+        return '';
+    }
+}
 ?>
