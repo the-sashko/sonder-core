@@ -1,5 +1,6 @@
 <?php
-class TwitterPlugin {
+class TwitterPlugin
+{
     const TWITTER_MESSAGE_MAX_LENGTH = 140;
 
     public $codebird = NULL;

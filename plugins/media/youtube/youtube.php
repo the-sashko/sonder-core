@@ -231,7 +231,7 @@ class YoutubePlugin
         if (
             count($urlParams) == 1 &&
             preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
-            $urlParams[0] != 'watch';
+            $urlParams[0] != 'watch'
         ) {
             $videoID = $urlParams[0];
         }

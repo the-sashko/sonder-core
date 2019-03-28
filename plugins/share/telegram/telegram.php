@@ -1,5 +1,5 @@
 <?php
-class TelegramPugin
+class TelegramPlugin
 {
     const TELEGRAM_API_URL = 'https://api.telegram.org';
 
