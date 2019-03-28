@@ -55,8 +55,6 @@ class Test extends App
     private function _error() : void
     {
         throw new Exception('Test App Init Eror!');
-
-        exit(0);
     }
 
     public function errorHandler(
@@ -69,8 +67,6 @@ class Test extends App
         $expMessage = $exp->getMessage();
 
         throw new Exception($errMessage);
-
-        exit(0);
     }
 
     private function _exception(Exception $exp) : void
@@ -78,8 +74,6 @@ class Test extends App
         $expMessage = $exp->getMessage();
 
         throw new Exception($expMessage);
-
-        exit(0);
     }
 
 }

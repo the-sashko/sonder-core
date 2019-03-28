@@ -121,7 +121,5 @@ class TwitterPlugin {
         }
 
         throw new Exception($error);
-
-        return false;
     }
 }
