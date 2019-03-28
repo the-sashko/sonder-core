@@ -8,6 +8,8 @@ class DBCache
 
     public function __construct(string $provider = '')
     {
+        $error = NULL;
+
         switch ($provider) {
             case 'redis':
                 $this->provider = new DBRedisCacheProvider();
@@ -26,9 +28,12 @@ class DBCache
                 break;
 
             default:
-                $message = "DB Cache Provider \"{$provider}\" Is Not Allowed";
-                throw new Exception($message);
+                $error = "DB Cache Provider \"{$provider}\" Is Not Allowed";
                 break;
+        }
+
+        if ($error != NULL) {
+            throw new Exception($error);
         }
     }
 
