@@ -15,7 +15,7 @@
             }
 
             $dataJSON = file_get_contents($dictFile);
-            $dictData = json_decode($dataJSON,true);
+            $dictData = (array) json_decode($dataJSON, true);
 
             if (array_key_exists($word, $dictData)) {
                 return $dictData[$word];

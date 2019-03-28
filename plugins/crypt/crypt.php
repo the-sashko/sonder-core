@@ -22,7 +22,7 @@ class CryptPlugin
      */
     public function getTripCode(string $input = '') : string
     {
-        if (strlen($input)>0) {
+        if (!strlen($input)>0) {
             return '';
         }
 

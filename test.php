@@ -4,6 +4,7 @@ class Test extends App
     public function __construct()
     {
         parent::__construct();
+        session_start();
     }
 
     private function _redirect() : void

@@ -15,6 +15,7 @@ $_SERVER = [
     'REMOTE_PORT'          => '80',
     'REMOTE_ADDR'          => '127.0.0.1',
     'REQUEST_SCHEME'       => 'https',
+    'REQUEST_TIME'         => time(),
     'SERVER_PROTOCOL'      => 'HTTP/1.1',
     'DOCUMENT_ROOT'        => __DIR__.'/../../../public',
     'DOCUMENT_URI'         => '/index.php',

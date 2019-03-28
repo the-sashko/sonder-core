@@ -77,6 +77,13 @@ class ModelFormCore
         return $text;
     }
 
+    public function formatEmail(string $email = '') : string
+    {
+        $email = preg_replace('/\s+/su', '', $email);
+
+        return $email;
+    }
+
     public function formatSlug(string $slug = '') : string
     {
         $slug = preg_replace('/\s+/su', '', $slug);

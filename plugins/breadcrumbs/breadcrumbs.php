@@ -11,12 +11,12 @@ class BreadcrumbsPlugin
             $html = '<a href="/">'._t('Main Page').'</a>';
 
             foreach ($pagePath as $uri => $title) {
-                $html = "{$html}<span>{$sparator}</span>";
+                $html = "{$html}<span>{$separator}</span>";
 
                 if ($uri != '#') {
-                    $html = "{$html}<span>{$sparator}</span>";
-                } else {
                     $html = "{$html}<a href=\"{$uri}\">{$title}</a>";
+                } else {
+                    $html = "{$html}<span>{$title}</span>";
                 }
             }
         } else {
