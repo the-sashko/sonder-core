@@ -271,9 +271,10 @@ class ControllerCore extends CommonCore {
         }
 
         if (count($pagePath) > 0) {
-            $metaData['title'] = $metaData['title'].
+            $metaData['title'] = $this->_getTitleByPagePath($pagePath).
                                  static::PAGE_TITLE_SEPARATOR.
-                                 $this->_getTitleByPagePath($pagePath);
+                                 $metaData['title'];
+                                 
         }
 
         if (!array_key_exists('canonical_url', $meta)) {

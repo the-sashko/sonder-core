@@ -209,7 +209,7 @@ class ImagePlugin
 
         $imageObject->setImageCompression(Imagick::COMPRESSION_ZIP);
         $imageObject->writeImage($imageFilePath);
-        chmod($imageFilePath, 0755);
+        //chmod($imageFilePath, 0755);
     }
 
     private function _getImageFilePath(
