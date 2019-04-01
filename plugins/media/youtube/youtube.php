@@ -188,6 +188,10 @@ class YoutubePlugin
 
     private function _parseYoutubeFullURL(string $text = '') : string
     {
+        if (!preg_match(static::LINK_REGEXP, $text)) {
+            return $text;
+        }
+
         $url = preg_replace(static::LINK_REGEXP, '$2://$3.com/watch$4', $text);
 
         $videoID = $this->_getVideoIDFromURL($url);
@@ -201,6 +205,10 @@ class YoutubePlugin
 
     private function _parseYoutubeShortURL(string $text = '') : string
     {
+        if (!preg_match(static::SHORT_LINK_REGEXP, $text)) {
+            return $text;
+        }
+
         $url = preg_replace(static::SHORT_LINK_REGEXP, '$2://$3.be/$4', $text);
         
         $videoID = $this->_getVideoIDFromURL($url);
@@ -214,7 +222,7 @@ class YoutubePlugin
 
     private function _getURLParams(string $url = '') : array
     {
-        $urlParams = trim($urlParams);
+        $urlParams = trim($url);
         $urlParams = explode('#', $url)[0];
         $urlParams = explode('/', $urlParams);
         $urlParams = end($urlParams);
@@ -229,7 +237,6 @@ class YoutubePlugin
         $urlParams = $this->_getURLParams($url);
 
         if (
-            count($urlParams) == 1 &&
             preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
             $urlParams[0] != 'watch'
         ) {
@@ -239,7 +246,7 @@ class YoutubePlugin
         foreach ($urlParams as $urlParam) {
             if (preg_match('/^v\=(.*?)$/su', $urlParam)) {
                 $videoID = preg_replace('/^v\=(.*?)$/su', '$1', $urlParam);
-            }         
+            }
         }
 
         if (!strlen($videoID) > 0) {
@@ -254,7 +261,7 @@ class YoutubePlugin
         $urlParams = $this->_getURLParams($url);
 
         foreach ($urlParams as $urlParam) {
-            if (preg_match('/^t\=(.*?)$/su', $urlParam)) {
+            if (!preg_match('/^t\=(.*?)$/su', $urlParam)) {
                 continue;
             }
 
@@ -268,8 +275,9 @@ class YoutubePlugin
                 $time = $time.'s';
             }
 
-            return $time.'?t='.$time;
+            return '?t='.$time;
         }
+
 
         return '';
     }
