@@ -228,6 +228,50 @@ class ModelObjectCore extends DBObjectClass
     /**
      * summary
      */
+    public function count(
+        string $table     = '',
+        string $condition = 'true',
+        int    $ttl       = self::DB_DEFAULT_TTL
+    ) : int
+    {
+        $sql = "
+            SELECT COUNT(\"id\") AS count
+            FROM {$table}
+            WHERE {$condition};
+        ";
+
+        $res = $this->select($sql, $this->scope, $ttl);
+
+        if (count($res) < 1) {
+            return 0;
+        }
+
+        $res = $res[0];
+
+        if (!is_array($res) || !array_key_exists('count', $res)) {
+            return 0;
+        }
+
+        $res = (int) $res['count'];
+        $res = $res > 0 ? $res : 0;
+
+        return $res;
+    }
+
+    /**
+     * summary
+     */
+    public function countAll(
+        string $table = '',
+        int    $ttl   = self::DB_DEFAULT_TTL
+    ) : int
+    {
+        return $this->count($table, 'true', $ttl);
+    }
+
+    /**
+     * summary
+     */
     private function _prepareQueryLimit(array $limit = []) : string
     {
         if (count($limit) != 2) {
