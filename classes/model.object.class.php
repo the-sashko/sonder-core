@@ -43,8 +43,11 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $selectedColumns = $this->_prepareSelectedColums($selectedColumns);
-        $queryLimit      = $this->_prepareQueryLimit($limit);
+        $selectedColumns = $this->_prepareSelectedColums(
+            $selectedColumns
+        );
+        
+        $queryLimit = $this->_prepareQueryLimit($limit);
 
         $isMultiple = $limit == 1;
 
@@ -131,7 +134,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $limit = $this->_getQueryLimitByPage($page);
+        $limit = $this->getQueryLimitByPage($page);
 
         return $this->getByCondition(
             $table,
@@ -183,7 +186,26 @@ class ModelObjectCore extends DBObjectClass
     /**
      * summary
      */
-    public function removeByID(string $table = '', int $id = -1) : bool
+    public function getBySlug(
+        string $table = '',
+        string $slug  = '',
+        int    $ttl   = self::DB_DEFAULT_TTL
+    ) : array
+    {
+        $condition = "\"slug\" = '{$slug}'";
+
+        return $this->getOneByCondition(
+            $table,
+            [],
+            $condition,
+            $ttl
+        );
+    }
+
+    /**
+     * summary
+     */
+    public function vremoveByID(string $table = '', int $id = -1) : bool
     {
         $condition = "\"id\" = {$id}";
         return $this->remove($table, $condition);
@@ -298,7 +320,7 @@ class ModelObjectCore extends DBObjectClass
     /**
      * summary
      */
-    private function _getQueryLimitByPage(int $page = 1) : array
+    public function getQueryLimitByPage(int $page = 1) : array
     {
         if ($page < 1) {
             throw new Exception("Invalid Content Page Value");

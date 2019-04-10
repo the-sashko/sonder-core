@@ -6,10 +6,10 @@ class ModelCore extends CommonCore
 {
     const MAIN_CONFIG_PATH = __DIR__.'/../../config/main.json';
 
-    public $object        = null;
-    public $voClassName   = null;
-    public $form          = null;
-    public $configData    = [];
+    public $object      = null;
+    public $voClassName = null;
+    public $form        = null;
+    public $configData  = [];
 
     /**
      * summary
@@ -105,6 +105,16 @@ class ModelCore extends CommonCore
         return $this->getVO($values);
     }
 
+    public function getBySlug(string $slug = '') : ValuesObject
+    {
+        $values = $this->object->getBySlug(
+            $this->object->getDefaultTableName(),
+            $slug
+        );
+
+        return $this->getVO($values);
+    }
+
     public function getByPage(int $page = 1) : array
     {
         $values = $this->object->getAllByPage(
@@ -137,7 +147,10 @@ class ModelCore extends CommonCore
     /**
      * summary
      */
-    protected function _getUniqSlug(string $slug = '', int $id = -1) : string
+    protected function _getUniqSlug(
+        string $slug = '',
+        int $id = -1)
+    : string
     {
         $condition = "\"slug\" = '{$slug}' AND \"id\" != {$id}";
 
