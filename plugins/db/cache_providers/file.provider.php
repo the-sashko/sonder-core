@@ -50,7 +50,7 @@ class DBFileCacheProvider
             return false;
         }
 
-        foreach(scandir($this::DB_CACHE_DIR.$scope) as $fileItem){
+        foreach(scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem){
             if(
                 $fileItem!='.' &&
                 $fileItem!='..' &&
@@ -59,6 +59,8 @@ class DBFileCacheProvider
                 unlink($this::DB_CACHE_DIR.$scope.'/'.$fileItem);
             }
         }
+
+        return true;
     }
 
     /**
@@ -72,6 +74,7 @@ class DBFileCacheProvider
         $hash = hash('md5', $sql).
                 hash('sha512', $sql).
                 hash('md5', $scope.$sql);
+
         return $this::DB_CACHE_DIR.'/'.$scope.'/'.$hash;
     }
 
@@ -81,6 +84,7 @@ class DBFileCacheProvider
     private function _getDataFromCache(string $cacheFilePath = '') : array
     {
         if (!is_file($cacheFilePath)) {
+
             return [];
         }
 
