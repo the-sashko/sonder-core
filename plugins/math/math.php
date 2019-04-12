@@ -1,7 +1,18 @@
 <?php
+/**
+ * Plugin For Math Functions
+ */
 class MathPlugin
 {
-    public function dec2base64(int $decimal = 0, $base = 64) : string
+    /**
+     * Convert Decimal Number Into Nuber In Selected Base
+     *
+     * @param int $decimal Decimal Number
+     * @param int $base    Output Number Base
+     *
+     * @return string Output String Repesentation Of Number In Selected Base
+     */
+    public function dec2base64(int $decimal = 0, int $base = 64) : string
     {
         $digitalAlphabet = array(
             '0', '1', '2', '3', '4', '5', '6', '7',
@@ -13,7 +24,7 @@ class MathPlugin
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
             'U', 'V', 'W', 'X', 'Y', 'Z', '_', '-'
         );
-        
+
         $result = '';
 
         if ($decimal < 1) {

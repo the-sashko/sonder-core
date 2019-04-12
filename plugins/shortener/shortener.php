@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 
+ * Plugin For Generating Short Links From API
  */
 class ShortenerPlugin
 {
@@ -11,6 +10,13 @@ class ShortenerPlugin
         'user_token' => ''
     ];
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setAPIOptions(
         string $url = '#',
         int $userID = -1,
@@ -22,6 +28,13 @@ class ShortenerPlugin
         $this->APIOptions['user_token'] = $userToken;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function send(
         string $link = '#',
         string $source = 'default'
@@ -73,6 +86,13 @@ class ShortenerPlugin
         return $shortURL;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getCurlOptions(
         string $link = '#',
         string $source = 'default'
@@ -92,6 +112,13 @@ class ShortenerPlugin
         ];
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getCurlFields(
         string $link = '#',
         string $source = 'default'
@@ -105,6 +132,13 @@ class ShortenerPlugin
         return json_encode($curlFields);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getCurlHeaders() : array
     {
         return [
@@ -114,5 +148,4 @@ class ShortenerPlugin
         ];
     }
 }
-
 ?>

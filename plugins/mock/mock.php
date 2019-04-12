@@ -1,15 +1,14 @@
 <?php
-
 /**
  * Mock Plugin For Unit Tests
  */
-
-class MockPlugin {
-
+class MockPlugin
+{
     /**
      * Mock Method For Unit Tests
-     * @return true Test Value
-    */
+     *
+     * @return bool Test Value
+     */
     public function mockAction() : bool
     {
         return true;

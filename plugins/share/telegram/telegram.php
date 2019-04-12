@@ -1,15 +1,32 @@
 <?php
+/**
+ * Plugin For Autoposting Links To Telegram
+ */
 class TelegramPlugin
 {
     const TELEGRAM_API_URL = 'https://api.telegram.org';
 
     public $credentials = [];
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setCredentials(array $credentials = []) : void
     {
         $this->credentials = $credentials;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function send(string $message = '') : void
     {
         $this->_checkCredentials();
@@ -25,7 +42,14 @@ class TelegramPlugin
         }
     }
 
-    public function _getFomatedMessage(string $message = '') : string
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _getFomatedMessage(string $message = '') : string
     {
         $message = strip_tags($message);
         $message = htmlspecialchars($message);
@@ -42,7 +66,14 @@ class TelegramPlugin
         return $message;
     }
 
-    public function _sendToChat(
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _sendToChat(
         string $message = '',
         string $chat = ''
     ) : void
@@ -54,7 +85,14 @@ class TelegramPlugin
         $this->_sendToRemoteAPI($url);
     }
 
-    public function _sendToRemoteAPI(string $url = '') : void
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _sendToRemoteAPI(string $url = '') : void
     {
         $curl = curl_init();
 
@@ -73,7 +111,14 @@ class TelegramPlugin
         $this->_validateAPIResponse($curlResponse);
     }
 
-    public function _validateAPIResponse(string $curlResponseJSON = '') : void
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _validateAPIResponse(string $curlResponseJSON = '') : void
     {
         if (strlen($curlResponseJSON) < 1) {
             throw new Exception('Invalid Telegram API Response');
@@ -92,7 +137,14 @@ class TelegramPlugin
         }
     }
 
-    public function _getCurlHeaders(string $url = '') : array
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _getCurlHeaders(string $url = '') : array
     {
         return [
             CURLOPT_URL            => $url,
@@ -105,12 +157,26 @@ class TelegramPlugin
         ];
     }
 
-    public function _getAPIURL() : string
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _getAPIURL() : string
     {
         return static::TELEGRAM_API_URL.'/bot'.
                $this->credentials['token'].'/sendMessage';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _checkCredentials() : void
     {
         if (count($this->credentials) < 1) {

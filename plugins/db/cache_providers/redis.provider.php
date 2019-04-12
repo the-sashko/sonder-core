@@ -1,4 +1,7 @@
 <?php
+/**
+ * Data Base Cahe Provider For Redis
+ */
 class DBRedisCacheProvider
 {
     const REDIS_DBCACHE_KEY_PREFIX = 'cache:db';
@@ -6,6 +9,13 @@ class DBRedisCacheProvider
     public $redis        = NULL;
     public $fileProvider = NULL;
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function __construct() {
         $this->redis = new RedisPlugin();
         $this->redis->setKeyPrefix(static::REDIS_DBCACHE_KEY_PREFIX);
@@ -13,6 +23,13 @@ class DBRedisCacheProvider
         $this->fileProvider = new DBFileCacheProvider();
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function set(
         string $sql = '',
         array $data = [],
@@ -34,13 +51,19 @@ class DBRedisCacheProvider
                 $ttl
             );
         } catch (Exception $exp) {
-
             (new LoggerPlugin)->logError($exp->getMessage());
 
             return $this->fileProvider->set($sql, $data, $scope, $ttl);
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function get(
         string $sql = '',
         string $scope = 'default'
@@ -51,12 +74,10 @@ class DBRedisCacheProvider
         $res = $this->redis->get('query_list:'.$redisKey);
 
         if (!strlen($res) > 0) {
-
             return $this->fileProvider->get($sql, $scope);
         }
 
         if ($sql != $res) {
-
             return $this->fileProvider->get($sql, $scope);
         }
 
@@ -66,13 +87,19 @@ class DBRedisCacheProvider
         $res = (array) json_decode($res, true);
 
         if (count($res) > 0) {
-
             return $res;
         }
 
         return $this->fileProvider->get($sql, $scope);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function flush(string $scope = 'default') : bool
     {
         $this->fileProvider->flush($scope);

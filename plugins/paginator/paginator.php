@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 
+ * Plugin For Generating Pagination Links
  */
 class PaginatorPlugin
 {
@@ -10,6 +9,13 @@ class PaginatorPlugin
     public $link = '';
     public $pages = [];
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function getHTML(
         int $pageCount = 1,
         int $currPage = 1,
@@ -27,14 +33,22 @@ class PaginatorPlugin
 
         $this->_filterPages();
         $this->_setPagesHTML();
+
         return $this->_getPaginatorHTML();
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _filterPages() : void
     {
         for ($page = 1; $page <= $this->pageCount; $page++) {
             if (
-                ($page > 3 && $page < $this->currPage - 1) || 
+                ($page > 3 && $page < $this->currPage - 1) ||
                 ($page < $this->pageCount - 2 && $page > $this->currPage + 1)
             ) {
                 $this->pages[] = -1;
@@ -44,6 +58,13 @@ class PaginatorPlugin
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _setPagesHTML() : void
     {
         $prevPage = 1;
@@ -75,6 +96,13 @@ class PaginatorPlugin
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPaginatorHTML() : string
     {
         $paginatorHTML = '';

@@ -1,5 +1,9 @@
 <?php
-class LinkPlugin {
+/**
+ * Plugin For Getting URL Links Metadata And Generating HTML
+ */
+class LinkPlugin
+{
     const META_TAG_OG_TITLE_REGEX = '/^(.*?)\<meta([\s]+)'.
                                     'property=(\"|\')og\:title(\"|\')([\s]+)'.
                                     'content=(\"|\')(.*?)(\"|\')(.*?)$/su';
@@ -102,6 +106,13 @@ class LinkPlugin {
     const IMG_IMAGE_REGEX_ALT = '/^(.*?)\<img(.*?)src=(\"|\')(.*?)(\"|\')'.
                                 '(.*?)\>(.*?)$/su';
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function parseLinkURL(string $text = '') : string
     {
         $text = preg_replace_callback(
@@ -116,6 +127,13 @@ class LinkPlugin {
         return $text;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function parseLinkShortCode(string $text = '') : string
     {
         return  preg_replace(
@@ -128,6 +146,13 @@ class LinkPlugin {
         );
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getWebPageMetaData(string $url = '') : array
     {
         $cacheFile = __DIR__.'/cache/'.hash('sha512',$url).'_'.
@@ -154,6 +179,13 @@ class LinkPlugin {
         return $metaData;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _saveWebPageMetaDataToCache(
         array $metaData = [],
         string $cacheFile = ''
@@ -163,6 +195,13 @@ class LinkPlugin {
         file_put_contents($urlCacheFile, json_encode($metaDataJSON));
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageImage(
         string $pageHTML = '',
         string $url = ''
@@ -172,11 +211,18 @@ class LinkPlugin {
 
         if (trim($image) < 5) {
             $image = _getPageImageFromBody($pageHTML);
-        }       
+        }
 
         return $this->_normalizeImage($image, $url);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageImageFromMetaTags(string $html = '') : string
     {
         if ($this->_isTagExists('META_TAG_OG_IMAGE_REGEX', $html)) {
@@ -218,6 +264,13 @@ class LinkPlugin {
         return '';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageImageFromBody(string $html = '') : string
     {
         if ($this->_isTagExists('IMG_IMAGE_REGEX_ALT', $html)) {
@@ -227,12 +280,26 @@ class LinkPlugin {
         return '';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _isImageValid(string $image = '') : bool
     {
         return strlen($image) >= 5 &&
         preg_match('/^(.*?)\.((jpg)|(jpeg)|(bmp)|(gif)|(png))$/su', $image);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _normalizeImage(
         string $image = '',
         string $url = ''
@@ -270,6 +337,13 @@ class LinkPlugin {
         return $image;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageDescription(string $pageHTML = '') : string
     {
         $description = $this->_getPageDescriptionFromMetaTags($pageHTML);
@@ -281,6 +355,13 @@ class LinkPlugin {
         return $this->_normalizeDescription($description);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageDescriptionFromBody(
         string $html = ''
     ) : string
@@ -304,6 +385,13 @@ class LinkPlugin {
         return $html;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageDescriptionFromMetaTags(
         string $pageHTML = ''
     ) : string
@@ -358,6 +446,13 @@ class LinkPlugin {
         return '';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageTitle(
         string $pageHTML = '',
         string $url = ''
@@ -376,6 +471,13 @@ class LinkPlugin {
         return $this->_normalizeTitle($title);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _normalizeTitle(string $title = '') : string
     {
         $title = strip_tags($title);
@@ -393,6 +495,13 @@ class LinkPlugin {
         return $title;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _normalizeDescription(string $description = '') : string
     {
         $description = strip_tags($description);
@@ -410,6 +519,13 @@ class LinkPlugin {
         return $description;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageTitleFromURL(string $url = '') : string
     {
         $title = $this->_getDomain($url);
@@ -421,6 +537,13 @@ class LinkPlugin {
         return $title;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getDomain(string $url = '') : string
     {
         $domain = preg_replace(
@@ -437,6 +560,13 @@ class LinkPlugin {
         return $domain;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getProtocol(string $url = '') : string
     {
         if (preg_match('/^https\:\/\/(.*?)$/su', $url)) {
@@ -446,6 +576,13 @@ class LinkPlugin {
         return 'http';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageTitleFromMetaTags(string $html = '') : string
     {
         if ($this->_isTagExists('META_TAG_OG_TITLE_REGEX', $html)) {
@@ -483,6 +620,13 @@ class LinkPlugin {
         return '';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageTitleFromBody(string $pageHTML = '') : string
     {
         if ($this->_isTagExists('H1_TITLE_REGEX', $html)) {
@@ -492,7 +636,7 @@ class LinkPlugin {
         if ($this->_isTagExists('H1_TITLE_REGEX_ALT', $html)) {
             return $this->_parseHTMLTag('H1_TITLE_REGEX_ALT', 3, $html);
         }
-        
+
         if ($this->_isTagExists('MAIN_TITLE_REGEX', $html)) {
             return $this->_parseHTMLTag('MAIN_TITLE_REGEX', 3, $html);
         }
@@ -504,6 +648,13 @@ class LinkPlugin {
         return '';
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageContent(string $url = '') : string
     {
         $pageHTML = _getPageHTMLFromCurl($url);
@@ -515,6 +666,13 @@ class LinkPlugin {
         return $pageHTML;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _removePageHTMLTags(string $html = '') : string
     {
         $html = preg_replace('/\<script(.*?)\>(.*?)\<\/script\>/su',
@@ -534,6 +692,13 @@ class LinkPlugin {
         return $html;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getPageHTMLFromCurl(string $url = '') : string
     {
         $curl = curl_init();
@@ -553,6 +718,13 @@ class LinkPlugin {
         return $pageHTML;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getWebPageMetaDataFromCache(
         string $fileCache = ''
     ) : array
@@ -581,6 +753,13 @@ class LinkPlugin {
         return $metaData;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _makeLinkShortCode(array $URLParts = []) : string
     {
         $shortCode = '';
@@ -597,11 +776,18 @@ class LinkPlugin {
         return $shortCode;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _parseHTMLTag(
         string $regexp = '',
         int $partNumber = 1,
         string $html = ''
-    ) : string 
+    ) : string
     {
         if (strlen($regexp) < 1) {
             return '';
@@ -622,10 +808,17 @@ class LinkPlugin {
         return (string) preg_replace($regexp, $part, $html);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _isTagExists(
         string $regexp = '',
         string $html = ''
-    ) : bool 
+    ) : bool
     {
         if (strlen($regexp) < 1) {
             return false;

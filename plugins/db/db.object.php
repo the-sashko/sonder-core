@@ -1,6 +1,6 @@
 <?php
 /**
- * summary
+ * Class For Basic Data Basic CRUD Actions And Transactions
  */
 class DBObjectClass extends DB
 {
@@ -10,8 +10,13 @@ class DBObjectClass extends DB
 
     public $scope = 'default';
 
+
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function initStore() : void
     {
@@ -21,7 +26,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function get(
         string $sql        = '',
@@ -39,7 +48,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function insert(
         string $table  = '',
@@ -53,13 +66,17 @@ class DBObjectClass extends DB
         $sql = "
             INSERT INTO \"{$table}\"
             {$columns}
-            VALUES {$values}; 
+            VALUES {$values};
         ";
         return $this->query($sql, $this->scope);
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function update(
         string $table     = '',
@@ -73,14 +90,18 @@ class DBObjectClass extends DB
         $sql = "
             UPDATE \"{$table}\"
             SET {$updateValues}
-            WHERE {$condition}; 
+            WHERE {$condition};
         ";
 
         return $this->query($sql, $this->scope);
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function updateByID(
         string $table     = '',
@@ -95,14 +116,18 @@ class DBObjectClass extends DB
         $sql = "
             UPDATE \"{$table}\"
             SET {$updateValues}
-            WHERE {$condition}; 
+            WHERE {$condition};
         ";
 
         return $this->query($sql, $this->scope);
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function multipleUpdate(
         string $table           = '',
@@ -129,7 +154,7 @@ class DBObjectClass extends DB
                 {$sql}
                 UPDATE \"{$table}\"
                 SET {$updateValues}
-                WHERE {$condition}; 
+                WHERE {$condition};
             ";
         }
         if ($isTransaction) {
@@ -138,9 +163,13 @@ class DBObjectClass extends DB
 
         return $this->query($sql, $this->scope);
     }
-    
+
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function remove(
         string $table     = '',
@@ -151,11 +180,16 @@ class DBObjectClass extends DB
             DELETE FROM \"{$table}\"
             WHERE {$condition};
         ";
+
         return $this->query($sql, $this->scope);
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function transactionQuery(string $sql = '') : bool
     {
@@ -163,6 +197,7 @@ class DBObjectClass extends DB
         try {
             $res = $this->query($sql, $this->scope);
             $this->commit();
+
             return $res;
         } catch (Exception $except) {
             $this->rollback();
@@ -171,7 +206,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function begin() : bool
     {
@@ -179,7 +218,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function commit() : bool
     {
@@ -187,7 +230,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function rollback() : bool
     {
@@ -195,14 +242,18 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _prepareInsertValues(array $values) : string
     {
-        if(
+        if (
             count($values) > 0 &&
             is_array($values[0])
-        ){
+        ) {
             foreach ($values as $idx => $value) {
                 $value = implode("','", $value);
                 $value = "'{$value}'";
@@ -212,24 +263,33 @@ class DBObjectClass extends DB
             $values = "({$values})";
         } else {
             $values = implode("','", $values);
-            $values = "('{$values}')";    
+            $values = "('{$values}')";
         }
 
         return $values;
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _prepareInsertColumns(array $columns) : string
     {
         $columns = implode("\",\"", $columns);
         $columns = "(\"{$columns}\")";
+
         return $columns;
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _prepareUpdateValues (
         array $columns = [],
@@ -253,7 +313,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _prepareMultipleUpdateValues (
         array $values = []

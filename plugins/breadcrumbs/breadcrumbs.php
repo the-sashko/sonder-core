@@ -1,8 +1,18 @@
 <?php
+/**
+ * Plugin For Generating HTML Breadcrumbs
+ */
 class BreadcrumbsPlugin
 {
     const BREADCRUMBS_SEPARATOR = '»';
 
+    /**
+     * Get HTML Of Breadcrumbs By Path Current Page In Site Structure
+     *
+     * @param array $pagePath Path Current Page In Site Structure
+     *
+     * @return string Output HTML Text
+     */
     public function getHTML(array $pagePath = []) : string
     {
         $separator = static::BREADCRUMBS_SEPARATOR;

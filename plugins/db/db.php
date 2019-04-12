@@ -1,21 +1,33 @@
 <?php
-
 /**
- * Trait for working with database
+ * Class For Working With Data Base
  */
-
 class DB
 {
     public $dbConfig = [];
     public $dbInstance = NULL;
     public $dbCache = NULL;
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function initDB(array $config = []) : void
     {
         $this->config = $config;
         $this->_setDBCache();
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function _setDBInstance() : void
     {
         list(
@@ -27,13 +39,24 @@ class DB
         $this->dbInstance = $this->_dbConnect($dsn, $user, $password);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function __destruct()
     {
         $this->dbInstance = NULL;
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _setDBCache() : void
     {
@@ -42,7 +65,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _dbConnect(
         string $dsn = '',
@@ -55,9 +82,9 @@ class DB
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ];
 
-        try{
+        try {
             return new PDO($dsn, $user, $password, $options);
-        } catch (PDOException $error){
+        } catch (PDOException $error) {
             $error = "
                 Could not connect to database!
                 Error: \"{$error}\"";
@@ -66,7 +93,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function select(
         string $sql   = '',
@@ -80,18 +111,18 @@ class DB
             return $res;
         }
 
-        if($this->dbInstance == NULL){
+        if ($this->dbInstance == NULL) {
             $this->_setDBInstance();
         }
 
-        try{
+        try {
             $res = $this->dbInstance->query($sql);
             $res = (array) $res->fetchALL();
 
             $this->dbCache->set($sql, $res, $scope, $ttl);
 
             return $res;
-        } catch (PDOException $error){
+        } catch (PDOException $error) {
             $error = "
                 SQL query failed!
                 Error: \"{$error->getMessage()}\"
@@ -102,7 +133,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function query(
         string $sql   = '',
@@ -111,17 +146,17 @@ class DB
     {
         $scope = $scope != '' ? $scope : 'default';
 
-        if($this->dbInstance == NULL){
+        if ($this->dbInstance == NULL) {
             $this->_setDBInstance();
         }
 
-        try{
+        try {
             $res = (bool) $this->dbInstance->query($sql);
 
             $this->dbCache->flush($scope);
 
             return $res;
-        } catch (PDOException $error){
+        } catch (PDOException $error) {
             $error = "
                 SQL query failed!
                 Error: \"{$error->getMessage()}\"
@@ -132,7 +167,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function transactionStart() : bool
     {
@@ -141,7 +180,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function transactionCommit() : bool
     {
@@ -150,7 +193,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     public function transactionRollback() : bool
     {
@@ -159,7 +206,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _getDBCredentials() : array
     {
@@ -171,14 +222,18 @@ class DB
         $db = isset($config['db']) ? $config['db'] : 'default';
         $user = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
-        
+
         $dsn = "{$type}:host={$host};port={$port};dbname={$db}";
 
         return [$dsn, $user, $password];
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _getDBCacheProvider() : string
     {
@@ -190,7 +245,11 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _dbError(string $error = '') : void
     {
@@ -198,18 +257,23 @@ class DB
     }
 
     /**
-     * summary
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
      */
     private function _transaction(string $transactionSQL = '') : bool
     {
-        if($this->dbInstance == NULL){
+        if ($this->dbInstance == NULL) {
             $this->_setDBInstance();
         }
 
-        try{
+        try {
             $res = (bool) $this->dbInstance->query($transactionSQL);
+
             return $res;
-        } catch (PDOException $error){
+        } catch (PDOException $error) {
             $error = "
                 SQL query failed!
                 Error: \"{$error->getMessage()}\"

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * Plugin For Generating Sitemaps From Links
  */
 class SitemapPlugin
 {
@@ -17,12 +17,12 @@ class SitemapPlugin
             chmod(static::SITEMAP_DIR, 0775);
         }
 
-        foreach(scandir(static::SITEMAP_DIR) as $fileItem){
-            if(
+        foreach (scandir(static::SITEMAP_DIR) as $fileItem) {
+            if (
                 $fileItem!='.' &&
                 $fileItem!='..' &&
                 is_file(static::SITEMAP_DIR.$fileItem)
-            ){
+            ) {
                 unlink(static::SITEMAP_DIR.$fileItem);
             }
         }
@@ -35,6 +35,14 @@ class SitemapPlugin
         }
     }
 
+    /**
+     * Get Translation String From Dictionary
+     *
+     * @param string $word Input String Value
+     * @param string $word Input String Value
+     * @param string $word Input String Value
+     * @param string $word Input String Value
+     */
     public function saveLinksToSitemap(
         string $sitemapName = '',
         array $links = [],
@@ -62,6 +70,13 @@ class SitemapPlugin
         file_put_contents($sitemapFilePath, $sitemapXML);
     }
 
+    /**
+     * Get Translation String From Dictionary
+     *
+     * @param string $word Input String Value
+     *
+     * @return string Translated String Value
+     */
     public function saveSummarySitemap(
         string $sitemapName = 'sitemap',
         array $sitemaps = []
@@ -86,6 +101,13 @@ class SitemapPlugin
         file_put_contents($sitemapFilePath, $sitemapXML);
     }
 
+    /**
+     * Get Translation String From Dictionary
+     *
+     * @param string $word Input String Value
+     *
+     * @return string Translated String Value
+     */
     private function _getSitemapFilePath(
         string $sitemapName = 'sitemap'
     ) : string

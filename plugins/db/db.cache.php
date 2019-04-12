@@ -1,11 +1,18 @@
 <?php
 /**
- * 
+ * Class For Basic Data Base Cache Functions: Read, Write Or Remove Cache
  */
 class DBCache
 {
     public $provider = NULL;
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function __construct(string $provider = '')
     {
         $error = NULL;
@@ -37,6 +44,13 @@ class DBCache
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function set(
         string $sql = '',
         array $data = [],
@@ -61,6 +75,13 @@ class DBCache
         return $this->provider->set($sql, $data, $scope, $ttl);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function get(
         string $sql = '',
         string $scope = 'default',
@@ -88,6 +109,13 @@ class DBCache
         return $data;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function flush(string $scope = 'default') : bool
     {
         $scope = strlen($scope) < 1 ? 'default' : $scope;

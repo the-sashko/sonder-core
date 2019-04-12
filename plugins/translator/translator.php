@@ -1,57 +1,79 @@
 <?php
-    class TranslatorPlugin {
+/**
+ * Plugin For Traslation String Values
+ */
+class TranslatorPlugin
+{
+    const DEFAULT_LANGUAGE = 'en';
 
-        const DEFAULT_LANGUAGE = 'en';
+    public $userLanguageCode = NULL;
 
-        public $userLanguageCode = null;
+    /**
+     * Get Translation String From Dictionary
+     *
+     * @param string $word Input String Value
+     *
+     * @return string Translated String Value
+     */
+    public function translate(string $word = '') : string
+    {
+        $langCode = $this->userLanguageCode;
 
-        public function translate(string $word = '') : string {
-            $langCode = $this->userLanguageCode;
+        $dictFile = __DIR__."/dict/{$langCode}.json";
 
-            $dictFile = __DIR__."/dict/{$langCode}.json";
-
-            if (!file_exists($dictFile) || !is_file($dictFile)) {
-                return $word;
-            }
-
-            $dataJSON = file_get_contents($dictFile);
-            $dictData = (array) json_decode($dataJSON, true);
-
-            if (array_key_exists($word, $dictData)) {
-                return $dictData[$word];
-            }
-
+        if (!file_exists($dictFile) || !is_file($dictFile)) {
             return $word;
         }
 
-        public function setUserLanguage(string $languageCode = '') : void
-        {
-            $this->userLanguageCode = $this->_getUserLanguageCodeFromSession();
+        $dataJSON = file_get_contents($dictFile);
+        $dictData = (array) json_decode($dataJSON, true);
 
-            if (strlen($languageCode) > 0) {
-                $this->userLanguageCode = $languageCode;
-            }
+        if (array_key_exists($word, $dictData)) {
+            return $dictData[$word];
         }
 
-        private function _getUserLanguageCodeFromSession() {
-            if (!array_key_exists('user_lang_code', $_SESSION)) {
-                if (defined('DEFAULT_LANGUAGE')) {
-                    return DEFAULT_LANGUAGE;
-                } else {
-                    return self::DEFAULT_LANGUAGE;
-                }
-            }
+        return $word;
+    }
 
-            $langCode = $_SESSION['user_lang_code'];
+    /**
+     * Set User Language Code
+     *
+     * @param string $languageCode Language Code
+     */
+    public function setUserLanguage(string $languageCode = '') : void
+    {
+        $this->userLanguageCode = $this->_getUserLanguageCodeFromSession();
 
-            $langCode = trim($langCode);
-            $langCode = (string)mb_convert_case($langCode,MB_CASE_LOWER);
-
-            if (strlen($langCode) != 2) {
-                return self::DEFAULT_LANGUAGE;
-            }
-
-            return $langCode;
+        if (strlen($languageCode) > 0) {
+            $this->userLanguageCode = $languageCode;
         }
     }
+
+    /**
+     * Get User Language Code
+     *
+     * @return string Language Code
+     */
+    private function _getUserLanguageCodeFromSession() : string
+    {
+        if (!array_key_exists('user_lang_code', $_SESSION)) {
+            if (defined('DEFAULT_LANGUAGE')) {
+                return DEFAULT_LANGUAGE;
+            } else {
+                return self::DEFAULT_LANGUAGE;
+            }
+        }
+
+        $langCode = $_SESSION['user_lang_code'];
+
+        $langCode = trim($langCode);
+        $langCode = (string)mb_convert_case($langCode,MB_CASE_LOWER);
+
+        if (strlen($langCode) != 2) {
+            return self::DEFAULT_LANGUAGE;
+        }
+
+        return $langCode;
+    }
+}
 ?>

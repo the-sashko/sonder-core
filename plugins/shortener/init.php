@@ -1,3 +1,3 @@
 <?php
-    require_once __DIR__.'/shortener.php';
+require_once __DIR__.'/shortener.php';
 ?>

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Plugin For Getting Youtube Metadata And Generating Embeded Player
+ */
 class YoutubePlugin
 {
     const LINK_REGEXP = '/^(.*?)(https|http)\:\/\/'.
@@ -11,6 +14,13 @@ class YoutubePlugin
 
     const SHORTCODE_REGEXP = '/^(.*?)\[Youtube:(.*?)\](.*?)$/su';
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function parseYoutubeURL(string $text = '') : string
     {
         $text = $this->_normalizeURL($text);
@@ -28,6 +38,13 @@ class YoutubePlugin
         return $this->parseYoutubeURL($text);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function parseYoutubeShortCode(string $text = '') : string
     {
         if (!preg_match(static::SHORTCODE_REGEXP, $text)) {
@@ -52,6 +69,13 @@ class YoutubePlugin
         return $this->parseYoutubeShortCode($text);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function getThumbnailByID(string $videoID = '') : string
     {
         $videoID = $this->_sanitizeVideoID($videoID);
@@ -73,13 +97,20 @@ class YoutubePlugin
         return __DIR__."/res/img/default.jpg";
     }
 
-    public function _getMetaData(string $videoID = '') : array
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
+    private function _getMetaData(string $videoID = '') : array
     {
         $videoID = $this->_sanitizeVideoID($videoID);
 
         $cacheFilePath = __DIR__."/cache/_{$videoID}.dat";
 
-        if(!file_exists($cacheFilePath) || !file_exists($cacheFilePath)){
+        if (!file_exists($cacheFilePath) || !file_exists($cacheFilePath)) {
             $metaDataURL = "https://www.youtube.com/".
                            "get_video_info?video_id={$videoID}";
             $metaData = file_get_contents ($metaDataURL);
@@ -94,13 +125,28 @@ class YoutubePlugin
         return $metaData;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _sanitizeVideoID(string $videoID = '') : string
     {
         $videoID = explode('#', $videoID)[0];
         $videoID = explode('&', $videoID)[0];
+
         return explode('?', $videoID)[0];
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getThumbnailURLs(string $videoID = '') : array
     {
         return [
@@ -116,6 +162,13 @@ class YoutubePlugin
         ];
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getThumbnailContent(string $videoID = '') : string
     {
         $thumbnailURLs = $this->_getThumbnailURLs($videoID);
@@ -123,11 +176,10 @@ class YoutubePlugin
         $thumbnailContent = false;
 
         foreach ($thumbnailURLs as $thumbnailURL) {
-
             if ($thumbnailContent != false) {
                 break;
             }
-            
+
             try {
                 $content = file_get_contents($thumbnailURL);
             } catch(Exception $except) {
@@ -138,6 +190,13 @@ class YoutubePlugin
         return (string) $thumbnailContent;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getTitleByID(string $videoID = '') : string
     {
         $title = _t('Youtube Video');
@@ -153,6 +212,13 @@ class YoutubePlugin
         return preg_replace('/(^\s|\s$)/su', '', $title);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _normalizeURL(string $text = '') : string
     {
         $text = preg_replace(
@@ -186,6 +252,13 @@ class YoutubePlugin
         return $text;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _parseYoutubeFullURL(string $text = '') : string
     {
         if (!preg_match(static::LINK_REGEXP, $text)) {
@@ -203,6 +276,13 @@ class YoutubePlugin
         return str_replace($url, '[Youtube:'.$videoID.']', $text);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _parseYoutubeShortURL(string $text = '') : string
     {
         if (!preg_match(static::SHORT_LINK_REGEXP, $text)) {
@@ -210,7 +290,7 @@ class YoutubePlugin
         }
 
         $url = preg_replace(static::SHORT_LINK_REGEXP, '$2://$3.be/$4', $text);
-        
+
         $videoID = $this->_getVideoIDFromURL($url);
 
         if (!strlen($videoID) > 0) {
@@ -220,6 +300,13 @@ class YoutubePlugin
         return str_replace($url, '[Youtube:'.$videoID.']', $text);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getURLParams(string $url = '') : array
     {
         $urlParams = trim($url);
@@ -227,9 +314,17 @@ class YoutubePlugin
         $urlParams = explode('/', $urlParams);
         $urlParams = end($urlParams);
         $urlParams = str_replace('?', '&', $urlParams);
+
         return explode('&', $urlParams);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getVideoIDFromURL(string $url = '') : string
     {
         $videoID = '';
@@ -256,6 +351,13 @@ class YoutubePlugin
         return $videoID.$this->_getTimeParamFromURL($url);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getTimeParamFromURL(string $url = '') : string
     {
         $urlParams = $this->_getURLParams($url);
@@ -277,7 +379,6 @@ class YoutubePlugin
 
             return '?t='.$time;
         }
-
 
         return '';
     }

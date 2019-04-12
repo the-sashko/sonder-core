@@ -1,11 +1,16 @@
 <?php
 /**
- * summary
+ * Plugin For Cryptographic Functions
  */
 class CryptPlugin
 {
     /**
-     * summary
+     * Get Hash From Input String And Salt
+     *
+     * @param string $input Input String Value
+     * @param string $salt  Salt Value
+     *
+     * @return string Hash
      */
     public function getHash(
         string $input = '',
@@ -14,11 +19,16 @@ class CryptPlugin
     {
         $md5Hash = hash('md5', $input);
         $sha256Hash = hash('sha256', strlen($salt).$input.$salt);
+
         return hash('sha512', strlen($input).$sha256Hash.$input.$md5Hash);
     }
 
     /**
-     * summary
+     * Get Trip Code From Input String
+     *
+     * @param string $input Input String Value
+     *
+     * @return string Trip Code
      */
     public function getTripCode(string $input = '') : string
     {

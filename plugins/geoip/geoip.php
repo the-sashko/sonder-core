@@ -1,54 +1,55 @@
 <?php
-class GeoIPPlugin {
-
+/**
+ * Plugin For Getting User IP Address And Getting IP Address Metadata
+ */
+class GeoIPPlugin
+{
     /**
-     * summary
+     * Get User IP Address From Request
+     * 
+     * @return string IP Address
      */
     public function getIP() : string
     {
-        $ip = '0.0.0.0';
-
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED'];
-        } elseif (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['HTTP_FORWARDED'])) {
-            $ip = $_SERVER['HTTP_FORWARDED'];
-        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
+            return $this->escapeInput($_SERVER["HTTP_CF_CONNECTING_IP"]);
         }
 
-        return $this->escapeInput($ip);
+        if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            return $this->escapeInput($_SERVER['HTTP_CLIENT_IP']);
+        }
+
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $this->escapeInput($_SERVER['HTTP_X_FORWARDED_FOR']);
+        }
+
+        if (isset($_SERVER['HTTP_X_FORWARDED'])) {
+            return $this->escapeInput($_SERVER['HTTP_X_FORWARDED']);
+        }
+
+        if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
+            return $this->escapeInput($_SERVER['HTTP_FORWARDED_FOR']);
+        }
+
+        if (isset($_SERVER['HTTP_FORWARDED'])) {
+            return $this->escapeInput($_SERVER['HTTP_FORWARDED']);
+        }
+
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            return $this->escapeInput($_SERVER['REMOTE_ADDR']);
+        }
+
+        return '0.0.0.0';
     }
 
+    /**
+     * Get Hash From User IP Address From Request
+     *
+     * @return string IP Address
+     */
     public function getIPHash() : string
     {
         return hash('sha256', $this->getIP());
     }
-
-    /*public function getGeodata($ip = '0.0.0.0') : string {
-        $APIKey = $this->configData['security']['geo_api_key'];
-        $sql = "
-            SELECT
-                `country` AS 'country'
-            FROM `geoip`
-            WHERE `ip` = '{$ip}';
-        ";
-        $res = $this->select($sql,'geoip');
-        if(count($res)>0&&is_array($res[0])&&isset($res[0]['country'])&&strlen($res[0]['country'])>0){
-            return $res[0]['country'];
-        } else {
-            $url = "http://api.ipstack.com/{$ip}?access_key={$APIKey}&format=1";
-            $res = file_get_contents($url);
-            var_dump($res);
-            die();
-        }
-    }*/
 }
 ?>

@@ -1,10 +1,20 @@
 <?php
+/**
+ * Plugin For Working With Redis
+ */
 class RedisPlugin
 {
     public $client = NULL;
     public $ttl = -1;
     public $keyPrefix = '';
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function __construct()
     {
         $settings = $this->_getSettings();
@@ -14,11 +24,25 @@ class RedisPlugin
         $this->client = new Predis\Client($settings);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function __destruct()
     {
         $this->client->disconnect();
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getSettings() : array
     {
         $settings = $this->_getRedisConfig();
@@ -35,6 +59,13 @@ class RedisPlugin
         return $settings;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _validateSettings(array $settings = []) : bool
     {
         if (count($settings) < 4) {
@@ -60,6 +91,13 @@ class RedisPlugin
         return true;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getRedisConfig() : array
     {
         $configPath = $this->_getConfigPath();
@@ -73,11 +111,25 @@ class RedisPlugin
         return (array) json_decode($settings, true);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getConfigPath() : string
     {
         return realpath(__DIR__.'/../../../config/redis.json');
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function getTTL(int $ttl = -1) : int
     {
         if ($ttl > 0) {
@@ -87,6 +139,13 @@ class RedisPlugin
         return $this->ttl;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setTTL(int $ttl = -1) : void
     {
         if ($ttl > 0) {
@@ -94,7 +153,13 @@ class RedisPlugin
         }
     }
 
-
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function getKey(string $key = '') : string
     {
         if (strlen($this->keyPrefix) > 0) {
@@ -104,6 +169,13 @@ class RedisPlugin
         return $key;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setKeyPrefix(string $keyPrefix = '') : void
     {
         if (strlen($keyPrefix) > 0) {
@@ -115,6 +187,13 @@ class RedisPlugin
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function set(
         string $key = '',
         string $value = '',
@@ -137,6 +216,13 @@ class RedisPlugin
         return true;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function get(string $key = '') : string
     {
         $key = $this->getKey($key);
@@ -144,6 +230,13 @@ class RedisPlugin
         return (string) $this->client->get($key);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function del(string $key = '') : bool
     {
         $key = $this->getKey($key);
@@ -151,6 +244,13 @@ class RedisPlugin
         return (bool) $this->client->del($key);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function sendToChannel(
         string $channel = '',
         string $message = ''
@@ -161,9 +261,16 @@ class RedisPlugin
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function delByPattern(string $keyPattern = '') : bool
     {
-        if(!strlen($keyPattern) > 0) {
+        if (!strlen($keyPattern) > 0) {
             return false;
         }
 
@@ -171,7 +278,7 @@ class RedisPlugin
 
         $keys = (array) $this->client->keys($keyPattern);
 
-        if(!count($keys) > 0){
+        if (!count($keys) > 0) {
             return false;
         }
 

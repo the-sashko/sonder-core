@@ -1,4 +1,7 @@
 <?php
+/**
+ * Mock For Data Base Cahe Provider
+ */
 class DBMockCacheProvider
 {
     public function set(

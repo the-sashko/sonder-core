@@ -1,4 +1,7 @@
 <?php
+/**
+ * Plugin For Converting And Resizing Images
+ */
 class ImagePlugin
 {
     var $imageFile;
@@ -19,6 +22,13 @@ class ImagePlugin
         ]
     ];
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setImage(
         string $imageFile = '',
         string $imageDir = '',
@@ -47,13 +57,27 @@ class ImagePlugin
         $this->sizes = $sizes;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function imageGen(array $sizes = []) : void
     {
-        foreach($sizes as $size){
+        foreach ($sizes as $size) {
             $this->_imageResize($size);
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _imageResize(string $size = '') : void
     {
         $size = $this->_getImageSize($size);
@@ -86,6 +110,13 @@ class ImagePlugin
         $imageObject->destroy();
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getImageSize(string $size = '') : array
     {
         if (!array_key_exists($size, $this->sizes)) {
@@ -95,6 +126,13 @@ class ImagePlugin
         return $this->sizes[$size];
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getImageObject() : Object
     {
         $imageObject = new \Imagick();
@@ -104,6 +142,13 @@ class ImagePlugin
         return $imageObject;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _calculateSize(
         array $size = [],
         int $originWidth = 0,
@@ -134,6 +179,13 @@ class ImagePlugin
         return $size;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _changeImageRatio(
         Object $imageObject = NULL,
         array $size = NULL,
@@ -184,6 +236,13 @@ class ImagePlugin
         return $imageObject;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _saveImage(
         Object $imageObject = NULL,
         string $prefix = '',
@@ -212,6 +271,13 @@ class ImagePlugin
         //chmod($imageFilePath, 0755);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _getImageFilePath(
         string $prefix = '',
         string $extension = 'png'

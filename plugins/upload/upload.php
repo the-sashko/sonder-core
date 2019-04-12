@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Plugin For Uploading Files
+ */
 class UploadPlugin
 {
     const KBYTE = 1024;
@@ -40,6 +42,16 @@ class UploadPlugin
         $this->maxSize = 2*static::MBYTE;
     }
 
+    /**
+     * Upload Files From Request To Server
+     *
+     * @param array  $extensions List Of Allowed Files Extensions
+     * @param int    $maxSize    Max Allowed Size Of File (Bytes)
+     * @param string $uploadsDir Path To Directory Of Uploaded Files
+     * @param bool   $isPublic   Is Uploaded File Will Accessed From Web
+     *
+     * @return array List Of Uploaded Files
+     */
     public function upload(
         array $extensions = [],
         int $maxSize = -1,
@@ -62,6 +74,9 @@ class UploadPlugin
         return $this->files;
     }
 
+    /**
+     * Remove Emply Elements From Array Of Uploaded Files
+     */
     private function _cleanEmptyFiles() : void
     {
         foreach ($this->files as $groupName => $groupFiles) {
@@ -94,6 +109,13 @@ class UploadPlugin
         }
     }
 
+    /**
+     * Upload Single File
+     *
+     * @param array $file Meta Data Of Input File
+     *
+     * @return array Meta Data Of Uploaded File
+     */
     private function _uploadFile(
         array $file = []
     ) : array
@@ -160,6 +182,13 @@ class UploadPlugin
         ];
     }
 
+    /**
+     * Get Extension By File Name
+     *
+     * @param string $name Name Of File
+     *
+     * @return string Extension
+     */
     private function _getExtensionFromName(string $name = '') : string
     {
         $extension = '';
@@ -172,6 +201,14 @@ class UploadPlugin
         return $extension;
     }
 
+    /**
+     * Set Settings Of Upload Files
+     *
+     * @param array  $extensions List Of Allowed Files Extensions
+     * @param int    $maxSize    Max Allowed Size Of File (Bytes)
+     * @param string $uploadsDir Path To Directory Of Uploaded Files
+     * @param bool   $isPublic   Is Uploaded File Will Accessed From Web
+     */
     private function _setSettings(
         array $extensions = [],
         int $maxSize = -1,

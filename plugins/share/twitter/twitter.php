@@ -1,4 +1,7 @@
 <?php
+/**
+ * Plugin For Autoposting Links To Twitter
+ */
 class TwitterPlugin
 {
     const TWITTER_MESSAGE_MAX_LENGTH = 140;
@@ -6,6 +9,13 @@ class TwitterPlugin
     public $codebird = NULL;
     public $credentials = [];
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function setCredentials(array $credentials = []) : void
     {
         if (!$this->_validateCredentials($credentials)) {
@@ -15,6 +25,13 @@ class TwitterPlugin
         $this->credentials = $credentials;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     public function send(string $message = '') : void
     {
         $this->_validateMessage($message);
@@ -29,6 +46,13 @@ class TwitterPlugin
         $this->_validateResponse($res);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _setCodebirdInstance() : void
     {
         $consumerKey = $this->credentials['consumer']['key'];
@@ -37,23 +61,36 @@ class TwitterPlugin
         $accessSecret = $this->credentials['access']['secret'];
 
         \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
-        
+
         $this->codebird = \Codebird\Codebird::getInstance();
         $this->codebird->setToken($accessToken, $accessSecret);
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _validateMessage(string $message = '') : void
     {
         if (strlen($message) > static::TWITTER_MESSAGE_MAX_LENGTH) {
             throw new Exception('Twitter API Error: Message Too Long');
         }
 
-
         if (!strlen(trim($message)) > 0) {
             throw new Exception('Twitter API Error: Message Empty');
         }
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _validateCredentials(array $credentials = []) : bool
     {
         if (!array_key_exists('consumer', $credentials)) {
@@ -91,6 +128,13 @@ class TwitterPlugin
         return true;
     }
 
+    /**
+     * Function Name
+     *
+     * @param type $value Value
+     *
+     * @return type Value
+     */
     private function _validateResponse(array $res = []) : bool
     {
         if (!count($res) > 0) {
@@ -124,3 +168,4 @@ class TwitterPlugin
         throw new Exception($error);
     }
 }
+?>

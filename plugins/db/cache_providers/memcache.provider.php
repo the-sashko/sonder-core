@@ -1,4 +1,7 @@
 <?php
+/**
+ * Data Base Cahe Provider For Memcache
+ */
 class DBMemcacheCacheProvider
 {
     public function set(
