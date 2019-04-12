@@ -22,7 +22,7 @@ interface DBCacheProvider
     ) : bool;
 
     /**
-     * Gat Data From Cache
+     * Get Data From Cache
      *
      * @param string $sql   SQL Query
      * @param string $scope Scope Of Data Base Request
