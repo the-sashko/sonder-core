@@ -4,17 +4,21 @@
  */
 class RedisPlugin
 {
+    /**
+     * @var Object Predis Client Instance
+     */
     public $client = NULL;
-    public $ttl = -1;
-    public $keyPrefix = '';
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @var int Default Time To Live Redis Data
      */
+    public $ttl = -1;
+
+    /**
+     * @var string Redis Entry Key Prefix
+     */
+    public $keyPrefix = '';
+
     public function __construct()
     {
         $settings = $this->_getSettings();
@@ -24,24 +28,15 @@ class RedisPlugin
         $this->client = new Predis\Client($settings);
     }
 
-    /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
-     */
     public function __destruct()
     {
         $this->client->disconnect();
     }
 
     /**
-     * Function Name
+     * Getting Redis Settings From Config File
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return array Redis Settings Data
      */
     private function _getSettings() : array
     {
@@ -60,11 +55,11 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Check Is Redis Settings Data Has Valid Format
      *
-     * @param type $value Value
+     * @param array $settings Redis Settings Data
      *
-     * @return type Value
+     * @return bool Is Redis Settings Data Has Valid Format
      */
     private function _validateSettings(array $settings = []) : bool
     {
@@ -92,11 +87,9 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Getting Redis Config Data
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return array Redis Config Data
      */
     private function _getRedisConfig() : array
     {
@@ -112,11 +105,9 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Getting Redis Config File Path
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return string Redis Config File Path
      */
     private function _getConfigPath() : string
     {
@@ -124,11 +115,9 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Getting Redis Data Time To Live
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return int Redis Data Time To Live
      */
     public function getTTL(int $ttl = -1) : int
     {
@@ -140,11 +129,9 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Setting Redis Data Time To Live
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param int Redis Data Time To Live
      */
     public function setTTL(int $ttl = -1) : void
     {
@@ -154,11 +141,11 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Getting Redis Entry Key
      *
-     * @param type $value Value
+     * @param string $key Input Redis Entry Key Value
      *
-     * @return type Value
+     * @return string Output Redis Entry Key Value
      */
     public function getKey(string $key = '') : string
     {
@@ -170,11 +157,9 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Setting Redis Entry Key Prefix
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $keyPrefix Redis Entry Key Prefix
      */
     public function setKeyPrefix(string $keyPrefix = '') : void
     {
@@ -188,11 +173,13 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Saving Data To Redis
      *
-     * @param type $value Value
+     * @param string $key   Redis Entry Key
+     * @param string $value Redis Entry Value
+     * @param int    $ttl   Redis Entry Time To Live
      *
-     * @return type Value
+     * @return bool Is Saving Value To Redis Successfull
      */
     public function set(
         string $key = '',
@@ -217,11 +204,11 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Getting Data From Redis
      *
-     * @param type $value Value
+     * @param string $key Redis Entry Key
      *
-     * @return type Value
+     * @return string Redis Entry Value
      */
     public function get(string $key = '') : string
     {
@@ -231,11 +218,11 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Removing Data From Redis By Key
      *
-     * @param type $value Value
+     * @param string $key Redis Entry Key
      *
-     * @return type Value
+     * @return bool Is Removing Data From Redis Successfull
      */
     public function del(string $key = '') : bool
     {
@@ -245,11 +232,10 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Sending Message To Redis Channel
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $channel Redis Channel
+     * @param string $message Message Data
      */
     public function sendToChannel(
         string $channel = '',
@@ -262,11 +248,11 @@ class RedisPlugin
     }
 
     /**
-     * Function Name
+     * Removing Data From Redis By Pattern
      *
-     * @param type $value Value
+     * @param string $keyPattern Redis Entries Key Pattern
      *
-     * @return type Value
+     * @return bool Is Removing Data From Redis Successfull
      */
     public function delByPattern(string $keyPattern = '') : bool
     {

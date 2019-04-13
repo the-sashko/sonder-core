@@ -4,7 +4,10 @@
  */
 class TranslitPlugin
 {
-    const CYRILLIC_ALPHABET = array(
+    /**
+     * @var array List Of Cyrillic Characters
+     */
+    const CYRILLIC_ALPHABET = [
         'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И',
         'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т',
         'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю',
@@ -12,9 +15,12 @@ class TranslitPlugin
         'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н',
         'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч',
         'ш', 'щ', 'ы', 'э', 'ю', 'я', 'і', 'ї', 'є', 'ґ'
-    );
+    ];
 
-    const LATIN_ALPHABET = array(
+    /**
+     * @var array List Of Translit Characters
+     */
+    const LATIN_ALPHABET = [
         'A',  'B',   'V',   'G',   'D',   'E',   'E',   'Zh',  'Z',   'Y',
         'J',  'K',   'L',   'M',   'N',   'O',   'P',   'R',   'S',   'T',
         'U',  'F',   'H',   'C',   'Ch',  'Sh',  'Sch', 'Y',   'E',   'Yu',
@@ -22,7 +28,7 @@ class TranslitPlugin
         'e',  'e',   'zh',  'z',   'y',   'j',   'k',   'l',   'm',   'n',
         'o',  'p',   'r',   's',   't',   'u',   'f',   'h',   'c',   'ch',
         'sh', 'sch', 'y',   'e',   'yu',  'ya',  'i',   'yi',  'ye',  'g'
-    );
+    ];
 
     /**
      * Convert Cyrillic String Value To Latin Translit

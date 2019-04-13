@@ -4,6 +4,9 @@
  */
 class ShortenerPlugin
 {
+    /**
+     * @var Shortener API Data
+     */
     public $APIData = [
         'url'        => '#',
         'user_id'    => -1,
@@ -11,11 +14,11 @@ class ShortenerPlugin
     ];
 
     /**
-     * Function Name
+     * Set Shortener API Options
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $url       Shortener API URL
+     * @param int    $userID    Shortener API User
+     * @param string $userToken Shortener API Token
      */
     public function setAPIOptions(
         string $url = '#',
@@ -29,11 +32,12 @@ class ShortenerPlugin
     }
 
     /**
-     * Function Name
+     * Get Short URL From Shortener API
      *
-     * @param type $value Value
+     * @param string $url    Full URL For Shorting
+     * @param string $source Full URL Source Param
      *
-     * @return type Value
+     * @return string Short Link URL 
      */
     public function send(
         string $link = '#',
@@ -87,11 +91,12 @@ class ShortenerPlugin
     }
 
     /**
-     * Function Name
+     * Get Curl Options For Shortener API Request
      *
-     * @param type $value Value
+     * @param string $url    Full URL For Shorting
+     * @param string $source Full URL Source Param
      *
-     * @return type Value
+     * @return array List Of Curl Options
      */
     private function _getCurlOptions(
         string $link = '#',
@@ -113,11 +118,12 @@ class ShortenerPlugin
     }
 
     /**
-     * Function Name
+     * Get Curl Fields For Shortener API Request
      *
-     * @param type $value Value
+     * @param string $url    Full URL For Shorting
+     * @param string $source Full URL Source Param
      *
-     * @return type Value
+     * @return string Curl Fields
      */
     private function _getCurlFields(
         string $link = '#',
@@ -133,11 +139,9 @@ class ShortenerPlugin
     }
 
     /**
-     * Function Name
+     * Get Curl Headers For Shortener API Request
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return array List Of Curl Headers
      */
     private function _getCurlHeaders() : array
     {

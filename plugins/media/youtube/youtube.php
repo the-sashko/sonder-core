@@ -4,22 +4,31 @@
  */
 class YoutubePlugin
 {
+    /**
+     * @var string Regexp For Full Youtube Link
+     */
     const LINK_REGEXP = '/^(.*?)(https|http)\:\/\/'.
                         '(m\.youtube|www\.youtube|youtube)\.com\/'.
                         'watch(.*?)(\s(.*?)$|$)/su';
 
+    /**
+     * @var string Regexp For Short Youtube Link
+     */
     const SHORT_LINK_REGEXP = '/(.*?)(https|http)\:\/\/'.
                               '(m\.youtu|www\.youtu|youtu)\.be\/'.
                               '(.*?)(\s(.*?)$|$)/su';
 
+    /**
+     * @var string Regexp For Youtube Shortcode
+     */
     const SHORTCODE_REGEXP = '/^(.*?)\[Youtube:(.*?)\](.*?)$/su';
 
     /**
-     * Function Name
+     * Replace Youtube URLs By Shortcodes In Text
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text
      *
-     * @return type Value
+     * @return string Output Plain Text With Shortodes
      */
     public function parseYoutubeURL(string $text = '') : string
     {
@@ -39,11 +48,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Replace Youtube Shortcodes By HTML Tags In Text
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text
      *
-     * @return type Value
+     * @return string Output Text With HTML Tags
      */
     public function parseYoutubeShortCode(string $text = '') : string
     {
@@ -70,11 +79,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video Thumbnail By ID
      *
-     * @param type $value Value
+     * @param string $videoID Youtube Video ID
      *
-     * @return type Value
+     * @return string Youtube Video Thumbnail File Path
      */
     public function getThumbnailByID(string $videoID = '') : string
     {
@@ -98,11 +107,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video Meta Data By ID
      *
-     * @param type $value Value
+     * @param string $videoID Youtube Video ID
      *
-     * @return type Value
+     * @return array Youtube Video Meta Data
      */
     private function _getMetaData(string $videoID = '') : array
     {
@@ -126,11 +135,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Clean Youtube Video ID
      *
-     * @param type $value Value
+     * @param string $videoID Input Youtube Video ID
      *
-     * @return type Value
+     * @return string Youtube Output Youtube Video ID
      */
     private function _sanitizeVideoID(string $videoID = '') : string
     {
@@ -141,11 +150,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get List Of Youtube Video Thumbnail URLs 
      *
-     * @param type $value Value
+     * @param string $videoID Youtube Video ID
      *
-     * @return type Value
+     * @return string List Of Youtube Video Thumbnail URLs
      */
     private function _getThumbnailURLs(string $videoID = '') : array
     {
@@ -163,11 +172,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video Thumbnail Data 
      *
-     * @param type $value Value
+     * @param string $videoID Youtube Video ID
      *
-     * @return type Value
+     * @return string Youtube Video Thumbnail Data 
      */
     private function _getThumbnailContent(string $videoID = '') : string
     {
@@ -191,11 +200,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video Title By Video ID 
      *
-     * @param type $value Value
+     * @param string $videoID Youtube Video ID
      *
-     * @return type Value
+     * @return string Youtube Video Title 
      */
     private function _getTitleByID(string $videoID = '') : string
     {
@@ -213,11 +222,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Normalize Youtube Video URLs In Text To Correct Formal 
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text
      *
-     * @return type Value
+     * @return string Output Plain Text
      */
     private function _normalizeURL(string $text = '') : string
     {
@@ -253,11 +262,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Replce Youtube Video Full URL By Shortcode 
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text
      *
-     * @return type Value
+     * @return string Output Text With Shortcodes
      */
     private function _parseYoutubeFullURL(string $text = '') : string
     {
@@ -277,11 +286,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Replce Youtube Video Short URL By Shortcode 
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text
      *
-     * @return type Value
+     * @return string Output Text With Shortcodes
      */
     private function _parseYoutubeShortURL(string $text = '') : string
     {
@@ -301,11 +310,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get List Of URL Params From URL Link
      *
-     * @param type $value Value
+     * @param string $url URL Link
      *
-     * @return type Value
+     * @return array List Of URL Params
      */
     private function _getURLParams(string $url = '') : array
     {
@@ -319,11 +328,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video ID From URL
      *
-     * @param type $value Value
+     * @param string $url Youtube Video URL
      *
-     * @return type Value
+     * @return string Youtube Video ID
      */
     private function _getVideoIDFromURL(string $url = '') : string
     {
@@ -352,11 +361,11 @@ class YoutubePlugin
     }
 
     /**
-     * Function Name
+     * Get Youtube Video Time Param From URL
      *
-     * @param type $value Value
+     * @param string $url Youtube URL
      *
-     * @return type Value
+     * @return string Youtube Time Param Value
      */
     private function _getTimeParamFromURL(string $url = '') : string
     {

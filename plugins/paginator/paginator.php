@@ -4,17 +4,34 @@
  */
 class PaginatorPlugin
 {
+    /**
+     * @var int Cout Of Pages
+     */
     public $pageCount = 1;
+
+    /**
+     * @var int Current Page
+     */
     public $currPage = 1;
+
+    /**
+     * @var string URL Of Base Link
+     */
     public $link = '';
+    
+    /**
+     * @var array List Of Pages
+     */
     public $pages = [];
 
     /**
-     * Function Name
+     * Get HTML Of Pagination
      *
-     * @param type $value Value
+     * @param int    $pageCount Cout Of Pages
+     * @param int    $currPage  Current Page
+     * @param string $link      URL Of Base Link
      *
-     * @return type Value
+     * @return string HTML Of Pagination
      */
     public function getHTML(
         int $pageCount = 1,
@@ -38,11 +55,7 @@ class PaginatorPlugin
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Remove Extra Pages From List
      */
     private function _filterPages() : void
     {
@@ -59,11 +72,7 @@ class PaginatorPlugin
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Convert List Of Page Into List Of HTML Tags
      */
     private function _setPagesHTML() : void
     {
@@ -97,11 +106,9 @@ class PaginatorPlugin
     }
 
     /**
-     * Function Name
+     * Get HTML Of Pagination From List Of HTML Tags
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return string HTML Of Pagination
      */
     private function _getPaginatorHTML() : string
     {

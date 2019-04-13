@@ -4,10 +4,25 @@
  */
 class ImagePlugin
 {
-    var $imageFile;
-    var $imageDir;
-    var $imageName = 'image';
-    var $sizes = [
+    /**
+     * @var string Input Image File Path
+     */
+    public $imageFile;
+
+    /**
+     * @var string Image Directory Path
+     */
+    public $imageDir;
+    
+    /**
+     * @var string Otput Images File Base Name
+     */
+    public $imageName = 'image';
+
+    /**
+     * @var array List Of Image Sizes
+     */
+    public $sizes = [
         'thumbnail' => [
             'height' => 64,
             'width' => 64,
@@ -23,11 +38,12 @@ class ImagePlugin
     ];
 
     /**
-     * Function Name
+     * Set Image Data
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $imageFile Input Image File Name
+     * @param string $imageDir  Image Directory Path
+     * @param string $imageName Otput Images File Base Name 
+     * @param array  $sizes     List Of Image Sized
      */
     public function setImage(
         string $imageFile = '',
@@ -58,11 +74,9 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Generate And Save Images By List Of Sizes
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param array $sizes List Of Sizes
      */
     public function imageGen(array $sizes = []) : void
     {
@@ -72,11 +86,9 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Generate And Save Single Image By Size Name
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $size Size Name
      */
     private function _imageResize(string $size = '') : void
     {
@@ -111,11 +123,11 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Getting Size Data By Size Name
      *
-     * @param type $value Value
+     * @param string $size Size Name
      *
-     * @return type Value
+     * @return array Size Data
      */
     private function _getImageSize(string $size = '') : array
     {
@@ -127,11 +139,9 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Getting Imagick Object From Input Image
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return Object Imagick Object
      */
     private function _getImageObject() : Object
     {
@@ -143,11 +153,13 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Change Size Data Using Original Size Of Image
      *
-     * @param type $value Value
+     * @param array $size         Input Size Value
+     * @param int   $originWidth  Original Width Of Image
+     * @param int   $originHeight Original Height Of Image
      *
-     * @return type Value
+     * @return array Size Output Size Value
      */
     private function _calculateSize(
         array $size = [],
@@ -180,11 +192,14 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Change Image Ratio Using New Size Data Original Size Of Image
      *
-     * @param type $value Value
+     * @param Object $imageObject  Input Imagick Object Value
+     * @param array  $size         New Size Data
+     * @param int    $originWidth  Width Of Original Image
+     * @param int    $originHeight Height Of Original Image
      *
-     * @return type Value
+     * @return Object Output Imagick Object Value
      */
     private function _changeImageRatio(
         Object $imageObject = NULL,
@@ -237,11 +252,11 @@ class ImagePlugin
     }
 
     /**
-     * Function Name
+     * Save Output Image
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param Object $imageObject  Imagick Object Of Output File
+     * @param string $prefix       Output File Name Prefix
+     * @param bool   $isLowQuality Is Use Low Quality
      */
     private function _saveImage(
         Object $imageObject = NULL,
@@ -268,15 +283,16 @@ class ImagePlugin
 
         $imageObject->setImageCompression(Imagick::COMPRESSION_ZIP);
         $imageObject->writeImage($imageFilePath);
-        //chmod($imageFilePath, 0755);
+        chmod($imageFilePath, 0755);
     }
 
     /**
-     * Function Name
+     * Getting Image File Path From File Extension And File Name Prefix
      *
-     * @param type $value Value
+     * @param string $prefix    Image File Extensin
+     * @param string $extension Image File Name Prefix
      *
-     * @return type Value
+     * @return string Image File Path
      */
     private function _getImageFilePath(
         string $prefix = '',

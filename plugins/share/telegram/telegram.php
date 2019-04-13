@@ -1,19 +1,23 @@
 <?php
 /**
- * Plugin For Autoposting Links To Telegram
+ * Plugin For Sending Messages To Telegram
  */
 class TelegramPlugin
 {
+    /**
+     * @var string Telegram API URL
+     */
     const TELEGRAM_API_URL = 'https://api.telegram.org';
 
+    /**
+     * @var array Telegram API Credentials
+     */
     public $credentials = [];
 
     /**
-     * Function Name
+     * Setting Telegram API Credentials
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param array $credentials Telegram API Credentials
      */
     public function setCredentials(array $credentials = []) : void
     {
@@ -21,11 +25,9 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Sending Message To Telegram Usera, Chats Or Channel
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $message Message Text Value
      */
     public function send(string $message = '') : void
     {
@@ -43,11 +45,11 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Removing From Message Text Tags And Extra Spaces
      *
-     * @param type $value Value
+     * @param string $message Input Message Text Value
      *
-     * @return type Value
+     * @return string Output Message Text Value
      */
     private function _getFomatedMessage(string $message = '') : string
     {
@@ -67,30 +69,27 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Send Message To Chat, Channel Or User By ID
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $message Message 
+     * @param string $chatID  ID Of Chat Or Channel 
      */
     private function _sendToChat(
         string $message = '',
-        string $chat = ''
+        string $chatID = ''
     ) : void
     {
         $url = $this->_getAPIURL();
-        $url = $url.'?chat_id='.$chat;
+        $url = $url.'?chat_id='.$chatID;
         $url = $url.'&text='.$message;
 
         $this->_sendToRemoteAPI($url);
     }
 
     /**
-     * Function Name
+     * Send Request To API URL
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $url API URL
      */
     private function _sendToRemoteAPI(string $url = '') : void
     {
@@ -112,11 +111,9 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Check Is Valid Respose From Telegram API
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $curlResponseJSON Respose From API
      */
     private function _validateAPIResponse(string $curlResponseJSON = '') : void
     {
@@ -138,11 +135,11 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Getting Curl Headers
      *
-     * @param type $value Value
+     * @param string $url URL Value
      *
-     * @return type Value
+     * @return array List Of Curl Headers
      */
     private function _getCurlHeaders(string $url = '') : array
     {
@@ -158,24 +155,19 @@ class TelegramPlugin
     }
 
     /**
-     * Function Name
+     * Getting API URL
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return string API URL
      */
     private function _getAPIURL() : string
     {
-        return static::TELEGRAM_API_URL.'/bot'.
-               $this->credentials['token'].'/sendMessage';
+        $token = $this->credentials['token'];
+
+        return static::TELEGRAM_API_URL.'/bot'.$token.'/sendMessage';
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Check Is Valid Telegram API Credentials
      */
     private function _checkCredentials() : void
     {

@@ -4,19 +4,28 @@
  */
 class DBObjectClass extends DB
 {
+    /**
+     * @var string Path To Data Base Config
+     */
     const DB_CONFIG_PATH = __DIR__.'/../../../config/db.json';
-    const DB_DEFAULT_LIMIT = 10000;
-    const DB_DEFAULT_TTL = 60*60*24*30*6;
-
-    public $scope = 'default';
-
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @var int Default Selected Rows Limit
+     */
+    const DB_DEFAULT_LIMIT = 10000;
+
+    /**
+     * @var int Default Value Of Data Base Cache Time To Live
+     */
+    const DB_DEFAULT_TTL = 60*60*24*30*6;
+
+    /**
+     * @var string Base Cache Time To Live
+     */
+    public $scope = 'default';
+
+    /**
+     * Create Connection To DB
      */
     public function initStore() : void
     {
@@ -26,11 +35,13 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL SELECT Query And Get Once Or Muliple Rows From Data Base
      *
-     * @param type $value Value
+     * @param string $sql        SQL SELECT Query
+     * @param bool   $isMultiple Is Getting Multiple Rows From Data Base
+     * @param int    $ttl        Time To Live Data Base Cache
      *
-     * @return type Value
+     * @return array Rows From Data Base
      */
     public function get(
         string $sql        = '',
@@ -48,11 +59,13 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL INSERT Query
      *
-     * @param type $value Value
+     * @param string $table   Data Base Table
+     * @param array  $columns Data Base Table Columns
+     * @param array  $values  Inserted Values
      *
-     * @return type Value
+     * @return bool Is Data Successfully Inserted
      */
     public function insert(
         string $table  = '',
@@ -72,11 +85,14 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL UPDATE Query
      *
-     * @param type $value Value
+     * @param string $table     Data Base Table
+     * @param array  $columns   Data Base Table Columns
+     * @param array  $values    Update Values
+     * @param string $condition Update Condition
      *
-     * @return type Value
+     * @return bool Is Data Successfully Updated
      */
     public function update(
         string $table     = '',
@@ -97,11 +113,14 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL UPDATE Query By ID Value
      *
-     * @param type $value Value
+     * @param string $table   Data Base Table
+     * @param array  $columns Data Base Table Columns
+     * @param array  $values  Update Values
+     * @param int    $id      ID Value Condition
      *
-     * @return type Value
+     * @return bool Is Data Successfully Updated
      */
     public function updateByID(
         string $table     = '',
@@ -123,11 +142,14 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute Multiple SQL UPDATE Queries
      *
-     * @param type $value Value
+     * @param string $table           Data Base Table
+     * @param array  $items           List Of Entries For Update
+     * @param string $conditionColumn Data Base Table Column For Condition
+     * @param bool   $isTransaction   Is Use SQL Transaction For UPDATE Queries
      *
-     * @return type Value
+     * @return bool Is Data Successfully Updated
      */
     public function multipleUpdate(
         string $table           = '',
@@ -165,11 +187,12 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL DELETE Query
      *
-     * @param type $value Value
+     * @param string $table     Data Base Table
+     * @param string $condition Delete Condition
      *
-     * @return type Value
+     * @return bool Is Data Successfully Removed
      */
     public function remove(
         string $table     = '',
@@ -185,15 +208,16 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Execute SQL Query Using Transaction
      *
-     * @param type $value Value
+     * @param string $sql SQL Query
      *
-     * @return type Value
+     * @return bool Is SQL Query Successfully Executed
      */
     public function transactionQuery(string $sql = '') : bool
     {
         $this->begin();
+
         try {
             $res = $this->query($sql, $this->scope);
             $this->commit();
@@ -203,14 +227,13 @@ class DBObjectClass extends DB
             $this->rollback();
         }
 
+        return false;
     }
 
     /**
-     * Function Name
+     * Begin SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Transaction Successfully Started
      */
     public function begin() : bool
     {
@@ -218,11 +241,9 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Commit SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Transaction Successfully Commited
      */
     public function commit() : bool
     {
@@ -230,11 +251,9 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Rollback SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Transaction Was Successfully Rollback
      */
     public function rollback() : bool
     {
@@ -242,11 +261,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Convert List Of Values To SQL INSERT Format
      *
-     * @param type $value Value
+     * @param array $values List Of Values For Insert To Data Base
      *
-     * @return type Value
+     * @return string Part Of SQL INSERT Query
      */
     private function _prepareInsertValues(array $values) : string
     {
@@ -270,11 +289,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Convert List Of Data Base Table Colums To SQL INSERT Format
      *
-     * @param type $value Value
+     * @param array $columns List Of Data Base Table Colums
      *
-     * @return type Value
+     * @return string Part Of SQL INSERT Query
      */
     private function _prepareInsertColumns(array $columns) : string
     {
@@ -285,11 +304,12 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Convert List Of Values AND Data Base Table Colums To SQL UPDATE Format
      *
-     * @param type $value Value
+     * @param array $columns List Of Data Base Table Colums
+     * @param array $values  List Of Values For Updating In Data Base
      *
-     * @return type Value
+     * @return string Part Of SQL UPDATE Query
      */
     private function _prepareUpdateValues (
         array $columns = [],
@@ -313,11 +333,11 @@ class DBObjectClass extends DB
     }
 
     /**
-     * Function Name
+     * Convert List Of Values To SQL UPDATE Format With Multiple Updating
      *
-     * @param type $value Value
+     * @param array $values List Of Values For Updateing In Data Base
      *
-     * @return type Value
+     * @return string Part Of SQL UPDATE Query
      */
     private function _prepareMultipleUpdateValues (
         array $values = []

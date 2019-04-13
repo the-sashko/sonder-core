@@ -4,14 +4,44 @@
  */
 class UploadPlugin
 {
+    /**
+     * @var int KiloByte Value In Bytes
+     */
     const KBYTE = 1024;
+
+    /**
+     * @var int MegaByte Value In Bytes
+     */
     const MBYTE = 1048576;
+
+    /**
+     * @var int GigaByte Value In Bytes
+     */
     const GBYTE = 1073741824;
 
+    /**
+     * @var array List Of Uploding Files
+     */
     public $files = [];
+
+    /**
+     * @var bool Is Uploaded Files Will Accessed From Web
+     */
     public $isPublic = false;
+
+    /**
+     * @var string Uploads Directory Name
+     */
     public $uploadsDir = 'uploads';
+
+    /**
+     * @var int Max Allowed Size Of File (Bytes)
+     */
     public $maxSize = -1;
+
+    /**
+     * @var array List Of Allowed File Extensions
+     */
     public $extensions = [];
 
     public function __construct()

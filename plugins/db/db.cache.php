@@ -4,15 +4,11 @@
  */
 class DBCache
 {
+    /**
+     * @var Object Instance OF Data Base Cache Provider
+     */
     public $provider = NULL;
 
-    /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
-     */
     public function __construct(string $provider = '')
     {
         $error = NULL;
@@ -45,11 +41,14 @@ class DBCache
     }
 
     /**
-     * Function Name
+     * Save Cached Data To Provider
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param array  $data  Data Base Data
+     * @param string $scope Scope Of Data Base Request
+     * @param int    $ttl   Time To Live Of Cache
      *
-     * @return type Value
+     * @return bool Is Successfully Saved Cached Data
      */
     public function set(
         string $sql = '',
@@ -76,11 +75,12 @@ class DBCache
     }
 
     /**
-     * Function Name
+     * Get Cached Data From Provider
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return array Cached Data
      */
     public function get(
         string $sql = '',
@@ -110,11 +110,11 @@ class DBCache
     }
 
     /**
-     * Function Name
+     * Remove From Provider All Cached Data Of Data Base Request Scope
      *
-     * @param type $value Value
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return bool Is Successfully Removed Cached Data
      */
     public function flush(string $scope = 'default') : bool
     {

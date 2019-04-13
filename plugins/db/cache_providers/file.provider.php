@@ -4,14 +4,20 @@
  */
 class DBFileCacheProvider
 {
+    /**
+     * @var string Cache Files Directory
+     */
     const DB_CACHE_DIR = __DIR__.'/../../../../res/cache/db';
 
     /**
-     * Function Name
+     * Save Cached Data To File
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param array  $data  Data Base Data
+     * @param string $scope Scope Of Data Base Request
+     * @param int    $ttl   Time To Live Of Cache
      *
-     * @return type Value
+     * @return bool Is Successfully Saved Cached Data
      */
     public function set(
         string $sql = '',
@@ -45,11 +51,12 @@ class DBFileCacheProvider
     }
 
     /**
-     * Function Name
+     * Get Cached Data From File
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return array Cached Data
      */
     public function get(
         string $sql = '',
@@ -62,11 +69,11 @@ class DBFileCacheProvider
     }
 
     /**
-     * Function Name
+     * Remove All Cache Files Of Data Base Request Scope
      *
-     * @param type $value Value
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return bool Is Successfully Removed Cached Data
      */
     public function flush(string $scope = 'default') : bool
     {
@@ -88,11 +95,12 @@ class DBFileCacheProvider
     }
 
     /**
-     * Function Name
+     * Get Cache File Path
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return string Value
      */
     private function _getCacheFilePath(
         string $sql = '',
@@ -107,11 +115,11 @@ class DBFileCacheProvider
     }
 
     /**
-     * Function Name
+     * Get Data From Cache File
      *
-     * @param type $value Value
+     * @param string $cacheFilePath Cache File Path
      *
-     * @return type Value
+     * @return array Cached Data
      */
     private function _getDataFromCache(string $cacheFilePath = '') : array
     {
@@ -135,11 +143,11 @@ class DBFileCacheProvider
     }
 
     /**
-     * Function Name
+     * Check Is Cached Data Valid
      *
-     * @param type $value Value
+     * @param array $cacheData Cached Data
      *
-     * @return type Value
+     * @return bool Is Cached Data Valid
      */
     private function _validateCache(array $cacheData = []) : bool
     {

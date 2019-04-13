@@ -4,51 +4,90 @@
  */
 class LinkPlugin
 {
+    /**
+     * @var string Regexp For Open Gaph Title Tag
+     */
     const META_TAG_OG_TITLE_REGEX = '/^(.*?)\<meta([\s]+)'.
                                     'property=(\"|\')og\:title(\"|\')([\s]+)'.
                                     'content=(\"|\')(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Open Gaph Title Tag
+     */
     const META_TAG_OG_TITLE_REGEX_ALT = '/^(.*?)\<meta([\s]+)'.
                                         'content=(\"|\')(.*?)\"([\s]+)'.
                                         'property=(\"|\')'.
                                         'og\:title(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Regexp For Twitter Title Tag
+     */
     const META_TAG_TWITTER_TITLE_REGEX = '/^(.*?)\<meta([\s]+)'.
                                          'name=(\"|\')twitter\:title'.
                                          '(\"|\')([\s]+)content='.
                                          '(\"|\')(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Twitter Title Tag
+     */
     const META_TAG_TWITTER_TITLE_REGEX_ALT = '/^(.*?)\<meta([\s]+)content='.
                                              '(\"|\')(.*?)\"([\s]+)'.
                                              'name=(\"|\')twitter\:title'.
                                              '(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Regexp For Meta Tag Title
+     */
     const META_TITLE_REGEX = '/^(.*?)\<title([\s]+|)\>'.
                              '(.*?)\<\/title\>(.*?)$/su';
 
+    /**
+     * @var string Regexp For H1 Tag
+     */
     const H1_TITLE_REGEX = '/^(.*?)\<h1(.*?)\>(.*?)\<\/h1\>(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For H1 Tag
+     */
     const H1_TITLE_REGEX_ALT = '/^(.*?)\<h1(.*?)\>(.*?)\<\/h1\>(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Main Tag
+     */
     const MAIN_TITLE_REGEX = '/^(.*?)\<main(.*?)\>(.*?)\<\/main\>(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Body Tag
+     */
     const BODY_TITLE_REGEX = '/^(.*?)\<body(.*?)\>(.*?)\<\/body\>(.*?)$/su';
 
+    /**
+     * @var string Regexp For Open Gaph Description Tag
+     */
     const META_TAG_OG_DESCRIPTION_REGEX = '/^(.*?)\<meta([\s]+)property='.
                                           '(\"|\')og\:description'.
                                           '(\"|\')([\s]+)content='.
                                           '(\"|\')(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Open Gaph Description Tag
+     */
     const META_TAG_OG_DESCRIPTION_REGEX_ALT = '/^(.*?)\<meta([\s]+)content='.
                                               '(\"|\')(.*?)\"([\s]+)property='.
                                               '(\"|\')og\:description'.
                                               '(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Regexp For Twitter Description Tag
+     */
     const META_TAG_TWITTER_DESCRIPTION_REGEX = '/^(.*?)\<meta([\s]+)name='.
                                                '(\"|\')twitter\:description'.
                                                '(\"|\')([\s]+)content='.
                                                '(\"|\')(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Twitter Description Tag
+     */
     const META_TAG_TWITTER_DESCRIPTION_REGEX_ALT = '/^(.*?)\<meta([\s]+)'.
                                                    'content=(\"|\')'.
                                                    '(.*?)\"([\s]+)name='.
@@ -56,62 +95,100 @@ class LinkPlugin
                                                    'description(\"|\')'.
                                                    '(.*?)$/su';
 
+    /**
+     * @var string Regexp For Meta Tag Description
+     */
     const META_DESCRIPTION_REGEX = '/^(.*?)\<meta([\s]+)'.
-                                   'name=(\"|\')description(\"|\''.
-                                   ')([\s]+)content=(\"|\')(.*?)'.
+                                   'name=(\"|\')description(\"|\')'.
+                                   '([\s]+)content=(\"|\')(.*?)'.
                                    '(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Meta Tag Description
+     */
     const META_DESCRIPTION_REGEX_ALT = '/^(.*?)\<meta([\s]+)'.
                                        'content=(\"|\')(.*?)\"([\s]+)'.
                                        'name=(\"|\')description(\"|\')'.
                                        '(.*?)$/su';
 
+    /**
+     * @var string Regexp For Article Tag
+     */
     const ARTICLE_DESCRIPTION_REGEX = '/^(.*?)\<article(.*?)\>(.*?)'.
                                       '\<\/article\>(.*?)$/su';
 
+    /**
+     * @var string Regexp For Main Tag
+     */
     const MAIN_DESCRIPTION_REGEX = '/^(.*?)\<main(.*?)\>(.*?)\<\/main\>'.
                                    '(.*?)$/su';
 
+    /**
+     * @var string Regexp For P Tag
+     */
     const P_DESCRIPTION_REGEX = '/^(.*?)\<p(.*?)\>(.*?)\<\/p\>(.*?)$/su';
 
+    /**
+     * @var string Regexp For Body Tag
+     */
     const BODY_DESCRIPTION_REGEX = '/^(.*?)\<body(.*?)\>(.*?)\<\/body\>'.
                                    '(.*?)$/su';
 
+    /**
+     * @var string Regexp For Open Gaph Image Tag
+     */
     const META_TAG_OG_IMAGE_REGEX = '/^(.*?)\<meta([\s]+)property=(\"|\')'.
                                     'og\:image(\"|\')([\s]+)'.
                                     'content=(\"|\')(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Open Gaph Image Tag
+     */
     const META_TAG_OG_IMAGE_REGEX_ALT = '/^(.*?)\<meta([\s]+)content='.
                                         '(\"|\')(.*?)\"([\s]+)property='.
                                         '(\"|\')og\:image(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Regexp For Twitter Image Tag
+     */
     const META_TAG_TWITTER_IMAGE_REGEX = '/^(.*?)\<meta([\s]+)name=(\"|\')'.
                                          'twitter\:image(\"|\')([\s]+)'.
                                          'content=(\"|\')(.*?)(\"|\')'.
                                          '(.*?)$/su';
-
+    /**
+     * @var string Alternative Regexp For Twitter Image Tag
+     */
     const META_TAG_TWITTER_IMAGE_REGEX_ALT = '/^(.*?)\<meta([\s]+)content='.
                                              '(\"|\')(.*?)\"([\s]+)name='.
                                              '(\"|\')twitter\:image(\"|\')'.
                                              '(.*?)$/su';
 
+    /**
+     * @var string Regexp For Image Link Tag
+     */
     const LINK_IMAGE_REGEX = '/^(.*?)\<link([\s]+)rel=(\"|\')'.
                              'image_src(\"|\')([\s]+)href=(\"|\')'.
                              '(.*?)(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Image Link Tag
+     */
     const LINK_IMAGE_REGEX_ALT = '/^(.*?)\<link([\s]+)href=(\"|\')'.
                                  '(.*?)\"([\s]+)rel=(\"|\')'.
                                  'image_src(\"|\')(.*?)$/su';
 
+    /**
+     * @var string Alternative Regexp For Image Tag
+     */
     const IMG_IMAGE_REGEX_ALT = '/^(.*?)\<img(.*?)src=(\"|\')(.*?)(\"|\')'.
                                 '(.*?)\>(.*?)$/su';
 
     /**
-     * Function Name
+     * Replace URL Links In Text By Shortcodes
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text Value
      *
-     * @return type Value
+     * @return string Output Text Value With Shortcodes
      */
     public function parseLinkURL(string $text = '') : string
     {
@@ -119,7 +196,7 @@ class LinkPlugin
             '/(https|http)\:\/\/(.*?)(\s|$)/su',
             [
                 $this,
-                '_makeLinkShortCode'
+                '_getLinkShortCode'
             ],
             $text
         );
@@ -128,11 +205,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Replace URL Links Shortcodes In Text By HTML Tags
      *
-     * @param type $value Value
+     * @param string $text Input Plain Text Value With Shortcodes
      *
-     * @return type Value
+     * @return string Output Text Value With HTML Tags
      */
     public function parseLinkShortCode(string $text = '') : string
     {
@@ -147,11 +224,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Meta Data 
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return array Meta Data Of Web Page
      */
     private function _getWebPageMetaData(string $url = '') : array
     {
@@ -180,11 +257,10 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Saving Web Page Meta Data To Cache
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param array  $metaData  Meta Data Of Web Page
+     * @param string $cacheFile Cached File Path
      */
     private function _saveWebPageMetaDataToCache(
         array $metaData = [],
@@ -196,11 +272,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Main Image Link
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page Main Image
      */
     private function _getPageImage(
         string $pageHTML = '',
@@ -217,11 +293,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Main Image Link From Meta Tags
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Main Image Link
      */
     private function _getPageImageFromMetaTags(string $html = '') : string
     {
@@ -265,11 +341,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Main Image Link From HTML Body
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Main Image Link
      */
     private function _getPageImageFromBody(string $html = '') : string
     {
@@ -281,11 +357,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Check Image Link Format
      *
-     * @param type $value Value
+     * @param string $image Image Link
      *
-     * @return type Value
+     * @return bool Is Image Link Has Valid Format
      */
     private function _isImageValid(string $image = '') : bool
     {
@@ -294,11 +370,12 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Change Web Page Main Image Link To Valid Format
      *
-     * @param type $value Value
+     * @param string $image Web Page Main Image Link
+     * @param string $url   Web Page URL
      *
-     * @return type Value
+     * @return string Nomalized Web Page Main Image Link
      */
     private function _normalizeImage(
         string $image = '',
@@ -338,29 +415,29 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Description From HTML
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Description
      */
-    private function _getPageDescription(string $pageHTML = '') : string
+    private function _getPageDescription(string $html = '') : string
     {
-        $description = $this->_getPageDescriptionFromMetaTags($pageHTML);
+        $description = $this->_getPageDescriptionFromMetaTags($html);
 
         if (trim($description) < 3) {
-            $description = $this->_getPageDescriptionFromBody($pageHTML);
+            $description = $this->_getPageDescriptionFromBody($html);
         }
 
         return $this->_normalizeDescription($description);
     }
 
     /**
-     * Function Name
+     * Getting Web Page Description From HTML Body
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Description
      */
     private function _getPageDescriptionFromBody(
         string $html = ''
@@ -386,14 +463,14 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Description From HTML Body
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Description
      */
     private function _getPageDescriptionFromMetaTags(
-        string $pageHTML = ''
+        string $html = ''
     ) : string
     {
         if ($this->_isTagExists('META_TAG_OG_DESCRIPTION_REGEX', $html)) {
@@ -447,21 +524,22 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Title From HTML
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
+     * @param string $url  Web Page URL
      *
-     * @return type Value
+     * @return string Web Page Title
      */
     private function _getPageTitle(
-        string $pageHTML = '',
+        string $html = '',
         string $url = ''
     ) : string
     {
-        $title = $this->_getPageTitleFromMetaTags($pageHTML);
+        $title = $this->_getPageTitleFromMetaTags($html);
 
         if (strlen(trim($title)) < 3) {
-            $title = $this->_getPageTitleFromBody($pageHTML);
+            $title = $this->_getPageTitleFromBody($html);
         }
 
         if (strlen(trim($title)) < 3) {
@@ -472,11 +550,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Change Web Page Title To Valid Format
      *
-     * @param type $value Value
+     * @param string $title Web Page Title
      *
-     * @return type Value
+     * @return string Nomalized Web Page Title
      */
     private function _normalizeTitle(string $title = '') : string
     {
@@ -496,11 +574,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Change Web Page Description To Valid Format
      *
-     * @param type $value Value
+     * @param string $description Web Page Description
      *
-     * @return type Value
+     * @return string Nomalized Web Page Description
      */
     private function _normalizeDescription(string $description = '') : string
     {
@@ -520,11 +598,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Title From URL
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page Title
      */
     private function _getPageTitleFromURL(string $url = '') : string
     {
@@ -538,11 +616,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Domain From URL
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page Domain
      */
     private function _getDomain(string $url = '') : string
     {
@@ -561,11 +639,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page HTTP Protocol From URL
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page HTTP Protocol
      */
     private function _getProtocol(string $url = '') : string
     {
@@ -576,12 +654,13 @@ class LinkPlugin
         return 'http';
     }
 
+    
     /**
-     * Function Name
+     * Getting Web Page Title From Meta Tags
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Title
      */
     private function _getPageTitleFromMetaTags(string $html = '') : string
     {
@@ -621,13 +700,13 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Title From HTML Body
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string Web Page Title
      */
-    private function _getPageTitleFromBody(string $pageHTML = '') : string
+    private function _getPageTitleFromBody(string $html = '') : string
     {
         if ($this->_isTagExists('H1_TITLE_REGEX', $html)) {
             return $this->_parseHTMLTag('H1_TITLE_REGEX', 3, $html);
@@ -649,29 +728,29 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page HTML From URL
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page HTML
      */
     private function _getPageContent(string $url = '') : string
     {
-        $pageHTML = _getPageHTMLFromCurl($url);
+        $html = _getPageHTMLFromCurl($url);
 
-        $pageHTML = (string) mb_convert_encoding($pageHTML,'UTF-8');
-        $pageHTML = htmlspecialchars_decode($pageHTML);
-        $pageHTML = $this->_removePageHTMLTags($pageHTML);
+        $html = (string) mb_convert_encoding($html, 'UTF-8');
+        $html = htmlspecialchars_decode($html);
+        $html = $this->_removePageHTMLTags($html);
 
-        return $pageHTML;
+        return $html;
     }
 
     /**
-     * Function Name
+     * Removing Extra Tags From Web Page HTML
      *
-     * @param type $value Value
+     * @param string $html Web Page HTML
      *
-     * @return type Value
+     * @return string $html Web Page HTML Without Extra Tags
      */
     private function _removePageHTMLTags(string $html = '') : string
     {
@@ -693,11 +772,11 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page HTML From Curl Request
      *
-     * @param type $value Value
+     * @param string $url Web Page URL
      *
-     * @return type Value
+     * @return string Web Page HTML
      */
     private function _getPageHTMLFromCurl(string $url = '') : string
     {
@@ -711,19 +790,19 @@ class LinkPlugin
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        $pageHTML = curl_exec($curl);
+        $html = curl_exec($curl);
 
         curl_close($curl);
 
-        return $pageHTML;
+        return $html;
     }
 
     /**
-     * Function Name
+     * Getting Web Page Meta Data From Cache
      *
-     * @param type $value Value
+     * @param string $fileCache Web Page Cache File Path
      *
-     * @return type Value
+     * @return array Web Page Web Page Meta Data
      */
     private function _getWebPageMetaDataFromCache(
         string $fileCache = ''
@@ -754,13 +833,13 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Getting Web Page Link Shortcode From Rergexp URL Parts
      *
-     * @param type $value Value
+     * @param arrat $URLParts Rergexp URL Parts
      *
-     * @return type Value
+     * @return string Web Page Link Shortcode
      */
-    private function _makeLinkShortCode(array $URLParts = []) : string
+    private function _getLinkShortCode(array $URLParts = []) : string
     {
         $shortCode = '';
 
@@ -777,11 +856,13 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Parsing HTML Tag Value By Regexp Rule
      *
-     * @param type $value Value
+     * @param string $regexp     Regexp Rule Name
+     * @param int    $partNumber Number Part Of HTML Tag That Contain Value
+     * @param string $html       Web Page HTML
      *
-     * @return type Value
+     * @return string Output Value Of HTML Tag
      */
     private function _parseHTMLTag(
         string $regexp = '',
@@ -809,11 +890,12 @@ class LinkPlugin
     }
 
     /**
-     * Function Name
+     * Chack Is Tag Exist In HTML By Regexp Rule
      *
-     * @param type $value Value
+     * @param string $regexp     Regexp Rule Name
+     * @param string $html       Web Page HTML
      *
-     * @return type Value
+     * @return bool Is Tag Exist In HTML
      */
     private function _isTagExists(
         string $regexp = '',

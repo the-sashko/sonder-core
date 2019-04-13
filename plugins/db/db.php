@@ -4,17 +4,26 @@
  */
 class DB
 {
+    /**
+     * @var array Data Base Config Data
+     */
     public $dbConfig = [];
+
+    /**
+     * @var PDO Instance Of PDO
+     */
     public $dbInstance = NULL;
+
+    /**
+     * @var Object Instance Of Data Base Cache
+     */
     public $dbCache = NULL;
 
     /**
-     * Function Name
+     * Set Data Base Config And Data Base Cache
      *
-     * @param type $value Value
-     *
-     * @return type Value
-     */
+     * @param array $config Data Base Config Data
+     **/
     public function initDB(array $config = []) : void
     {
         $this->config = $config;
@@ -22,11 +31,7 @@ class DB
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Connect To Data Base And Set PDO Instance
      */
     public function _setDBInstance() : void
     {
@@ -39,24 +44,13 @@ class DB
         $this->dbInstance = $this->_dbConnect($dsn, $user, $password);
     }
 
-    /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
-     */
     public function __destruct()
     {
         $this->dbInstance = NULL;
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Set Data Base Cache Provider
      */
     private function _setDBCache() : void
     {
@@ -65,11 +59,13 @@ class DB
     }
 
     /**
-     * Function Name
+     * Connect To Data Base
      *
-     * @param type $value Value
+     * @param string $dsn      Data Base DSN
+     * @param string $user     Data Base User
+     * @param string $password Data Base Password
      *
-     * @return type Value
+     * @return PDO Instance Of PDO
      */
     private function _dbConnect(
         string $dsn = '',
@@ -93,11 +89,13 @@ class DB
     }
 
     /**
-     * Function Name
+     * Execute SQL SELECT Query
      *
-     * @param type $value Value
+     * @param string $sql   SQL SELECT Query
+     * @param string $scope Scope Of SQL Query
+     * @param int    $ttl   Data Base Cache Time To Live
      *
-     * @return type Value
+     * @return array Data From Data Base
      */
     public function select(
         string $sql   = '',
@@ -133,11 +131,12 @@ class DB
     }
 
     /**
-     * Function Name
+     * Execute SQL Query
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param string $scope Scope Of SQL Query
      *
-     * @return type Value
+     * @return bool Is SQL Query Successfully Executed
      */
     public function query(
         string $sql   = '',
@@ -167,50 +166,45 @@ class DB
     }
 
     /**
-     * Function Name
+     * Start SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Transaction Successfully Start
      */
     public function transactionStart() : bool
     {
         $sql = 'START TRANSACTION;';
+ 
         return $this->_transaction($sql);
     }
 
     /**
-     * Function Name
+     * Commit SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Query Successfully Commited
      */
     public function transactionCommit() : bool
     {
         $sql = 'COMMIT;';
+
         return $this->_transaction($sql);
     }
 
     /**
-     * Function Name
+     * Rollback SQL Transaction
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return bool Is SQL Query Successfully Rollback
      */
     public function transactionRollback() : bool
     {
         $sql = 'ROLLBACK;';
+
         return $this->_transaction($sql);
     }
 
     /**
-     * Function Name
+     * Getting Data Base Credentials
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return array Data Base Credentials
      */
     private function _getDBCredentials() : array
     {
@@ -229,11 +223,9 @@ class DB
     }
 
     /**
-     * Function Name
+     * Getting Data Base Cache Provider Name
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @return string Data Base Cache Provider Name
      */
     private function _getDBCacheProvider() : string
     {
@@ -245,11 +237,9 @@ class DB
     }
 
     /**
-     * Function Name
+     * Handle Data Base Errors
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $error Data Base Error
      */
     private function _dbError(string $error = '') : void
     {
@@ -257,11 +247,11 @@ class DB
     }
 
     /**
-     * Function Name
+     * Execute Transaction SQL Query
      *
-     * @param type $value Value
+     * @param string $transactionSQL SQL Query
      *
-     * @return type Value
+     * @return bool Is Transaction SQL Query Successfully Executed
      */
     private function _transaction(string $transactionSQL = '') : bool
     {

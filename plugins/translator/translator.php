@@ -4,8 +4,14 @@
  */
 class TranslatorPlugin
 {
+    /**
+     * @var string Default Language Code
+     */
     const DEFAULT_LANGUAGE = 'en';
 
+    /**
+     * @var string User Language Code
+     */
     public $userLanguageCode = NULL;
 
     /**

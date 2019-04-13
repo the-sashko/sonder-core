@@ -1,20 +1,28 @@
 <?php
 /**
- * Plugin For Autoposting Links To Twitter
+ * Plugin For Sending Messages To Twitter
  */
 class TwitterPlugin
 {
+    /**
+     * @var int Twitter Max Length Of Message
+     */
     const TWITTER_MESSAGE_MAX_LENGTH = 140;
 
+    /**
+     * @var Object Instance Of Codebird
+     */
     public $codebird = NULL;
+
+    /**
+     * @var array Credentials
+     */
     public $credentials = [];
 
     /**
-     * Function Name
+     * Setting Twitter API Credentials
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param array $credentials Twitter API Credentials
      */
     public function setCredentials(array $credentials = []) : void
     {
@@ -26,11 +34,9 @@ class TwitterPlugin
     }
 
     /**
-     * Function Name
+     * Sending Message To Twitter
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $message Message Text
      */
     public function send(string $message = '') : void
     {
@@ -47,11 +53,7 @@ class TwitterPlugin
     }
 
     /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
+     * Setting Codebird Instance
      */
     private function _setCodebirdInstance() : void
     {
@@ -67,11 +69,9 @@ class TwitterPlugin
     }
 
     /**
-     * Function Name
+     * Check Is Message Has Valid Format
      *
-     * @param type $value Value
-     *
-     * @return type Value
+     * @param string $message Message Text
      */
     private function _validateMessage(string $message = '') : void
     {
@@ -85,11 +85,11 @@ class TwitterPlugin
     }
 
     /**
-     * Function Name
+     * Validate Twitter API Credentials
      *
-     * @param type $value Value
+     * @param array $credentials Twitter API Credentials
      *
-     * @return type Value
+     * @return bool Is Twitter API Credentials Data Has Valid Format
      */
     private function _validateCredentials(array $credentials = []) : bool
     {
@@ -129,11 +129,11 @@ class TwitterPlugin
     }
 
     /**
-     * Function Name
+     * Check Is Valid Respose From Twitter API
      *
-     * @param type $value Value
+     * @param array $res Respose From Twitter API
      *
-     * @return type Value
+     * @return bool Is Twitter API Respose Has Valid Format
      */
     private function _validateResponse(array $res = []) : bool
     {

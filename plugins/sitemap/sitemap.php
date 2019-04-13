@@ -4,7 +4,14 @@
  */
 class SitemapPlugin
 {
+    /**
+     * @var string Public Directory Path
+     */
     const PUBLIC_DIR = __DIR__.'/../../../../public/';
+
+    /**
+     * @var string Sitemap Directory Path
+     */
     const SITEMAP_DIR = __DIR__.'/../../../../public/xml/';
 
     public function __construct()
@@ -36,12 +43,12 @@ class SitemapPlugin
     }
 
     /**
-     * Get Translation String From Dictionary
+     * Create And Save Satemap From List Of Lnks
      *
-     * @param string $word Input String Value
-     * @param string $word Input String Value
-     * @param string $word Input String Value
-     * @param string $word Input String Value
+     * @param string $sitemapName Name Of Sitemap
+     * @param array  $links       List Of Site Links
+     * @param string $frequency   Sitemap Frequency Param
+     * @param float  $priority    Sitemap Priority Param
      */
     public function saveLinksToSitemap(
         string $sitemapName = '',
@@ -71,11 +78,10 @@ class SitemapPlugin
     }
 
     /**
-     * Get Translation String From Dictionary
+     * Create And Save Satemap From List Of Sitemaps
      *
-     * @param string $word Input String Value
-     *
-     * @return string Translated String Value
+     * @param string $sitemapName Name Of Sitemap
+     * @param array  $links       List Of Sitemaps
      */
     public function saveSummarySitemap(
         string $sitemapName = 'sitemap',
@@ -102,11 +108,11 @@ class SitemapPlugin
     }
 
     /**
-     * Get Translation String From Dictionary
+     * Get Sitemap File Path
      *
-     * @param string $word Input String Value
+     * @param string $sitemapName Name Of Sitemap File
      *
-     * @return string Translated String Value
+     * @return string Sitemap File Path
      */
     private function _getSitemapFilePath(
         string $sitemapName = 'sitemap'

@@ -4,8 +4,14 @@
  */
 class TemplaterPlugin
 {
+    /**
+     * @var string Templates Directory Path
+     */
     const TEMPLATE_DIR = __DIR__.'/../../../res/tpl/';
 
+    /**
+     * @var string Templates Scope
+     */
     public $scope = 'site';
 
     /**

@@ -4,18 +4,21 @@
  */
 class DBRedisCacheProvider
 {
+    /**
+     * @var string Redis Entry Key Prefix
+     */
     const REDIS_DBCACHE_KEY_PREFIX = 'cache:db';
 
-    public $redis        = NULL;
+    /**
+     * @var Object Instance Of RedisPlugin
+     */
+    public $redis = NULL;
+    
+    /**
+     * @var Object Instance Of DBFileCacheProvider
+     */
     public $fileProvider = NULL;
 
-    /**
-     * Function Name
-     *
-     * @param type $value Value
-     *
-     * @return type Value
-     */
     public function __construct() {
         $this->redis = new RedisPlugin();
         $this->redis->setKeyPrefix(static::REDIS_DBCACHE_KEY_PREFIX);
@@ -24,11 +27,14 @@ class DBRedisCacheProvider
     }
 
     /**
-     * Function Name
+     * Save Cached Data To Redis
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param array  $data  Data Base Data
+     * @param string $scope Scope Of Data Base Request
+     * @param int    $ttl   Time To Live Of Cache
      *
-     * @return type Value
+     * @return bool Is Successfully Saved Cached Data
      */
     public function set(
         string $sql = '',
@@ -58,11 +64,12 @@ class DBRedisCacheProvider
     }
 
     /**
-     * Function Name
+     * Get Cached Data From Redis
      *
-     * @param type $value Value
+     * @param string $sql   SQL Query
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return array Cached Data
      */
     public function get(
         string $sql = '',
@@ -94,11 +101,11 @@ class DBRedisCacheProvider
     }
 
     /**
-     * Function Name
+     * Remove From Redis All Cached Data Of Data Base Request Scope
      *
-     * @param type $value Value
+     * @param string $scope Scope Of Data Base Request
      *
-     * @return type Value
+     * @return bool Is Successfully Removed Cached Data
      */
     public function flush(string $scope = 'default') : bool
     {
