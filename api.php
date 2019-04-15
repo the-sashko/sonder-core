@@ -10,34 +10,6 @@ class API Extends App
     }
 
     /**
-     * Main Method For Application
-     */
-    public function run() : void
-    {
-        try {
-            list(
-                $apiVersion,
-                $model,
-                $action,
-                $params,
-                $page
-            ) = $this->_getParams($apiVersion,);
-
-            $this->_autoLoad();
-
-            $controller = new APIController($params, $page);
-            
-            set_error_handler([$this, 'errorHandler']);
-
-            $controller->execute($model, $action, );
-        } catch (\Exception $exp) {
-            $this->_exception($exp);
-        }
-
-        exit(0);
-    }
-
-    /**
      * Errors Handler
      *
      * @param int    $errCode    HTTP Response Code
