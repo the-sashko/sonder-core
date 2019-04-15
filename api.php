@@ -10,54 +10,6 @@ class API Extends App
     }
 
     /**
-     * Errors Handler
-     *
-     * @param int    $errCode    HTTP Response Code
-     * @param string $errMessage Error Message
-     * @param string $errFile    File With Error
-     * @param int    $errLine    Line In File With Error
-     */
-    public function errorHandler(
-        int    $errCode,
-        string $errMessage,
-        string $errFile,
-        int    $errLine
-    ) : void {
-        $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-
-        foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
-            if (!array_key_exists('file', $debugBacktraceStep)) {
-                $debugBacktrace[$idx] = '...';
-            } else {
-                $debugBacktrace[$idx] = $debugBacktraceStep['file'];
-            }
-
-            if (array_key_exists('line', $debugBacktraceStep)) {
-                $debugBacktrace[$idx] = $debugBacktrace[$idx].
-                                        ' ('.$debugBacktraceStep['line'].')';
-            }
-        }
-
-        $debugBacktraceStr = implode(' -> ', array_reverse($debugBacktrace));
-        $logMessage = "Error [$errCode]: $errMessage. ".
-                      "File: $errFile ($errLine). ".
-                      "Trace: $errFile ($debugBacktraceStr)";
-
-        (new ErrorPlugin)->displayError(
-            $errCode,
-            $errMessage,
-            $errFile,
-            $errLine,
-            $debugBacktrace,
-            OUTPUT_FORMAT_JSON
-        );
-
-        (new LoggerPlugin)->logError($logMessage);
-
-        exit(0);
-    }
-
-    /**
      * Handler For Only Api Class Errors
      */
     private function _error() : void
