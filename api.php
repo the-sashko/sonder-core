@@ -104,21 +104,5 @@ class API Extends App
         require_once __DIR__.'/autoload.php';
         require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
-
-    /**
-     * Exceptions Handler
-     *
-     * @param Exception $exp Exception Instance
-     */
-    private function _exception(Exception $exp) : void
-    {
-        $expMessage = $exp->getMessage();
-
-        (new ErrorPlugin)->displayException($expMessage, OUTPUT_FORMAT_JSON);
-
-        (new LoggerPlugin)->logError($expMessage);
-
-        exit(0);
-    }
 }
 ?>

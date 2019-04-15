@@ -35,6 +35,7 @@ switch (APP_MODE) {
     case 'api':
         require_once __DIR__.'/config/api.php';
         require_once $routerPath;
+        require_once __DIR__.'/app.php';
         require_once __DIR__.'/api.php';
         (new API)->run();
         break;
