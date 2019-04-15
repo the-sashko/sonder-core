@@ -10,7 +10,7 @@ class TwitterPlugin
     const TWITTER_MESSAGE_MAX_LENGTH = 140;
 
     /**
-     * @var Object Instance Of Codebird
+     * @var object Instance Of Codebird
      */
     public $codebird = NULL;
 

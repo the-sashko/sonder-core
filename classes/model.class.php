@@ -10,7 +10,7 @@ class ModelCore extends CommonCore
     const MAIN_CONFIG_PATH = __DIR__.'/../../config/main.json';
 
     /**
-     * @var Object Model Object Class Instance
+     * @var object Model Object Class Instance
      */
     public $object = NULL;
 

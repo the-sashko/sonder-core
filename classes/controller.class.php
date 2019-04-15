@@ -138,7 +138,7 @@ class ControllerCore extends CommonCore
         if (
             isset($_SESSION['flash_data']) &&
             is_array($_SESSION['flash_data']) &&
-            count($_SESSION['flash_data'])>0
+            count($_SESSION['flash_data']) > 0
         ) {
             foreach (
                 $_SESSION['flash_data'] as $flashDataIDX => $flashDataVal

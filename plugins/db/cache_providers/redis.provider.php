@@ -10,12 +10,12 @@ class DBRedisCacheProvider
     const REDIS_DBCACHE_KEY_PREFIX = 'cache:db';
 
     /**
-     * @var Object Instance Of RedisPlugin
+     * @var object Instance Of RedisPlugin
      */
     public $redis = NULL;
     
     /**
-     * @var Object Instance Of DBFileCacheProvider
+     * @var object Instance Of DBFileCacheProvider
      */
     public $fileProvider = NULL;
 

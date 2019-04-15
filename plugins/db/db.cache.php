@@ -5,7 +5,7 @@
 class DBCache
 {
     /**
-     * @var Object Instance OF Data Base Cache Provider
+     * @var object Instance OF Data Base Cache Provider
      */
     public $provider = NULL;
 

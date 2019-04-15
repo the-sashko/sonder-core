@@ -5,7 +5,7 @@
 class RedisPlugin
 {
     /**
-     * @var Object Predis Client Instance
+     * @var object Predis Client Instance
      */
     public $client = NULL;
 

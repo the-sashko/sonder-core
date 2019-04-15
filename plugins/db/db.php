@@ -15,7 +15,7 @@ class DB
     public $dbInstance = NULL;
 
     /**
-     * @var Object Instance Of Data Base Cache
+     * @var object Instance Of Data Base Cache
      */
     public $dbCache = NULL;
 
