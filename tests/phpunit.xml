@@ -14,5 +14,5 @@
         <testsuite name="Plugins">
             <directory>plugins</directory>
         </testsuite>
-    </testsuites>  
+    </testsuites>
 </phpunit>

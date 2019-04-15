@@ -22,7 +22,7 @@ class ErrorPlugin
         string $errFile,
         int    $errLine,
         array  $debugBacktrace = [],
-        bool   $isJSONOutput = false
+        bool   $isJSONOutput   = false
     ) : bool
     {
         if (!$isJSONOutput) {

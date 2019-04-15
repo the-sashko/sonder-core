@@ -31,8 +31,8 @@ function renderPage(string $templatePage = '') : void
  */
 function renderPart(
     string $templatePart = '',
-    int $ttl = 0,
-    array $templateData = []
+    int    $ttl          = 0,
+    array  $templateData = []
 ) : bool
 {
     if ($ttl>0) {
@@ -114,8 +114,8 @@ function _page(string $templatePage = '') : void
  */
 function _part(
     string $templatePart = '',
-    array $templateData = [],
-    bool $cache = false
+    array  $templateData = [],
+    bool   $cache        = false
 ) : void
 {
     $ttl = $cache ? (int)$GLOBALS['templateTTL'] : 0;

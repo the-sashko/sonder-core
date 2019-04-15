@@ -15,10 +15,10 @@ class DBMemcacheCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql = '',
-        array $data = [],
+        string $sql   = '',
+        array  $data  = [],
         string $scope = 'default',
-        int $ttl = -1
+        int    $ttl   = -1
     ) : bool
     {
         // To-Do
@@ -34,7 +34,7 @@ class DBMemcacheCacheProvider
      * @return array Cached Data
      */
     public function get(
-        string $sql = '',
+        string $sql   = '',
         string $scope = 'default'
     ) : array
     {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Main Application Class For API Requests
+ */
 class API
 {
     public function __construct()
@@ -6,6 +9,9 @@ class API
         $this->_validateURI();
     }
 
+    /**
+     * Main Method For Application
+     */
     public function run() : void
     {
         try {
@@ -31,6 +37,14 @@ class API
         exit(0);
     }
 
+    /**
+     * Errors Handler
+     *
+     * @param int    $errCode    HTTP Response Code
+     * @param string $errMessage Error Message
+     * @param string $errFile    File With Error
+     * @param int    $errLine    Line In File With Error
+     */
     public function errorHandler(
         int    $errCode,
         string $errMessage,
@@ -71,6 +85,9 @@ class API
         exit(0);
     }
 
+    /**
+     * Parse Controller, Method Of Cotroller And Params From URI
+     */
     private function _parseURI() : array
     {
         $page = null;
@@ -125,18 +142,31 @@ class API
         ];
     }
 
+    /**
+     * Handler For Only Api Class Errors
+     */
     private function _error() : void
     {
         header('Location: /', true, 302);
         exit(0);
     }
 
+    /**
+     * Require All Plugins And Controller Classes
+     *
+     * @param string $controller Name Of Controller Class
+     */
     private function _autoLoad(string $controller = '') : void
     {
         require_once __DIR__.'/autoload.php';
         require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
 
+    /**
+     * Exceptions Handler
+     *
+     * @param Exception $exp Exception Instance
+     */
     private function _exception(Exception $exp) : void
     {
         $expMessage = $exp->getMessage();

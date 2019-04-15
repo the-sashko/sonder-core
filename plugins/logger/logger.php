@@ -41,7 +41,7 @@ class LoggerPlugin
      * @return bool Is Entry Successfully Saved
      */
     public function logError(
-        string $message = '',
+        string $message          = '',
         bool   $isThrowException = false
     ) : bool
     {
@@ -67,7 +67,7 @@ class LoggerPlugin
      * @return bool Is Entry Successfully Saved
      */
     private function _writeToLogFile(
-        string $message = '',
+        string $message     = '',
         string $logFileName = ''
     ) : bool
     {

@@ -51,10 +51,10 @@ class DBCache
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql = '',
-        array $data = [],
+        string $sql   = '',
+        array  $data  = [],
         string $scope = 'default',
-        int $ttl = -1
+        int    $ttl   = -1
     ) : bool
     {
         if (strlen($sql) < 12) {
@@ -83,9 +83,9 @@ class DBCache
      * @return array Cached Data
      */
     public function get(
-        string $sql = '',
+        string $sql   = '',
         string $scope = 'default',
-        int $ttl = -1
+        int    $ttl   = -1
     ) : array
     {
         if (strlen($sql) < 12) {

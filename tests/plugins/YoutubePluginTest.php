@@ -1,8 +1,14 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class For Testing YoutubePlugin Class Methods
+ */
 class YoutubePluginTest extends TestCase
 {
+    /**
+     * @var array Data Sample For Unit Tests
+     */
     const TEXT_DATA_SAMPLE = [
         [
             'value'    => '',
@@ -18,7 +24,10 @@ class YoutubePluginTest extends TestCase
         ]
     ];
 
-    public function testGetHTML()
+    /**
+     * Unit Test Of parseYoutubeURL Method
+     */
+    public function testParseYoutubeURL()
     {
         $youtube = (new CommonCore)->initPlugin('youtube');
 

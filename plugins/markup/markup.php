@@ -142,8 +142,8 @@ class MarkupPlugin
      * @return string Output Text Value
      */
     public function parseReplyShortCode(
-        string $text = '',
-        int $sectionID = 0
+        string $text      = '',
+        int    $sectionID = 0
     ) : string
     {
         $text = preg_replace(

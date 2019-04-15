@@ -1,6 +1,12 @@
 <?php
+/**
+ * Main Class For Cron Controller
+ */
 class CronControllerCore extends ControllerCore
 {
+    /**
+     * Method That Running All Cron Jobs
+     */
     public function actionRun() : void
     {
         if ($this->URLParam != $this->initConfig('cron')['token']) {
@@ -16,6 +22,7 @@ class CronControllerCore extends ControllerCore
         foreach ($cronJobs as $cronJob) {
             $method = $cronJob->getAction();
             $cronJob->setTimeNextExec();
+
             try {
                 $res = $logger->log('Job '.$method.' Start', 'cron');
                 $this->$method();
@@ -29,6 +36,7 @@ class CronControllerCore extends ControllerCore
                 $logger->logError($message, false);
                 $logger->log('Job '.$method.' Fail', 'cron');
             }
+
             $cron->updateByVO($cronJob);
         }
     }

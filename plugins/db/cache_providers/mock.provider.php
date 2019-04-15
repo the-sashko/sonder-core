@@ -15,17 +15,17 @@ class DBMockCacheProvider
      * @return bool Is Successfully Saved Cached Data (Always Returns true)
      */
     public function set(
-        string $sql = '',
-        array $data = [],
+        string $sql   = '',
+        array  $data  = [],
         string $scope = 'default',
-        int $ttl = -1
+        int    $ttl   = -1
     ) : bool
     {
         return true;
     }
 
     /**
-     * Mock Of Getting Data From Cache
+     * Mock Of Get Data From Cache
      *
      * @param string $sql   SQL Query
      * @param string $scope Scope Of Data Base Request
@@ -33,7 +33,7 @@ class DBMockCacheProvider
      * @return array Cached Data (Always Returns Empty Array)
      */
     public function get(
-        string $sql = '',
+        string $sql   = '',
         string $scope = 'default'
     ) : array
     {

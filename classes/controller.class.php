@@ -1,13 +1,47 @@
 <?php
-class ControllerCore extends CommonCore {
+/**
+ * Core Controller Class
+ */
+class ControllerCore extends CommonCore
+{
+    /**
+     * @var string Separator For Web Page Title Sections 
+     */
     const PAGE_TITLE_SEPARATOR = ' / ';
 
+    /**
+     * @var array POST Request Data 
+     */
     public $post = [];
+
+    /**
+     * @var string Param Data From URL
+     */
     public $URLParam = '';
+
+    /**
+     * @var array Common Data For Templates, Cross-Model And Cross-Plugin Usage
+     */
     public $commonData = [];
+
+    /**
+     * @var array Data From JSON Config Files
+     */
     public $configData = [];
+
+    /**
+     * @var string HTML Termplates Scope
+     */
     public $templaterScope  = 'site';
+
+    /**
+     * @var int Current Page In Pagination
+     */
     public $page = 1;
+
+    /**
+     * @var bool Is Output In JSON Format
+     */
     public $isOutputJSON = false;
 
     public function __construct(
@@ -26,11 +60,19 @@ class ControllerCore extends CommonCore {
         $this->_setOutputType();
     }
 
+    /**
+     * Set Output Format Type
+     */
     private function _setOutputType() : void
     {
         define('OUTPUT_FORMAT_JSON', $this->isOutputJSON);
     }
 
+    /**
+     * Set POST Request Data
+     *
+     * @param array $postData POST Request Data
+     */
     private function _setPostData(array $postData = []) : void
     {
         $securityPlugin = $this->initPlugin('security');
@@ -43,16 +85,27 @@ class ControllerCore extends CommonCore {
         $this->post = array_map($escapeMethod, $postData);
     }
 
+    /**
+     * Set Current Page In Pagination
+     *
+     * @param int $page Current Page Number
+     */
     private function _setPage(int $page = 1) : void
     {
         $this->page = $page < 1 ? 1 : $page;
     }
 
+    /**
+     * Set Data From JSON Config Files
+     */
     private function _initConfigs() : void
     {
         $this->configData['main'] = $this->initConfig('main');
     }
 
+    /**
+     * Sanitize Data From Session
+     */
     private function _escapeSessionData() : void
     {
         $securityPlugin = $this->initPlugin('security');
@@ -65,6 +118,11 @@ class ControllerCore extends CommonCore {
         $_SESSION = array_map($escapeMethod, $_SESSION);
     }
 
+    /**
+     * Set Param Data From URL
+     *
+     * @param string $URLParam Param Data From URL
+     */
     private function _setURLParam(string $URLParam = '') : void
     {
         $securityPlugin = $this->initPlugin('security');
@@ -72,13 +130,16 @@ class ControllerCore extends CommonCore {
         $this->URLParam = $securityPlugin->escapeInput($URLParam);
     }
 
-    private function _setFlashSessionData()
+    /**
+     * Set Data From One Use Session Param To Common Data
+     */
+    private function _setFlashSessionData() : void
     {
-        if(
+        if (
             isset($_SESSION['flash_data']) &&
             is_array($_SESSION['flash_data']) &&
             count($_SESSION['flash_data'])>0
-        ){
+        ) {
             foreach (
                 $_SESSION['flash_data'] as $flashDataIDX => $flashDataVal
             ) {
@@ -89,18 +150,30 @@ class ControllerCore extends CommonCore {
         $_SESSION['flash_data'] = [];
     }
 
+    /**
+     * Redirect To URL
+     *
+     * @param string $url         URL Value
+     * @param bool   $isPermanent Is Redirect Permanently
+     */
     public function redirect(
-        string $URL = '',
-        bool $isPermanent = false
+        string $url         = '',
+        bool   $isPermanent = false
     ) : void
     {
-        $URL = strlen($URL) > 0 ? $URL : '/';
+        $url = strlen($url) > 0 ? $url : '/';
         $code = $isPermanent ? 301 : 302;
 
-        header("Location: {$URL}", true, $code);
+        header("Location: {$url}", true, $code);
         exit(0);
     }
 
+    /**
+     * Return Data In JSON Format
+     *
+     * @param bool  $status Is Request Successful
+     * @param array $data   Output Data
+     */
     public function returnJSON(bool $status = true, array $data = []) : void
     {
         $dataJSON = [
@@ -114,10 +187,17 @@ class ControllerCore extends CommonCore {
         exit(0);
     }
 
+    /**
+     * Return Data In HTML Format
+     *
+     * @param string $template Teplate Page Name
+     * @param array  $params   Params Data For Templates
+     * @param int    $ttl      Time To Live Of Template Cache
+     */
     public function render(
         string $template = '',
-        array $params = [],
-        int $ttl = 0
+        array  $params   = [],
+        int    $ttl      = 0
     ) : void
     {
         $dataParams = [];
@@ -158,6 +238,11 @@ class ControllerCore extends CommonCore {
         $templater->render($template, $dataParams, $ttl);
     }
 
+    /**
+     * Display List By CRUD Action
+     *
+     * @param string $modelName Name Of Model Class
+     */
     public function CRUDList(string $modelName = '') : void
     {
         $model = $this->initModel($modelName);
@@ -168,8 +253,14 @@ class ControllerCore extends CommonCore {
         ]);
     }
 
+    /**
+     * Create New Item By CRUD Action
+     *
+     * @param string $modelName   Name Of Model Class
+     * @param string $redirectURI URI For Redirection After Creation
+     */
     public function CRUDCreate(
-        string $modelName = '',
+        string $modelName   = '',
         string $redirectURI = '/'
     ) : void
     {
@@ -188,8 +279,14 @@ class ControllerCore extends CommonCore {
         $this->$formAction(NULL, $message);
     }
 
+    /**
+     * Update New Item By CRUD Action
+     *
+     * @param string $modelName   Name Of Model Class
+     * @param string $redirectURI URI For Redirection After Updation
+     */
     public function CRUDUpdate(
-        string $modelName = '',
+        string $modelName   = '',
         string $redirectURI = '/'
     ) : void
     {
@@ -214,8 +311,14 @@ class ControllerCore extends CommonCore {
         $this->$formAction($modelVO, $message);
     }
 
+    /**
+     * Remove New Item By CRUD Action
+     *
+     * @param string $modelName   Name Of Model Class
+     * @param string $redirectURI URI For Redirection After Removal
+     */
     public function CRUDDelete(
-        string $modelName = '',
+        string $modelName   = '',
         string $redirectURI = '/'
     ) : void
     {
@@ -229,14 +332,17 @@ class ControllerCore extends CommonCore {
         $this->redirect($redirectURI);
     }
 
-    public function actionError()
-    {
-        //;
-    }
-
+    /**
+     * Get HTML Meta Tag Values
+     *
+     * @param array $pagePath Current Page Path In Site Structure
+     * @param array $meta     Input HTML Meta Tag Values
+     *
+     * @return array Output HTML Meta Tag Values
+     */
     private function _getMetaParams(
         array $pagePath = [],
-        array $meta = []
+        array $meta     = []
     ) : array
     {
         $metaData = $this->initConfig('seo');
@@ -295,6 +401,13 @@ class ControllerCore extends CommonCore {
         return $metaData;
     }
 
+    /**
+     * Get Page Title From Current Page Path In Site Structure
+     *
+     * @param array $pagePath Current Page Path In Site Structure
+     *
+     * @return string Page Title
+     */
     private function _getTitleByPagePath(array $pagePath = []) : string
     {
         $pagePath = array_reverse($pagePath);

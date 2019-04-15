@@ -1,14 +1,23 @@
 <?php
 /**
- * summary
+ * Basic Class For Model Object Classes
  */
 class ModelObjectCore extends DBObjectClass
 {
+    /**
+     * @var int Count Items On Page 
+     */
     public $itemsOnPage = 10;
+
+    /**
+     * @var string Default Table In Data Base
+     */
     public $defaultTableName = NULL;
 
     /**
      * summary
+     *
+     * @return string Get Default Table In Data Base
      */
     public function getDefaultTableName() : string
     {
@@ -22,7 +31,12 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get One Item By SQL Query
+     *
+     * @param string $sql SQL SELECT Query
+     * @param int    $ttl Time To Live Data Base Cache
+     *
+     * @return array Item Data
      */
     public function getOne(
         string $sql = '',
@@ -33,7 +47,15 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get List Of Items From Data Base By Condition
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Columns
+     * @param array  $condition       Data Base Selection Condition
+     * @param string $limit           Limit And Offset Of Items Selection
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array List Of Items
      */
     public function getByCondition(
         string $table           = '',
@@ -43,7 +65,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $selectedColumns = $this->_prepareSelectedColums(
+        $selectedColumns = $this->_prepareSelectedColumns(
             $selectedColumns
         );
         
@@ -64,7 +86,14 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get One Items From Data Base By Condition
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Columns
+     * @param array  $condition       Data Base Selection Condition
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array Item Data
      */
     public function getOneByCondition(
         string $table           = '',
@@ -73,7 +102,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
-        $selectedColumns = $this->_prepareSelectedColums($selectedColumns);
+        $selectedColumns = $this->_prepareSelectedColumns($selectedColumns);
 
         $sql = "
             SELECT
@@ -88,7 +117,14 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get All Items From Data Base By Condition
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Columns
+     * @param array  $condition       Data Base Selection Condition
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array List Of Items
      */
     public function getAllByCondition(
         string $table           = '',
@@ -107,7 +143,13 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get All Items From Data Base Table
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Column
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array List Of Items
      */
     public function getAll(
         string $table           = '',
@@ -124,7 +166,15 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get Items From Data Base By Condition And Page
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Columns
+     * @param array  $condition       Data Base Selection Condition
+     * @param int    $page            Page Number
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array List Of Items
      */
     public function getByPageWithCondition(
         string $table           = '',
@@ -146,7 +196,14 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get All Items From Data Base By Page
+     *
+     * @param string $table           Data Base Table
+     * @param array  $selectedColumns List Of Returned Data Base Table Columns
+     * @param int    $page            Page Number
+     * @param int    $ttl             Time To Live Data Base Cache
+     *
+     * @return array List Of Items
      */
     public function getAllByPage(
         string $table           = '',
@@ -165,7 +222,13 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get One Item From Data Base By ID
+     *
+     * @param string $table Data Base Table
+     * @param int    $id    Item ID
+     * @param int    $ttl   Time To Live Data Base Cache
+     *
+     * @return array Item Data
      */
     public function getByID(
         string $table = '',
@@ -184,7 +247,13 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get One Item From Data Base By Slug
+     *
+     * @param string $table Data Base Table
+     * @param string $slug  Item Slug
+     * @param int    $ttl   Time To Live Data Base Cache
+     *
+     * @return array Item Data
      */
     public function getBySlug(
         string $table = '',
@@ -203,16 +272,25 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Remove Item From Data Base By ID
+     *
+     * @param string $table Data Base Table
+     * @param int    $id    Item ID
+     *
+     * @return bool Is Item Successfully Removed
      */
-    public function vremoveByID(string $table = '', int $id = -1) : bool
+    public function removeByID(string $table = '', int $id = -1) : bool
     {
         $condition = "\"id\" = {$id}";
         return $this->remove($table, $condition);
     }
 
     /**
-     * summary
+     * Get Maximum ID In Data Base Table
+     *
+     * @param string $table Data Base Table
+     *
+     * @return int Maximum ID In Data Base Table
      */
     public function getMaxID(string $table = '') : int
     {
@@ -232,23 +310,13 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
-     */
-    private function _prepareSelectedColums(
-        array $selectedColumns = []
-    ) : string
-    {
-        if (count($selectedColumns)>0) {
-            $selectedColumns = implode(',', $selectedColumns);
-        } else {
-            $selectedColumns = '*';
-        }
-
-        return $selectedColumns;
-    }
-
-    /**
-     * summary
+     * Count Items In Data Base Table By Condition
+     *
+     * @param string $table     Data Base Table
+     * @param array  $condition Data Base Selection Condition
+     * @param int    $ttl       Time To Live Data Base Cache
+     *
+     * @return int Count Items In Data Base Table
      */
     public function count(
         string $table     = '',
@@ -281,7 +349,12 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Count Items In Data Base Table By Condition
+     *
+     * @param string $table Data Base Table
+     * @param int    $ttl   Time To Live Data Base Cache
+     *
+     * @return int Count Items In Data Base Table
      */
     public function countAll(
         string $table = '',
@@ -292,7 +365,50 @@ class ModelObjectCore extends DBObjectClass
     }
 
     /**
-     * summary
+     * Get Offset And Limit Params From Page
+     *
+     * @param int $page Page Number
+     *
+     * @return array Offset And Limit Params
+     */
+    public function getQueryLimitByPage(int $page = 1) : array
+    {
+        if ($page < 1) {
+            throw new Exception("Invalid Content Page Value");
+        }
+
+        $limit = $this->itemsOnPage;
+        $offset = $this->itemsOnPage * ($page - 1);
+
+        return [$limit, $offset];
+    }
+
+    /**
+     * Get SQL SELECT List Of Columns From List Of Columns
+     *
+     * @param array $selected Columns List Of Columns
+     *
+     * @return string SQL SELECT List Of Columns
+     */
+    private function _prepareSelectedColumns(
+        array $selectedColumns = []
+    ) : string
+    {
+        if (count($selectedColumns)>0) {
+            $selectedColumns = implode(',', $selectedColumns);
+        } else {
+            $selectedColumns = '*';
+        }
+
+        return $selectedColumns;
+    }
+
+    /**
+     * Get SQL SELECT Limit From Limit And Offset Params
+     *
+     * @param array $limit Limit And Offset Params
+     *
+     * @return string SQL SELECT Limit
      */
     private function _prepareQueryLimit(array $limit = []) : string
     {
@@ -315,21 +431,6 @@ class ModelObjectCore extends DBObjectClass
         $offsetSQL = "OFFSET {$offset}";
 
         return "{$limitSQL}\n{$offsetSQL}";
-    }
-
-    /**
-     * summary
-     */
-    public function getQueryLimitByPage(int $page = 1) : array
-    {
-        if ($page < 1) {
-            throw new Exception("Invalid Content Page Value");
-        }
-
-        $limit = $this->itemsOnPage;
-        $offset = $this->itemsOnPage * ($page - 1);
-
-        return [$limit, $offset];
     }
 }
 ?>

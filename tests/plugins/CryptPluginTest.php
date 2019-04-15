@@ -1,8 +1,14 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class For Testing CryptPlugin Class Methods
+ */
 class CryptPluginTest extends TestCase
 {
+    /**
+     * @var array Data Sample For Unit Tests
+     */
     const HASH_DATA_SAMPLE = [
         [
             'value'    => 'foo',
@@ -36,8 +42,14 @@ class CryptPluginTest extends TestCase
         ]
     ];
 
+    /**
+     * @var array Data Sample SALT For Unit Tests
+     */
     const SALT = 'foo_bar';
 
+    /**
+     * Unit Test Of getHash Method
+     */
     public function testGetHash()
     {
         $crypt = (new CommonCore)->initPlugin('crypt');
@@ -48,6 +60,9 @@ class CryptPluginTest extends TestCase
         }
     }
 
+    /**
+     * Unit Test Of getTripCode Method
+     */
     public function testGetTripCode()
     {
         $crypt = (new CommonCore)->initPlugin('crypt');

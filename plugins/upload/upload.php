@@ -83,10 +83,10 @@ class UploadPlugin
      * @return array List Of Uploaded Files
      */
     public function upload(
-        array $extensions = [],
-        int $maxSize = -1,
+        array  $extensions = [],
+        int    $maxSize    = -1,
         string $uploadsDir = 'uploads',
-        bool $isPublic = false
+        bool   $isPublic   = false
     ) : array
     {
         $this->_setSettings($extensions, $maxSize, $uploadsDir, $isPublic);
@@ -240,10 +240,10 @@ class UploadPlugin
      * @param bool   $isPublic   Is Uploaded File Will Accessed From Web
      */
     private function _setSettings(
-        array $extensions = [],
-        int $maxSize = -1,
+        array  $extensions = [],
+        int    $maxSize    = -1,
         string $uploadsDir = 'uploads',
-        bool $isPublic = false
+        bool   $isPublic   = false
     ) : void
     {
         if (count($extensions) < 1) {

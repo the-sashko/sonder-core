@@ -24,16 +24,16 @@ class ImagePlugin
      */
     public $sizes = [
         'thumbnail' => [
-            'height' => 64,
-            'width' => 64,
+            'height'      => 64,
+            'width'       => 64,
             'low_quality' => true,
-            'prefix' => 'thumb'
+            'prefix'      => 'thumb'
         ],
         'post' => [
-            'height' => NULL,
-            'width' => 200,
+            'height'      => NULL,
+            'width'       => 200,
             'low_quality' => false,
-            'prefix' => 'p'
+            'prefix'      => 'p'
         ]
     ];
 
@@ -47,9 +47,9 @@ class ImagePlugin
      */
     public function setImage(
         string $imageFile = '',
-        string $imageDir = '',
+        string $imageDir  = '',
         string $imageName = '',
-        array  $sizes = []
+        array  $sizes     = []
     ) : void
     {
         if (!strlen($imageDir) > 0) {
@@ -123,7 +123,7 @@ class ImagePlugin
     }
 
     /**
-     * Getting Size Data By Size Name
+     * Geting Size Data By Size Name
      *
      * @param string $size Size Name
      *
@@ -139,7 +139,7 @@ class ImagePlugin
     }
 
     /**
-     * Getting Imagick Object From Input Image
+     * Geting Imagick Object From Input Image
      *
      * @return Object Imagick Object
      */
@@ -162,9 +162,9 @@ class ImagePlugin
      * @return array Size Output Size Value
      */
     private function _calculateSize(
-        array $size = [],
-        int $originWidth = 0,
-        int $originHeight = 0
+        array $size         = [],
+        int   $originWidth  = 0,
+        int   $originHeight = 0
     ) : array
     {
         $size['width'] = (int) $size['width'];
@@ -203,9 +203,9 @@ class ImagePlugin
      */
     private function _changeImageRatio(
         Object $imageObject = NULL,
-        array $size = NULL,
-        int $originWidth = 0,
-        int $originHeight = 0
+        array $size         = NULL,
+        int   $originWidth  = 0,
+        int   $originHeight = 0
     ) : Object
     {
         $size['width'] = (int) $size['width'];
@@ -259,9 +259,9 @@ class ImagePlugin
      * @param bool   $isLowQuality Is Use Low Quality
      */
     private function _saveImage(
-        Object $imageObject = NULL,
-        string $prefix = '',
-        bool $isLowQuality = false
+        Object $imageObject  = NULL,
+        string $prefix       = '',
+        bool   $isLowQuality = false
     ) : void
     {
         if (strlen($prefix) < 1) {
@@ -287,7 +287,7 @@ class ImagePlugin
     }
 
     /**
-     * Getting Image File Path From File Extension And File Name Prefix
+     * Geting Image File Path From File Extension And File Name Prefix
      *
      * @param string $prefix    Image File Extensin
      * @param string $extension Image File Name Prefix
@@ -295,7 +295,7 @@ class ImagePlugin
      * @return string Image File Path
      */
     private function _getImageFilePath(
-        string $prefix = '',
+        string $prefix    = '',
         string $extension = 'png'
     ) : string
     {

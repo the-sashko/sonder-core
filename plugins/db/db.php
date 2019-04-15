@@ -68,8 +68,8 @@ class DB
      * @return PDO Instance Of PDO
      */
     private function _dbConnect(
-        string $dsn = '',
-        string $user = '',
+        string $dsn      = '',
+        string $user     = '',
         string $password = ''
     ) : PDO
     {
@@ -202,7 +202,7 @@ class DB
     }
 
     /**
-     * Getting Data Base Credentials
+     * Get Data Base Credentials
      *
      * @return array Data Base Credentials
      */
@@ -223,7 +223,7 @@ class DB
     }
 
     /**
-     * Getting Data Base Cache Provider Name
+     * Get Data Base Cache Provider Name
      *
      * @return string Data Base Cache Provider Name
      */

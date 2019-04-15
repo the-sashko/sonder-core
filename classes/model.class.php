@@ -4,23 +4,35 @@
  */
 class ModelCore extends CommonCore
 {
+    /**
+     * @var string Path To Main Config File
+     */
     const MAIN_CONFIG_PATH = __DIR__.'/../../config/main.json';
 
-    public $object      = null;
-    public $voClassName = null;
-    public $form        = null;
-    public $configData  = [];
+    /**
+     * @var Object Model Object Class Instance
+     */
+    public $object = NULL;
 
     /**
-     * summary
+     * @var string Model Values Object Class Name
      */
+    public $voClassName = NULL;
+
+    /**
+     * @var array Data From JSON Config Files
+     */
+    public $configData  = [];
+
     public function __construct()
     {
         $this->setConfigData();
     }
 
     /**
-     * summary
+     * Set Model Object Class Instance
+     *
+     * @param string Model Object Class Name
      */
     public function setObject(string $objectClassName = '') : void
     {
@@ -31,7 +43,9 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Set Model Value Object Class Name 
+     *
+     * @param string Model Value Object Class Name
      */
     public function setValuesObjectClass(string $voClassName = '') : void
     {
@@ -39,7 +53,7 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Set Config Main Data
      */
     public function setConfigData() : void
     {
@@ -48,7 +62,11 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get String Value From Main Config Data
+     *
+     * @param string $valueName Value Name
+     *
+     * @return string Value Data
      */
     public function getConfigValue(string $valueName = '') : string
     {
@@ -60,7 +78,11 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get Array Value From Main Config Data
+     *
+     * @param string $valueName Value Name
+     *
+     * @return array Value Data
      */
     public function getConfigArrayValue(string $valueName = '') : array
     {
@@ -72,7 +94,11 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get Model Value Object Instance
+     *
+     * @param array $inputArray List Of Values
+     *
+     * @return ValuesObject Values Object Instance
      */
     public function getVO(array $inputArray = []) : ValuesObject
     {
@@ -84,7 +110,11 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get List Of Model Value Object Instances
+     *
+     * @param array $inputArray List Of Values
+     *
+     * @return array List Of Model Value Object Instances
      */
     public function getVOArray(array $inputArrays = []) : array
     {
@@ -95,6 +125,13 @@ class ModelCore extends CommonCore
         return $inputArrays;
     }
 
+    /**
+     * Get Model Value Object Instance By ID Value
+     *
+     * @param int $id ID Value
+     *
+     * @return ValuesObject Values Object Instance
+     */
     public function getByID(int $id = -1) : ValuesObject
     {
         $values = $this->object->getByID(
@@ -105,6 +142,13 @@ class ModelCore extends CommonCore
         return $this->getVO($values);
     }
 
+    /**
+     * Get Model Value Object Instance By Slug Value
+     *
+     * @param string $slug Slug Value
+     *
+     * @return ValuesObject Values Object Instance
+     */
     public function getBySlug(string $slug = '') : ValuesObject
     {
         $values = $this->object->getBySlug(
@@ -115,6 +159,13 @@ class ModelCore extends CommonCore
         return $this->getVO($values);
     }
 
+    /**
+     * Get List Of Model Value Object Instances By Page Number
+     *
+     * @param int $page Page Number
+     *
+     * @return array List Of Model Value Object Instances
+     */
     public function getByPage(int $page = 1) : array
     {
         $values = $this->object->getAllByPage(
@@ -126,6 +177,13 @@ class ModelCore extends CommonCore
         return $this->getVOArray($values);
     }
 
+    /**
+     * Remove Model Data From Data Base By ID Value
+     *
+     * @param int $id ID Value
+     *
+     * @return bool Is Data From Data Base Successffuly Removed
+     */
     public function removeByID(int $id = -1) : bool
     {
         return $this->object->removeByID(
@@ -135,7 +193,12 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get Slug Value From String And Model Value ID
+     *
+     * @param string $input Input String
+     * @param int    $id    ID Value
+     *
+     * @return string Output Slug Value
      */
     public function getSlug(string $input = '', int $id = -1) : string
     {
@@ -145,12 +208,17 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * summary
+     * Get Unique Slug Value From Slug And Model Value ID
+     *
+     * @param string $input Input Slug Value
+     * @param int    $id    ID Value
+     *
+     * @return string Output Slug Value
      */
     protected function _getUniqSlug(
         string $slug = '',
-        int $id = -1)
-    : string
+        int    $id   = -1
+    ) : string
     {
         $condition = "\"slug\" = '{$slug}' AND \"id\" != {$id}";
 
@@ -180,6 +248,13 @@ class ModelCore extends CommonCore
         return $this->_getUniqSlug($slug, $id);
     }
 
+    /**
+     * Format Title Value
+     *
+     * @param string $title Input Title Value
+     *
+     * @return string Output Title Value
+     */
     public function formatTitle(string $title = '') : string
     {
         $title = preg_replace('/\s+/su', ' ', $title);
@@ -188,6 +263,13 @@ class ModelCore extends CommonCore
         return $title;
     }
 
+    /**
+     * Format Text Value
+     *
+     * @param string $text Input Text Value
+     *
+     * @return string Output Text Value
+     */
     public function formatText(string $text = '') : string
     {
         $text = preg_replace('/\n+/su', "\n", $text);
@@ -201,6 +283,13 @@ class ModelCore extends CommonCore
         return $text;
     }
 
+    /**
+     * Format Email Value
+     *
+     * @param string $email Input Email Value
+     *
+     * @return string Output Email Value
+     */
     public function formatEmail(string $email = '') : string
     {
         $email = preg_replace('/\s+/su', '', $email);
@@ -208,6 +297,13 @@ class ModelCore extends CommonCore
         return $email;
     }
 
+    /**
+     * Format Slug Value
+     *
+     * @param string $slug Input Slug Value
+     *
+     * @return string Output Slug Value
+     */
     public function formatSlug(string $slug = '') : string
     {
         $slug = preg_replace('/\s+/su', '', $slug);
@@ -216,6 +312,13 @@ class ModelCore extends CommonCore
         return $slug;
     }
 
+    /**
+     * Format URL Value
+     *
+     * @param string $url Input URL Value
+     *
+     * @return string Output URL Value
+     */
     public function formatURL(string $url = '') : string
     {
         $url = preg_replace('/\s+/su', '', $url);

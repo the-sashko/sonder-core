@@ -8,7 +8,8 @@ class CommonCore
     * Get Model Instance By Name
     *
     * @param string $model Name Of Model
-    * @return ModelCore Insnace Of Model
+    *
+    * @return Object ModelCore Insnace Of Model
     */
     public function initModel(string $model = '') : ModelCore
     {
@@ -43,7 +44,8 @@ class CommonCore
     * Get Plugin Instance By Name
     *
     * @param string $plugin Name Of Plugin
-    * @return object Insnace Of Plugin
+    *
+    * @return Object Insnace Of Plugin
     */
     public function initPlugin(string $plugin = '') : Object
     {
@@ -60,6 +62,7 @@ class CommonCore
     * Get Config Data By Config File Name
     *
     * @param string $configName Name Of Config File
+    *
     * @return array Data From Config File
     */
     public function initConfig(string $configName = '') : array
@@ -75,5 +78,4 @@ class CommonCore
         return (array) json_decode($configJSON, true);
     }
 }
-
 ?>

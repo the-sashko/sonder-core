@@ -22,9 +22,9 @@ class TemplaterPlugin
      * @param int    $ttl        Time To Live Template Cache
      */
     public function render(
-        string $template = 'main',
-        array $dataParams = [],
-        int $ttl = 0
+        string $template   = 'main',
+        array  $dataParams = [],
+        int    $ttl        = 0
     ) : void
     {
         $GLOBALS['templateDir'] = static::TEMPLATE_DIR;

@@ -1,8 +1,14 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class For Testing MathPlugin Class Methods
+ */
 class MathPluginTest extends TestCase
 {
+    /**
+     * @var array Data Sample For Unit Tests
+     */
     const CONVERTION_DATA_SAMPLE = [
         '0' => [
             '2' => '0',
@@ -105,6 +111,9 @@ class MathPluginTest extends TestCase
         ]
     ];
 
+    /**
+     * Unit Test Of dec2base64 Method
+     */
     public function testDec2base64()
     {
         $math = (new CommonCore)->initPlugin('math');

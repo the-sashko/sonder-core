@@ -68,9 +68,9 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Inserted
      */
     public function insert(
-        string $table  = '',
-        array  $columns  = [],
-        array  $values = []
+        string $table   = '',
+        array  $columns = [],
+        array  $values  = []
     ) : bool
     {
         $columns = $this->_prepareInsertColumns($columns);
@@ -123,10 +123,10 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Updated
      */
     public function updateByID(
-        string $table     = '',
-        array  $columns   = [],
-        array  $values    = [],
-        int    $id        = -1
+        string $table   = '',
+        array  $columns = [],
+        array  $values  = [],
+        int    $id      = -1
     ) : bool
     {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
@@ -313,7 +313,7 @@ class DBObjectClass extends DB
      */
     private function _prepareUpdateValues (
         array $columns = [],
-        array $values = []
+        array $values  = []
     ) : string
     {
         $updateValues = [];

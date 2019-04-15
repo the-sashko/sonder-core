@@ -21,8 +21,8 @@ class ShortenerPlugin
      * @param string $userToken Shortener API Token
      */
     public function setAPIOptions(
-        string $url = '#',
-        int $userID = -1,
+        string $url       = '#',
+        int    $userID    = -1,
         string $userToken = ''
     ) : void
     {
@@ -40,7 +40,7 @@ class ShortenerPlugin
      * @return string Short Link URL 
      */
     public function send(
-        string $link = '#',
+        string $link   = '#',
         string $source = 'default'
     ) : string
     {
@@ -99,7 +99,7 @@ class ShortenerPlugin
      * @return array List Of Curl Options
      */
     private function _getCurlOptions(
-        string $link = '#',
+        string $link   = '#',
         string $source = 'default'
     ) : array
     {
@@ -146,7 +146,7 @@ class ShortenerPlugin
     private function _getCurlHeaders() : array
     {
         return [
-            'Access-Id: '.$this->APIOptions['user_id'],
+            'Access-Id:    '.$this->APIOptions['user_id'],
             'Access-Token: '.$this->APIOptions['user_token'],
             'Content-Type: application/json'
         ];

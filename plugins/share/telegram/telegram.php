@@ -15,7 +15,7 @@ class TelegramPlugin
     public $credentials = [];
 
     /**
-     * Setting Telegram API Credentials
+     * Set Telegram API Credentials
      *
      * @param array $credentials Telegram API Credentials
      */
@@ -135,7 +135,7 @@ class TelegramPlugin
     }
 
     /**
-     * Getting Curl Headers
+     * Get  Curl Headers
      *
      * @param string $url URL Value
      *
@@ -155,7 +155,7 @@ class TelegramPlugin
     }
 
     /**
-     * Getting API URL
+     * Get API URL
      *
      * @return string API URL
      */

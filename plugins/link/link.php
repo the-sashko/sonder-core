@@ -224,7 +224,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Meta Data 
+     * Get Web Page Meta Data 
      *
      * @param string $url Web Page URL
      *
@@ -263,7 +263,7 @@ class LinkPlugin
      * @param string $cacheFile Cached File Path
      */
     private function _saveWebPageMetaDataToCache(
-        array $metaData = [],
+        array  $metaData  = [],
         string $cacheFile = ''
     ) : void
     {
@@ -272,7 +272,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Main Image Link
+     * Get Web Page Main Image Link
      *
      * @param string $url Web Page URL
      *
@@ -280,7 +280,7 @@ class LinkPlugin
      */
     private function _getPageImage(
         string $pageHTML = '',
-        string $url = ''
+        string $url      = ''
     ) : string
     {
         $image = $this->_getPageImageFromMetaTags($pageHTML);
@@ -293,7 +293,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Main Image Link From Meta Tags
+     * Get Web Page Main Image Link From Meta Tags
      *
      * @param string $html Web Page HTML
      *
@@ -341,7 +341,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Main Image Link From HTML Body
+     * Get Web Page Main Image Link From HTML Body
      *
      * @param string $html Web Page HTML
      *
@@ -379,7 +379,7 @@ class LinkPlugin
      */
     private function _normalizeImage(
         string $image = '',
-        string $url = ''
+        string $url   = ''
     ) : string
     {
         $image = trim($image);
@@ -415,7 +415,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Description From HTML
+     * Get Web Page Description From HTML
      *
      * @param string $html Web Page HTML
      *
@@ -433,7 +433,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Description From HTML Body
+     * Get Web Page Description From HTML Body
      *
      * @param string $html Web Page HTML
      *
@@ -463,7 +463,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Description From HTML Body
+     * Get Web Page Description From HTML Body
      *
      * @param string $html Web Page HTML
      *
@@ -524,7 +524,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Title From HTML
+     * Get Web Page Title From HTML
      *
      * @param string $html Web Page HTML
      * @param string $url  Web Page URL
@@ -533,7 +533,7 @@ class LinkPlugin
      */
     private function _getPageTitle(
         string $html = '',
-        string $url = ''
+        string $url  = ''
     ) : string
     {
         $title = $this->_getPageTitleFromMetaTags($html);
@@ -598,7 +598,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Title From URL
+     * Get Web Page Title From URL
      *
      * @param string $url Web Page URL
      *
@@ -616,7 +616,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Domain From URL
+     * Get Web Page Domain From URL
      *
      * @param string $url Web Page URL
      *
@@ -639,7 +639,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page HTTP Protocol From URL
+     * Get Web Page HTTP Protocol From URL
      *
      * @param string $url Web Page URL
      *
@@ -656,7 +656,7 @@ class LinkPlugin
 
     
     /**
-     * Getting Web Page Title From Meta Tags
+     * Get Web Page Title From Meta Tags
      *
      * @param string $html Web Page HTML
      *
@@ -700,7 +700,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Title From HTML Body
+     * Get Web Page Title From HTML Body
      *
      * @param string $html Web Page HTML
      *
@@ -728,7 +728,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page HTML From URL
+     * Get Web Page HTML From URL
      *
      * @param string $url Web Page URL
      *
@@ -772,7 +772,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page HTML From Curl Request
+     * Get Web Page HTML From Curl Request
      *
      * @param string $url Web Page URL
      *
@@ -798,7 +798,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Meta Data From Cache
+     * Get Web Page Meta Data From Cache
      *
      * @param string $fileCache Web Page Cache File Path
      *
@@ -833,7 +833,7 @@ class LinkPlugin
     }
 
     /**
-     * Getting Web Page Link Shortcode From Rergexp URL Parts
+     * Get Web Page Link Shortcode From Rergexp URL Parts
      *
      * @param arrat $URLParts Rergexp URL Parts
      *
@@ -865,9 +865,9 @@ class LinkPlugin
      * @return string Output Value Of HTML Tag
      */
     private function _parseHTMLTag(
-        string $regexp = '',
-        int $partNumber = 1,
-        string $html = ''
+        string $regexp     = '',
+        int    $partNumber = 1,
+        string $html       = ''
     ) : string
     {
         if (strlen($regexp) < 1) {
@@ -899,7 +899,7 @@ class LinkPlugin
      */
     private function _isTagExists(
         string $regexp = '',
-        string $html = ''
+        string $html   = ''
     ) : bool
     {
         if (strlen($regexp) < 1) {

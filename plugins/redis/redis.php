@@ -34,7 +34,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Redis Settings From Config File
+     * Get Redis Settings From Config File
      *
      * @return array Redis Settings Data
      */
@@ -87,7 +87,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Redis Config Data
+     * Get Redis Config Data
      *
      * @return array Redis Config Data
      */
@@ -105,7 +105,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Redis Config File Path
+     * Get Redis Config File Path
      *
      * @return string Redis Config File Path
      */
@@ -115,7 +115,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Redis Data Time To Live
+     * Get Redis Data Time To Live
      *
      * @return int Redis Data Time To Live
      */
@@ -129,7 +129,7 @@ class RedisPlugin
     }
 
     /**
-     * Setting Redis Data Time To Live
+     * Set Redis Data Time To Live
      *
      * @param int Redis Data Time To Live
      */
@@ -141,7 +141,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Redis Entry Key
+     * Get Redis Entry Key
      *
      * @param string $key Input Redis Entry Key Value
      *
@@ -157,7 +157,7 @@ class RedisPlugin
     }
 
     /**
-     * Setting Redis Entry Key Prefix
+     * Set Redis Entry Key Prefix
      *
      * @param string $keyPrefix Redis Entry Key Prefix
      */
@@ -182,9 +182,9 @@ class RedisPlugin
      * @return bool Is Saving Value To Redis Successfull
      */
     public function set(
-        string $key = '',
+        string $key   = '',
         string $value = '',
-        int $ttl = -1
+        int    $ttl   = -1
     ) : bool
     {
         $key = $this->getKey($key);
@@ -204,7 +204,7 @@ class RedisPlugin
     }
 
     /**
-     * Getting Data From Redis
+     * Get Data From Redis
      *
      * @param string $key Redis Entry Key
      *

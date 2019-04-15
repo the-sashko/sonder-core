@@ -9,7 +9,6 @@ if (file_exists(__DIR__.'/../routers/default.php')) {
     $routerPath = __DIR__.'/examples/router.php';
 }
 
-
 switch (APP_MODE) {
     case 'dev':
         require_once __DIR__.'/config/dev.php';
@@ -47,5 +46,4 @@ switch (APP_MODE) {
         (new App)->run();
         break;
 }
-
 ?>

@@ -20,7 +20,7 @@ class TwitterPlugin
     public $credentials = [];
 
     /**
-     * Setting Twitter API Credentials
+     * Set Twitter API Credentials
      *
      * @param array $credentials Twitter API Credentials
      */
@@ -53,7 +53,7 @@ class TwitterPlugin
     }
 
     /**
-     * Setting Codebird Instance
+     * Set Codebird Instance
      */
     private function _setCodebirdInstance() : void
     {

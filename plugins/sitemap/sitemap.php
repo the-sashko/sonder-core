@@ -52,9 +52,9 @@ class SitemapPlugin
      */
     public function saveLinksToSitemap(
         string $sitemapName = '',
-        array $links = [],
-        string $frequency = 'hourly',
-        float $priority = 0.5
+        array  $links       = [],
+        string $frequency   = 'hourly',
+        float  $priority    = 0.5
     ) : void
     {
         $sitemapXML = '<urlset>';
@@ -85,7 +85,7 @@ class SitemapPlugin
      */
     public function saveSummarySitemap(
         string $sitemapName = 'sitemap',
-        array $sitemaps = []
+        array  $sitemaps    = []
     ) : void
     {
         $sitemapXML = '<sitemapindex>';

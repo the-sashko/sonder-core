@@ -1,7 +1,9 @@
 <?php
+/**
+ * Main Application Class 
+ */
 class App
 {
-
     use Router;
 
     public function __construct()
@@ -10,6 +12,9 @@ class App
         $this->_replaceURI();
     }
 
+    /**
+     * Main Method For Application
+     */
     public function run() : void
     {
         list(
@@ -45,6 +50,14 @@ class App
         exit(0);
     }
 
+    /**
+     * Errors Handler
+     *
+     * @param int    $errCode    HTTP Response Code
+     * @param string $errMessage Error Message
+     * @param string $errFile    File With Error
+     * @param int    $errLine    Line In File With Error
+     */
     public function errorHandler(
         int    $errCode,
         string $errMessage,
@@ -85,6 +98,9 @@ class App
         exit(0);
     }
 
+    /**
+     * Perform Redirects By Rules
+     */
     private function _redirect() : void
     {
         $uri = $_SERVER['REQUEST_URI'];
@@ -92,6 +108,9 @@ class App
         $this->routeRedirect($uri);
     }
 
+    /**
+     * Rewrite URI By Rules
+     */
     private function _replaceURI() : void
     {
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
@@ -106,6 +125,9 @@ class App
         $_SERVER['REQUEST_URI'] = $uri;
     }
 
+    /**
+     * Parse Controller, Method Of Cotroller And Params From URI
+     */
     private function _parseURI() : array
     {
         $page = null;
@@ -160,14 +182,29 @@ class App
         ];
     }
 
+    /**
+     * Check Is Controller Exists
+     *
+     * @param string $controller Var
+     *
+     * @return bool Is Controller Exists
+     */
     private function _isControllerExist(string $controller = '') : bool
     {
         return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
     }
 
+    /**
+     * Check Is Method Public And Exists In Controller 
+     *
+     * @param ControllerCore $controller ControllerCore Instance
+     * @param string         $action     Name Of Method
+     *
+     * @return bool Is Method Public And Exists In Controller 
+     */
     private function _isValidControllerAction(
         ControllerCore $controller,
-        string $action
+        string         $action
     ) : bool
     {
         if (!method_exists($controller, $action)) {
@@ -183,19 +220,32 @@ class App
         return true;
     }
 
+    /**
+     * Handler For Only App Class Errors
+     */
     private function _error() : void
     {
         header('Location: /', true, 302);
         exit(0);
     }
 
+    /**
+     * Require All Plugins And Controller Classes
+     *
+     * @param string $controller Name Of Controller Class
+     */
     private function _autoLoad(string $controller = '') : void
     {
         require_once __DIR__.'/autoload.php';
         require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
 
-    private function _exception(Exception $exp) : void
+    /**
+     * Exceptions Handler
+     *
+     * @param Exception $exp Exception Instance
+     */
+    private function _exception(Exception $exp = NULL) : void
     {
         $expMessage = $exp->getMessage();
 

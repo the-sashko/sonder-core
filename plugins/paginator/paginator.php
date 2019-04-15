@@ -34,9 +34,9 @@ class PaginatorPlugin
      * @return string HTML Of Pagination
      */
     public function getHTML(
-        int $pageCount = 1,
-        int $currPage = 1,
-        string $link = ''
+        int    $pageCount = 1,
+        int    $currPage  = 1,
+        string $link      = ''
     ) : string
     {
         $this->pageCount = $pageCount;
