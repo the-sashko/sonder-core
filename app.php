@@ -130,9 +130,9 @@ class App
      */
     private function _parseURI() : array
     {
-        $page = null;
-        $param = null;
-        $controller = null;
+        $page = NULL;
+        $param = NULL;
+        $controller = NULL;
         $uri = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
@@ -164,7 +164,7 @@ class App
             $controller = $uriData[0];
         }
 
-        if ($controller === null || $action === null) {
+        if ($controller === NULL || $action === NULL) {
             $this->_error();
         }
 

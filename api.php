@@ -2,7 +2,7 @@
 /**
  * Main Application Class For API Requests
  */
-class API
+class API Extends App
 {
     public function __construct()
     {
@@ -83,63 +83,6 @@ class API
         (new LoggerPlugin)->logError($logMessage);
 
         exit(0);
-    }
-
-    /**
-     * Parse Controller, Method Of Cotroller And Params From URI
-     */
-    private function _parseURI() : array
-    {
-        $page = null;
-        $param = null;
-        $controller = null;
-        $uri = $_SERVER['REQUEST_URI'];
-
-        if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
-            $page = preg_replace(
-                '/^\/(.*?)\/page-([0-9]+)\/$/su',
-                '$2',
-                $uri
-            );
-            $uri = preg_replace(
-                '/^\/(.*?)\/page-([0-9]+)\/$/su',
-                '$1',
-                $uri
-            );
-        }
-
-        $uri = preg_replace('/^\/(.*?)\/$/su', '$1', $uri);
-
-        $uriData = explode('/', $uri);
-
-        if (isset($uriData[2])) {
-            $param = $uriData[2];
-        }
-
-        if (isset($uriData[1])) {
-            $action = $uriData[1];
-        }
-
-        if (isset($uriData[0])) {
-            $controller = $uriData[0];
-        }
-
-        if ($controller === null || $action === null) {
-            $this->_error();
-        }
-
-        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action = 'action'.mb_convert_case($action, MB_CASE_TITLE);
-
-        $param = (string) $param;
-        $page = (int) $page;
-
-        return [
-            $controller,
-            $action,
-            $param,
-            $page
-        ];
     }
 
     /**
