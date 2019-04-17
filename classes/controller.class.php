@@ -42,7 +42,7 @@ class ControllerCore extends CommonCore
     /**
      * @var bool Is Output In JSON Format
      */
-    public $isOutputJSON = false;
+    public $isOutputJSON = FALSE;
 
     public function __construct(
         string $URLParam = '',
@@ -158,13 +158,13 @@ class ControllerCore extends CommonCore
      */
     public function redirect(
         string $url         = '',
-        bool   $isPermanent = false
+        bool   $isPermanent = FALSE
     ) : void
     {
-        $url = strlen($url) > 0 ? $url : '/';
+        $url  = strlen($url) > 0 ? $url : '/';
         $code = $isPermanent ? 301 : 302;
 
-        header("Location: {$url}", true, $code);
+        header("Location: {$url}", TRUE, $code);
         exit(0);
     }
 
@@ -174,7 +174,7 @@ class ControllerCore extends CommonCore
      * @param bool  $status Is Request Successful
      * @param array $data   Output Data
      */
-    public function returnJSON(bool $status = true, array $data = []) : void
+    public function returnJSON(bool $status = TRUE, array $data = []) : void
     {
         $dataJSON = [
             'status' => $status,

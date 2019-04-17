@@ -22,7 +22,7 @@ class ModelCore extends CommonCore
     /**
      * @var array Data From JSON Config Files
      */
-    public $configData  = [];
+    public $configData = [];
 
     public function __construct()
     {

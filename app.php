@@ -172,7 +172,7 @@ class App
         $action = 'action'.mb_convert_case($action, MB_CASE_TITLE);
 
         $param = (string) $param;
-        $page = (int) $page;
+        $page  = (int) $page;
 
         return [
             $controller,
@@ -208,16 +208,16 @@ class App
     ) : bool
     {
         if (!method_exists($controller, $action)) {
-            return false;
+            return FALSE;
         }
 
         $reflection = new ReflectionMethod($controller, $action);
 
         if (!$reflection->isPublic()) {
-            return false;
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -225,7 +225,7 @@ class App
      */
     private function _error() : void
     {
-        header('Location: /', true, 302);
+        header('Location: /', TRUE, 302);
         exit(0);
     }
 

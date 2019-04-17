@@ -377,7 +377,7 @@ class ModelObjectCore extends DBObjectClass
             throw new Exception("Invalid Content Page Value");
         }
 
-        $limit = $this->itemsOnPage;
+        $limit  = $this->itemsOnPage;
         $offset = $this->itemsOnPage * ($page - 1);
 
         return [$limit, $offset];
@@ -416,7 +416,7 @@ class ModelObjectCore extends DBObjectClass
             return '';
         }
 
-        $limit = (int) $limit[0];
+        $limit  = (int) $limit[0];
         $offset = (int) $limit[1];
 
         if ($offset < 0) {
@@ -427,7 +427,7 @@ class ModelObjectCore extends DBObjectClass
             throw new Exception("Invalid SQL LIMIT Value");
         }
 
-        $limitSQL = "LIMIT {$limit}";
+        $limitSQL  = "LIMIT {$limit}";
         $offsetSQL = "OFFSET {$offset}";
 
         return "{$limitSQL}\n{$offsetSQL}";

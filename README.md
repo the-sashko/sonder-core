@@ -1,4 +1,4 @@
-# php-common-toolkit
+# PHP Common Toolkit
 
 Some useful PHP tools
 
