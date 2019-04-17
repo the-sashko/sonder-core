@@ -268,7 +268,7 @@ class ImagePlugin
             throw new Exception('Image File Prefix Has Bad Format');
         }
 
-        if (NULL == $imageObject) {
+        if (NULL === $imageObject) {
             throw new Exception('Image Object Missing');
         }
 
