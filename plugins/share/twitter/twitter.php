@@ -94,38 +94,38 @@ class TwitterPlugin
     private function _validateCredentials(array $credentials = []) : bool
     {
         if (!array_key_exists('consumer', $credentials)) {
-            return false;
+            return FALSE;
         }
 
         if (!is_array($credentials['consumer'])) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('key', $credentials['consumer'])) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('secret', $credentials['consumer'])) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('access', $credentials)) {
-            return false;
+            return FALSE;
         }
 
         if (!is_array($credentials['access'])) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('token', $credentials['access'])) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('secret', $credentials['access'])) {
-            return false;
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -142,7 +142,7 @@ class TwitterPlugin
         }
 
         if (!array_key_exists('errors', $res)) {
-            return true;
+            return TRUE;
         }
 
         $message = 'Unknow Twitter API Errror';

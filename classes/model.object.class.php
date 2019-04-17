@@ -412,7 +412,7 @@ class ModelObjectCore extends DBObjectClass
      */
     private function _prepareQueryLimit(array $limit = []) : string
     {
-        if (count($limit) != 2) {
+        if (2 !== count($limit)) {
             return '';
         }
 

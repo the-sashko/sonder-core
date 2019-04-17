@@ -30,7 +30,7 @@ class DBObjectClass extends DB
     public function initStore() : void
     {
         $config = file_get_contents($this::DB_CONFIG_PATH);
-        $config = json_decode($config, true);
+        $config = json_decode($config, TRUE);
         parent::initDB($config);
     }
 
@@ -45,7 +45,7 @@ class DBObjectClass extends DB
      */
     public function get(
         string $sql        = '',
-        bool   $isMultiple = true,
+        bool   $isMultiple = TRUE,
         int    $ttl        = self::DB_DEFAULT_TTL
     ) : array
     {

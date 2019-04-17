@@ -33,7 +33,7 @@ class DB
     /**
      * Connect To Data Base And Set PDO Instance
      */
-    public function _setDBInstance() : void
+    private function _setDBInstance() : void
     {
         list(
             $dsn,

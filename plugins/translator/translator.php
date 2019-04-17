@@ -75,7 +75,7 @@ class TranslatorPlugin
         $langCode = trim($langCode);
         $langCode = (string)mb_convert_case($langCode,MB_CASE_LOWER);
 
-        if (strlen($langCode) != 2) {
+        if (2 !== strlen($langCode)) {
             return self::DEFAULT_LANGUAGE;
         }
 

@@ -43,7 +43,7 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * Set Model Value Object Class Name 
+     * Set Model Value Object Class Name
      *
      * @param string Model Value Object Class Name
      */

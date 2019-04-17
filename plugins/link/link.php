@@ -239,10 +239,10 @@ class LinkPlugin
             return $this->_getWebPageMetaDataFromCache($cacheFile);
         }
 
-        $pageHTML = $this->_getPageContent($url);
-        $title = $this->_getPageTitle($pageHTML, $url);
+        $pageHTML    = $this->_getPageContent($url);
+        $title       = $this->_getPageTitle($pageHTML, $url);
         $description = $this->_getPageDescription($pageHTML);
-        $image = $this->_getPageImage($pageHTML);
+        $image       = $this->_getPageImage($pageHTML);
 
         $metaData = [
             'url'         => $url,

@@ -223,12 +223,12 @@ class ImagePlugin
             throw new Exception('Image Object Missing');
         }
 
-        $newWidth = $originWidth;
+        $newWidth  = $originWidth;
         $newHeight = (int) ($size['height'] / $size['width']) * $newWidth;
 
         if ($newHeight > $originHeight) {
             $newHeight = $originHeight;
-            $newWidth = (int) ($size['width'] / $size['height']) * $newHeight;
+            $newWidth  = (int) ($size['width'] / $size['height']) * $newHeight;
         }
 
         if ($newWidth < $originWidth) {
@@ -268,7 +268,7 @@ class ImagePlugin
             throw new Exception('Image File Prefix Has Bad Format');
         }
 
-        if ($imageObject == NULL) {
+        if (NULL == $imageObject) {
             throw new Exception('Image Object Missing');
         }
 
