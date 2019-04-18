@@ -24,7 +24,7 @@ class CronControllerCore extends ControllerCore
             $cronJob->setTimeNextExec();
 
             try {
-                $res = $logger->log('Job '.$method.' Start', 'cron');
+                $logger->log('Job '.$method.' Start', 'cron');
                 $this->$method();
                 $cronJob->setLastExecStatus(TRUE);
                 $cronJob->setErrorMessage('');

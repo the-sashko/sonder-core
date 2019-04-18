@@ -71,8 +71,6 @@ class ModelObjectCore extends DBObjectClass
         
         $queryLimit = $this->_prepareQueryLimit($limit);
 
-        $isMultiple = $limit == 1;
-
         $sql = "
             SELECT
                 {$selectedColumns}    

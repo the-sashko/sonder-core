@@ -267,7 +267,7 @@ class DB
             $error = "
                 SQL query failed!
                 Error: \"{$error->getMessage()}\"
-                Query: \"{$sql}\"
+                Query: \"{$transactionSQL}\"
             ";
             $this->_dbError($error);
         }
