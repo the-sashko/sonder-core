@@ -32,7 +32,7 @@ class TranslatorPlugin
         }
 
         $dataJSON = file_get_contents($dictFile);
-        $dictData = (array) json_decode($dataJSON, true);
+        $dictData = (array) json_decode($dataJSON, TRUE);
 
         if (array_key_exists($word, $dictData)) {
             return $dictData[$word];

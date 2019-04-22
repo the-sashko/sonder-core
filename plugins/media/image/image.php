@@ -32,7 +32,7 @@ class ImagePlugin
         'post' => [
             'height'      => NULL,
             'width'       => 200,
-            'low_quality' => false,
+            'low_quality' => FALSE,
             'prefix'      => 'p'
         ]
     ];
@@ -261,7 +261,7 @@ class ImagePlugin
     private function _saveImage(
         Object $imageObject  = NULL,
         string $prefix       = '',
-        bool   $isLowQuality = false
+        bool   $isLowQuality = FALSE
     ) : void
     {
         if (strlen($prefix) < 1) {

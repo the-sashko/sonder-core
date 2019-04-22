@@ -1,6 +1,6 @@
 <?php
 /**
- * Main Application Class 
+ * Main Application Class
  */
 class App
 {

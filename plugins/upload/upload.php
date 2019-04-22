@@ -155,7 +155,7 @@ class UploadPlugin
             !array_key_exists('name', $file) ||
             !array_key_exists('tmp_name', $file) ||
             !array_key_exists('error', $file) ||
-            $file['error'] != UPLOAD_ERR_OK ||
+            $file['error'] !== UPLOAD_ERR_OK ||
             $file['size'] < 1
         ) {
             return [

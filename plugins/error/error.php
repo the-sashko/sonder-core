@@ -133,7 +133,7 @@ class ErrorPlugin
      */
     public function displayException(
         string $expMessage,
-        bool   $isJSONOutput = false
+        bool   $isJSONOutput = FALSE
     ) : bool
     {
         if (!$isJSONOutput) {

@@ -122,7 +122,7 @@ class YoutubePlugin
         if (!file_exists($cacheFilePath) || !file_exists($cacheFilePath)) {
             $metaDataURL = "https://www.youtube.com/".
                            "get_video_info?video_id={$videoID}";
-            $metaData = file_get_contents ($metaDataURL);
+            $metaData    = file_get_contents ($metaDataURL);
             file_put_contents($cacheFilePath, base64_encode($metaData));
         } else {
             $metaData = file_get_contents($cacheFilePath);

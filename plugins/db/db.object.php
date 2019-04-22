@@ -155,7 +155,7 @@ class DBObjectClass extends DB
         string $table           = '',
         array  $items           = [],
         string $conditionColumn = '',
-        bool   $isTransaction   = false
+        bool   $isTransaction   = FALSE
     ) : bool
     {
         if (!strlen($conditionColumn) > 0) {

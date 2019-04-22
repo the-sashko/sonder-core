@@ -72,7 +72,7 @@ class TelegramPlugin
      * Send Message To Chat, Channel Or User By ID
      *
      * @param string $message Message 
-     * @param string $chatID  ID Of Chat Or Channel 
+     * @param string $chatID ID Of Chat Or Channel
      */
     private function _sendToChat(
         string $message = '',
