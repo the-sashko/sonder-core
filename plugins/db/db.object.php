@@ -324,7 +324,7 @@ class DBObjectClass extends DB
         }
 
         foreach ($columns as $idx => $column) {
-            $value = $values[$idx];
+            $value          = $values[$idx];
             $updateValues[] = "\"{$column}\" = '{$value}'";
         }
 

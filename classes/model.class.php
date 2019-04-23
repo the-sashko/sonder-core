@@ -202,8 +202,8 @@ class ModelCore extends CommonCore
      */
     public function getSlug(string $input = '', int $id = -1) : string
     {
-        $translit  = $this->initPlugin('translit');
-        $slug      = $translit->getSlug($input);
+        $translit = $this->initPlugin('translit');
+        $slug     = $translit->getSlug($input);
 
         return $this->_getUniqSlug($slug, $id);
     }

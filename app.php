@@ -115,6 +115,7 @@ class App
     private function _replaceURI() : void
     {
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
+
         $uri = $_SERVER['REQUEST_URI'];
 
         if ('' === $uri) {

@@ -61,7 +61,7 @@ class SitemapPlugin
 
         foreach ($links as $link) {
             $sitemapDate = date('Y-m-d').'T'.date('H:i:s+00:00');
-            $sitemapXML = "{$sitemapXML}
+            $sitemapXML  = "{$sitemapXML}
                 <url>
                     <loc>{$link}</loc>
                     <changefreq>{$frequency}</changefreq>

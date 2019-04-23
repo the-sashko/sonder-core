@@ -96,6 +96,7 @@ class ErrorPlugin
     ) : bool
     {
         $output = [];
+
         $isDisplay = (bool) ini_get('display_errors');
 
         $output['status'] = 'error';

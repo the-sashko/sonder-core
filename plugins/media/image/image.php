@@ -167,7 +167,7 @@ class ImagePlugin
         int   $originHeight = 0
     ) : array
     {
-        $size['width'] = (int) $size['width'];
+        $size['width']  = (int) $size['width'];
         $size['height'] = (int) $size['height'];
 
         if ($size['width'] < 1 && $size['height'] < 1) {
