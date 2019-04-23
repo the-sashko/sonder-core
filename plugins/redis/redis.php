@@ -64,26 +64,26 @@ class RedisPlugin
     private function _validateSettings(array $settings = []) : bool
     {
         if (count($settings) < 4) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('scheme', $settings)) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('host', $settings)) {
-            return false;
+            return FALSE;
         }
 
         if (!array_key_exists('port', $settings)) {
-            return false;
+            return FAlSE;
         }
 
         if (!array_key_exists('password', $settings)) {
-            return false;
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -101,7 +101,7 @@ class RedisPlugin
 
         $settings = file_get_contents($configPath);
 
-        return (array) json_decode($settings, true);
+        return (array) json_decode($settings, TRUE);
     }
 
     /**
@@ -191,7 +191,7 @@ class RedisPlugin
         $ttl = $this->getTTL($ttl);
 
         if (!strlen($key) > 0) {
-            return false;
+            return FALSE;
         }
 
         if ($ttl > 0) {
@@ -200,7 +200,7 @@ class RedisPlugin
             $this->client->set($key, $value);
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -257,7 +257,7 @@ class RedisPlugin
     public function delByPattern(string $keyPattern = '') : bool
     {
         if (!strlen($keyPattern) > 0) {
-            return false;
+            return FALSE;
         }
 
         $keyPattern = $this->getKey($keyPattern);
@@ -265,12 +265,12 @@ class RedisPlugin
         $keys = (array) $this->client->keys($keyPattern);
 
         if (!count($keys) > 0) {
-            return false;
+            return FALSE;
         }
 
         array_map(array($this->client, 'del'), $keys);
 
-        return true;
+        return TRUE;
     }
 }
 ?>

@@ -43,7 +43,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl = self::DB_DEFAULT_TTL
     ) : array
     {
-        return $this->get($sql, false, $ttl);
+        return $this->get($sql, FALSE, $ttl);
     }
 
     /**
@@ -60,7 +60,7 @@ class ModelObjectCore extends DBObjectClass
     public function getByCondition(
         string $table           = '',
         array  $selectedColumns = [],
-        string $condition       = 'true',
+        string $condition       = 'TRUE',
         array  $limit           = [],
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
@@ -80,7 +80,7 @@ class ModelObjectCore extends DBObjectClass
             {$queryLimit};
         ";
 
-        return $this->get($sql, true, $ttl);
+        return $this->get($sql, TRUE, $ttl);
     }
 
     /**
@@ -96,7 +96,7 @@ class ModelObjectCore extends DBObjectClass
     public function getOneByCondition(
         string $table           = '',
         array  $selectedColumns = [],
-        string $condition       = 'true',
+        string $condition       = 'TRUE',
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
@@ -111,7 +111,7 @@ class ModelObjectCore extends DBObjectClass
             LIMIT 1;
         ";
 
-        return $this->get($sql, false, $ttl);
+        return $this->get($sql, FALSE, $ttl);
     }
 
     /**
@@ -127,7 +127,7 @@ class ModelObjectCore extends DBObjectClass
     public function getAllByCondition(
         string $table           = '',
         array  $selectedColumns = [],
-        string $condition       = 'true',
+        string $condition       = 'TRUE',
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
     {
@@ -158,7 +158,7 @@ class ModelObjectCore extends DBObjectClass
         return $this->getAllByCondition(
             $table,
             $selectedColumns,
-            'true',
+            'TRUE',
             $ttl
         );
     }
@@ -177,7 +177,7 @@ class ModelObjectCore extends DBObjectClass
     public function getByPageWithCondition(
         string $table           = '',
         array  $selectedColumns = [],
-        string $condition       = 'true',
+        string $condition       = 'TRUE',
         int    $page            = 1,
         int    $ttl             = self::DB_DEFAULT_TTL
     ) : array
@@ -213,7 +213,7 @@ class ModelObjectCore extends DBObjectClass
         return $this->getByPageWithCondition(
             $table,
             $selectedColumns,
-            'true',
+            'TRUE',
             $page,
             $ttl
         );
@@ -298,7 +298,7 @@ class ModelObjectCore extends DBObjectClass
             FROM \"{$table}\"
             GROUP BY \"id\";
         ";
-        $res = $this->get($sql, false, self::DB_DEFAULT_TTL);
+        $res = $this->get($sql, FALSE, self::DB_DEFAULT_TTL);
 
         if (!array_key_exists('max_id', $res)) {
             return 0;
@@ -318,7 +318,7 @@ class ModelObjectCore extends DBObjectClass
      */
     public function count(
         string $table     = '',
-        string $condition = 'true',
+        string $condition = 'TRUE',
         int    $ttl       = self::DB_DEFAULT_TTL
     ) : int
     {
@@ -359,7 +359,7 @@ class ModelObjectCore extends DBObjectClass
         int    $ttl   = self::DB_DEFAULT_TTL
     ) : int
     {
-        return $this->count($table, 'true', $ttl);
+        return $this->count($table, 'TRUE', $ttl);
     }
 
     /**

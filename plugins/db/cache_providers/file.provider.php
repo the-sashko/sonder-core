@@ -47,7 +47,7 @@ class DBFileCacheProvider
         file_put_contents($cacheFilePath, json_encode($cacheData));
         chmod($cacheFilePath, 0775);
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -78,7 +78,7 @@ class DBFileCacheProvider
     public function flush(string $scope = 'default') : bool
     {
         if (!is_dir($this::DB_CACHE_DIR.'/'.$scope)) {
-            return false;
+            return FALSE;
         }
 
         foreach (scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem) {
@@ -91,7 +91,7 @@ class DBFileCacheProvider
             }
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -128,7 +128,7 @@ class DBFileCacheProvider
         }
 
         $cacheData = file_get_contents($cacheFilePath);
-        $cacheData = json_decode($cacheData,true);
+        $cacheData = json_decode($cacheData, TRUE);
 
         if (!$this->_validateCache($cacheData)) {
             unlink($cacheFilePath);
@@ -137,7 +137,7 @@ class DBFileCacheProvider
         }
 
         $cacheData = base64_decode($cacheData['content']);
-        $cacheData = (array) json_decode($cacheData,true);
+        $cacheData = (array) json_decode($cacheData, TRUE);
 
         return $cacheData;
     }

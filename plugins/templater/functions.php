@@ -90,7 +90,7 @@ function renderPart(
         );
     }
 
-    return true;
+    return TRUE;
 }
 
 /**
@@ -115,7 +115,7 @@ function _page(string $templatePage = '') : void
 function _part(
     string $templatePart = '',
     array  $templateData = [],
-    bool   $cache        = false
+    bool   $cache        = FALSE
 ) : void
 {
     $ttl = $cache ? (int)$GLOBALS['templateTTL'] : 0;

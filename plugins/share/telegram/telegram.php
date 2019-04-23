@@ -145,12 +145,12 @@ class TelegramPlugin
     {
         return [
             CURLOPT_URL            => $url,
-            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_RETURNTRANSFER => TRUE,
             CURLOPT_MAXREDIRS      => 10,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_CUSTOMREQUEST  => 'GET',
             CURLOPT_POSTFIELDS     => '',
-            CURLOPT_FAILONERROR    => false
+            CURLOPT_FAILONERROR    => FALSE
         ];
     }
 

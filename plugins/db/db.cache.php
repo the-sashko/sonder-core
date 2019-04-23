@@ -58,15 +58,15 @@ class DBCache
     ) : bool
     {
         if (strlen($sql) < 12) {
-            return false;
+            return FALSE;
         }
 
         if (count($data) < 1) {
-            return false;
+            return FALSE;
         }
 
         if ($ttl < 1) {
-            return false;
+            return FALSE;
         }
 
         $scope = strlen($scope) < 1 ? 'default' : $scope;

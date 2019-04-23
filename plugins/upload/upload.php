@@ -27,7 +27,7 @@ class UploadPlugin
     /**
      * @var bool Is Uploaded Files Will Accessed From Web
      */
-    public $isPublic = false;
+    public $isPublic = FALSE;
 
     /**
      * @var string Uploads Directory Name
@@ -69,7 +69,7 @@ class UploadPlugin
             $this->files[$filesIDX] = $file;
         }
 
-        $this->maxSize = 2*static::MBYTE;
+        $this->maxSize = 2 * static::MBYTE;
     }
 
     /**
@@ -86,7 +86,7 @@ class UploadPlugin
         array  $extensions = [],
         int    $maxSize    = -1,
         string $uploadsDir = 'uploads',
-        bool   $isPublic   = false
+        bool   $isPublic   = FALSE
     ) : array
     {
         $this->_setSettings($extensions, $maxSize, $uploadsDir, $isPublic);
@@ -159,14 +159,14 @@ class UploadPlugin
             $file['size'] < 1
         ) {
             return [
-                'status' => true,
+                'status' => TRUE,
                 'data'   => NULL
             ];
         }
 
         if ($file['size'] > $this->maxSize) {
             return [
-                'status' => false,
+                'status' => FALSE,
                 'data'   => 'File Is Too Large'
             ];
         }
@@ -175,8 +175,8 @@ class UploadPlugin
 
         if (!in_array($fileExtension, $this->extensions)) {
             return [
-                'status'    => false,
-                'data' => 'Bad File Type'
+                'status' => FALSE,
+                'data'   => 'Bad File Type'
             ];
         }
 
@@ -201,13 +201,13 @@ class UploadPlugin
 
         if (!$status) {
             return [
-                'status' => false,
+                'status' => FALSE,
                 'data'   => 'Can Not Save File'
             ];
         }
 
         return [
-            'status' => true,
+            'status' => TRUE,
             'data'   => $fileName
         ];
     }
@@ -243,7 +243,7 @@ class UploadPlugin
         array  $extensions = [],
         int    $maxSize    = -1,
         string $uploadsDir = 'uploads',
-        bool   $isPublic   = false
+        bool   $isPublic   = FALSE
     ) : void
     {
         if (count($extensions) < 1) {

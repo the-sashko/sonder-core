@@ -14,7 +14,7 @@ class API Extends App
      */
     private function _error() : void
     {
-        header('Location: /', true, 302);
+        header('Location: /', TRUE, 302);
         exit(0);
     }
 

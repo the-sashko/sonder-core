@@ -98,7 +98,7 @@ class DBObjectClass extends DB
         string $table     = '',
         array  $columns   = [],
         array  $values    = [],
-        string $condition = 'false'
+        string $condition = 'FALSE'
     ) : bool
     {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
@@ -170,7 +170,7 @@ class DBObjectClass extends DB
                 $conditionValue = $item[$conditionColumn];
                 $condition = "\"$conditionColumn\" = '{$conditionValue}'";
             } else {
-                $condition = 'false';
+                $condition = 'FALSE';
             }
             $sql = "
                 {$sql}
@@ -196,7 +196,7 @@ class DBObjectClass extends DB
      */
     public function remove(
         string $table     = '',
-        string $condition = 'false'
+        string $condition = 'FALSE'
     ) : bool
     {
         $sql = "
@@ -227,7 +227,7 @@ class DBObjectClass extends DB
             $this->rollback();
         }
 
-        return false;
+        return FALSE;
     }
 
     /**

@@ -182,7 +182,7 @@ class YoutubePlugin
     {
         $thumbnailURLs = $this->_getThumbnailURLs($videoID);
 
-        $thumbnailContent = false;
+        $thumbnailContent = FALSE;
 
         foreach ($thumbnailURLs as $thumbnailURL) {
             if ($thumbnailContent != false) {
@@ -192,7 +192,7 @@ class YoutubePlugin
             try {
                 $content = file_get_contents($thumbnailURL);
             } catch(Exception $except) {
-                $content = false;
+                $content = FALSE;
             }
         }
 

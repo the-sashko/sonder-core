@@ -91,7 +91,7 @@ class CommonCore
 
         $configJSON = file_get_contents($configPath);
 
-        return (array) json_decode($configJSON, true);
+        return (array) json_decode($configJSON, TRUE);
     }
 }
 ?>

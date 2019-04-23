@@ -26,7 +26,7 @@ class ImagePlugin
         'thumbnail' => [
             'height'      => 64,
             'width'       => 64,
-            'low_quality' => true,
+            'low_quality' => TRUE,
             'prefix'      => 'thumb'
         ],
         'post' => [

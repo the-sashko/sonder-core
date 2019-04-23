@@ -18,11 +18,11 @@ class LoggerPlugin
     ) : bool
     {
         if (strlen($message) < 3) {
-            return false;
+            return FALSE;
         }
 
         if (strlen($logType) < 3) {
-            return false;
+            return FALSE;
         }
 
         $dateString = date('[Y-m-d H:i:s]');
@@ -42,11 +42,11 @@ class LoggerPlugin
      */
     public function logError(
         string $message          = '',
-        bool   $isThrowException = false
+        bool   $isThrowException = FALSE
     ) : bool
     {
         if (strlen($message) < 3) {
-            return false;
+            return FALSE;
         }
 
         $res = $this->log($message, 'error');
@@ -72,20 +72,20 @@ class LoggerPlugin
     ) : bool
     {
         if (strlen($message) < 3) {
-            return false;
+            return FALSE;
         }
 
         $logFile = fopen($logFileName, 'a');
 
         if (!$logFile) {
-            return false;
+            return FALSE;
         }
 
         fwrite($logFile, $message);
 
         fclose($logFile);
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -107,16 +107,16 @@ class LoggerPlugin
                        '-'.$oldYear.'-'.date('m').'-'.date('d').'.log';
 
         if (!file_exists($oldLogFileName)) {
-            return true;
+            return TRUE;
         }
 
         if (!is_file($oldLogFileName)) {
-            return true;
+            return TRUE;
         }
 
         unlink($oldLogFileName);
 
-        return true;
+        return TRUE;
     }
 
     /**

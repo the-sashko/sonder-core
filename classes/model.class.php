@@ -36,7 +36,7 @@ class ModelCore extends CommonCore
      */
     public function setObject(string $objectClassName = '') : void
     {
-        if ($this->object === null) {
+        if ($this->object === NULL) {
             $this->object = new $objectClassName();
             $this->object->initStore();
         }

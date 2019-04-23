@@ -22,7 +22,7 @@ class ErrorPlugin
         string $errFile,
         int    $errLine,
         array  $debugBacktrace = [],
-        bool   $isJSONOutput   = false
+        bool   $isJSONOutput   = FALSE
     ) : bool
     {
         if (!$isJSONOutput) {
@@ -73,7 +73,7 @@ class ErrorPlugin
 
         include __DIR__.'/tpl/error.tpl';
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -120,7 +120,7 @@ class ErrorPlugin
         header('Content-Type: application/json');
         echo json_encode($output);
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -175,7 +175,7 @@ class ErrorPlugin
         header('Content-Type: application/json');
         echo json_encode($output);
 
-        return true;
+        return TRUE;
     }
 }
 ?>
