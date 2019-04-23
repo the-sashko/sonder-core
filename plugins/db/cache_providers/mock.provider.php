@@ -21,7 +21,7 @@ class DBMockCacheProvider
         int    $ttl   = -1
     ) : bool
     {
-        return true;
+        return TRUE;
     }
 
     /**
@@ -49,7 +49,7 @@ class DBMockCacheProvider
      */
     public function flush(string $scope = 'default') : bool
     {
-        return true;
+        return TRUE;
     }
 }
 ?>

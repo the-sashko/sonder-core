@@ -98,7 +98,7 @@ class ImagePlugin
         $originWidth  = (int) $imageObject->getImageGeometry()['width'];
         $originHeight = (int) $imageObject->getImageGeometry()['height'];
 
-        if ($size['width'] == NULL || $size['height'] == NULL) {
+        if (NULL === $size['width'] || NULL == $size['height']) {
             $size = $this->_calculateSize($size, $originWidth, $originHeight);
         } else {
             $imageObject = $this->_changeImageRatio(
@@ -219,7 +219,7 @@ class ImagePlugin
             throw new Exception('Input Image Have Bad Format');
         }
 
-        if ($imageObject == NULL) {
+        if (NULL === $imageObject) {
             throw new Exception('Image Object Missing');
         }
 

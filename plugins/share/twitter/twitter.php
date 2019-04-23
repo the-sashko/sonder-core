@@ -42,7 +42,7 @@ class TwitterPlugin
     {
         $this->_validateMessage($message);
 
-        if ($this->codebird == NULL) {
+        if (NULL === $this->codebird) {
             $this->_setCodebirdInstance();
         }
 

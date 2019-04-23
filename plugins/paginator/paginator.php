@@ -79,7 +79,7 @@ class PaginatorPlugin
         $prevPage = 1;
         foreach ($this->pages as $idx => $page) {
             if ($page > 0) {
-                if ($this->pages[$idx] != $this->currPage) {
+                if ($this->pages[$idx] !== $this->currPage) {
                     if ($page > 1) {
                         $this->pages[$idx] = '<a href="'.
                                        $this->link.'/page-'.$page.'/>'.

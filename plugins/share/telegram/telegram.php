@@ -121,7 +121,7 @@ class TelegramPlugin
             throw new Exception('Invalid Telegram API Response');
         }
 
-        $curlResponse = (array) json_decode($curlResponseJSON, true);
+        $curlResponse = (array) json_decode($curlResponseJSON, TRUE);
 
         if (!array_key_exists('ok', $curlResponse)) {
             throw new Exception('Telegram API Error: '.$curlResponseJSON);

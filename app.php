@@ -117,7 +117,7 @@ class App
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
         $uri = $_SERVER['REQUEST_URI'];
 
-        if ('' == $uri) {
+        if ('' === $uri) {
             $uri = '/';
         }
 

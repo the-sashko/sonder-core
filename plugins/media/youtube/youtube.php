@@ -185,7 +185,7 @@ class YoutubePlugin
         $thumbnailContent = FALSE;
 
         foreach ($thumbnailURLs as $thumbnailURL) {
-            if ($thumbnailContent != false) {
+            if (FALSE !== $thumbnailContent) {
                 break;
             }
 
@@ -342,7 +342,7 @@ class YoutubePlugin
 
         if (
             preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
-            $urlParams[0] != 'watch'
+            'watch' !== $urlParams[0]
         ) {
             $videoID = $urlParams[0];
         }

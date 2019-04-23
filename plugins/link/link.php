@@ -912,7 +912,7 @@ class LinkPlugin
         $regexp = static::$regexp;
 
         if (strlen($html) < 8) {
-            return false;
+            return FALSE;
         }
 
         return preg_match($regexp, $html);

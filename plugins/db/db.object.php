@@ -319,7 +319,7 @@ class DBObjectClass extends DB
     {
         $updateValues = [];
 
-        if (count($columns) != count($values)) {
+        if (count($columns) !== count($values)) {
             return '';
         }
 

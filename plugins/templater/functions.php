@@ -48,7 +48,7 @@ function renderPart(
             ) {
                 echo $partCacheData['data'];
 
-                return true;
+                return TRUE;
             }
         } else {
             ob_start();

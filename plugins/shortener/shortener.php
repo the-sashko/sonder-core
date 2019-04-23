@@ -61,7 +61,7 @@ class ShortenerPlugin
             throw new Exception($message);
         }
 
-        $response = json_decode($response, true);
+        $response = json_decode($response, TRUE);
 
         if (
             !array_key_exists('status', $response) ||
@@ -109,7 +109,7 @@ class ShortenerPlugin
 
         return [
             CURLOPT_URL            => $this->APIOptions['url'],
-            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_RETURNTRANSFER => TRUE,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_CUSTOMREQUEST  => 'POST',
             CURLOPT_POSTFIELDS     => $curlFields,

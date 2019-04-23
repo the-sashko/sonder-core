@@ -11,7 +11,7 @@ class MockPlugin
      */
     public function mockAction() : bool
     {
-        return true;
+        return TRUE;
     }
 }
 ?>

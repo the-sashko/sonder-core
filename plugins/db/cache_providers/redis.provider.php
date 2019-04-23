@@ -84,14 +84,14 @@ class DBRedisCacheProvider
             return $this->fileProvider->get($sql, $scope);
         }
 
-        if ($sql != $res) {
+        if ($sql !== $res) {
             return $this->fileProvider->get($sql, $scope);
         }
 
         $res = $this->redis->get('data_list:'.$redisKey);
 
         $res = base64_decode($res);
-        $res = (array) json_decode($res, true);
+        $res = (array) json_decode($res, TRUE);
 
         if (count($res) > 0) {
             return $res;

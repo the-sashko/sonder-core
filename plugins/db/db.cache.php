@@ -35,7 +35,7 @@ class DBCache
                 break;
         }
 
-        if (NULL != $error) {
+        if (NULL !== $error) {
             throw new Exception($error);
         }
     }

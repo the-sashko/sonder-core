@@ -58,7 +58,7 @@ class ModelCore extends CommonCore
     public function setConfigData() : void
     {
         $configDataJSON   = file_get_contents(self::MAIN_CONFIG_PATH);
-        $this->configData = json_decode($configDataJSON, true);
+        $this->configData = json_decode($configDataJSON, TRUE);
     }
 
     /**

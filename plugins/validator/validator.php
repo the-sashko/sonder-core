@@ -53,7 +53,7 @@ class ValidatorPlugin
     private function _isValidID(string $value = '') : bool
     {
         if (!preg_match('/^([0-9]+)$/su', $value)) {
-            return false;
+            return FALSE;
         }
 
         $value = (int) $value;
@@ -110,7 +110,7 @@ class ValidatorPlugin
     private function _isValidAge(string $value = '') : bool
     {
         if (!preg_match('/^([0-9]+)$/su', $value)) {
-            return false;
+            return FALSE;
         }
 
         $value = (int) $value;
@@ -128,15 +128,15 @@ class ValidatorPlugin
     private function _isValidSlug(string $value = '') : bool
     {
         if (!$this->_isValidTitle($value)) {
-            return false;
+            return FALSE;
         }
 
         if (preg_match('/^(.*?)\-\-(.*?)$/su', $value)) {
-            return false;
+            return FALSE;
         }
 
         if (preg_match('/(^\-(.*?)$)|(^(.*?)\-$)/su', $value)) {
-            return false;
+            return FALSE;
         }
 
         return preg_match('/^([0-9a-z\-]+)$/su', $value);

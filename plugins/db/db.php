@@ -143,7 +143,7 @@ class DB
         string $scope = 'default'
     ) : bool
     {
-        $scope = $scope != '' ? $scope : 'default';
+        $scope = '' !== $scope ? $scope : 'default';
 
         if ($this->dbInstance == NULL) {
             $this->_setDBInstance();
@@ -255,7 +255,7 @@ class DB
      */
     private function _transaction(string $transactionSQL = '') : bool
     {
-        if ($this->dbInstance == NULL) {
+        if (NULL === $this->dbInstance) {
             $this->_setDBInstance();
         }
 

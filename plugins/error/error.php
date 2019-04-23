@@ -68,7 +68,7 @@ class ErrorPlugin
         if (!$isDisplay) {
             echo 'Internal Server Error!';
 
-            return false;
+            return FALSE;
         }
 
         include __DIR__.'/tpl/error.tpl';
@@ -154,7 +154,7 @@ class ErrorPlugin
     {
         include __DIR__.'/tpl/exception.tpl';
 
-        return true;
+        return TRUE;
     }
 
     /**

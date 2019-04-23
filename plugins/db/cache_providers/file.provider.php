@@ -83,8 +83,8 @@ class DBFileCacheProvider
 
         foreach (scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem) {
             if (
-                '.' != $fileItem &&
-                '..' != $fileItem &&
+                '.' !== $fileItem &&
+                '..' !== $fileItem &&
                 is_file($this::DB_CACHE_DIR.$scope.'/'.$fileItem)
             ) {
                 unlink($this::DB_CACHE_DIR.$scope.'/'.$fileItem);

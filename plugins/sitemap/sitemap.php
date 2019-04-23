@@ -26,8 +26,8 @@ class SitemapPlugin
 
         foreach (scandir(static::SITEMAP_DIR) as $fileItem) {
             if (
-                $fileItem!='.' &&
-                $fileItem!='..' &&
+                '.' !== $fileItem &&
+                '..' !== $fileItem &&
                 is_file(static::SITEMAP_DIR.$fileItem)
             ) {
                 unlink(static::SITEMAP_DIR.$fileItem);
@@ -119,7 +119,7 @@ class SitemapPlugin
         string $sitemapName = 'sitemap'
     ) : string
     {
-        if ($sitemapName != 'sitemap') {
+        if ('sitemap' !== $sitemapName) {
             return static::SITEMAP_DIR.$sitemapName.'.xml';
         }
 

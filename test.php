@@ -71,7 +71,7 @@ class Test extends App
     {
         //Mock For App::_isControllerExist()
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -89,7 +89,7 @@ class Test extends App
     {
         //Mock For App::_isValidControllerAction()
 
-        return true;
+        return TRUE;
     }
 
     /**

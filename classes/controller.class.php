@@ -354,7 +354,7 @@ class ControllerCore extends CommonCore
 
         $metaData['copyright'] = '&copy; '.$metaData['site_name'];
 
-        if (date('Y') != $launchYear) {
+        if (date('Y') !== $launchYear) {
             $metaData['copyright'] = $metaData['copyright'].' '.
                                      $launchYear.'-'.date('Y');
         } else {
