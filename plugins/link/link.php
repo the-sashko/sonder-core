@@ -232,8 +232,8 @@ class LinkPlugin
      */
     private function _getWebPageMetaData(string $url = '') : array
     {
-        $cacheFile = __DIR__.'/cache/'.hash('sha512',$url).'_'.
-                     hash('md5',$url).'.dat';
+        $cacheFile = __DIR__.'/cache/'.hash('sha512', $url).'_'.
+                     hash('md5', $url).'.dat';
 
         if (file_exists($cacheFile) && is_file($cacheFile)) {
             return $this->_getWebPageMetaDataFromCache($cacheFile);
@@ -388,18 +388,18 @@ class LinkPlugin
             return '/assets/img/website.png';
         }
 
-        if (preg_match('/^\/\/(.*?)$/su',$image)) {
+        if (preg_match('/^\/\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
             return "{$protocol}:{$image}";
         }
 
-        if (preg_match('/^\/(.*?)$/su',$image)) {
+        if (preg_match('/^\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
             $domain = $this->_getDomain($url);
             return  "{$protocol}://{$domain}/{$image}";
         }
 
-        if (!preg_match('/^http(s|)\:\/\/(.*?)$/su',$image)) {
+        if (!preg_match('/^http(s|)\:\/\/(.*?)$/su', $image)) {
             $url = exeplode('#', $url)[0];
             $url = exeplode('&', $url)[0];
             $url = exeplode('?', $url)[0];
@@ -512,7 +512,7 @@ class LinkPlugin
             return $this->_parseHTMLTag('META_DESCRIPTION_REGEX', 7, $html);
         }
 
-        if ($this->_isTagExists('META_DESCRIPTION_REGEX_ALT',$html)) {
+        if ($this->_isTagExists('META_DESCRIPTION_REGEX_ALT', $html)) {
             return $this->_parseHTMLTag(
                 'META_DESCRIPTION_REGEX_ALT',
                 4,
@@ -846,7 +846,7 @@ class LinkPlugin
         if (count($URLParts) > 0 && strlen($URLParts[0]) > 0) {
             $url = $URLParts[0];
             $url = trim($url);
-            $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su','',$url);
+            $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su', '', $url);
             $metaData = $this->_getWebPageMetaData($url);
         }
 
