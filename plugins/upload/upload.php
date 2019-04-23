@@ -173,7 +173,7 @@ class UploadPlugin
 
         $fileExtension = $this->_getExtensionFromName($file['name']);
 
-        if (!in_array($fileExtension, $this->extensions)) {
+        if (!in_array($fileExtension, $this->extensions, TRUE)) {
             return [
                 'status' => FALSE,
                 'data'   => 'Bad File Type'

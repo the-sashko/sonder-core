@@ -906,7 +906,7 @@ class LinkPlugin
     ) : bool
     {
         if (strlen($regexp) < 1) {
-            return false;
+            return FALSE;
         }
 
         $regexp = static::$regexp;

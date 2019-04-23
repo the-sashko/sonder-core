@@ -145,7 +145,7 @@ class DB
     {
         $scope = '' !== $scope ? $scope : 'default';
 
-        if ($this->dbInstance == NULL) {
+        if (NULL === $this->dbInstance) {
             $this->_setDBInstance();
         }
 
