@@ -5,14 +5,14 @@
 class ModelObjectCore extends DBObjectClass
 {
     /**
-     * @var int Count Items On Page 
+     * @var int Count Items On Page
      */
     public $itemsOnPage = 10;
 
     /**
      * @var string Default Table In Data Base
      */
-    public $defaultTableName = NULL;
+    public $defaultTableName = null;
 
     /**
      * summary
@@ -41,9 +41,8 @@ class ModelObjectCore extends DBObjectClass
     public function getOne(
         string $sql = '',
         int    $ttl = self::DB_DEFAULT_TTL
-    ) : array
-    {
-        return $this->get($sql, FALSE, $ttl);
+    ) : array {
+        return $this->get($sql, false, $ttl);
     }
 
     /**
@@ -58,13 +57,12 @@ class ModelObjectCore extends DBObjectClass
      * @return array List Of Items
      */
     public function getByCondition(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        string $condition       = 'TRUE',
-        array  $limit           = [],
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $condition = 'TRUE',
+        array  $limit = [],
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $selectedColumns = $this->_prepareSelectedColumns(
             $selectedColumns
         );
@@ -80,7 +78,7 @@ class ModelObjectCore extends DBObjectClass
             {$queryLimit};
         ";
 
-        return $this->get($sql, TRUE, $ttl);
+        return $this->get($sql, true, $ttl);
     }
 
     /**
@@ -94,12 +92,11 @@ class ModelObjectCore extends DBObjectClass
      * @return array Item Data
      */
     public function getOneByCondition(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        string $condition       = 'TRUE',
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $condition = 'TRUE',
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $selectedColumns = $this->_prepareSelectedColumns($selectedColumns);
 
         $sql = "
@@ -111,7 +108,7 @@ class ModelObjectCore extends DBObjectClass
             LIMIT 1;
         ";
 
-        return $this->get($sql, FALSE, $ttl);
+        return $this->get($sql, false, $ttl);
     }
 
     /**
@@ -125,12 +122,11 @@ class ModelObjectCore extends DBObjectClass
      * @return array List Of Items
      */
     public function getAllByCondition(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        string $condition       = 'TRUE',
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $condition = 'TRUE',
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         return $this->getByCondition(
             $table,
             $selectedColumns,
@@ -150,11 +146,10 @@ class ModelObjectCore extends DBObjectClass
      * @return array List Of Items
      */
     public function getAll(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         return $this->getAllByCondition(
             $table,
             $selectedColumns,
@@ -175,13 +170,12 @@ class ModelObjectCore extends DBObjectClass
      * @return array List Of Items
      */
     public function getByPageWithCondition(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        string $condition       = 'TRUE',
-        int    $page            = 1,
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $condition = 'TRUE',
+        int    $page = 1,
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $limit = $this->getQueryLimitByPage($page);
 
         return $this->getByCondition(
@@ -204,12 +198,11 @@ class ModelObjectCore extends DBObjectClass
      * @return array List Of Items
      */
     public function getAllByPage(
-        string $table           = '',
+        string $table = '',
         array  $selectedColumns = [],
-        int    $page            = 1,
-        int    $ttl             = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        int    $page = 1,
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         return $this->getByPageWithCondition(
             $table,
             $selectedColumns,
@@ -230,10 +223,9 @@ class ModelObjectCore extends DBObjectClass
      */
     public function getByID(
         string $table = '',
-        int    $id    = -1,
-        int    $ttl   = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        int    $id = -1,
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $condition = "\"id\" = {$id}";
 
         return $this->getOneByCondition(
@@ -255,10 +247,9 @@ class ModelObjectCore extends DBObjectClass
      */
     public function getBySlug(
         string $table = '',
-        string $slug  = '',
-        int    $ttl   = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $slug = '',
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $condition = "\"slug\" = '{$slug}'";
 
         return $this->getOneByCondition(
@@ -298,7 +289,7 @@ class ModelObjectCore extends DBObjectClass
             FROM \"{$table}\"
             GROUP BY \"id\";
         ";
-        $res = $this->get($sql, FALSE, self::DB_DEFAULT_TTL);
+        $res = $this->get($sql, false, self::DB_DEFAULT_TTL);
 
         if (!array_key_exists('max_id', $res)) {
             return 0;
@@ -317,11 +308,10 @@ class ModelObjectCore extends DBObjectClass
      * @return int Count Items In Data Base Table
      */
     public function count(
-        string $table     = '',
+        string $table = '',
         string $condition = 'TRUE',
-        int    $ttl       = self::DB_DEFAULT_TTL
-    ) : int
-    {
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : int {
         $sql = "
             SELECT COUNT(\"id\") AS count
             FROM {$table}
@@ -356,9 +346,8 @@ class ModelObjectCore extends DBObjectClass
      */
     public function countAll(
         string $table = '',
-        int    $ttl   = self::DB_DEFAULT_TTL
-    ) : int
-    {
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : int {
         return $this->count($table, 'TRUE', $ttl);
     }
 
@@ -390,8 +379,7 @@ class ModelObjectCore extends DBObjectClass
      */
     private function _prepareSelectedColumns(
         array $selectedColumns = []
-    ) : string
-    {
+    ) : string {
         if (count($selectedColumns)>0) {
             $selectedColumns = implode(',', $selectedColumns);
         } else {
