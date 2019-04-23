@@ -54,7 +54,6 @@ class ControllerCore extends CommonCore
         $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
         $this->_setPage($page);
-        $this->_escapeSessionData();
         $this->_setFlashSessionData();
         $this->_initConfigs();
         $this->_setOutputType();
@@ -104,21 +103,6 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Sanitize Data From Session
-     */
-    private function _escapeSessionData() : void
-    {
-        $securityPlugin = $this->initPlugin('security');
-
-        $escapeMethod = [
-            $securityPlugin,
-            'escapeInput'
-        ];
-
-        $_SESSION = array_map($escapeMethod, $_SESSION);
-    }
-
-    /**
      * Set Param Data From URL
      *
      * @param string $URLParam Param Data From URL
@@ -136,18 +120,16 @@ class ControllerCore extends CommonCore
     private function _setFlashSessionData() : void
     {
         if (
-            isset($_SESSION['flash_data']) &&
-            is_array($_SESSION['flash_data']) &&
-            count($_SESSION['flash_data']) > 0
+            $this->session->get('flash_data') &&
+            is_array($this->session->get('flash_data')
         ) {
-            foreach (
-                $_SESSION['flash_data'] as $flashDataIDX => $flashDataVal
-            ) {
+            $flashData = $this->session->get('flash_data');
+            foreach ($flashData as $flashDataIDX => $flashDataVal) {
                 $this->commonData[$flashDataIDX] = $flashDataVal;
             }
         }
 
-        $_SESSION['flash_data'] = [];
+        $this->session->set('flash_data', []);
     }
 
     /**
@@ -385,10 +367,12 @@ class ControllerCore extends CommonCore
 
         if (!array_key_exists('canonical_url', $meta)) {
             if (
-                array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
-                strlen($_SERVER['REAL_REQUEST_URI']) > 0
+                $this->serverInfo->has('REAL_REQUEST_URI') &&
+                strlen($this->serverInfo->get('REAL_REQUEST_URI')) > 0
             ) {
-                $meta['canonical_url'] = $_SERVER['REAL_REQUEST_URI'];
+                $meta['canonical_url'] = $this->serverInfo->get(
+                    'REAL_REQUEST_URI'
+                );
             } else {
                 $meta['canonical_url'] = '/';
             }

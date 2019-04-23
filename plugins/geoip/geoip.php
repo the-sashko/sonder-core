@@ -11,32 +11,34 @@ class GeoIPPlugin
      */
     public function getIP() : string
     {
-        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            return $this->escapeInput($_SERVER["HTTP_CF_CONNECTING_IP"]);
+        $serverInfo = new ServerInfo();
+
+        if ($serverInfo->has('HTTP_CF_CONNECTING_IP')) {
+            return $serverInfo->get('HTTP_CF_CONNECTING_IP');
         }
 
-        if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            return $this->escapeInput($_SERVER['HTTP_CLIENT_IP']);
+        if ($serverInfo->has('HTTP_CLIENT_IP')) {
+            return $serverInfo->get('HTTP_CLIENT_IP');
         }
 
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $this->escapeInput($_SERVER['HTTP_X_FORWARDED_FOR']);
+        if ($serverInfo->has('HTTP_X_FORWARDED_FOR')) {
+            return $serverInfo->get('HTTP_X_FORWARDED_FOR');
         }
 
-        if (isset($_SERVER['HTTP_X_FORWARDED'])) {
-            return $this->escapeInput($_SERVER['HTTP_X_FORWARDED']);
+        if ($serverInfo->has('HTTP_X_FORWARDED')) {
+            return $serverInfo->get('HTTP_X_FORWARDED');
         }
 
-        if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-            return $this->escapeInput($_SERVER['HTTP_FORWARDED_FOR']);
+        if ($serverInfo->has('HTTP_FORWARDED_FOR')) {
+            return $serverInfo->get('HTTP_FORWARDED_FOR');
         }
 
-        if (isset($_SERVER['HTTP_FORWARDED'])) {
-            return $this->escapeInput($_SERVER['HTTP_FORWARDED']);
+        if ($serverInfo->has('HTTP_FORWARDED')) {
+            return $serverInfo->get('HTTP_FORWARDED');
         }
 
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            return $this->escapeInput($_SERVER['REMOTE_ADDR']);
+        if ($serverInfo->has('REMOTE_ADDR')) {
+            return $serverInfo->get('REMOTE_ADDR');
         }
 
         return '0.0.0.0';

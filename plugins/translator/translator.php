@@ -62,7 +62,8 @@ class TranslatorPlugin
      */
     private function _getUserLanguageCodeFromSession() : string
     {
-        if (!array_key_exists('user_lang_code', $_SESSION)) {
+        $session = new SessionPlugin();
+        if (!$session->has('user_lang_code')) {
             if (defined('DEFAULT_LANGUAGE')) {
                 return DEFAULT_LANGUAGE;
             } else {
@@ -70,7 +71,7 @@ class TranslatorPlugin
             }
         }
 
-        $langCode = $_SESSION['user_lang_code'];
+        $langCode = $session->get('user_lang_code');
 
         $langCode = trim($langCode);
         $langCode = (string)mb_convert_case($langCode,MB_CASE_LOWER);

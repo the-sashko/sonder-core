@@ -5,6 +5,22 @@
 class CommonCore
 {
     /**
+     * @var object Session Plugin Instance
+     * */
+    public $session = NULL;
+
+    /**
+     * @var object ServerInfo Plugin Instance
+     * */
+    public $serverInfo = NULL;
+
+    public function __construct()
+    {
+        $this->session    = $this->initPlugin('session');
+        $this->serverInfo = $this->initPlugin('serverInfo');
+    }
+
+    /**
     * Get Model Instance By Name
     *
     * @param string $model Name Of Model
