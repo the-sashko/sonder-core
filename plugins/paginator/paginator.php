@@ -77,7 +77,7 @@ class PaginatorPlugin
     private function _setPagesHTML() : void
     {
         $prevPage = 1;
-        foreach ($this->pages AS $idx => $page) {
+        foreach ($this->pages as $idx => $page) {
             if ($page > 0) {
                 if ($this->pages[$idx] != $this->currPage) {
                     if ($page > 1) {
@@ -118,7 +118,7 @@ class PaginatorPlugin
             return '';
         }
 
-        foreach ($this->pages AS $idx => $page) {
+        foreach ($this->pages as $idx => $page) {
             $paginatorHTML = $paginatorHTML.$page;
         }
 

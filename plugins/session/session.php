@@ -34,7 +34,7 @@ class SessionPlugin
 
     /**
      * Set Data To Session Value
-     * 
+     *
      * @param string $valueName Name Of Value
      * @param mixed  $valueData Data Of Value
      */
@@ -46,7 +46,7 @@ class SessionPlugin
 
     /**
      * Check Is Session Value Exists
-     * 
+     *
      * @param string $vaueName Name Of Value
      *
      * @return bool Is Value Exists In Session

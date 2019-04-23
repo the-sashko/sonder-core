@@ -75,12 +75,12 @@ class Test extends App
     }
 
     /**
-     * Mock Method Of Validation Methods 
+     * Mock Method Of Validation Methods
      *
      * @param ControllerCore $controller ControllerCore Instance
      * @param string         $action     Name Of Method
      *
-     * @return bool Is Method Public And Exists In Controller 
+     * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidControllerAction(
         ControllerCore $controller,

@@ -63,7 +63,7 @@ class TranslitPlugin
             $inputString
         );
         $inputString = preg_replace('/([\-]+)/su', '-', $inputString);
-        $inputString = preg_replace('/(^-)|(-$)/su','',$inputString);
+        $inputString = preg_replace('/(^-)|(-$)/su', '', $inputString);
 
         return $inputString;
     }

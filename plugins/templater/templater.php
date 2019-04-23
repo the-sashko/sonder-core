@@ -36,29 +36,29 @@ class TemplaterPlugin
         $GLOBALS['templateParams'] = $dataParams;
         $GLOBALS['templateScope']  = $this->scope;
         $GLOBALS['templateTTL']    = $ttl;
-        $template = strlen($template)>0?$template:'main';
+        $template = strlen($template) > 0 ? $template : 'main';
 
         if ($ttl>0) {
             $currSlug    = $_SERVER['REQUEST_URI'];
-            $currSlug    = str_replace('/','_', $currSlug);
-            $currSlug    = preg_replace('/(^_)|(_$)/su','',$currSlug);
+            $currSlug    = str_replace('/', '_', $currSlug);
+            $currSlug    = preg_replace('/(^_)|(_$)/su', '', $currSlug);
             $tplCacheDir = static::TEMPLATE_DIR.$currSlug;
 
             if (!is_dir($tplCacheDir)) {
                 mkdir($tplCacheDir);
-                chmod($tplCacheDir,0775);
+                chmod($tplCacheDir, 0775);
             }
 
             $tplCacheDir = $tplCacheDir.'/'.$this->scope;
             if (!is_dir($tplCacheDir)) {
                 mkdir($tplCacheDir);
-                chmod($tplCacheDir,0775);
+                chmod($tplCacheDir, 0775);
             }
 
             $tplCacheDir = "{$tplCacheDir}/{$template}";
             if (!is_dir($tplCacheDir)) {
                 mkdir($tplCacheDir);
-                chmod($tplCacheDir,0775);
+                chmod($tplCacheDir, 0775);
             }
 
             $GLOBALS['templateCacheDir'] = $tplCacheDir;

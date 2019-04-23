@@ -176,7 +176,7 @@ class YoutubePlugin
      *
      * @param string $videoID Youtube Video ID
      *
-     * @return string Youtube Video Thumbnail Data 
+     * @return string Youtube Video Thumbnail Data
      */
     private function _getThumbnailContent(string $videoID = '') : string
     {

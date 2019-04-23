@@ -2,7 +2,7 @@
 /**
  * Plugin For Working With Server Meta Data
  */
-class SessionPlugin
+class ServerInfoPlugin
 {
     /**
      * @var array Server Meta Data
@@ -34,7 +34,7 @@ class SessionPlugin
 
     /**
      * Check Is Server Meta Data Value Exists
-     * 
+     *
      * @param string $vaueName Name Of Value
      *
      * @return bool Is Value Exists In Server Meta Data

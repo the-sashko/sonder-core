@@ -51,6 +51,9 @@ class ControllerCore extends CommonCore
     )
     {
         session_start();
+
+        parent::__construct();
+
         $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
         $this->_setPage($page);
@@ -361,7 +364,7 @@ class ControllerCore extends CommonCore
         if (count($pagePath) > 0) {
             $metaData['title'] = $this->_getTitleByPagePath($pagePath).
                                  static::PAGE_TITLE_SEPARATOR.
-                                 $metaData['title']; 
+                                 $metaData['title'];
         }
 
         if (!array_key_exists('canonical_url', $meta)) {

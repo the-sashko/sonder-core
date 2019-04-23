@@ -311,7 +311,7 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL UPDATE Query
      */
-    private function _prepareUpdateValues (
+    private function _prepareUpdateValues(
         array $columns = [],
         array $values  = []
     ) : string

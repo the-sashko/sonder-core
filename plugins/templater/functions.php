@@ -40,7 +40,7 @@ function renderPart(
             $partCacheData = file_get_contents(
                 $GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat'
             );
-            $partCacheData = json_decode($partCacheData,true);
+            $partCacheData = json_decode($partCacheData, TRUE);
             if (
                 isset($partCacheData['timestamp']) &&
                 intval($partCacheData['timestamp']) > time() &&

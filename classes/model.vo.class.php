@@ -5,7 +5,7 @@
 class ValuesObject
 {
     /**
-     * @var List Of Model Instance Data 
+     * @var List Of Model Instance Data
      */
     public $data = [];
 

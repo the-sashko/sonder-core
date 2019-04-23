@@ -37,7 +37,7 @@ class ShortenerPlugin
      * @param string $url    Full URL For Shorting
      * @param string $source Full URL Source Param
      *
-     * @return string Short Link URL 
+     * @return string Short Link URL
      */
     public function send(
         string $link   = '#',

@@ -224,7 +224,7 @@ class LinkPlugin
     }
 
     /**
-     * Get Web Page Meta Data 
+     * Get Web Page Meta Data
      *
      * @param string $url Web Page URL
      *
