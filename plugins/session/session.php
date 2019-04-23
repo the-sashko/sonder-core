@@ -12,8 +12,8 @@ class SessionPlugin
     public function __construct()
     {
         $securityPlugin = new SecurityPlugin();
-        $_SESSION = $securityPlugi->escapeInput($_SESSION);
-        $this->_data = new ValueObject($_SESSION);
+        $_SESSION       = $securityPlugin->escapeInput($_SESSION);
+        $this->_data    = new ValueObject($_SESSION);
     }
 
     /**
@@ -40,8 +40,8 @@ class SessionPlugin
      */
     public function set(string $valueName = '', $valueData = NULL)
     {
-        $this->_data->set($valueName) = $valueData;
-        $_SESSION[$valueName]         = $valueData;
+        $this->_data->set($valueName, $valueData);
+        $_SESSION[$valueName] = $valueData;
     }
 
     /**
