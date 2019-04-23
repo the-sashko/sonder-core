@@ -14,7 +14,7 @@ interface ModelCRUD
      */
     public function formHandler(
         array $formData = [],
-        int   $id       = -1
+        int   $id = -1
     ) : array;
 }
 ?>

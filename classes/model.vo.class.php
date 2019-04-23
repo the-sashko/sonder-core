@@ -5,7 +5,7 @@
 class ValuesObject
 {
     /**
-     * @var List Of Model Instance Data 
+     * @var List Of Model Instance Data
      */
     public $data = [];
 
@@ -36,7 +36,7 @@ class ValuesObject
      * @param string $valueName Data Name
      * @param mixed  $value     Data Value
      */
-    public function set(string $valueName = '', $value = NULL) : void
+    public function set(string $valueName = '', $value = null) : void
     {
         $this->data[$valueName] = $value;
     }

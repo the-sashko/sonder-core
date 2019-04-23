@@ -2,7 +2,7 @@
 /**
  * Main Application Class For API Requests
  */
-class API Extends App
+class API extends App
 {
     public function __construct()
     {
@@ -14,7 +14,7 @@ class API Extends App
      */
     private function _error() : void
     {
-        header('Location: /', TRUE, 302);
+        header('Location: /', true, 302);
         exit(0);
     }
 

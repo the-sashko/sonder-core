@@ -31,8 +31,7 @@ class Test extends App
         string $errMessage,
         string $errFile,
         int    $errLine
-    ) : void
-    {
+    ) : void {
         $expMessage = $exp->getMessage();
 
         throw new Exception($errMessage);
@@ -75,18 +74,17 @@ class Test extends App
     }
 
     /**
-     * Mock Method Of Validation Methods 
+     * Mock Method Of Validation Methods
      *
      * @param ControllerCore $controller ControllerCore Instance
      * @param string         $action     Name Of Method
      *
-     * @return bool Is Method Public And Exists In Controller 
+     * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidControllerAction(
         ControllerCore $controller,
         string         $action
-    ) : bool
-    {
+    ) : bool {
         //Mock For App::_isValidControllerAction()
 
         return true;

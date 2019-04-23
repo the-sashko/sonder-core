@@ -6,7 +6,7 @@ class GeoIPPlugin
 {
     /**
      * Get User IP Address From Request
-     * 
+     *
      * @return string IP Address
      */
     public function getIP() : string

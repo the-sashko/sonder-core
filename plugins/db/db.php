@@ -12,12 +12,12 @@ class DB
     /**
      * @var PDO Instance Of PDO
      */
-    public $dbInstance = NULL;
+    public $dbInstance = null;
 
     /**
      * @var object Instance Of Data Base Cache
      */
-    public $dbCache = NULL;
+    public $dbCache = null;
 
     /**
      * Set Data Base Config And Data Base Cache
@@ -46,7 +46,7 @@ class DB
 
     public function __destruct()
     {
-        $this->dbInstance = NULL;
+        $this->dbInstance = null;
     }
 
     /**
@@ -68,11 +68,10 @@ class DB
      * @return PDO Instance Of PDO
      */
     private function _dbConnect(
-        string $dsn      = '',
-        string $user     = '',
+        string $dsn = '',
+        string $user = '',
         string $password = ''
-    ) : PDO
-    {
+    ) : PDO {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
@@ -98,18 +97,17 @@ class DB
      * @return array Data From Data Base
      */
     public function select(
-        string $sql   = '',
+        string $sql = '',
         string $scope = 'default',
-        int    $ttl   = -1
-    ) : array
-    {
+        int    $ttl = -1
+    ) : array {
         $res = $this->dbCache->get($sql, $scope, $ttl);
 
         if (count($res) > 0) {
             return $res;
         }
 
-        if ($this->dbInstance == NULL) {
+        if ($this->dbInstance == null) {
             $this->_setDBInstance();
         }
 
@@ -139,13 +137,12 @@ class DB
      * @return bool Is SQL Query Successfully Executed
      */
     public function query(
-        string $sql   = '',
+        string $sql = '',
         string $scope = 'default'
-    ) : bool
-    {
+    ) : bool {
         $scope = $scope != '' ? $scope : 'default';
 
-        if ($this->dbInstance == NULL) {
+        if ($this->dbInstance == null) {
             $this->_setDBInstance();
         }
 
@@ -255,7 +252,7 @@ class DB
      */
     private function _transaction(string $transactionSQL = '') : bool
     {
-        if ($this->dbInstance == NULL) {
+        if ($this->dbInstance == null) {
             $this->_setDBInstance();
         }
 

@@ -7,7 +7,7 @@ class RedisPlugin
     /**
      * @var object Predis Client Instance
      */
-    public $client = NULL;
+    public $client = null;
 
     /**
      * @var int Default Time To Live Redis Data
@@ -64,26 +64,26 @@ class RedisPlugin
     private function _validateSettings(array $settings = []) : bool
     {
         if (count($settings) < 4) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('scheme', $settings)) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('host', $settings)) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('port', $settings)) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('password', $settings)) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -101,7 +101,7 @@ class RedisPlugin
 
         $settings = file_get_contents($configPath);
 
-        return (array) json_decode($settings, TRUE);
+        return (array) json_decode($settings, true);
     }
 
     /**
@@ -182,16 +182,15 @@ class RedisPlugin
      * @return bool Is Saving Value To Redis Successfull
      */
     public function set(
-        string $key   = '',
+        string $key = '',
         string $value = '',
-        int    $ttl   = -1
-    ) : bool
-    {
+        int    $ttl = -1
+    ) : bool {
         $key = $this->getKey($key);
         $ttl = $this->getTTL($ttl);
 
         if (!strlen($key) > 0) {
-            return FALSE;
+            return false;
         }
 
         if ($ttl > 0) {
@@ -200,7 +199,7 @@ class RedisPlugin
             $this->client->set($key, $value);
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -240,8 +239,7 @@ class RedisPlugin
     public function sendToChannel(
         string $channel = '',
         string $message = ''
-    ) : void
-    {
+    ) : void {
         if (strlen($channel) > 0 && strlen($message) > 0) {
             $this->client->publish($channel, $message);
         }
@@ -257,7 +255,7 @@ class RedisPlugin
     public function delByPattern(string $keyPattern = '') : bool
     {
         if (!strlen($keyPattern) > 0) {
-            return FALSE;
+            return false;
         }
 
         $keyPattern = $this->getKey($keyPattern);
@@ -265,12 +263,12 @@ class RedisPlugin
         $keys = (array) $this->client->keys($keyPattern);
 
         if (!count($keys) > 0) {
-            return FALSE;
+            return false;
         }
 
         array_map(array($this->client, 'del'), $keys);
 
-        return TRUE;
+        return true;
     }
 }
 ?>

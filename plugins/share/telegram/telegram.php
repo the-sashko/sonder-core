@@ -71,14 +71,13 @@ class TelegramPlugin
     /**
      * Send Message To Chat, Channel Or User By ID
      *
-     * @param string $message Message 
+     * @param string $message Message
      * @param string $chatID ID Of Chat Or Channel
      */
     private function _sendToChat(
         string $message = '',
         string $chatID = ''
-    ) : void
-    {
+    ) : void {
         $url = $this->_getAPIURL();
         $url = $url.'?chat_id='.$chatID;
         $url = $url.'&text='.$message;
@@ -145,12 +144,12 @@ class TelegramPlugin
     {
         return [
             CURLOPT_URL            => $url,
-            CURLOPT_RETURNTRANSFER => TRUE,
+            CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS      => 10,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_CUSTOMREQUEST  => 'GET',
             CURLOPT_POSTFIELDS     => '',
-            CURLOPT_FAILONERROR    => FALSE
+            CURLOPT_FAILONERROR    => false
         ];
     }
 

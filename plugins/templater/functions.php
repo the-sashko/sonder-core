@@ -31,16 +31,15 @@ function renderPage(string $templatePage = '') : void
  */
 function renderPart(
     string $templatePart = '',
-    int    $ttl          = 0,
+    int    $ttl = 0,
     array  $templateData = []
-) : bool
-{
+) : bool {
     if ($ttl>0) {
         if (is_file($GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat')) {
             $partCacheData = file_get_contents(
                 $GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat'
             );
-            $partCacheData = json_decode($partCacheData,true);
+            $partCacheData = json_decode($partCacheData, true);
             if (
                 isset($partCacheData['timestamp']) &&
                 intval($partCacheData['timestamp']) > time() &&
@@ -90,7 +89,7 @@ function renderPart(
         );
     }
 
-    return TRUE;
+    return true;
 }
 
 /**
@@ -115,9 +114,8 @@ function _page(string $templatePage = '') : void
 function _part(
     string $templatePart = '',
     array  $templateData = [],
-    bool   $cache        = FALSE
-) : void
-{
+    bool   $cache = false
+) : void {
     $ttl = $cache ? (int)$GLOBALS['templateTTL'] : 0;
     renderPart($templatePart, $ttl, $templateData);
 }

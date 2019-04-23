@@ -11,7 +11,7 @@ class SecurityPlugin
      *
      * @return mixed Output Sanitized Value (String Or Array Of Strings)
      */
-    public function escapeInput($input = NULL)
+    public function escapeInput($input = null)
     {
         if (is_array($input)) {
             return array_map([$this, 'escapeInput'], $input);

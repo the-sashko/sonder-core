@@ -12,7 +12,7 @@ class TranslatorPlugin
     /**
      * @var string User Language Code
      */
-    public $userLanguageCode = NULL;
+    public $userLanguageCode = null;
 
     /**
      * Get Translation String From Dictionary
@@ -32,7 +32,7 @@ class TranslatorPlugin
         }
 
         $dataJSON = file_get_contents($dictFile);
-        $dictData = (array) json_decode($dataJSON, TRUE);
+        $dictData = (array) json_decode($dataJSON, true);
 
         if (array_key_exists($word, $dictData)) {
             return $dictData[$word];
@@ -74,7 +74,7 @@ class TranslatorPlugin
         $langCode = $session->get('user_lang_code');
 
         $langCode = trim($langCode);
-        $langCode = (string)mb_convert_case($langCode,MB_CASE_LOWER);
+        $langCode = (string)mb_convert_case($langCode, MB_CASE_LOWER);
 
         if (2 !== strlen($langCode)) {
             return self::DEFAULT_LANGUAGE;

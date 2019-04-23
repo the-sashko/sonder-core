@@ -12,7 +12,7 @@ class TwitterPlugin
     /**
      * @var object Instance Of Codebird
      */
-    public $codebird = NULL;
+    public $codebird = null;
 
     /**
      * @var array Credentials
@@ -42,7 +42,7 @@ class TwitterPlugin
     {
         $this->_validateMessage($message);
 
-        if ($this->codebird == NULL) {
+        if ($this->codebird == null) {
             $this->_setCodebirdInstance();
         }
 
@@ -94,38 +94,38 @@ class TwitterPlugin
     private function _validateCredentials(array $credentials = []) : bool
     {
         if (!array_key_exists('consumer', $credentials)) {
-            return FALSE;
+            return false;
         }
 
         if (!is_array($credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('key', $credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('secret', $credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('access', $credentials)) {
-            return FALSE;
+            return false;
         }
 
         if (!is_array($credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('token', $credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('secret', $credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -142,7 +142,7 @@ class TwitterPlugin
         }
 
         if (!array_key_exists('errors', $res)) {
-            return TRUE;
+            return true;
         }
 
         $message = 'Unknow Twitter API Errror';

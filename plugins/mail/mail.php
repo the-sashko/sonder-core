@@ -15,12 +15,11 @@ class MailPlugin
      * @return bool Is Message Successfully Send
      */
     public function sendMail(
-        string $email      = '',
-        string $message    = '',
-        string $subject    = '',
+        string $email = '',
+        string $message = '',
+        string $subject = '',
         string $replyEmail = ''
-    ) : bool
-    {
+    ) : bool {
         if (
             preg_match('/^(.*?)@(.*?)\.(.*?)$/su', $email) > 0 &&
             strlen($message) > 0

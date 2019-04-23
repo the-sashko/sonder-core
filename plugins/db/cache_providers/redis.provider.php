@@ -12,14 +12,15 @@ class DBRedisCacheProvider
     /**
      * @var object Instance Of RedisPlugin
      */
-    public $redis = NULL;
+    public $redis = null;
     
     /**
      * @var object Instance Of DBFileCacheProvider
      */
-    public $fileProvider = NULL;
+    public $fileProvider = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->redis = new RedisPlugin();
         $this->redis->setKeyPrefix(static::REDIS_DBCACHE_KEY_PREFIX);
 
@@ -37,12 +38,11 @@ class DBRedisCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
+        string $sql = '',
+        array  $data = [],
         string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
-    {
+        int    $ttl = -1
+    ) : bool {
         $redisKey = $scope.':'.md5($sql);
 
         $cacheData = json_encode($data);
@@ -72,10 +72,9 @@ class DBRedisCacheProvider
      * @return array Cached Data
      */
     public function get(
-        string $sql   = '',
+        string $sql = '',
         string $scope = 'default'
-    ) : array
-    {
+    ) : array {
         $redisKey = $scope.':'.md5($sql);
 
         $res = $this->redis->get('query_list:'.$redisKey);

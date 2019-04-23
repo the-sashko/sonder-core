@@ -22,9 +22,8 @@ class ErrorPlugin
         string $errFile,
         int    $errLine,
         array  $debugBacktrace = [],
-        bool   $isJSONOutput   = FALSE
-    ) : bool
-    {
+        bool   $isJSONOutput = false
+    ) : bool {
         if (!$isJSONOutput) {
             return $this->_displayHTMLError(
                 $errCode,
@@ -61,8 +60,7 @@ class ErrorPlugin
         string $errFile,
         int    $errLine,
         array  $debugBacktrace
-    ) : bool
-    {
+    ) : bool {
         $isDisplay = (bool) ini_get('display_errors');
 
         if (!$isDisplay) {
@@ -73,7 +71,7 @@ class ErrorPlugin
 
         include __DIR__.'/tpl/error.tpl';
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -93,8 +91,7 @@ class ErrorPlugin
         string $errFile,
         int    $errLine,
         array  $debugBacktrace
-    ) : bool
-    {
+    ) : bool {
         $output = [];
         $isDisplay = (bool) ini_get('display_errors');
 
@@ -120,7 +117,7 @@ class ErrorPlugin
         header('Content-Type: application/json');
         echo json_encode($output);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -133,9 +130,8 @@ class ErrorPlugin
      */
     public function displayException(
         string $expMessage,
-        bool   $isJSONOutput = FALSE
-    ) : bool
-    {
+        bool   $isJSONOutput = false
+    ) : bool {
         if (!$isJSONOutput) {
             return $this->_displayHTMLException($expMessage);
         }
@@ -175,7 +171,7 @@ class ErrorPlugin
         header('Content-Type: application/json');
         echo json_encode($output);
 
-        return TRUE;
+        return true;
     }
 }
 ?>

@@ -142,10 +142,9 @@ class MarkupPlugin
      * @return string Output Text Value
      */
     public function parseReplyShortCode(
-        string $text      = '',
+        string $text = '',
         int    $sectionID = 0
-    ) : string
-    {
+    ) : string {
         $text = preg_replace(
             '/\[Reply\:([0-9]+)\]/su',
             '<a

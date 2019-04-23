@@ -52,11 +52,10 @@ class SitemapPlugin
      */
     public function saveLinksToSitemap(
         string $sitemapName = '',
-        array  $links       = [],
-        string $frequency   = 'hourly',
-        float  $priority    = 0.5
-    ) : void
-    {
+        array  $links = [],
+        string $frequency = 'hourly',
+        float  $priority = 0.5
+    ) : void {
         $sitemapXML = '<urlset>';
 
         foreach ($links as $link) {
@@ -85,9 +84,8 @@ class SitemapPlugin
      */
     public function saveSummarySitemap(
         string $sitemapName = 'sitemap',
-        array  $sitemaps    = []
-    ) : void
-    {
+        array  $sitemaps = []
+    ) : void {
         $sitemapXML = '<sitemapindex>';
 
         foreach ($sitemaps as $sitemap) {
@@ -117,8 +115,7 @@ class SitemapPlugin
      */
     private function _getSitemapFilePath(
         string $sitemapName = 'sitemap'
-    ) : string
-    {
+    ) : string {
         if ($sitemapName != 'sitemap') {
             return static::SITEMAP_DIR.$sitemapName.'.xml';
         }

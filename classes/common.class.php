@@ -7,12 +7,12 @@ class CommonCore
     /**
      * @var object Session Plugin Instance
      * */
-    public $session = NULL;
+    public $session = null;
 
     /**
      * @var object ServerInfo Plugin Instance
      * */
-    public $serverInfo = NULL;
+    public $serverInfo = null;
 
     public function __construct()
     {
@@ -91,7 +91,7 @@ class CommonCore
 
         $configJSON = file_get_contents($configPath);
 
-        return (array) json_decode($configJSON, TRUE);
+        return (array) json_decode($configJSON, true);
     }
 }
 ?>

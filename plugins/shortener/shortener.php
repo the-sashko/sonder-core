@@ -21,11 +21,10 @@ class ShortenerPlugin
      * @param string $userToken Shortener API Token
      */
     public function setAPIOptions(
-        string $url       = '#',
-        int    $userID    = -1,
+        string $url = '#',
+        int    $userID = -1,
         string $userToken = ''
-    ) : void
-    {
+    ) : void {
         $this->APIOptions['url']        = $url;
         $this->APIOptions['user_id']    = $userID;
         $this->APIOptions['user_token'] = $userToken;
@@ -37,13 +36,12 @@ class ShortenerPlugin
      * @param string $url    Full URL For Shorting
      * @param string $source Full URL Source Param
      *
-     * @return string Short Link URL 
+     * @return string Short Link URL
      */
     public function send(
-        string $link   = '#',
+        string $link = '#',
         string $source = 'default'
-    ) : string
-    {
+    ) : string {
         $curlOptions = $this->_getCurlOptions($link, $source);
 
         $curl = curl_init();
@@ -99,10 +97,9 @@ class ShortenerPlugin
      * @return array List Of Curl Options
      */
     private function _getCurlOptions(
-        string $link   = '#',
+        string $link = '#',
         string $source = 'default'
-    ) : array
-    {
+    ) : array {
         $curlFields = $this->_getCurlFields($link, $source);
 
         $curlHeaders = $this->_getCurlHeaders();
@@ -128,8 +125,7 @@ class ShortenerPlugin
     private function _getCurlFields(
         string $link = '#',
         string $source = 'default'
-    ) : string
-    {
+    ) : string {
         $curlFields = [
             'link'   => $link,
             'source' => $source

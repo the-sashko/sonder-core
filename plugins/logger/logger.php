@@ -15,14 +15,13 @@ class LoggerPlugin
     public function log(
         string $message = '',
         string $logType = 'default'
-    ) : bool
-    {
+    ) : bool {
         if (strlen($message) < 3) {
-            return FALSE;
+            return false;
         }
 
         if (strlen($logType) < 3) {
-            return FALSE;
+            return false;
         }
 
         $dateString = date('[Y-m-d H:i:s]');
@@ -41,12 +40,11 @@ class LoggerPlugin
      * @return bool Is Entry Successfully Saved
      */
     public function logError(
-        string $message          = '',
-        bool   $isThrowException = FALSE
-    ) : bool
-    {
+        string $message = '',
+        bool   $isThrowException = false
+    ) : bool {
         if (strlen($message) < 3) {
-            return FALSE;
+            return false;
         }
 
         $res = $this->log($message, 'error');
@@ -67,25 +65,24 @@ class LoggerPlugin
      * @return bool Is Entry Successfully Saved
      */
     private function _writeToLogFile(
-        string $message     = '',
+        string $message = '',
         string $logFileName = ''
-    ) : bool
-    {
+    ) : bool {
         if (strlen($message) < 3) {
-            return FALSE;
+            return false;
         }
 
         $logFile = fopen($logFileName, 'a');
 
         if (!$logFile) {
-            return FALSE;
+            return false;
         }
 
         fwrite($logFile, $message);
 
         fclose($logFile);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -107,16 +104,16 @@ class LoggerPlugin
                        '-'.$oldYear.'-'.date('m').'-'.date('d').'.log';
 
         if (!file_exists($oldLogFileName)) {
-            return TRUE;
+            return true;
         }
 
         if (!is_file($oldLogFileName)) {
-            return TRUE;
+            return true;
         }
 
         unlink($oldLogFileName);
 
-        return TRUE;
+        return true;
     }
 
     /**

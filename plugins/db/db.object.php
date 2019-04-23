@@ -30,7 +30,7 @@ class DBObjectClass extends DB
     public function initStore() : void
     {
         $config = file_get_contents($this::DB_CONFIG_PATH);
-        $config = json_decode($config, TRUE);
+        $config = json_decode($config, true);
         parent::initDB($config);
     }
 
@@ -44,11 +44,10 @@ class DBObjectClass extends DB
      * @return array Rows From Data Base
      */
     public function get(
-        string $sql        = '',
-        bool   $isMultiple = TRUE,
-        int    $ttl        = self::DB_DEFAULT_TTL
-    ) : array
-    {
+        string $sql = '',
+        bool   $isMultiple = true,
+        int    $ttl = self::DB_DEFAULT_TTL
+    ) : array {
         $res = $this->select($sql, $this->scope, $ttl);
 
         if (!$isMultiple) {
@@ -68,11 +67,10 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Inserted
      */
     public function insert(
-        string $table   = '',
+        string $table = '',
         array  $columns = [],
-        array  $values  = []
-    ) : bool
-    {
+        array  $values = []
+    ) : bool {
         $columns = $this->_prepareInsertColumns($columns);
         $values = $this->_prepareInsertValues($values);
 
@@ -95,12 +93,11 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Updated
      */
     public function update(
-        string $table     = '',
-        array  $columns   = [],
-        array  $values    = [],
+        string $table = '',
+        array  $columns = [],
+        array  $values = [],
         string $condition = 'FALSE'
-    ) : bool
-    {
+    ) : bool {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
 
         $sql = "
@@ -123,12 +120,11 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Updated
      */
     public function updateByID(
-        string $table   = '',
+        string $table = '',
         array  $columns = [],
-        array  $values  = [],
-        int    $id      = -1
-    ) : bool
-    {
+        array  $values = [],
+        int    $id = -1
+    ) : bool {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
         $condition    = "\"id\" = {$id}";
 
@@ -152,12 +148,11 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Updated
      */
     public function multipleUpdate(
-        string $table           = '',
-        array  $items           = [],
+        string $table = '',
+        array  $items = [],
         string $conditionColumn = '',
-        bool   $isTransaction   = FALSE
-    ) : bool
-    {
+        bool   $isTransaction = false
+    ) : bool {
         if (!strlen($conditionColumn) > 0) {
             $conditionColumn = 'id';
         }
@@ -195,10 +190,9 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Removed
      */
     public function remove(
-        string $table     = '',
+        string $table = '',
         string $condition = 'FALSE'
-    ) : bool
-    {
+    ) : bool {
         $sql = "
             DELETE FROM \"{$table}\"
             WHERE {$condition};
@@ -227,7 +221,7 @@ class DBObjectClass extends DB
             $this->rollback();
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -311,11 +305,10 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL UPDATE Query
      */
-    private function _prepareUpdateValues (
+    private function _prepareUpdateValues(
         array $columns = [],
-        array $values  = []
-    ) : string
-    {
+        array $values = []
+    ) : string {
         $updateValues = [];
 
         if (count($columns) != count($values)) {
@@ -339,10 +332,9 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL UPDATE Query
      */
-    private function _prepareMultipleUpdateValues (
+    private function _prepareMultipleUpdateValues(
         array $values = []
-    ) : string
-    {
+    ) : string {
         $updateValues = [];
 
         foreach ($values as $idx => $value) {

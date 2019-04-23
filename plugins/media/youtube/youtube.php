@@ -150,7 +150,7 @@ class YoutubePlugin
     }
 
     /**
-     * Get List Of Youtube Video Thumbnail URLs 
+     * Get List Of Youtube Video Thumbnail URLs
      *
      * @param string $videoID Youtube Video ID
      *
@@ -172,17 +172,17 @@ class YoutubePlugin
     }
 
     /**
-     * Get Youtube Video Thumbnail Data 
+     * Get Youtube Video Thumbnail Data
      *
      * @param string $videoID Youtube Video ID
      *
-     * @return string Youtube Video Thumbnail Data 
+     * @return string Youtube Video Thumbnail Data
      */
     private function _getThumbnailContent(string $videoID = '') : string
     {
         $thumbnailURLs = $this->_getThumbnailURLs($videoID);
 
-        $thumbnailContent = FALSE;
+        $thumbnailContent = false;
 
         foreach ($thumbnailURLs as $thumbnailURL) {
             if ($thumbnailContent != false) {
@@ -191,8 +191,8 @@ class YoutubePlugin
 
             try {
                 $content = file_get_contents($thumbnailURL);
-            } catch(Exception $except) {
-                $content = FALSE;
+            } catch (Exception $except) {
+                $content = false;
             }
         }
 
@@ -200,11 +200,11 @@ class YoutubePlugin
     }
 
     /**
-     * Get Youtube Video Title By Video ID 
+     * Get Youtube Video Title By Video ID
      *
      * @param string $videoID Youtube Video ID
      *
-     * @return string Youtube Video Title 
+     * @return string Youtube Video Title
      */
     private function _getTitleByID(string $videoID = '') : string
     {
@@ -222,7 +222,7 @@ class YoutubePlugin
     }
 
     /**
-     * Normalize Youtube Video URLs In Text To Correct Formal 
+     * Normalize Youtube Video URLs In Text To Correct Formal
      *
      * @param string $text Input Plain Text
      *
@@ -262,7 +262,7 @@ class YoutubePlugin
     }
 
     /**
-     * Replce Youtube Video Full URL By Shortcode 
+     * Replce Youtube Video Full URL By Shortcode
      *
      * @param string $text Input Plain Text
      *
@@ -286,7 +286,7 @@ class YoutubePlugin
     }
 
     /**
-     * Replce Youtube Video Short URL By Shortcode 
+     * Replce Youtube Video Short URL By Shortcode
      *
      * @param string $text Input Plain Text
      *

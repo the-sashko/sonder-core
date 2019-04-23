@@ -12,7 +12,7 @@ class ValidatorPlugin
      *
      * @return bool Validation Result
      */
-    public function isValid(string $value = NULL, string $type = '') : bool
+    public function isValid(string $value = null, string $type = '') : bool
     {
         $validatorAction = '_isValid'.mb_convert_case($type, MB_CASE_TITLE);
 

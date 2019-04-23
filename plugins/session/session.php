@@ -26,7 +26,7 @@ class SessionPlugin
     public function get(string $valueName = '')
     {
         if (!$this->_data->has($valueName)) {
-            return NULL;
+            return null;
         }
 
         return $this->_data->get($valueName);
@@ -34,11 +34,11 @@ class SessionPlugin
 
     /**
      * Set Data To Session Value
-     * 
+     *
      * @param string $valueName Name Of Value
      * @param mixed  $valueData Data Of Value
      */
-    public function set(string $valueName = '', $valueData = NULL)
+    public function set(string $valueName = '', $valueData = null)
     {
         $this->_data->set($valueName, $valueData);
         $_SESSION[$valueName] = $valueData;
@@ -46,7 +46,7 @@ class SessionPlugin
 
     /**
      * Check Is Session Value Exists
-     * 
+     *
      * @param string $vaueName Name Of Value
      *
      * @return bool Is Value Exists In Session

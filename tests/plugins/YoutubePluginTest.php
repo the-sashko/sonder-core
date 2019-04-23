@@ -31,7 +31,7 @@ class YoutubePluginTest extends TestCase
     {
         $youtube = (new CommonCore)->initPlugin('youtube');
 
-        foreach (static::TEXT_DATA_SAMPLE as $text) {            
+        foreach (static::TEXT_DATA_SAMPLE as $text) {
             $res = $youtube->parseYoutubeURL($text['value']);
             $this->assertEquals($text['expected'], $res);
         }

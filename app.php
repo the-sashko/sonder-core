@@ -130,9 +130,9 @@ class App
      */
     private function _parseURI() : array
     {
-        $page = NULL;
-        $param = NULL;
-        $controller = NULL;
+        $page = null;
+        $param = null;
+        $controller = null;
         $uri = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
@@ -165,7 +165,7 @@ class App
             $controller = $uriData[0];
         }
 
-        if (NULL === $controller || NULL === $action) {
+        if (null === $controller || null === $action) {
             $this->_error();
         }
 
@@ -196,29 +196,28 @@ class App
     }
 
     /**
-     * Check Is Method Public And Exists In Controller 
+     * Check Is Method Public And Exists In Controller
      *
      * @param ControllerCore $controller ControllerCore Instance
      * @param string         $action     Name Of Method
      *
-     * @return bool Is Method Public And Exists In Controller 
+     * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidControllerAction(
         ControllerCore $controller,
         string         $action
-    ) : bool
-    {
+    ) : bool {
         if (!method_exists($controller, $action)) {
-            return FALSE;
+            return false;
         }
 
         $reflection = new ReflectionMethod($controller, $action);
 
         if (!$reflection->isPublic()) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -226,7 +225,7 @@ class App
      */
     private function _error() : void
     {
-        header('Location: /', TRUE, 302);
+        header('Location: /', true, 302);
         exit(0);
     }
 
@@ -246,7 +245,7 @@ class App
      *
      * @param Exception $exp Exception Instance
      */
-    private function _exception(Exception $exp = NULL) : void
+    private function _exception(Exception $exp = null) : void
     {
         $expMessage = $exp->getMessage();
 

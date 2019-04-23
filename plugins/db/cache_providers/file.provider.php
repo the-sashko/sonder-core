@@ -20,12 +20,11 @@ class DBFileCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
+        string $sql = '',
+        array  $data = [],
         string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
-    {
+        int    $ttl = -1
+    ) : bool {
         $cacheFilePath = $this->_getCacheFilePath($sql, $scope);
 
         $content = base64_encode(json_encode($data));
@@ -47,7 +46,7 @@ class DBFileCacheProvider
         file_put_contents($cacheFilePath, json_encode($cacheData));
         chmod($cacheFilePath, 0775);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -59,10 +58,9 @@ class DBFileCacheProvider
      * @return array Cached Data
      */
     public function get(
-        string $sql   = '',
+        string $sql = '',
         string $scope = 'default'
-    ) : array
-    {
+    ) : array {
         $cacheFilePath = $this->_getCacheFilePath($sql, $scope);
 
         return $this->_getDataFromCache($cacheFilePath);
@@ -78,7 +76,7 @@ class DBFileCacheProvider
     public function flush(string $scope = 'default') : bool
     {
         if (!is_dir($this::DB_CACHE_DIR.'/'.$scope)) {
-            return FALSE;
+            return false;
         }
 
         foreach (scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem) {
@@ -91,7 +89,7 @@ class DBFileCacheProvider
             }
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -105,8 +103,7 @@ class DBFileCacheProvider
     private function _getCacheFilePath(
         string $sql = '',
         string $scope = ''
-    ) : string
-    {
+    ) : string {
         $hash = hash('md5', $sql).
                 hash('sha512', $sql).
                 hash('md5', $scope.$sql);
@@ -128,7 +125,7 @@ class DBFileCacheProvider
         }
 
         $cacheData = file_get_contents($cacheFilePath);
-        $cacheData = json_decode($cacheData, TRUE);
+        $cacheData = json_decode($cacheData, true);
 
         if (!$this->_validateCache($cacheData)) {
             unlink($cacheFilePath);
@@ -137,7 +134,7 @@ class DBFileCacheProvider
         }
 
         $cacheData = base64_decode($cacheData['content']);
-        $cacheData = (array) json_decode($cacheData, TRUE);
+        $cacheData = (array) json_decode($cacheData, true);
 
         return $cacheData;
     }

@@ -12,12 +12,12 @@ class ModelCore extends CommonCore
     /**
      * @var object Model Object Class Instance
      */
-    public $object = NULL;
+    public $object = null;
 
     /**
      * @var string Model Values Object Class Name
      */
-    public $voClassName = NULL;
+    public $voClassName = null;
 
     /**
      * @var array Data From JSON Config Files
@@ -36,7 +36,7 @@ class ModelCore extends CommonCore
      */
     public function setObject(string $objectClassName = '') : void
     {
-        if (NULL === $this->object) {
+        if (null === $this->object) {
             $this->object = new $objectClassName();
             $this->object->initStore();
         }
@@ -74,7 +74,7 @@ class ModelCore extends CommonCore
             return (string) $this->configData[$valueName];
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -102,7 +102,7 @@ class ModelCore extends CommonCore
      */
     public function getVO(array $inputArray = []) : ValuesObject
     {
-        if (NULL === $this->voClassName) {
+        if (null === $this->voClassName) {
             throw new Exception('Value Object class not set');
         }
 
@@ -217,9 +217,8 @@ class ModelCore extends CommonCore
      */
     protected function _getUniqSlug(
         string $slug = '',
-        int    $id   = -1
-    ) : string
-    {
+        int    $id = -1
+    ) : string {
         $condition = "\"slug\" = '{$slug}' AND \"id\" != {$id}";
 
         $value = $this->object->getOneByCondition(

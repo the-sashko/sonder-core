@@ -26,7 +26,7 @@ class SessionPlugin
     public function get(string $valueName = '')
     {
         if (!$this->_data->has($valueName)) {
-            return NULL;
+            return null;
         }
 
         return $this->_data->get($valueName);
@@ -34,7 +34,7 @@ class SessionPlugin
 
     /**
      * Check Is Server Meta Data Value Exists
-     * 
+     *
      * @param string $vaueName Name Of Value
      *
      * @return bool Is Value Exists In Server Meta Data

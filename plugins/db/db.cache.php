@@ -7,11 +7,11 @@ class DBCache
     /**
      * @var object Instance OF Data Base Cache Provider
      */
-    public $provider = NULL;
+    public $provider = null;
 
     public function __construct(string $provider = '')
     {
-        $error = NULL;
+        $error = null;
 
         switch ($provider) {
             case 'redis':
@@ -35,7 +35,7 @@ class DBCache
                 break;
         }
 
-        if (NULL != $error) {
+        if (null != $error) {
             throw new Exception($error);
         }
     }
@@ -51,22 +51,21 @@ class DBCache
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
+        string $sql = '',
+        array  $data = [],
         string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
-    {
+        int    $ttl = -1
+    ) : bool {
         if (strlen($sql) < 12) {
-            return FALSE;
+            return false;
         }
 
         if (count($data) < 1) {
-            return FALSE;
+            return false;
         }
 
         if ($ttl < 1) {
-            return FALSE;
+            return false;
         }
 
         $scope = strlen($scope) < 1 ? 'default' : $scope;
@@ -83,11 +82,10 @@ class DBCache
      * @return array Cached Data
      */
     public function get(
-        string $sql   = '',
+        string $sql = '',
         string $scope = 'default',
-        int    $ttl   = -1
-    ) : array
-    {
+        int    $ttl = -1
+    ) : array {
         if (strlen($sql) < 12) {
             return [];
         }

@@ -26,14 +26,14 @@ class CronControllerCore extends ControllerCore
             try {
                 $logger->log('Job '.$method.' Start', 'cron');
                 $this->$method();
-                $cronJob->setLastExecStatus(TRUE);
+                $cronJob->setLastExecStatus(true);
                 $cronJob->setErrorMessage('');
                 $logger->log('Job '.$method.' Done', 'cron');
             } catch (Exception $exp) {
                 $message = $exp->getMessage();
                 $cronJob->setErrorMessage($message);
-                $cronJob->setLastExecStatus(FALSE);
-                $logger->logError($message, FALSE);
+                $cronJob->setLastExecStatus(false);
+                $logger->logError($message, false);
                 $logger->log('Job '.$method.' Fail', 'cron');
             }
 

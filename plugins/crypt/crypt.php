@@ -14,9 +14,8 @@ class CryptPlugin
      */
     public function getHash(
         string $input = '',
-        string $salt  = ''
-    ) : string
-    {
+        string $salt = ''
+    ) : string {
         $md5Hash    = hash('md5', $input);
         $sha256Hash = hash('sha256', strlen($salt).$input.$salt);
 

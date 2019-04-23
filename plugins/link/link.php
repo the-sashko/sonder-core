@@ -224,7 +224,7 @@ class LinkPlugin
     }
 
     /**
-     * Get Web Page Meta Data 
+     * Get Web Page Meta Data
      *
      * @param string $url Web Page URL
      *
@@ -232,8 +232,8 @@ class LinkPlugin
      */
     private function _getWebPageMetaData(string $url = '') : array
     {
-        $cacheFile = __DIR__.'/cache/'.hash('sha512',$url).'_'.
-                     hash('md5',$url).'.dat';
+        $cacheFile = __DIR__.'/cache/'.hash('sha512', $url).'_'.
+                     hash('md5', $url).'.dat';
 
         if (file_exists($cacheFile) && is_file($cacheFile)) {
             return $this->_getWebPageMetaDataFromCache($cacheFile);
@@ -263,10 +263,9 @@ class LinkPlugin
      * @param string $cacheFile Cached File Path
      */
     private function _saveWebPageMetaDataToCache(
-        array  $metaData  = [],
+        array  $metaData = [],
         string $cacheFile = ''
-    ) : void
-    {
+    ) : void {
         $metaData['url'] = base64_encode($metaData['url']);
         file_put_contents($urlCacheFile, json_encode($metaDataJSON));
     }
@@ -280,9 +279,8 @@ class LinkPlugin
      */
     private function _getPageImage(
         string $pageHTML = '',
-        string $url      = ''
-    ) : string
-    {
+        string $url = ''
+    ) : string {
         $image = $this->_getPageImageFromMetaTags($pageHTML);
 
         if (trim($image) < 5) {
@@ -379,27 +377,26 @@ class LinkPlugin
      */
     private function _normalizeImage(
         string $image = '',
-        string $url   = ''
-    ) : string
-    {
+        string $url = ''
+    ) : string {
         $image = trim($image);
 
         if (!$this->_isImageValid($image)) {
             return '/assets/img/website.png';
         }
 
-        if (preg_match('/^\/\/(.*?)$/su',$image)) {
+        if (preg_match('/^\/\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
             return "{$protocol}:{$image}";
         }
 
-        if (preg_match('/^\/(.*?)$/su',$image)) {
+        if (preg_match('/^\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
             $domain = $this->_getDomain($url);
             return  "{$protocol}://{$domain}/{$image}";
         }
 
-        if (!preg_match('/^http(s|)\:\/\/(.*?)$/su',$image)) {
+        if (!preg_match('/^http(s|)\:\/\/(.*?)$/su', $image)) {
             $url = exeplode('#', $url)[0];
             $url = exeplode('&', $url)[0];
             $url = exeplode('?', $url)[0];
@@ -441,8 +438,7 @@ class LinkPlugin
      */
     private function _getPageDescriptionFromBody(
         string $html = ''
-    ) : string
-    {
+    ) : string {
         if ($this->_isTagExists('ARTICLE_DESCRIPTION_REGEX', $html)) {
             return $this->_parseHTMLTag('ARTICLE_DESCRIPTION_REGEX', 3, $html);
         }
@@ -471,8 +467,7 @@ class LinkPlugin
      */
     private function _getPageDescriptionFromMetaTags(
         string $html = ''
-    ) : string
-    {
+    ) : string {
         if ($this->_isTagExists('META_TAG_OG_DESCRIPTION_REGEX', $html)) {
             return $this->_parseHTMLTag(
                 'META_TAG_OG_DESCRIPTION_REGEX',
@@ -512,7 +507,7 @@ class LinkPlugin
             return $this->_parseHTMLTag('META_DESCRIPTION_REGEX', 7, $html);
         }
 
-        if ($this->_isTagExists('META_DESCRIPTION_REGEX_ALT',$html)) {
+        if ($this->_isTagExists('META_DESCRIPTION_REGEX_ALT', $html)) {
             return $this->_parseHTMLTag(
                 'META_DESCRIPTION_REGEX_ALT',
                 4,
@@ -533,9 +528,8 @@ class LinkPlugin
      */
     private function _getPageTitle(
         string $html = '',
-        string $url  = ''
-    ) : string
-    {
+        string $url = ''
+    ) : string {
         $title = $this->_getPageTitleFromMetaTags($html);
 
         if (strlen(trim($title)) < 3) {
@@ -782,13 +776,13 @@ class LinkPlugin
     {
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_COOKIESESSION, TRUE);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($curl, CURLOPT_COOKIESESSION, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
-        curl_setopt($curl, CURLOPT_FORBID_REUSE, TRUE);
+        curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         $html = curl_exec($curl);
 
@@ -806,10 +800,9 @@ class LinkPlugin
      */
     private function _getWebPageMetaDataFromCache(
         string $fileCache = ''
-    ) : array
-    {
+    ) : array {
         $metaDataJSON = file_get_contents($fileCache);
-        $metaData     = json_decode($metaDataJSON, TRUE);
+        $metaData     = json_decode($metaDataJSON, true);
 
         if (array_key_exists('url', $metaData)) {
             $metaData['url'] = base64_decode($metaData['url']);
@@ -846,7 +839,7 @@ class LinkPlugin
         if (count($URLParts) > 0 && strlen($URLParts[0]) > 0) {
             $url = $URLParts[0];
             $url = trim($url);
-            $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su','',$url);
+            $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su', '', $url);
             $metaData = $this->_getWebPageMetaData($url);
         }
 
@@ -865,11 +858,10 @@ class LinkPlugin
      * @return string Output Value Of HTML Tag
      */
     private function _parseHTMLTag(
-        string $regexp     = '',
+        string $regexp = '',
         int    $partNumber = 1,
-        string $html       = ''
-    ) : string
-    {
+        string $html = ''
+    ) : string {
         if (strlen($regexp) < 1) {
             return '';
         }
@@ -899,9 +891,8 @@ class LinkPlugin
      */
     private function _isTagExists(
         string $regexp = '',
-        string $html   = ''
-    ) : bool
-    {
+        string $html = ''
+    ) : bool {
         if (strlen($regexp) < 1) {
             return false;
         }
