@@ -120,8 +120,8 @@ class ControllerCore extends CommonCore
     private function _setFlashSessionData() : void
     {
         if (
-            $this->session->get('flash_data') &&
-            is_array($this->session->get('flash_data')
+            $this->session->has('flash_data') &&
+            is_array($this->session->get('flash_data'))
         ) {
             $flashData = $this->session->get('flash_data');
             foreach ($flashData as $flashDataIDX => $flashDataVal) {
