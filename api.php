@@ -2,7 +2,7 @@
 /**
  * Main Application Class For API Requests
  */
-class API Extends App
+class API extends App
 {
     public function __construct()
     {

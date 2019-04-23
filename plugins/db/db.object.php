@@ -339,7 +339,7 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL UPDATE Query
      */
-    private function _prepareMultipleUpdateValues (
+    private function _prepareMultipleUpdateValues(
         array $values = []
     ) : string
     {
