@@ -13,7 +13,7 @@ class ServerInfoPlugin
     {
         $securityPlugin = new SecurityPlugin();
         $_SERVER        = $securityPlugin->escapeInput($_SERVER);
-        $this->_data    = new ValueObject($_SERVER);
+        $this->_data    = new ValuesObject($_SERVER);
     }
 
     /**

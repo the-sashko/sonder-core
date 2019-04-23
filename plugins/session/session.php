@@ -13,7 +13,7 @@ class SessionPlugin
     {
         $securityPlugin = new SecurityPlugin();
         $_SESSION       = $securityPlugin->escapeInput($_SESSION);
-        $this->_data    = new ValueObject($_SESSION);
+        $this->_data    = new ValuesObject($_SESSION);
     }
 
     /**
