@@ -42,14 +42,13 @@ class ControllerCore extends CommonCore
     /**
      * @var bool Is Output In JSON Format
      */
-    public $isOutputJSON = FALSE;
+    public $isOutputJSON = false;
 
     public function __construct(
         string $URLParam = '',
         array  $postData = [],
-        int    $page     = 1
-    )
-    {
+        int    $page = 1
+    ) {
         session_start();
         $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
@@ -139,14 +138,13 @@ class ControllerCore extends CommonCore
      * @param bool   $isPermanent Is Redirect Permanently
      */
     public function redirect(
-        string $url         = '',
-        bool   $isPermanent = FALSE
-    ) : void
-    {
+        string $url = '',
+        bool   $isPermanent = false
+    ) : void {
         $url  = strlen($url) > 0 ? $url : '/';
         $code = $isPermanent ? 301 : 302;
 
-        header("Location: {$url}", TRUE, $code);
+        header("Location: {$url}", true, $code);
         exit(0);
     }
 
@@ -156,7 +154,7 @@ class ControllerCore extends CommonCore
      * @param bool  $status Is Request Successful
      * @param array $data   Output Data
      */
-    public function returnJSON(bool $status = TRUE, array $data = []) : void
+    public function returnJSON(bool $status = true, array $data = []) : void
     {
         $dataJSON = [
             'status' => $status,
@@ -178,10 +176,9 @@ class ControllerCore extends CommonCore
      */
     public function render(
         string $template = '',
-        array  $params   = [],
-        int    $ttl      = 0
-    ) : void
-    {
+        array  $params = [],
+        int    $ttl = 0
+    ) : void {
         $dataParams = [];
 
         $dataParams = $this->configData['main'];
@@ -242,11 +239,10 @@ class ControllerCore extends CommonCore
      * @param string $redirectURI URI For Redirection After Creation
      */
     public function CRUDCreate(
-        string $modelName   = '',
+        string $modelName = '',
         string $redirectURI = '/'
-    ) : void
-    {
-        $message = NULL;
+    ) : void {
+        $message = null;
 
         $model = $this->initModel($modelName);
 
@@ -258,7 +254,7 @@ class ControllerCore extends CommonCore
         }
 
         $formAction = $modelName.'Form';
-        $this->$formAction(NULL, $message);
+        $this->$formAction(null, $message);
     }
 
     /**
@@ -268,11 +264,10 @@ class ControllerCore extends CommonCore
      * @param string $redirectURI URI For Redirection After Updation
      */
     public function CRUDUpdate(
-        string $modelName   = '',
+        string $modelName = '',
         string $redirectURI = '/'
-    ) : void
-    {
-        $message = NULL;
+    ) : void {
+        $message = null;
         $id = (int) $this->URLParam;
 
         $model = $this->initModel($modelName);
@@ -300,10 +295,9 @@ class ControllerCore extends CommonCore
      * @param string $redirectURI URI For Redirection After Removal
      */
     public function CRUDDelete(
-        string $modelName   = '',
+        string $modelName = '',
         string $redirectURI = '/'
-    ) : void
-    {
+    ) : void {
         $id = (int) $this->URLParam;
         $model = $this->initModel($modelName);
 
@@ -324,9 +318,8 @@ class ControllerCore extends CommonCore
      */
     private function _getMetaParams(
         array $pagePath = [],
-        array $meta     = []
-    ) : array
-    {
+        array $meta = []
+    ) : array {
         $metaData = $this->initConfig('seo');
         $mainConfigData = $this->initConfig('main');
 
@@ -361,7 +354,7 @@ class ControllerCore extends CommonCore
         if (count($pagePath) > 0) {
             $metaData['title'] = $this->_getTitleByPagePath($pagePath).
                                  static::PAGE_TITLE_SEPARATOR.
-                                 $metaData['title']; 
+                                 $metaData['title'];
         }
 
         if (!array_key_exists('canonical_url', $meta)) {
