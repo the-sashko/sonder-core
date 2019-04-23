@@ -68,7 +68,7 @@ class ModelObjectCore extends DBObjectClass
         $selectedColumns = $this->_prepareSelectedColumns(
             $selectedColumns
         );
-        
+ 
         $queryLimit = $this->_prepareQueryLimit($limit);
 
         $sql = "

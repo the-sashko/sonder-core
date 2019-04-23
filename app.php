@@ -39,7 +39,7 @@ class App
         if (!$this->_isValidControllerAction($controller, $action)) {
             $this->_error();
         }
-            
+ 
         try {
             set_error_handler([$this, 'errorHandler']);
             $controller->$action();
@@ -67,9 +67,9 @@ class App
         $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
-            if (!array_key_exists('file', $debugBacktraceStep)) {
-                $debugBacktrace[$idx] = '...';
-            } else {
+            $debugBacktrace[$idx] = '…';
+
+            if (array_key_exists('file', $debugBacktraceStep)) {
                 $debugBacktrace[$idx] = $debugBacktraceStep['file'];
             }
 

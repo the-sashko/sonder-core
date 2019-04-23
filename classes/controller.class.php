@@ -369,6 +369,8 @@ class ControllerCore extends CommonCore
         }
 
         if (!array_key_exists('canonical_url', $meta)) {
+            $meta['canonical_url'] = '/';
+
             if (
                 $this->serverInfo->has('REAL_REQUEST_URI') &&
                 strlen($this->serverInfo->get('REAL_REQUEST_URI')) > 0
@@ -376,8 +378,6 @@ class ControllerCore extends CommonCore
                 $meta['canonical_url'] = $this->serverInfo->get(
                     'REAL_REQUEST_URI'
                 );
-            } else {
-                $meta['canonical_url'] = '/';
             }
         }
 

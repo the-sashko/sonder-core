@@ -242,11 +242,11 @@ class ModelCore extends CommonCore
             $slugNumber++;
             $slug = preg_replace('/^(.*?)\-([0-9]+)/su', '$1', $slug);
             $slug = $slug.'-'.$slugNumber;
-        } else {
-            $slug = $slug.'-1';
+
+            return $this->_getUniqSlug($slug, $id);
         }
 
-        return $this->_getUniqSlug($slug, $id);
+        return $this->_getUniqSlug($slug.'-1', $id);
     }
 
     /**
