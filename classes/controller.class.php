@@ -5,12 +5,12 @@
 class ControllerCore extends CommonCore
 {
     /**
-     * @var string Separator For Web Page Title Sections 
+     * @var string Separator For Web Page Title Sections
      */
     const PAGE_TITLE_SEPARATOR = ' / ';
 
     /**
-     * @var array POST Request Data 
+     * @var array POST Request Data
      */
     public $post = [];
 
@@ -254,7 +254,7 @@ class ControllerCore extends CommonCore
             list($res, $message) = $model->formHandler($this->post);
             if ($res) {
                 $this->redirect($redirectURI);
-            } 
+            }
         }
 
         $formAction = $modelName.'Form';
@@ -286,7 +286,7 @@ class ControllerCore extends CommonCore
             list($res, $message) = $model->formHandler($this->post, $id);
             if ($res) {
                 $this->redirect($redirectURI);
-            } 
+            }
         }
 
         $formAction = $modelName.'Form';
@@ -361,8 +361,7 @@ class ControllerCore extends CommonCore
         if (count($pagePath) > 0) {
             $metaData['title'] = $this->_getTitleByPagePath($pagePath).
                                  static::PAGE_TITLE_SEPARATOR.
-                                 $metaData['title'];
-                                 
+                                 $metaData['title']; 
         }
 
         if (!array_key_exists('canonical_url', $meta)) {

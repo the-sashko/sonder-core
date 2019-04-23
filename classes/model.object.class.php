@@ -5,7 +5,7 @@
 class ModelObjectCore extends DBObjectClass
 {
     /**
-     * @var int Count Items On Page 
+     * @var int Count Items On Page
      */
     public $itemsOnPage = 10;
 

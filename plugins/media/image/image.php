@@ -42,7 +42,7 @@ class ImagePlugin
      *
      * @param string $imageFile Input Image File Name
      * @param string $imageDir  Image Directory Path
-     * @param string $imageName Otput Images File Base Name 
+     * @param string $imageName Otput Images File Base Name
      * @param array  $sizes     List Of Image Sized
      */
     public function setImage(

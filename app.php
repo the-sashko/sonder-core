@@ -196,12 +196,12 @@ class App
     }
 
     /**
-     * Check Is Method Public And Exists In Controller 
+     * Check Is Method Public And Exists In Controller
      *
      * @param ControllerCore $controller ControllerCore Instance
      * @param string         $action     Name Of Method
      *
-     * @return bool Is Method Public And Exists In Controller 
+     * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidControllerAction(
         ControllerCore $controller,
