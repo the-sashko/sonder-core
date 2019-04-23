@@ -92,6 +92,7 @@ class SitemapPlugin
 
         foreach ($sitemaps as $sitemap) {
             $sitemapDate = date('Y-m-d').'T'.date('H:i:s+00:00');
+
             $sitemapXML = "{$sitemapXML}
                 <sitemap>
                     <loc>/xml/{$sitemap}.xml</loc>

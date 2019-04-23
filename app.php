@@ -116,7 +116,7 @@ class App
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
         $uri = $_SERVER['REQUEST_URI'];
 
-        if ($uri == '') {
+        if ('' == $uri) {
             $uri = '/';
         }
 
@@ -141,6 +141,7 @@ class App
                 '$2',
                 $uri
             );
+
             $uri = preg_replace(
                 '/^\/(.*?)\/page-([0-9]+)\/$/su',
                 '$1',
@@ -164,7 +165,7 @@ class App
             $controller = $uriData[0];
         }
 
-        if ($controller === NULL || $action === NULL) {
+        if (NULL === $controller || NULL === $action) {
             $this->_error();
         }
 

@@ -130,7 +130,7 @@ class DBObjectClass extends DB
     ) : bool
     {
         $updateValues = $this->_prepareUpdateValues($columns, $values);
-        $condition = "\"id\" = {$id}";
+        $condition    = "\"id\" = {$id}";
 
         $sql = "
             UPDATE \"{$table}\"

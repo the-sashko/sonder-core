@@ -99,7 +99,7 @@ class ErrorPlugin
         $isDisplay = (bool) ini_get('display_errors');
 
         $output['status'] = 'error';
-        $output['data'] = [];
+        $output['data']   = [];
 
         $output['data']['message'] = 'Internal Server Error!';
 

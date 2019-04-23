@@ -32,7 +32,7 @@ class ControllerCore extends CommonCore
     /**
      * @var string HTML Termplates Scope
      */
-    public $templaterScope  = 'site';
+    public $templaterScope = 'site';
 
     /**
      * @var int Current Page In Pagination
@@ -342,10 +342,10 @@ class ControllerCore extends CommonCore
                              $mainConfigData['site_domain'].
                              $metaData['image'];
 
-        $metaData['title'] = $mainConfigData['site_name'];
-        $metaData['site_name'] = $mainConfigData['site_name'];
+        $metaData['title']       = $mainConfigData['site_name'];
+        $metaData['site_name']   = $mainConfigData['site_name'];
         $metaData['site_slogan'] = $mainConfigData['site_slogan'];
-        $metaData['locale'] = $mainConfigData['site_locale'];
+        $metaData['locale']      = $mainConfigData['site_locale'];
 
         $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
 

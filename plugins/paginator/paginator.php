@@ -101,7 +101,7 @@ class PaginatorPlugin
             }
 
             $this->pages[$idx] = '<span>...</span>';
-            $prevPage = $page;
+            $prevPage          = $page;
         }
     }
 

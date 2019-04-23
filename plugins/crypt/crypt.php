@@ -17,7 +17,7 @@ class CryptPlugin
         string $salt  = ''
     ) : string
     {
-        $md5Hash = hash('md5', $input);
+        $md5Hash    = hash('md5', $input);
         $sha256Hash = hash('sha256', strlen($salt).$input.$salt);
 
         return hash('sha512', strlen($input).$sha256Hash.$input.$md5Hash);

@@ -76,7 +76,7 @@ class RedisPlugin
         }
 
         if (!array_key_exists('port', $settings)) {
-            return FAlSE;
+            return FALSE;
         }
 
         if (!array_key_exists('password', $settings)) {

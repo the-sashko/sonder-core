@@ -36,7 +36,7 @@ class ModelCore extends CommonCore
      */
     public function setObject(string $objectClassName = '') : void
     {
-        if ($this->object === NULL) {
+        if (NULL === $this->object) {
             $this->object = new $objectClassName();
             $this->object->initStore();
         }
@@ -57,7 +57,7 @@ class ModelCore extends CommonCore
      */
     public function setConfigData() : void
     {
-        $configDataJSON = file_get_contents(self::MAIN_CONFIG_PATH);
+        $configDataJSON   = file_get_contents(self::MAIN_CONFIG_PATH);
         $this->configData = json_decode($configDataJSON, true);
     }
 
@@ -102,7 +102,7 @@ class ModelCore extends CommonCore
      */
     public function getVO(array $inputArray = []) : ValuesObject
     {
-        if ($this->voClassName == NULL) {
+        if (NULL === $this->voClassName) {
             throw new Exception('Value Object class not set');
         }
 

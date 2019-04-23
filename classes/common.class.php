@@ -29,7 +29,7 @@ class CommonCore
     */
     public function initModel(string $model = '') : ModelCore
     {
-        $modelsDir = __DIR__.'/../../models';
+        $modelsDir  = __DIR__.'/../../models';
         $modelClass = mb_convert_case($model, MB_CASE_TITLE);
 
         if (!file_exists("{$modelsDir}/{$model}/{$model}.php")) {

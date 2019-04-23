@@ -23,7 +23,7 @@ class BreadcrumbsPlugin
             foreach ($pagePath as $uri => $title) {
                 $html = "{$html}<span>{$separator}</span>";
 
-                if ($uri != '#') {
+                if ('#' != $uri) {
                     $html = "{$html}<a href=\"{$uri}\">{$title}</a>";
                 } else {
                     $html = "{$html}<span>{$title}</span>";

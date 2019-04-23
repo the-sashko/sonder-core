@@ -26,8 +26,8 @@ class ShortenerPlugin
         string $userToken = ''
     ) : void
     {
-        $this->APIOptions['url'] = $url;
-        $this->APIOptions['user_id'] = $userID;
+        $this->APIOptions['url']        = $url;
+        $this->APIOptions['user_id']    = $userID;
         $this->APIOptions['user_token'] = $userToken;
     }
 

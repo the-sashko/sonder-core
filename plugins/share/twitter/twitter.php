@@ -47,7 +47,7 @@ class TwitterPlugin
         }
 
         $status = 'status='.$message;
-        $res = (array) $this->codebird->statuses_update($status);
+        $res    = (array) $this->codebird->statuses_update($status);
 
         $this->_validateResponse($res);
     }
@@ -57,10 +57,10 @@ class TwitterPlugin
      */
     private function _setCodebirdInstance() : void
     {
-        $consumerKey = $this->credentials['consumer']['key'];
+        $consumerKey    = $this->credentials['consumer']['key'];
         $consumerSecret = $this->credentials['consumer']['secret'];
-        $accessToken = $this->credentials['access']['token'];
-        $accessSecret = $this->credentials['access']['secret'];
+        $accessToken    = $this->credentials['access']['token'];
+        $accessSecret   = $this->credentials['access']['secret'];
 
         \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
 

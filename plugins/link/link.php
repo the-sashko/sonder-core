@@ -809,7 +809,7 @@ class LinkPlugin
     ) : array
     {
         $metaDataJSON = file_get_contents($fileCache);
-        $metaData = json_decode($metaDataJSON,true);
+        $metaData     = json_decode($metaDataJSON, TRUE);
 
         if (array_key_exists('url', $metaData)) {
             $metaData['url'] = base64_decode($metaData['url']);

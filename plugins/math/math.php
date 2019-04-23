@@ -41,8 +41,8 @@ class MathPlugin
 
         while ($decimal > 0) {
             $remainder = $decimal % $base;
-            $decimal = ($decimal - $remainder) / $base;
-            $result = $digitalAlphabet[$remainder].$result;
+            $decimal   = ($decimal - $remainder) / $base;
+            $result    = $digitalAlphabet[$remainder].$result;
         }
 
         return $result;

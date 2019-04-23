@@ -210,11 +210,11 @@ class DB
     {
         $config = $this->config;
 
-        $type = isset($config['type']) ? $config['type'] : 'mysql';
-        $host = isset($config['host']) ? $config['host'] : 'localhost';
-        $port = isset($config['port']) ? $config['port'] : '5433';
-        $db = isset($config['db']) ? $config['db'] : 'default';
-        $user = isset($config['user']) ? $config['user'] : '';
+        $type     = isset($config['type']) ? $config['type'] : 'mysql';
+        $host     = isset($config['host']) ? $config['host'] : 'localhost';
+        $port     = isset($config['port']) ? $config['port'] : '5433';
+        $db       = isset($config['db']) ? $config['db'] : 'default';
+        $user     = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
 
         $dsn = "{$type}:host={$host};port={$port};dbname={$db}";
