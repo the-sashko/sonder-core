@@ -278,7 +278,7 @@ class ControllerCore extends CommonCore
         $message = NULL;
         $id = (int) $this->URLParam;
 
-        $model = $this->initModel($modelName);
+        $model   = $this->initModel($modelName);
         $modelVO = $model->getByID($id);
 
         if (!$modelVO->has('id')) {
@@ -307,7 +307,7 @@ class ControllerCore extends CommonCore
         string $redirectURI = '/'
     ) : void
     {
-        $id = (int) $this->URLParam;
+        $id    = (int) $this->URLParam;
         $model = $this->initModel($modelName);
 
         if (!$model->removeByID($id)) {
@@ -330,7 +330,7 @@ class ControllerCore extends CommonCore
         array $meta     = []
     ) : array
     {
-        $metaData = $this->initConfig('seo');
+        $metaData       = $this->initConfig('seo');
         $mainConfigData = $this->initConfig('main');
 
         if (array_key_exists('description', $meta)) {

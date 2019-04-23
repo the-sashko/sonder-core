@@ -119,7 +119,7 @@ class UploadPlugin
                 }
 
                 $file['status'] = (bool) $file['status'];
-                $file['data'] = (string) $file['data'];
+                $file['data']   = (string) $file['data'];
 
                 if (
                     !$file['status'] &&
@@ -222,7 +222,7 @@ class UploadPlugin
     private function _getExtensionFromName(string $name = '') : string
     {
         $extension = '';
-        $name = mb_convert_case($name, MB_CASE_LOWER);
+        $name      = mb_convert_case($name, MB_CASE_LOWER);
 
         if (preg_match('/^(.*?)\.([a-z]+)$/su', $name)) {
             $extension = preg_replace('/^(.*?)\.([a-z]+)$/su', '$2', $name);

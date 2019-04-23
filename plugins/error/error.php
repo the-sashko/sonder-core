@@ -166,8 +166,9 @@ class ErrorPlugin
      */
     private function _displayJSONException(string $expMessage) : bool
     {
-        $output = [];
+        $output           = [];
         $output['status'] = 'error';
+
         $output['data'] = [
             'message' => $expMessage
         ];

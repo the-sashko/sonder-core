@@ -25,8 +25,8 @@ class LoggerPlugin
             return FALSE;
         }
 
-        $dateString = date('[Y-m-d H:i:s]');
-        $message = "{$dateString} {$message}\n";
+        $dateString  = date('[Y-m-d H:i:s]');
+        $message     = "{$dateString} {$message}\n";
         $logFileName = $this->_getLogFileName($logType);
 
         return $this->_writeToLogFile($message, $logFileName);
@@ -102,7 +102,9 @@ class LoggerPlugin
         }
 
         $oldYear = strval(intval(date('Y'))-1);
+
         $logDir = $this->_getLogDir($logType);
+
         $oldLogFileName = $logDir.'/'.$logType.
                        '-'.$oldYear.'-'.date('m').'-'.date('d').'.log';
 

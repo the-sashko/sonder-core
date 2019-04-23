@@ -80,6 +80,7 @@ class App
         }
 
         $debugBacktraceStr = implode(' -> ', array_reverse($debugBacktrace));
+
         $logMessage = "Error [$errCode]: $errMessage. ".
                       "File: $errFile ($errLine). ".
                       "Trace: $errFile ($debugBacktraceStr)";
@@ -130,10 +131,10 @@ class App
      */
     private function _parseURI() : array
     {
-        $page = NULL;
-        $param = NULL;
+        $page       = NULL;
+        $param      = NULL;
         $controller = NULL;
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri        = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
             $page = preg_replace(
@@ -170,10 +171,9 @@ class App
         }
 
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action = 'action'.mb_convert_case($action, MB_CASE_TITLE);
-
-        $param = (string) $param;
-        $page  = (int) $page;
+        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        $param      = (string) $param;
+        $page       = (int) $page;
 
         return [
             $controller,

@@ -92,10 +92,10 @@ class ImagePlugin
      */
     private function _imageResize(string $size = '') : void
     {
-        $size = $this->_getImageSize($size);
+        $size        = $this->_getImageSize($size);
         $imageObject = $this->_getImageObject();
 
-        $originWidth = (int) $imageObject->getImageGeometry()['width'];
+        $originWidth  = (int) $imageObject->getImageGeometry()['width'];
         $originHeight = (int) $imageObject->getImageGeometry()['height'];
 
         if ($size['width'] == NULL || $size['height'] == NULL) {
@@ -208,7 +208,7 @@ class ImagePlugin
         int   $originHeight = 0
     ) : Object
     {
-        $size['width'] = (int) $size['width'];
+        $size['width']  = (int) $size['width'];
         $size['height'] = (int) $size['height'];
 
         if ($size['width'] < 1 && $size['height'] < 1) {

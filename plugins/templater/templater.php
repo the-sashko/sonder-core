@@ -36,6 +36,7 @@ class TemplaterPlugin
         $GLOBALS['templateParams'] = $dataParams;
         $GLOBALS['templateScope']  = $this->scope;
         $GLOBALS['templateTTL']    = $ttl;
+
         $template = strlen($template) > 0 ? $template : 'main';
 
         if ($ttl>0) {

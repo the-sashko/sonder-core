@@ -40,7 +40,7 @@ class PaginatorPlugin
     ) : string
     {
         $this->pageCount = $pageCount;
-        $this->currPage = $currPage;
+        $this->currPage  = $currPage;
 
         if (preg_match('/^(.*)\/$/su', $link)) {
             $link = preg_replace('/^(.*)\/$/su', '$1', $link);

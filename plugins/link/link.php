@@ -390,12 +390,14 @@ class LinkPlugin
 
         if (preg_match('/^\/\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
+
             return "{$protocol}:{$image}";
         }
 
         if (preg_match('/^\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
-            $domain = $this->_getDomain($url);
+            $domain   = $this->_getDomain($url);
+
             return  "{$protocol}://{$domain}/{$image}";
         }
 
@@ -847,6 +849,7 @@ class LinkPlugin
             $url = $URLParts[0];
             $url = trim($url);
             $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su', '', $url);
+
             $metaData = $this->_getWebPageMetaData($url);
         }
 

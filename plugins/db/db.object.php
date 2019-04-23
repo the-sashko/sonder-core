@@ -74,7 +74,7 @@ class DBObjectClass extends DB
     ) : bool
     {
         $columns = $this->_prepareInsertColumns($columns);
-        $values = $this->_prepareInsertValues($values);
+        $values  = $this->_prepareInsertValues($values);
 
         $sql = "
             INSERT INTO \"{$table}\"
@@ -168,7 +168,7 @@ class DBObjectClass extends DB
             $updateValues = $this->_prepareMultipleUpdateValues($item);
             if (isset($item[$conditionColumn])) {
                 $conditionValue = $item[$conditionColumn];
-                $condition = "\"$conditionColumn\" = '{$conditionValue}'";
+                $condition      = "\"$conditionColumn\" = '{$conditionValue}'";
             } else {
                 $condition = 'FALSE';
             }
@@ -276,6 +276,7 @@ class DBObjectClass extends DB
             foreach ($values as $idx => $value) {
                 $value = implode("','", $value);
                 $value = "'{$value}'";
+
                 $values[$idx] = $value;
             }
             $values = implode("),(", $values);
@@ -346,7 +347,7 @@ class DBObjectClass extends DB
         $updateValues = [];
 
         foreach ($values as $idx => $value) {
-            $value = $values[$idx];
+            $value          = $values[$idx];
             $updateValues[] = "\"{$idx}\" = '{$value}'";
         }
 

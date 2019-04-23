@@ -99,7 +99,7 @@ class TelegramPlugin
         curl_setopt_array($curl, $curlHeaders);
 
         $curlResponse = curl_exec($curl);
-        $curlError = curl_error($curl);
+        $curlError    = curl_error($curl);
 
         curl_close($curl);
 
