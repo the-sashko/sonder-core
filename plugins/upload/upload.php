@@ -27,7 +27,7 @@ class UploadPlugin
     /**
      * @var bool Is Uploaded Files Will Accessed From Web
      */
-    public $isPublic = FALSE;
+    public $isPublic = false;
 
     /**
      * @var string Uploads Directory Name
@@ -65,9 +65,9 @@ class UploadPlugin
 
                     $fileMultiple[$valuesIDX][$fileIDX] = $value;
                 }
-           }
+            }
 
-           $this->files[$filesIDX] = $fileMultiple;
+            $this->files[$filesIDX] = $fileMultiple;
         }
 
         $this->maxSize = 2 * static::MBYTE;
@@ -85,11 +85,10 @@ class UploadPlugin
      */
     public function upload(
         array  $extensions = [],
-        int    $maxSize    = -1,
+        int    $maxSize = -1,
         string $uploadsDir = 'uploads',
-        bool   $isPublic   = FALSE
-    ) : array
-    {
+        bool   $isPublic = false
+    ) : array {
         $this->_setSettings($extensions, $maxSize, $uploadsDir, $isPublic);
 
         foreach ($this->files as $groupName => $groupFiles) {
@@ -149,8 +148,7 @@ class UploadPlugin
      */
     private function _uploadFile(
         array $file = []
-    ) : array
-    {
+    ) : array {
         if (
             !array_key_exists('size', $file) ||
             !array_key_exists('name', $file) ||
@@ -160,23 +158,23 @@ class UploadPlugin
             $file['size'] < 1
         ) {
             return [
-                'status' => TRUE,
-                'data'   => NULL
+                'status' => true,
+                'data'   => null
             ];
         }
 
         if ($file['size'] > $this->maxSize) {
             return [
-                'status' => FALSE,
+                'status' => false,
                 'data'   => 'File Is Too Large'
             ];
         }
 
         $fileExtension = $this->_getExtensionFromName($file['name']);
 
-        if (!in_array($fileExtension, $this->extensions, TRUE)) {
+        if (!in_array($fileExtension, $this->extensions, true)) {
             return [
-                'status' => FALSE,
+                'status' => false,
                 'data'   => 'Bad File Type'
             ];
         }
@@ -202,13 +200,13 @@ class UploadPlugin
 
         if (!$status) {
             return [
-                'status' => FALSE,
+                'status' => false,
                 'data'   => 'Can Not Save File'
             ];
         }
 
         return [
-            'status' => TRUE,
+            'status' => true,
             'data'   => $fileName
         ];
     }
@@ -242,11 +240,10 @@ class UploadPlugin
      */
     private function _setSettings(
         array  $extensions = [],
-        int    $maxSize    = -1,
+        int    $maxSize = -1,
         string $uploadsDir = 'uploads',
-        bool   $isPublic   = FALSE
-    ) : void
-    {
+        bool   $isPublic = false
+    ) : void {
         if (count($extensions) < 1) {
             throw new Exception('Extentions For Uploaded Files Not Set!');
         }
