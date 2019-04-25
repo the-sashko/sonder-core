@@ -66,10 +66,8 @@ class UploadPlugin
                     $fileMultiple[$valuesIDX][$fileIDX] = $value;
                 }
            }
-
            $this->files[$filesIDX] = $fileMultiple;
         }
-
         $this->maxSize = 2 * static::MBYTE;
     }
 
