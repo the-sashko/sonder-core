@@ -1,7 +1,0 @@
-{
-    "type"     : "mysql",
-    "host"     : "localhost",
-    "db"       : "<db_name>",
-    "user"     : "<user_name>",
-    "password" : "<password>"
-}

@@ -3,10 +3,10 @@ if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');
 }
 
+$routerPath = __DIR__.'/examples/protected/routers/default.php';
+
 if (file_exists(__DIR__.'/../routers/default.php')) {
     $routerPath = __DIR__.'/../routers/default.php';
-} else {
-    $routerPath = __DIR__.'/examples/router.php';
 }
 
 switch (APP_MODE) {

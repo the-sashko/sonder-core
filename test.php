@@ -33,8 +33,6 @@ class Test extends App
         int    $errLine
     ) : void
     {
-        $expMessage = $exp->getMessage();
-
         throw new Exception($errMessage);
     }
 
