@@ -13,7 +13,7 @@ class DBRedisCacheProvider
      * @var object Instance Of RedisPlugin
      */
     public $redis = NULL;
-    
+
     /**
      * @var object Instance Of DBFileCacheProvider
      */

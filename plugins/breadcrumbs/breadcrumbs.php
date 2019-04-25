@@ -17,20 +17,22 @@ class BreadcrumbsPlugin
     {
         $separator = static::BREADCRUMBS_SEPARATOR;
 
-        if (count($pagePath) > 0) {
-            $html = '<a href="/">'._t('Main Page').'</a>';
+        if (count($pagePath) < 1) {
+            $html = '<span>'._t('Main Page'),'</span>';
+        }
+        
+        $html = '<a href="/">'._t('Main Page').'</a>';
 
-            foreach ($pagePath as $uri => $title) {
-                $html = "{$html}<span>{$separator}</span>";
+        foreach ($pagePath as $uri => $title) {
+            $html = "{$html}<span>{$separator}</span>";
 
-                if ('#' !== $uri) {
-                    $html = "{$html}<a href=\"{$uri}\">{$title}</a>";
-                } else {
-                    $html = "{$html}<span>{$title}</span>";
-                }
+            $htmlLink = "<span>{$title}</span>";
+
+            if ('#' !== $uri) {
+                $htmlLink = "<a href=\"{$uri}\">{$title}</a>";
             }
-        } else {
-            $html = '<span>'._t('Main Page').'</span>';
+            
+            $html = "{$html}{$htmlLink}";
         }
 
         return "<nav class=\"breadcrumbs\">{$html}</nav>";

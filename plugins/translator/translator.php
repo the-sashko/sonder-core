@@ -66,9 +66,9 @@ class TranslatorPlugin
         if (!$session->has('user_lang_code')) {
             if (defined('DEFAULT_LANGUAGE')) {
                 return DEFAULT_LANGUAGE;
-            } else {
-                return self::DEFAULT_LANGUAGE;
             }
+
+            return self::DEFAULT_LANGUAGE;
         }
 
         $langCode = $session->get('user_lang_code');
