@@ -84,6 +84,7 @@ class PaginatorPlugin
                         $this->pages[$idx] = '<a href="'.
                                        $this->link.'/page-'.$page.'/>'.
                                        $page.'</a>';
+
                         $prevPage = $page;
 
                         continue;
