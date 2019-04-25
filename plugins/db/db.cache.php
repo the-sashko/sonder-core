@@ -16,23 +16,23 @@ class DBCache
         switch ($provider) {
             case 'redis':
                 $this->provider = new DBRedisCacheProvider();
-                break;
+            break;
 
             case 'memcache':
                 $this->provider = new DBMemcacheCacheProvider();
-                break;
+            break;
 
             case 'file':
                 $this->provider = new DBFileCacheProvider();
-                break;
+            break;
 
             case 'mock':
                 $this->provider = new DBMockCacheProvider();
-                break;
+            break;
 
             default:
                 $error = "DB Cache Provider \"{$provider}\" Is Not Allowed";
-                break;
+            break;
         }
 
         if (NULL !== $error) {
