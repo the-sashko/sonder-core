@@ -22,7 +22,7 @@ class ExampleObject extends ModelObjectCore
     /**
      * Geting Data From Example Table
      *
-     * @return bool Size Data
+     * @return array List Of Example Data
      */
     public function getAllExamples() : array
     {

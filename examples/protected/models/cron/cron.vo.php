@@ -77,7 +77,7 @@ class CronVO extends ValuesObject
     public function getErrorMessage() : string
     {
         $lastExecStatus = (bool) $this->getLastExecStatus();
-        $isActive = (bool) $this->getIsActive();
+        $isActive       = (bool) $this->getIsActive();
 
         if (!$lastExecStatus && $isActive) {
             return (string) $this->get('error_message');
@@ -94,7 +94,7 @@ class CronVO extends ValuesObject
     public function getStatus() : string
     {
         $lastExecStatus = (bool) $this->getLastExecStatus();
-        $isActive  = (bool) $this->getIsActive();
+        $isActive       = (bool) $this->getIsActive();
 
         if (!$isActive) {
             return static::STATUS_WAITING;

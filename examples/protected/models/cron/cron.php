@@ -36,14 +36,14 @@ class Cron extends ModelCore implements ModelCRUD
      *
      * @return bool Is Cron Job Exists
      */
-    protected function _isCronExists(
+    private function _isCronExists(
         string $action   = '',
         int    $interval = -1
     ) : bool
     {
         // To-Do
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -55,10 +55,10 @@ class Cron extends ModelCore implements ModelCRUD
      *
      * @return bool Is Cron Job Successfully Created
      */
-    protected function _create(
+    private function _create(
         string $action   = '',
         int    $interval = -1,
-        bool   $isActive = false
+        bool   $isActive = FALSE
     ) : bool
     {
         return $this->object->create([
@@ -78,10 +78,10 @@ class Cron extends ModelCore implements ModelCRUD
      *
      * @return bool Is Cron Job Successfully Updated
      */
-    protected function _updateByID(
+    private function _updateByID(
         string $action   = '',
         int    $interval = -1,
-        bool   $isActive = false,
+        bool   $isActive = FALSE,
         int    $cronID   = -1
     ) : bool
     {

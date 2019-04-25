@@ -17,13 +17,13 @@ CREATE TABLE "public"."cron_jobs" (
     "error_message" character varying(255),
     CONSTRAINT "cron_id" PRIMARY KEY ("id"),
     CONSTRAINT "cron_jobs_action_interval" UNIQUE ("action", "interval")
-) WITH (oids = false);
+);
 
 CREATE TABLE "example" (
 	"id" integer DEFAULT nextval('example_id_seq') NOT NULL,
 	"foo" character varying(8) NOT NULL,
-	CONSTRAINT "example_id" PRIMARY KEY ("id"),
-) WITH (oids = false);
+	CONSTRAINT "example_id" PRIMARY KEY ("id")
+);
 
 CREATE INDEX "cron_action" ON "public"."cron_jobs" USING btree ("action");
 CREATE INDEX "cron_action_time_next_exec" ON "public"."cron_jobs" USING btree ("action", "time_next_exec");

@@ -28,26 +28,36 @@ trait CronForm
 
         if (!$res) {
             return [
-                false,
+                FALSE,
                 $error
             ];
         }
 
         if ($cronID > 0) {
             $res = $this->_updateByID($action, $interval, $isActive, $cronID);
-        } else {
-            $res = $this->_create($action, $interval, $isActive);
+
+            if (!$res) {
+                $error = 'Internal Database Error';
+                return [
+                    FALSE,
+                    $error
+                ];
+            }
+
+            return [TRUE, ''];
         }
+
+        $res = $this->_create($action, $interval, $isActive);
 
         if (!$res) {
             $error = 'Internal Database Error';
             return [
-                false,
+                FALSE,
                 $error
             ];
         }
 
-        return [true, ''];
+        return [TRUE, ''];
     }
 
     /**
@@ -58,14 +68,14 @@ trait CronForm
      *
      * @return array Prepared Form Data
      */
-    protected function _getFormFields(
+    private function _getFormFields(
         array $formData = [],
-        int   $cronID    = -1
+        int   $cronID   = -1
     ) : array
     {
         $cronVO = $this->getVO($formData);
 
-        $action = $cronVO->getAction();
+        $action   = $cronVO->getAction();
         $interval = $cronVO->getInterval();
         $isActive = $cronVO->getIsActive();
 
@@ -83,16 +93,16 @@ trait CronForm
      *
      * @return array Result Of Form Data Validation
      */
-    protected function _validateFormFields(
+    private function _validateFormFields(
         string $action   = '',
         int    $interval = -1,
-        bool   $isActive = false
+        bool   $isActive = FALSE
     ) : array
     {
         if (!preg_match('/^job([A-Z])([a-z]+)$/su', $action)) {
             $error = 'Cron Job Has Invalid Format';
             return [
-                false,
+                FALSE,
                 $error
             ];
         }
@@ -100,7 +110,7 @@ trait CronForm
         if ($interval < 1) {
             $error = 'Invalid Internal Value';
             return [
-                false,
+                FALSE,
                 $error
             ];
         }
@@ -108,12 +118,12 @@ trait CronForm
         if ($this->_isCronExists($action, $interval)) {
             $error = 'This Job Is Already Set';
             return [
-                false,
+                FALSE,
                 $error
             ];
         }
 
-        return [true, ''];
+        return [TRUE, ''];
     }
 }
 ?>
