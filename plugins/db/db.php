@@ -217,7 +217,7 @@ class DB
         $user     = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
 
-        $dsn = "{$type}:host={$host};port={$port};dbname={$dbname}";
+        $dsn = "{$type}:host={$host};port={$port};dbname={$dbName}";
 
         return [$dsn, $user, $password];
     }
