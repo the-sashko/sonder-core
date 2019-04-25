@@ -196,9 +196,11 @@ class RedisPlugin
 
         if ($ttl > 0) {
             $this->client->set($key, $value, 'EX', $ttl);
-        } else {
-            $this->client->set($key, $value);
+
+            return TRUE;
         }
+
+        $this->client->set($key, $value);
 
         return TRUE;
     }

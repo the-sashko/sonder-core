@@ -48,25 +48,26 @@ class UploadPlugin
     {
         foreach ($_FILES as $filesIDX => $file) {
             if (
-                array_key_exists('name', $file) &&
-                is_array($file['name'])
+                !array_key_exists('name', $file) ||
+                !is_array($file['name'])
             ) {
-                $fileMultiple = [];
-                foreach ($file as $fileIDX => $values) {
-                    foreach ($values as $valuesIDX => $value) {
-                        if (!array_key_exists($valuesIDX, $fileMultiple)) {
-                            $fileMultiple[$valuesIDX] = [];
-                        }
-                        $fileMultiple[$valuesIDX][$fileIDX] = $value;
-                    }
-                }
+                $this->files[$filesIDX] = [$file];
 
-                $file = $fileMultiple;
-            } else {
-                $file = [$file];
+                continue;
             }
 
-            $this->files[$filesIDX] = $file;
+            $fileMultiple = [];
+            foreach ($file as $fileIDX => $values) {
+                foreach ($values as $valuesIDX => $value) {
+                    if (!array_key_exists($valuesIDX, $fileMultiple)) {
+                        $fileMultiple[$valuesIDX] = [];
+                    }
+
+                    $fileMultiple[$valuesIDX][$fileIDX] = $value;
+                }
+           }
+
+           $this->files[$filesIDX] = $fileMultiple
         }
 
         $this->maxSize = 2 * static::MBYTE;

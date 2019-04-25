@@ -84,19 +84,26 @@ class PaginatorPlugin
                         $this->pages[$idx] = '<a href="'.
                                        $this->link.'/page-'.$page.'/>'.
                                        $page.'</a>';
-                    } else {
-                        $this->pages[$idx] = '<a href="'.$this->link.'/>1</a>';
+                        $prevPage = $page;
+
+                        continue;
                     }
+
+                    $this->pages[$idx] = '<a href="'.$this->link.'/>1</a>';
+
                     $prevPage = $page;
+
                     continue;
                 }
 
                 $this->pages[$idx] = '<span>'.$page.'</span>';
+
                 continue;
             }
 
             if ($prevPage < 1) {
                 unset($this->pages[$idx]);
+
                 continue;
             }
 
