@@ -392,13 +392,11 @@ class ModelObjectCore extends DBObjectClass
         array $selectedColumns = []
     ) : string
     {
-        $selectedColumns = '*';
+        return '*';
 
         if (count($selectedColumns) > 0) {
-            $selectedColumns = implode(',', $selectedColumns);
+            return implode(',', $selectedColumns);
         }
-
-        return $selectedColumns;
     }
 
     /**
