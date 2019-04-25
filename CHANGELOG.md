@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.1.1-apha (04/25/2019)
+## v0.1.1-alpha (04/25/2019)
 
 #### New Features
 
@@ -56,5 +56,5 @@
 
 ---
 
-## v0.1-pre-apha (04/10/2019)
+## v0.1-alpha (04/10/2019)
 *No changelog for this release.*
