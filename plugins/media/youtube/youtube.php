@@ -130,7 +130,7 @@ class YoutubePlugin
 
         $metaData = file_get_contents($cacheFilePath);
         $metaData = base64_decode($metaData);
-        
+ 
         return parse_str($metaData, $metaData);
     }
 
