@@ -656,7 +656,6 @@ class LinkPlugin
         return 'http';
     }
 
-    
     /**
      * Get Web Page Title From Meta Tags
      *
@@ -813,10 +812,10 @@ class LinkPlugin
         $metaDataJSON = file_get_contents($fileCache);
         $metaData     = json_decode($metaDataJSON, TRUE);
 
+        $metaData['url'] = '#';
+
         if (array_key_exists('url', $metaData)) {
             $metaData['url'] = base64_decode($metaData['url']);
-        } else {
-            $metaData['url'] = '#';
         }
 
         if (!array_key_exists('title', $metaData)) {
