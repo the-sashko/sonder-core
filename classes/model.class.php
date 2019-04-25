@@ -216,7 +216,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Slug Value
      */
-    protected function _getUniqSlug(
+    private function _getUniqSlug(
         string $slug = '',
         int    $id   = -1
     ) : string
