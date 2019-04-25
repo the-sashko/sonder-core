@@ -119,13 +119,13 @@ class UploadPlugin
                 $file['status'] = (bool) $file['status'];
                 $file['data']   = (string) $file['data'];
 
+                $this->files[$groupName][$groupIDX] = $file;
+
                 if (
                     !$file['status'] &&
                     strlen($file['data']) < 0
                 ) {
                     unset($this->files[$groupName][$groupIDX]);
-                } else {
-                    $this->files[$groupName][$groupIDX] = $file;
                 }
             }
         }

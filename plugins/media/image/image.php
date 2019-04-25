@@ -100,7 +100,9 @@ class ImagePlugin
 
         if (NULL === $size['width'] || NULL === $size['height']) {
             $size = $this->_calculateSize($size, $originWidth, $originHeight);
-        } else {
+        }
+
+        if (NULL !== $size['width'] && NULL !== $size['height']) {
             $imageObject = $this->_changeImageRatio(
                 $imageObject,
                 $size,

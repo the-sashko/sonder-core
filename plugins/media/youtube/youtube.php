@@ -124,7 +124,7 @@ class YoutubePlugin
                            "get_video_info?video_id={$videoID}";
             $metaData    = file_get_contents ($metaDataURL);
             file_put_contents($cacheFilePath, base64_encode($metaData));
- 
+
             return parse_str($metaData, $metaData);
         }
 
