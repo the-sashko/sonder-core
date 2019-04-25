@@ -64,7 +64,7 @@ class PaginatorPlugin
                 ($page > 3 && $page < $this->currPage - 1) ||
                 ($page < $this->pageCount - 2 && $page > $this->currPage + 1)
             ) {
-                $pages = -1;
+                $page = -1;
             }
 
             $this->pages[] = $page;
