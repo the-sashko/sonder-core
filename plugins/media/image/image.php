@@ -13,7 +13,7 @@ class ImagePlugin
      * @var string Image Directory Path
      */
     public $imageDir;
- 
+
     /**
      * @var string Otput Images File Base Name
      */
@@ -231,16 +231,15 @@ class ImagePlugin
             $newWidth  = (int) ($size['width'] / $size['height']) * $newHeight;
         }
 
+        $positionX = 0;
+        $positionY = 0;
+
         if ($newWidth < $originWidth) {
             $positionX = (int) (($originWidth-$newWidth) / 2);
-        } else {
-            $positionX = 0;
         }
 
         if ($newHeight < $originHeight) {
             $positionY = (int) (($originHeight-$newHeight) / 2);
-        } else {
-            $positionY = 0;
         }
 
         $positionX = $positionX > 0 ? $positionX + 1 : 0;

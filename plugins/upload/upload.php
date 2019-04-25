@@ -182,10 +182,10 @@ class UploadPlugin
 
         $fileName = md5($file['name']).'.'.$fileExtension;
 
+        $fileDir = __DIR__.'/../../../'.$this->uploadDir;
+
         if ($this->isPublic) {
             $fileDir = __DIR__.'/../../../../public/'.$this->uploadsDir;
-        } else {
-            $fileDir = __DIR__.'/../../../'.$this->uploadsDir;
         }
 
         if (

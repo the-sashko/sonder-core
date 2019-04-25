@@ -166,12 +166,14 @@ class DBObjectClass extends DB
 
         foreach ($items as $item) {
             $updateValues = $this->_prepareMultipleUpdateValues($item);
+
+            $condition = 'FALSE';
+
             if (isset($item[$conditionColumn])) {
                 $conditionValue = $item[$conditionColumn];
                 $condition      = "\"$conditionColumn\" = '{$conditionValue}'";
-            } else {
-                $condition = 'FALSE';
             }
+
             $sql = "
                 {$sql}
                 UPDATE \"{$table}\"
@@ -179,6 +181,7 @@ class DBObjectClass extends DB
                 WHERE {$condition};
             ";
         }
+
         if ($isTransaction) {
             return $this->transactionQuery($sql);
         }

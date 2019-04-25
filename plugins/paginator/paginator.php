@@ -18,7 +18,7 @@ class PaginatorPlugin
      * @var string URL Of Base Link
      */
     public $link = '';
-    
+
     /**
      * @var array List Of Pages
      */
@@ -64,10 +64,10 @@ class PaginatorPlugin
                 ($page > 3 && $page < $this->currPage - 1) ||
                 ($page < $this->pageCount - 2 && $page > $this->currPage + 1)
             ) {
-                $this->pages[] = -1;
-            } else {
-                $this->pages[] = $page;
+                $pages = -1;
             }
+
+            $this->pages[] = $page;
         }
     }
 

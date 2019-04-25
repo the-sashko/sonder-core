@@ -36,11 +36,13 @@ function renderPart(
 ) : bool
 {
     if ($ttl > 0) {
+
         if (is_file($GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat')) {
             $partCacheData = file_get_contents(
                 $GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat'
             );
             $partCacheData = json_decode($partCacheData, TRUE);
+
             if (
                 isset($partCacheData['timestamp']) &&
                 intval($partCacheData['timestamp']) > time() &&
@@ -50,9 +52,10 @@ function renderPart(
 
                 return TRUE;
             }
-        } else {
-            ob_start();
+
         }
+
+        ob_start();
     }
 
     foreach ($templateData as $templateDataItemIdx => $templateDataItem) {

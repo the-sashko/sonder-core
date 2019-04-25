@@ -164,9 +164,9 @@ class RedisPlugin
     public function setKeyPrefix(string $keyPrefix = '') : void
     {
         if (strlen($keyPrefix) > 0) {
+            $this->keyPrefix = $this->keyPrefix.':'.$keyPrefix;
+
             if (strlen($this->keyPrefix) > 0) {
-                $this->keyPrefix = $this->keyPrefix.':'.$keyPrefix;
-            } else {
                 $this->keyPrefix = $this->keyPrefix.':'.$keyPrefix;
             }
         }

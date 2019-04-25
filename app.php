@@ -39,7 +39,7 @@ class App
         if (!$this->_isValidControllerAction($controller, $action)) {
             $this->_error();
         }
- 
+
         try {
             set_error_handler([$this, 'errorHandler']);
             $controller->$action();
