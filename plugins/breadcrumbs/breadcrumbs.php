@@ -18,9 +18,9 @@ class BreadcrumbsPlugin
         $separator = static::BREADCRUMBS_SEPARATOR;
 
         if (count($pagePath) < 1) {
-            $html = '<span>'._t('Main Page'),'</span>';
+            $html = '<span>'._t('Main Page').'</span>';
         }
-        
+ 
         $html = '<a href="/">'._t('Main Page').'</a>';
 
         foreach ($pagePath as $uri => $title) {
