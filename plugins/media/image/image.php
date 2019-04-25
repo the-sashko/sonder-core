@@ -13,7 +13,7 @@ class ImagePlugin
      * @var string Image Directory Path
      */
     public $imageDir;
-    
+ 
     /**
      * @var string Otput Images File Base Name
      */
@@ -98,7 +98,7 @@ class ImagePlugin
         $originWidth  = (int) $imageObject->getImageGeometry()['width'];
         $originHeight = (int) $imageObject->getImageGeometry()['height'];
 
-        if (NULL === $size['width'] || NULL == $size['height']) {
+        if (NULL === $size['width'] || NULL === $size['height']) {
             $size = $this->_calculateSize($size, $originWidth, $originHeight);
         } else {
             $imageObject = $this->_changeImageRatio(
@@ -272,13 +272,13 @@ class ImagePlugin
             throw new Exception('Image Object Missing');
         }
 
+        $imageObject->setImageCompressionQuality(90);
+        $imageFilePath = $this->_getImageFilePath($prefix, 'png');
+
         if ($isLowQuality) {
             $imageObject->setImageFormat("gif");
             $imageObject->setImageCompressionQuality(10);
             $imageFilePath = $this->_getImageFilePath($prefix, 'gif');
-        } else {
-            $imageObject->setImageCompressionQuality(90);
-            $imageFilePath = $this->_getImageFilePath($prefix, 'png');
         }
 
         $imageObject->setImageCompression(Imagick::COMPRESSION_ZIP);

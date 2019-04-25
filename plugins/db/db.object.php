@@ -270,8 +270,8 @@ class DBObjectClass extends DB
     private function _prepareInsertValues(array $values) : string
     {
         if (
-            count($values) > 0 &&
-            is_array($values[0])
+            count($values) < 1 ||
+            !is_array($values[0])
         ) {
             $values = implode("','", $values);
             $values = "('{$values}')";
