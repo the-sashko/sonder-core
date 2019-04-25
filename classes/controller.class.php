@@ -355,12 +355,13 @@ class ControllerCore extends CommonCore
 
         $metaData['copyright'] = '&copy; '.$metaData['site_name'];
 
+        $copyrightDate = date('Y');
+
         if (date('Y') !== $launchYear) {
-            $metaData['copyright'] = $metaData['copyright'].' '.
-                                     $launchYear.'-'.date('Y');
-        } else {
-            $metaData['copyright'] = $metaData['copyright'].' '.date('Y');
+            $copyrightDate = $launchYear.'-'.date('Y');
         }
+
+        $metaData['copyright'] = $copyrightDate;
 
         if (count($pagePath) > 0) {
             $metaData['title'] = $this->_getTitleByPagePath($pagePath).

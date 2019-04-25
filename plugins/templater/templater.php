@@ -39,7 +39,7 @@ class TemplaterPlugin
 
         $template = strlen($template) > 0 ? $template : 'main';
 
-        if ($ttl>0) {
+        if ($ttl > 0) {
             $currSlug    = (new ServerInfo)->get('REQUEST_URI');
             $currSlug    = str_replace('/', '_', $currSlug);
             $currSlug    = preg_replace('/(^_)|(_$)/su', '', $currSlug);

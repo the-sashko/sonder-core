@@ -31,7 +31,7 @@ class BreadcrumbsPlugin
             if ('#' !== $uri) {
                 $htmlLink = "<a href=\"{$uri}\">{$title}</a>";
             }
-            
+
             $html = "{$html}{$htmlLink}";
         }
 

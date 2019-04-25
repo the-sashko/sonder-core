@@ -35,7 +35,7 @@ function renderPart(
     array  $templateData = []
 ) : bool
 {
-    if ($ttl>0) {
+    if ($ttl > 0) {
         if (is_file($GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat')) {
             $partCacheData = file_get_contents(
                 $GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat'
