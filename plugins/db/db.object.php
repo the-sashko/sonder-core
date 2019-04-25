@@ -273,18 +273,21 @@ class DBObjectClass extends DB
             count($values) > 0 &&
             is_array($values[0])
         ) {
-            foreach ($values as $idx => $value) {
-                $value = implode("','", $value);
-                $value = "'{$value}'";
-
-                $values[$idx] = $value;
-            }
-            $values = implode("),(", $values);
-            $values = "({$values})";
-        } else {
             $values = implode("','", $values);
             $values = "('{$values}')";
+
+            return $values;
         }
+
+        foreach ($values as $idx => $value) {
+            $value = implode("','", $value);
+            $value = "'{$value}'";
+
+            $values[$idx] = $value;
+        }
+
+        $values = implode("),(", $values);
+        $values = "({$values})";
 
         return $values;
     }

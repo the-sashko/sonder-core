@@ -109,7 +109,7 @@ class DB
             return $res;
         }
 
-        if ($this->dbInstance == NULL) {
+        if (NULL === $this->dbInstance) {
             $this->_setDBInstance();
         }
 
@@ -173,7 +173,7 @@ class DB
     public function transactionStart() : bool
     {
         $sql = 'START TRANSACTION;';
- 
+
         return $this->_transaction($sql);
     }
 
@@ -213,11 +213,11 @@ class DB
         $type     = isset($config['type']) ? $config['type'] : 'mysql';
         $host     = isset($config['host']) ? $config['host'] : 'localhost';
         $port     = isset($config['port']) ? $config['port'] : '5433';
-        $db       = isset($config['db']) ? $config['db'] : 'default';
+        $dbName   = isset($config['db']) ? $config['db'] : 'default';
         $user     = isset($config['user']) ? $config['user'] : '';
         $password = isset($config['password']) ? $config['password'] : '';
 
-        $dsn = "{$type}:host={$host};port={$port};dbname={$db}";
+        $dsn = "{$type}:host={$host};port={$port};dbname={$dbname}";
 
         return [$dsn, $user, $password];
     }
