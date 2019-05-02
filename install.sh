@@ -5,7 +5,7 @@ scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 cd "$scriptDir/.."
 
-cp -r core/examples/public ../../public
+cp -r core/examples/public ../public
 cp -r core/examples/protected/config config
 cp -r core/examples/protected/controllers controllers
 cp -r core/examples/protected/models models
