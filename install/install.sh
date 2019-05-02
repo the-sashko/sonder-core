@@ -3,16 +3,16 @@
 currDir=$(pwd)
 scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
-cd "$scriptDir/.."
+cd "$scriptDir/../.."
 
-cp -r examples/public ../../public
-cp -r examples/config config
-cp -r examples/controllers controllers
-cp -r examples/models models
-cp -r examples/res res
-cp -r examples/routers routers
-cp -r examples/init.php init.php
-cp -r examples/api.init.php api.init.php
+cp -r core/examples/public ../../public
+cp -r core/examples/protected/config config
+cp -r core/examples/protected/controllers controllers
+cp -r core/examples/protected/models models
+cp -r core/examples/protected/res res
+cp -r core/examples/protected/routers routers
+cp -r core/examples/protected/init.php init.php
+cp -r core/examples/protected/api.init.php api.init.php
 
 cd "$currDir"
 
