@@ -31,6 +31,50 @@ class ValuesObject
     }
 
     /**
+     * Get Mustiple Params From Model Data In JSON Format
+     *
+     * @param array $params List Of Values
+     *
+     * @return string Data Values In JSON Format
+     */
+    public function getJSON(array $params = [])
+    {
+        $res = [];
+
+        foreach ($params as $param) {
+            $res[$param] = '';
+
+            if ($this->has($param)) {
+                $res[$param] = (string) $this->get($param);
+            }
+        }
+
+        return json_encode($res);
+    }
+
+    /**
+     * Get Mustiple Params From Model Data In PHP Array Format
+     *
+     * @param array $params List Of Values
+     *
+     * @return array Array Of Data Values
+     */
+    public function getArray(array $params = [])
+    {
+        $res = [];
+
+        foreach ($params as $param) {
+            $res[$param] = '';
+
+            if ($this->has($param)) {
+                $res[$param] = (string) $this->get($param);
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * Set Data Of Model Instance
      *
      * @param string $valueName Data Name
