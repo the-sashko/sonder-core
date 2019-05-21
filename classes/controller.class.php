@@ -102,7 +102,7 @@ class ControllerCore extends CommonCore
      */
     private function _initConfigs() : void
     {
-        $this->configData['main'] = $this->initConfig('main');
+        $this->configData['main'] = $this->getConfig('main');
     }
 
     /**
@@ -331,8 +331,8 @@ class ControllerCore extends CommonCore
         array $meta     = []
     ) : array
     {
-        $metaData       = $this->initConfig('seo');
-        $mainConfigData = $this->initConfig('main');
+        $metaData       = $this->getConfig('seo');
+        $mainConfigData = $this->getConfig('main');
 
         if (array_key_exists('description', $meta)) {
             $metaData['description'] = $meta['description'];

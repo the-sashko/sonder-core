@@ -81,7 +81,7 @@ class CommonCore
     *
     * @return array Data From Config File
     */
-    public function initConfig(string $configName = '') : array
+    public function getConfig(string $configName = '') : array
     {
         $configPath = __DIR__."/../../config/{$configName}.json";
 
