@@ -15,7 +15,7 @@ class CronControllerCore extends ControllerCore
 
         $logger = $this->getPlugin('logger');
 
-        $cron = $this->initModel('cron');
+        $cron = $this->getModel('cron');
 
         $cronJobs = $cron->getJobs();
 

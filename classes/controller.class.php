@@ -230,7 +230,7 @@ class ControllerCore extends CommonCore
      */
     public function CRUDList(string $modelName = '') : void
     {
-        $model    = $this->initModel($modelName);
+        $model    = $this->getModel($modelName);
         $modelVOs = $model->getByPage($this->page);
 
         $this->render($modelName.'/list', [
@@ -251,7 +251,7 @@ class ControllerCore extends CommonCore
     {
         $message = NULL;
 
-        $model = $this->initModel($modelName);
+        $model = $this->getModel($modelName);
 
         if (count($this->post) > 0) {
             list($res, $message) = $model->formHandler($this->post);
@@ -279,7 +279,7 @@ class ControllerCore extends CommonCore
 
         $id = (int) $this->URLParam;
 
-        $model   = $this->initModel($modelName);
+        $model   = $this->getModel($modelName);
         $modelVO = $model->getByID($id);
 
         if (!$modelVO->has('id')) {
@@ -309,7 +309,7 @@ class ControllerCore extends CommonCore
     ) : void
     {
         $id    = (int) $this->URLParam;
-        $model = $this->initModel($modelName);
+        $model = $this->getModel($modelName);
 
         if (!$model->removeByID($id)) {
             throw new Exception("Error While Removing {$modelName} #{$id}");

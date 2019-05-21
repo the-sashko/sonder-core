@@ -27,7 +27,7 @@ class CommonCore
     *
     * @return Object ModelCore Insnace Of Model
     */
-    public function initModel(string $model = '') : ModelCore
+    public function getModel(string $model = '') : ModelCore
     {
         $modelsDir  = __DIR__.'/../../models';
         $modelClass = mb_convert_case($model, MB_CASE_TITLE);
