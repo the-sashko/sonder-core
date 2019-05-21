@@ -34,7 +34,7 @@ class BreadcrumbsPluginTest extends TestCase
      */
     public function testGetHTML()
     {
-        $breadcrumbs = (new CommonCore)->initPlugin('breadcrumbs');
+        $breadcrumbs = (new CommonCore)->getPlugin('breadcrumbs');
 
         foreach (static::PATH_DATA_SAMPLE as $path) {
             $html = $breadcrumbs->getHTML($path['value']);

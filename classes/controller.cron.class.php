@@ -13,7 +13,7 @@ class CronControllerCore extends ControllerCore
             throw new Exception('Invalid Token');
         }
 
-        $logger = $this->initPlugin('logger');
+        $logger = $this->getPlugin('logger');
 
         $cron = $this->initModel('cron');
 

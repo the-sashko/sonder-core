@@ -77,7 +77,7 @@ class ControllerCore extends CommonCore
      */
     private function _setPostData(array $postData = []) : void
     {
-        $securityPlugin = $this->initPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
 
         $escapeMethod = [
             $securityPlugin,
@@ -112,7 +112,7 @@ class ControllerCore extends CommonCore
      */
     private function _setURLParam(string $URLParam = '') : void
     {
-        $securityPlugin = $this->initPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
 
         $this->URLParam = $securityPlugin->escapeInput($URLParam);
     }
@@ -210,13 +210,13 @@ class ControllerCore extends CommonCore
             $dataParams['meta']
         );
 
-        $breadcrumbs = $this->initPlugin('breadcrumbs');
+        $breadcrumbs = $this->getPlugin('breadcrumbs');
 
         $dataParams['breadcrumbs'] = $breadcrumbs->getHTML(
                                         $dataParams['pagePath']
                                      );
 
-        $templater = $this->initPlugin('templater');
+        $templater = $this->getPlugin('templater');
 
         $templater->scope = $this->templaterScope;
 

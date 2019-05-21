@@ -16,8 +16,8 @@ class CommonCore
 
     public function __construct()
     {
-        $this->session    = $this->initPlugin('session');
-        $this->serverInfo = $this->initPlugin('serverInfo');
+        $this->session    = $this->getPlugin('session');
+        $this->serverInfo = $this->getPlugin('serverInfo');
     }
 
     /**
@@ -63,7 +63,7 @@ class CommonCore
     *
     * @return Object Insnace Of Plugin
     */
-    public function initPlugin(string $plugin = '') : Object
+    public function getPlugin(string $plugin = '') : Object
     {
         $pluginClass = "{$plugin}Plugin";
 
