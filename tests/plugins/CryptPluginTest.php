@@ -49,7 +49,7 @@ class CryptPluginTest extends TestCase
      */
     public function testGetHash()
     {
-        $crypt = (new CommonCore)->initPlugin('crypt');
+        $crypt = (new CommonCore)->getPlugin('crypt');
 
         foreach (static::HASH_DATA_SAMPLE as $data) {
             $hash = $crypt->getHash($data['value'], static::SALT);
@@ -62,7 +62,7 @@ class CryptPluginTest extends TestCase
      */
     public function testGetTripCode()
     {
-        $crypt = (new CommonCore)->initPlugin('crypt');
+        $crypt = (new CommonCore)->getPlugin('crypt');
 
         foreach (static::HASH_DATA_SAMPLE as $data) {
             $tripCode = $crypt->getTripCode($data['value']);

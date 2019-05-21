@@ -1,8 +1,8 @@
 <?php
 /**
- * Model CRUD Interface
+ * Interface Of CRUD Model
  */
-interface ModelCRUD
+interface IModelCRUD
 {
     /**
      * Handler For Model Form That Creating Or Editing Model Item

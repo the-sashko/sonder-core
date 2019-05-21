@@ -9,7 +9,7 @@ class CronController extends CronControllerCore
      */
     public function jobTest() : void
     {
-        $this->initPlugin('logger')->log('Cron Test Job Executed', 'test');
+        $this->getPlugin('logger')->log('Cron Test Job Executed', 'test');
     }
 }
 ?>

@@ -2,7 +2,7 @@
 /**
  * ModelCore Class For Cron Model
  */
-class Cron extends ModelCore implements ModelCRUD
+class Cron extends ModelCore implements IModelCRUD
 {
     use CronForm;
 

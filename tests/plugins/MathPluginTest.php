@@ -116,7 +116,7 @@ class MathPluginTest extends TestCase
      */
     public function testDec2base64()
     {
-        $math = (new CommonCore)->initPlugin('math');
+        $math = (new CommonCore)->getPlugin('math');
 
         foreach (static::CONVERTION_DATA_SAMPLE as $inputValue => $inputSet) {
             $inputValue = (int) $inputValue;

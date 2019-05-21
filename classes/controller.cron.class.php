@@ -9,13 +9,13 @@ class CronControllerCore extends ControllerCore
      */
     public function actionRun() : void
     {
-        if ($this->URLParam !== $this->initConfig('cron')['token']) {
+        if ($this->URLParam !== $this->getConfig('cron')['token']) {
             throw new Exception('Invalid Token');
         }
 
-        $logger = $this->initPlugin('logger');
+        $logger = $this->getPlugin('logger');
 
-        $cron = $this->initModel('cron');
+        $cron = $this->getModel('cron');
 
         $cronJobs = $cron->getJobs();
 

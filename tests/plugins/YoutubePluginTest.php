@@ -38,7 +38,7 @@ class YoutubePluginTest extends TestCase
      */
     public function testParseYoutubeURL()
     {
-        $youtube = (new CommonCore)->initPlugin('youtube');
+        $youtube = (new CommonCore)->getPlugin('youtube');
 
         foreach (static::TEXT_DATA_SAMPLE as $text) {
             $res = $youtube->parseYoutubeURL($text['value']);

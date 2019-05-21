@@ -13,7 +13,7 @@ class CommonCoreTest extends TestCase
     {
         $commonCoreTest = new CommonCore();
 
-        $mockPlugin = $commonCoreTest->initPlugin('mock');
+        $mockPlugin = $commonCoreTest->getPlugin('mock');
 
         $this->assertTrue($mockPlugin->mockAction());
     }

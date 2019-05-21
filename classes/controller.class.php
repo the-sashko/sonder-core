@@ -77,7 +77,7 @@ class ControllerCore extends CommonCore
      */
     private function _setPostData(array $postData = []) : void
     {
-        $securityPlugin = $this->initPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
 
         $escapeMethod = [
             $securityPlugin,
@@ -102,7 +102,7 @@ class ControllerCore extends CommonCore
      */
     private function _initConfigs() : void
     {
-        $this->configData['main'] = $this->initConfig('main');
+        $this->configData['main'] = $this->getConfig('main');
     }
 
     /**
@@ -112,7 +112,7 @@ class ControllerCore extends CommonCore
      */
     private function _setURLParam(string $URLParam = '') : void
     {
-        $securityPlugin = $this->initPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
 
         $this->URLParam = $securityPlugin->escapeInput($URLParam);
     }
@@ -210,13 +210,13 @@ class ControllerCore extends CommonCore
             $dataParams['meta']
         );
 
-        $breadcrumbs = $this->initPlugin('breadcrumbs');
+        $breadcrumbs = $this->getPlugin('breadcrumbs');
 
         $dataParams['breadcrumbs'] = $breadcrumbs->getHTML(
                                         $dataParams['pagePath']
                                      );
 
-        $templater = $this->initPlugin('templater');
+        $templater = $this->getPlugin('templater');
 
         $templater->scope = $this->templaterScope;
 
@@ -230,7 +230,7 @@ class ControllerCore extends CommonCore
      */
     public function CRUDList(string $modelName = '') : void
     {
-        $model    = $this->initModel($modelName);
+        $model    = $this->getModel($modelName);
         $modelVOs = $model->getByPage($this->page);
 
         $this->render($modelName.'/list', [
@@ -251,7 +251,7 @@ class ControllerCore extends CommonCore
     {
         $message = NULL;
 
-        $model = $this->initModel($modelName);
+        $model = $this->getModel($modelName);
 
         if (count($this->post) > 0) {
             list($res, $message) = $model->formHandler($this->post);
@@ -279,7 +279,7 @@ class ControllerCore extends CommonCore
 
         $id = (int) $this->URLParam;
 
-        $model   = $this->initModel($modelName);
+        $model   = $this->getModel($modelName);
         $modelVO = $model->getByID($id);
 
         if (!$modelVO->has('id')) {
@@ -309,7 +309,7 @@ class ControllerCore extends CommonCore
     ) : void
     {
         $id    = (int) $this->URLParam;
-        $model = $this->initModel($modelName);
+        $model = $this->getModel($modelName);
 
         if (!$model->removeByID($id)) {
             throw new Exception("Error While Removing {$modelName} #{$id}");
@@ -331,8 +331,8 @@ class ControllerCore extends CommonCore
         array $meta     = []
     ) : array
     {
-        $metaData       = $this->initConfig('seo');
-        $mainConfigData = $this->initConfig('main');
+        $metaData       = $this->getConfig('seo');
+        $mainConfigData = $this->getConfig('main');
 
         if (array_key_exists('description', $meta)) {
             $metaData['description'] = $meta['description'];

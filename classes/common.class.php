@@ -16,8 +16,8 @@ class CommonCore
 
     public function __construct()
     {
-        $this->session    = $this->initPlugin('session');
-        $this->serverInfo = $this->initPlugin('serverInfo');
+        $this->session    = $this->getPlugin('session');
+        $this->serverInfo = $this->getPlugin('serverInfo');
     }
 
     /**
@@ -27,7 +27,7 @@ class CommonCore
     *
     * @return Object ModelCore Insnace Of Model
     */
-    public function initModel(string $model = '') : ModelCore
+    public function getModel(string $model = '') : ModelCore
     {
         $modelsDir  = __DIR__.'/../../models';
         $modelClass = mb_convert_case($model, MB_CASE_TITLE);
@@ -63,7 +63,7 @@ class CommonCore
     *
     * @return Object Insnace Of Plugin
     */
-    public function initPlugin(string $plugin = '') : Object
+    public function getPlugin(string $plugin = '') : Object
     {
         $pluginClass = "{$plugin}Plugin";
 
@@ -81,7 +81,7 @@ class CommonCore
     *
     * @return array Data From Config File
     */
-    public function initConfig(string $configName = '') : array
+    public function getConfig(string $configName = '') : array
     {
         $configPath = __DIR__."/../../config/{$configName}.json";
 
