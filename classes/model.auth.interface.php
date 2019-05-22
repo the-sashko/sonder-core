@@ -22,7 +22,7 @@ interface IModelAuth
      * @return array Are Login And Password Valid
      */
     public function checkLoginAndPassword(
-        string $login    = '',
+        string $login = '',
         string $password = ''
     ) : void;
 
@@ -44,7 +44,7 @@ interface IModelAuth
      * @return bool Is User Successfully Signed In
      */
     public function signinByLoginAndPassword(
-        string $login    = '',
+        string $login = '',
         string $password = ''
     ) : void;
 
@@ -64,21 +64,21 @@ interface IModelAuth
 
     /**
      * Ban User
-     * 
+     *
      * @return bool Is User Successfully Added To Ban
      */
     public function add2ban() : bool;
 
     /**
      * Remove User From
-     * 
+     *
      * @return bool Is User Successfully Removed From Ban
      */
     public function removeFromBan() : bool;
 
     /**
      * Check Is User Banned
-     * 
+     *
      * @return bool Is User Banned
      */
     public function isBanned() : bool;
