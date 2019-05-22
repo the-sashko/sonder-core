@@ -14,6 +14,8 @@ cp -r core/examples/protected/routers routers
 cp -r core/examples/protected/init.php init.php
 cp -r core/examples/protected/api.init.php api.init.php
 
+mkdir res/logs
+
 cd "$currDir"
 
 exit

@@ -5,6 +5,6 @@ interface ISMSResponse
 
     public function getErrorMessage() : string;
 
-    public function getrMessageCode() : string;
+    public function getRemoteMessageCode() : string;
 }
 ?>

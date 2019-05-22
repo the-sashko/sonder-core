@@ -3,7 +3,7 @@ interface ISMSCredentials
 {
     public function getLogin() : string;
 
-    public function getPassword() : string;
+    public function getToken() : string;
 
     public function getURL() : string;
 
@@ -13,7 +13,7 @@ interface ISMSCredentials
 
     public function setLogin(string $login = '') : void;
 
-    public function setPassword(string $password = '') : void;
+    public function setToken(string $token = '') : void;
 
     public function setURL(string $url = '#') : void;
 
