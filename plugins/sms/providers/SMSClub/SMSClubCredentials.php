@@ -59,7 +59,7 @@ class SMSClubCredentials implements ISMSCredentials
             return [];
         }
 
-        return (array) $this->_data['alpha_name'];
+        return (array) $this->_data['options'];
     }
 
     public function setLogin(string $login = '') : void

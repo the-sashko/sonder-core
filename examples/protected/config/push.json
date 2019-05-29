@@ -1,0 +1,10 @@
+{
+    "url": "https://onesignal.com/api/v1/notifications",
+    "login": "555d15b3-60fe-4b77-b53a-74376d1abde8",
+    "token": "ODM4YzIyMzMtYjQyNy00Mjc2LTg3MDQtZWUyYjQ4MmZiZDQ1",
+    "subscribers_group": "Subscribed Users",
+    "options": {},
+    "default_message_url": "#",
+    "default_message_image": "https://blog.sashko.me/assets/img/logo-100.png",
+    "default_message_title": "Blog By Sashko"
+}
