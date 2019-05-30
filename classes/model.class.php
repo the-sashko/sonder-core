@@ -26,6 +26,8 @@ class ModelCore extends CommonCore
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->setConfigData();
     }
 
