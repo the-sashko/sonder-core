@@ -23,6 +23,17 @@ class SMSClubProvider implements ISMSProvider
         return $this->_response;
     }
 
+    public function checkMessage(
+        ISMSResponse $smsResponse = NULL
+    ) : ISMSResponse
+    {
+        //To-Do
+
+        throw Exception('Not Implemented Yet');
+
+        return (new ISMSResponse);
+    }
+
     private function _sendRemoteRequest(
         string $phone   = '',
         string $message = ''

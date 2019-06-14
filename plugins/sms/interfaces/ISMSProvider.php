@@ -5,5 +5,9 @@ interface ISMSProvider
         string $phone   = '',
         string $message = ''
     ) : ISMSResponse;
+
+    public function checkMessage(
+        ISMSResponse $smsResponse = NULL
+    ) : ISMSResponse;
 }
 ?>
