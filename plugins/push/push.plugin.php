@@ -1,13 +1,10 @@
 <?php
-class SmsPlugin
+class PushPlugin
 {
-    const SMS_TEXT_MAX_LENGTH = 70;
-
     private $_provider = NULL;
 
     public function setProvider(string $providerIdent = '') : void
     {
-
         $credentialsProviderClass = $providerIdent.'Credentials';
         $credentialsProviderFile  = __DIR__.'/providers/'.$providerIdent.'/'
                                     .$credentialsProviderClass.'.php';
@@ -15,7 +12,7 @@ class SmsPlugin
         $responseProviderClass = $providerIdent.'Response';
         $responseProviderFile  = __DIR__.'/providers/'.$providerIdent.'/'
                                  .$responseProviderClass.'.php';
-        
+
         $providerClass = $providerIdent.'Provider';
         $providerFile  = __DIR__.'/providers/'.$providerIdent.'/'
                          .$providerClass.'.php';
@@ -24,71 +21,61 @@ class SmsPlugin
             !file_exists($credentialsProviderFile) ||
             !is_file($credentialsProviderFile)
         ) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
         }
 
         if (
             !file_exists($responseProviderFile) ||
             !is_file($responseProviderFile)
         ) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
+        
         }
 
         if (!file_exists($providerFile) || !is_file($providerFile)) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
         }
-
+        
         include_once $credentialsProviderFile;
         include_once $responseProviderFile;
         include_once $providerFile;
 
         if (!class_exists($credentialsProviderClass)) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
         }
 
         if (!class_exists($responseProviderClass)) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
         }
 
         if (!class_exists($providerClass)) {
-            throw new Exception('Invalid SMS Provider');
+            throw new Exception('Invalid Push Provider');
         }
 
         $this->_provider = new $providerClass();
     }
 
-    public function sendMessage(
-        string $phone   = '',
-        string $message = ''
-    ) : array
+    public function getHTMLSnippet() : string
     {
         if ($this->_provider === NULL) {
-            throw new Exception('SMS Provider Is Not Set');
+            throw new Exception('Push Provider Is Not Set');
         }
 
-        if (!$this->_validatePhone($phone)) {
-            return [FALSE, 'Invalid Phone Number'];
-        }
-
-        if (strlen($message) < 1) {
-        }
-
-        if (strlen($message) > static::SMS_TEXT_MAX_LENGTH) {
-            return [FALSE, 'SMS Text Is Too Long'];
-        }
-
-        $response = $this->_provider->sendMessage($phone, $message);
-
-        if (!$response->getStatus()) {
-            return [FALSE, $response->getErrorMessage()];
-        }
-
-        return [TRUE, $response->getRemoteMessageCode()];
+        return $this->_provider->getHTMLSnippet();
     }
 
-    private function _validatePhone(string $phone = '') : bool
+    public function sendMessage(
+        string $message = '',
+        string $title   = '',
+        string $image   = '',
+        string $url     = '#'
+    ) : IPushResponse
     {
-        return preg_match('/^\+([0-9]+)$/su', $phone);
+        if ($this->_provider === NULL) {
+            throw new Exception('Push Provider Is Not Set');
+        }
+
+        return $this->_provider->sendMessage($message, $title, $image, $url);
     }
 }
 ?>

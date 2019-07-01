@@ -103,6 +103,7 @@ class ControllerCore extends CommonCore
     private function _initConfigs() : void
     {
         $this->configData['main'] = $this->getConfig('main');
+        $this->configData['hooks'] = $this->getConfig('hooks');
     }
 
     /**
@@ -220,6 +221,8 @@ class ControllerCore extends CommonCore
 
         $templater->scope = $this->templaterScope;
 
+        $dataParams = $this->execHook('onBeforeRender', $dataParams);
+
         $templater->render($template, $dataParams, $ttl);
     }
 
@@ -295,6 +298,75 @@ class ControllerCore extends CommonCore
 
         $formAction = $modelName.'Form';
         $this->$formAction($modelVO, $message);
+    }
+
+
+    /**
+     * Execute All Hooks In Scope
+     *
+     * @param string $hookScope  Scope Of Hooks
+     * @param array  $entityData Entity Data
+     */
+    public function execHook(
+        string $hookScope  = '',
+        array  $entityData = []
+    ) : array
+    {
+        $hooksData = $this->configData['hooks'];
+
+        if (!array_key_exists($hookScope, $hooksData)){
+            return $entityData;
+        }
+
+        foreach ($hooksData[$hookScope] as $hookItem) {
+            if (!array_key_exists('hook', $hookItem)){
+                continue;
+            }
+
+            if (!array_key_exists('method', $hookItem)){
+                continue;
+            }
+
+            $hookClass        = $hookItem['hook'];
+            $hookFile         = $hookItem['hook'];
+            $hookAutoloadFile = $hookItem['hook'];
+            $hookMethod       = $hookItem['method'];
+
+            $hookClass = mb_convert_case($hookClass, MB_CASE_TITLE).'Hook';
+           
+            $hookFile = __DIR__.'/../../hooks/'.$hookFile.'/'.$hookFile.'.php';
+
+            $hookAutoloadFile = __DIR__.'/../../hooks/'.
+                                $hookAutoloadFile.'/autoload.php';
+
+            if (file_exists($hookAutoloadFile) && is_file($hookAutoloadFile)) {
+                $hookFile = $hookAutoloadFile;
+            }
+
+            if (!file_exists($hookFile) || !is_file($hookFile)) {
+                throw new Exception('Hook '.$hookItem['hook'].' Is Not Exists');
+            }
+
+            require_once $hookFile;
+
+            if (!class_exists($hookClass)) {
+                throw new Exception('Hook Class '.$hookClass.' Is Not Exists');
+            }
+
+            $hookInstance = new $hookClass($entityData);
+
+            if (!method_exists($hookInstance, $hookMethod)) {
+                $errorMessage = 'Hook Method '.$hookMethod.
+                                ' In Class '.$hookClass.' Is Not Exists';
+                throw new Exception($errorMessage);
+            }
+
+            $hookInstance->$hookMethod();
+
+            $entityData = $hookInstance->getEntity();
+        }
+
+        return $entityData;
     }
 
     /**

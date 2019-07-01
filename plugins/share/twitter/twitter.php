@@ -7,7 +7,7 @@ class TwitterPlugin
     /**
      * @var int Twitter Max Length Of Message
      */
-    const TWITTER_MESSAGE_MAX_LENGTH = 140;
+    const MESSAGE_MAX_LENGTH = 140;
 
     /**
      * @var object Instance Of Codebird
@@ -75,7 +75,7 @@ class TwitterPlugin
      */
     private function _validateMessage(string $message = '') : void
     {
-        if (strlen($message) > static::TWITTER_MESSAGE_MAX_LENGTH) {
+        if (strlen($message) > static::MESSAGE_MAX_LENGTH) {
             throw new Exception('Twitter API Error: Message Too Long');
         }
 

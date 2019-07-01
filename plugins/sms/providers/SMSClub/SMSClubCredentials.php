@@ -26,13 +26,13 @@ class SMSClubCredentials implements ISMSCredentials
         return (string) $this->_data['login'];
     }
 
-    public function getPassword() : string
+    public function getToken() : string
     {
-        if (!array_key_exists('password', $this->_data)) {
+        if (!array_key_exists('token', $this->_data)) {
             return '';
         }
 
-        return (string) $this->_data['password'];
+        return (string) $this->_data['token'];
     }
 
     public function getURL() : string
@@ -59,7 +59,7 @@ class SMSClubCredentials implements ISMSCredentials
             return [];
         }
 
-        return (array) $this->_data['alpha_name'];
+        return (array) $this->_data['options'];
     }
 
     public function setLogin(string $login = '') : void
@@ -67,9 +67,9 @@ class SMSClubCredentials implements ISMSCredentials
         $this->_data['login'] = $login;
     }
 
-    public function setPassword(string $password = '') : void
+    public function setToken(string $token = '') : void
     {
-        $this->_data['password'] = $password;
+        $this->_data['token'] = $token;
     }
 
     public function setURL(string $url = '#') : void

@@ -57,7 +57,9 @@ class SitemapPlugin
         float  $priority    = 0.5
     ) : void
     {
-        $sitemapXML = '<urlset>';
+        $sitemapXML = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
+                      '<urlset '.
+                      'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         foreach ($links as $link) {
             $sitemapDate = date('Y-m-d').'T'.date('H:i:s+00:00');
@@ -85,17 +87,20 @@ class SitemapPlugin
      */
     public function saveSummarySitemap(
         string $sitemapName = 'sitemap',
-        array  $sitemaps    = []
+        array  $sitemaps    = [],
+        string $host        = ''
     ) : void
     {
-        $sitemapXML = '<sitemapindex>';
+        $sitemapXML = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
+                      '<sitemapindex '.
+                      'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         foreach ($sitemaps as $sitemap) {
             $sitemapDate = date('Y-m-d').'T'.date('H:i:s+00:00');
 
             $sitemapXML = "{$sitemapXML}
                 <sitemap>
-                    <loc>/xml/{$sitemap}.xml</loc>
+                    <loc>{$host}/xml/{$sitemap}.xml</loc>
                     <lastmod>{$sitemapDate}</lastmod>
                 </sitemap>
             ";

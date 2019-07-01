@@ -26,6 +26,8 @@ class ModelCore extends CommonCore
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->setConfigData();
     }
 
@@ -280,6 +282,7 @@ class ModelCore extends CommonCore
         $text = preg_replace('/\<br\>/su', "\n", $text);
         $text = preg_replace('/\n+/su', "\n", $text);
         $text = preg_replace('/(^\s)|(\s$)/su', '', $text);
+        $text = str_replace('\'', '&#8217;', $text);
 
         return $text;
     }
