@@ -7,7 +7,7 @@ class MainController extends ControllerCore
     /**
      * @var string Template Scope
      */
-    public $templaterScope = 'dafault';
+    public $templaterScope = 'default';
 
     /**
      * Default Site Action
