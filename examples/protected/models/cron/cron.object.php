@@ -1,30 +1,12 @@
 <?php
-/**
- * ModelObject Class For Cron Model
- */
 class CronObject extends ModelObjectCore
 {
-    /**
-     * @var string Default Data Base Table
-     */
     public $defaultTableName = 'cron_jobs';
+    public $tableCrons       = 'cron_jobs';
+    public $scope            = 'cron';
 
     /**
-     * @var string Data Base Table For Cron Jobs Data
-     */
-    public $tableCrons = 'cron_jobs';
-
-    /**
-     * @var string Data Base Queries Cache Scope
-     */
-    public $scope = 'cron';
-
-    /**
-     * Insert Cron Job Data To Data Base
-     *
-     * @param array $values Cron Job Data
-     *
-     * @return bool Is Cron Job Data Successfully Saved
+     * summary
      */
     public function create(array $values = []) : bool
     {
@@ -38,13 +20,7 @@ class CronObject extends ModelObjectCore
     }
 
     /**
-     * Update Cron Job Data In Data Base By Job ID
-     *
-     * @param array $columns Cron Job Columns In Data Base Table
-     * @param array $values  Cron Job Data
-     * @param int   $id      Cron Job ID
-     *
-     * @return bool Is Cron Job Data Successfully Updated
+     * summary
      */
     public function updateCronByID(
         array  $columns = [],
@@ -56,9 +32,7 @@ class CronObject extends ModelObjectCore
     }
 
     /**
-     * Get All Cron Jobs
-     *
-     * @return array List Of All Cron Jobs
+     * summary
      */
     public function getAllCrons() : array
     {
@@ -66,9 +40,7 @@ class CronObject extends ModelObjectCore
     }
 
     /**
-     * Get Cron Jobs For Execution
-     *
-     * @return array List Of All Cron Jobs For Execution
+     * summary
      */
     public function getJobs() : array
     {

@@ -9,6 +9,7 @@ cp -r core/examples/public ../public
 cp -r core/examples/protected/config config
 cp -r core/examples/protected/controllers controllers
 cp -r core/examples/protected/models models
+cp -r core/examples/protected/hooks hooks
 cp -r core/examples/protected/res res
 cp -r core/examples/protected/routers routers
 cp -r core/examples/protected/init.php init.php
