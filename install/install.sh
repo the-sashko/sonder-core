@@ -17,6 +17,8 @@ cp -r core/examples/protected/api.init.php api.init.php
 
 mkdir res/logs
 
+cd core
+
 git submodule update --init --recursive
 
 cd "$currDir"
