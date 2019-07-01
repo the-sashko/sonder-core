@@ -23,6 +23,10 @@ cd core
 
 git submodule update --init --recursive
 
+cd ../..
+
+cp core/examples/.gitignore .gitignore
+
 cd "$currDir"
 
 exit
