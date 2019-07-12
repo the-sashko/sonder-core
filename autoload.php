@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/plugins/autoload.php';
 require_once __DIR__.'/classes/values.object.php';
+require_once __DIR__.'/classes/form.object.php';
 require_once __DIR__.'/classes/common.class.php';
 require_once __DIR__.'/classes/hook.class.php';
 require_once __DIR__.'/classes/model.object.class.php';

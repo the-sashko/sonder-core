@@ -107,6 +107,74 @@ class YoutubePlugin
     }
 
     /**
+     * Get Youtube Video ID From URL
+     *
+     * @param string $url Youtube Video URL
+     *
+     * @return string Youtube Video ID
+     */
+    public function getVideoIDFromURL(
+        ?string $url               = NULL,
+        bool    $isReturnTimeParam = TRUE
+    ) : ?string
+    {
+        if (!$this->_isValidURL($url)) {
+            return NULL;
+        }
+
+        $videoID = NULL;
+
+        $urlParams = $this->_getURLParams($url);
+
+        if (
+            preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
+            'watch' !== $urlParams[0]
+        ) {
+            $videoID = $urlParams[0];
+        }
+
+        foreach ($urlParams as $urlParam) {
+            if (preg_match('/^v\=(.*?)$/su', $urlParam)) {
+                $videoID = preg_replace('/^v\=(.*?)$/su', '$1', $urlParam);
+            }
+        }
+
+        if (empty($videoID)) {
+            return NULL;
+        }
+
+        if ($isReturnTimeParam) {
+            $videoID = $videoID.$this->_getTimeParamFromURL($url);
+        }
+
+        return $videoID;
+    }
+
+    /**
+     * Check Is Value Valid Youtube Video URL
+     *
+     * @param string $url Youtube Video URL
+     *
+     * @return bool Is Input Value Valid Youtube Video URL
+     */
+    private function _isValidURL(?string $url = NULL) : bool
+    {
+        if (empty($url)) {
+            return FALSE;
+        }
+
+        if (preg_match(static::LINK_REGEXP, $url)) {
+            return TRUE;
+        }
+
+        if (preg_match(static::SHORT_LINK_REGEXP, $url)) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
      * Get Youtube Video Meta Data By ID
      *
      * @param string $videoID Youtube Video ID
@@ -276,7 +344,7 @@ class YoutubePlugin
 
         $url = preg_replace(static::LINK_REGEXP, '$2://$3.com/watch$4', $text);
 
-        $videoID = $this->_getVideoIDFromURL($url);
+        $videoID = $this->getVideoIDFromURL($url);
 
         if (!strlen($videoID) > 0) {
             return str_replace($url, 'https://www.youtube.com', $text);
@@ -300,7 +368,7 @@ class YoutubePlugin
 
         $url = preg_replace(static::SHORT_LINK_REGEXP, '$2://$3.be/$4', $text);
 
-        $videoID = $this->_getVideoIDFromURL($url);
+        $videoID = $this->getVideoIDFromURL($url);
 
         if (!strlen($videoID) > 0) {
             return str_replace($url, 'https://www.youtube.com', $text);
@@ -325,39 +393,6 @@ class YoutubePlugin
         $urlParams = str_replace('?', '&', $urlParams);
 
         return explode('&', $urlParams);
-    }
-
-    /**
-     * Get Youtube Video ID From URL
-     *
-     * @param string $url Youtube Video URL
-     *
-     * @return string Youtube Video ID
-     */
-    private function _getVideoIDFromURL(string $url = '') : string
-    {
-        $videoID = '';
-
-        $urlParams = $this->_getURLParams($url);
-
-        if (
-            preg_match('/^([^\=]+)$/su', $urlParams[0]) &&
-            'watch' !== $urlParams[0]
-        ) {
-            $videoID = $urlParams[0];
-        }
-
-        foreach ($urlParams as $urlParam) {
-            if (preg_match('/^v\=(.*?)$/su', $urlParam)) {
-                $videoID = preg_replace('/^v\=(.*?)$/su', '$1', $urlParam);
-            }
-        }
-
-        if (!strlen($videoID) > 0) {
-            return $videoID;
-        }
-
-        return $videoID.$this->_getTimeParamFromURL($url);
     }
 
     /**

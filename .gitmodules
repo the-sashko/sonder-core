@@ -4,3 +4,6 @@
 [submodule "plugins/share/twitter/vendor"]
 	path = plugins/share/twitter/vendor
 	url = https://github.com/jublo/codebird-php.git
+[submodule "plugins/qr/vendor"]
+	path = plugins/qr/vendor
+	url = https://github.com/the-sashko/for_php_qr_core
