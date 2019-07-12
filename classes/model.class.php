@@ -134,12 +134,16 @@ class ModelCore extends CommonCore
      *
      * @return ValuesObject Values Object Instance
      */
-    public function getByID(int $id = -1) : ValuesObject
+    public function getByID(int $id = -1) : ?ValuesObject
     {
         $values = $this->object->getByID(
             $this->object->getDefaultTableName(),
             $id
         );
+
+        if (empty($values)) {
+            return NULL;
+        }
 
         return $this->getVO($values);
     }
