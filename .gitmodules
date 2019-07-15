@@ -1,9 +1,9 @@
 [submodule "plugins/redis/vendor"]
-	path = plugins/redis/vendor
-	url = https://github.com/nrk/predis.git
+    path = plugins/redis/vendor
+    url = https://github.com/the-sashko/predis
 [submodule "plugins/share/twitter/vendor"]
-	path = plugins/share/twitter/vendor
-	url = https://github.com/jublo/codebird-php.git
+    path = plugins/share/twitter/vendor
+    url = https://github.com/the-sashko/codebird-php
 [submodule "plugins/qr/vendor"]
-	path = plugins/qr/vendor
-	url = https://github.com/the-sashko/for_php_qr_core
+    path = plugins/qr/vendor
+    url = https://github.com/the-sashko/for_php_qr_core
