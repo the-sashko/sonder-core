@@ -7,6 +7,4 @@
 [submodule "plugins/qr/vendor"]
     path = plugins/qr/vendor
     url = https://github.com/the-sashko/for_php_qr_core
-[submodule "plugins/mail/vendor/PHPMailer"]
-	path = plugins/mail/vendor/PHPMailer
-	url = https://github.com/the-sashko/PHPMailer.git
+
