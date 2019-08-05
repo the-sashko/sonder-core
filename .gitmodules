@@ -8,3 +8,6 @@
     path = plugins/qr/vendor
     url = https://github.com/the-sashko/for_php_qr_core
 
+[submodule "plugins/mail/providers/SMTP/vendor"]
+	path = plugins/mail/providers/SMTP/vendor
+	url = https://github.com/the-sashko/PHPMailer.git

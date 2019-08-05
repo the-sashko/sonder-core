@@ -119,5 +119,23 @@ class Test extends App
 
         throw new Exception($expMessage);
     }
+
+    /**
+     *  Mock Redirect Rules
+     */
+    public function routeRedirect(string $uri = '') : void
+    {
+        //Mock For App::routeRedirect()
+    }
+
+    /**
+     *  Mock Rewrite Rules
+     */
+    public function routeRewrite(string $uri = '') : string
+    {
+        //Mock For App::routeRewrite()
+
+        return '';
+    }
 }
 ?>
