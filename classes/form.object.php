@@ -1,6 +1,6 @@
 <?php
 /**
- * Class For Working With Form Data 
+ * Class For Working With Form Data
  */
 class FormObject extends ValuesObject
 {
@@ -12,7 +12,7 @@ class FormObject extends ValuesObject
     /**
      * @var bool Status Of Processing Form
      */
-    public $status = FALSE;
+    public $status = false;
 
     /**
      * @var array List Of Errors
@@ -22,7 +22,7 @@ class FormObject extends ValuesObject
     /**
      * @var string Message For User
      */
-    public $message = NULL;
+    public $message = null;
 
     /**
     * Get Processing Form Status
@@ -42,7 +42,7 @@ class FormObject extends ValuesObject
     public function getErrors() : ?array
     {
         if ($this->getStatus()) {
-            return NULL;
+            return null;
         }
         
         $errors = $this->errors;
@@ -69,7 +69,7 @@ class FormObject extends ValuesObject
      *
      * @param bool $status Processing Form Status Value
      */
-    public function setStatus(bool $status = FALSE) : void
+    public function setStatus(bool $status = false) : void
     {
         $this->status = $status;
     }
@@ -79,7 +79,7 @@ class FormObject extends ValuesObject
      */
     public function setSuccess() : void
     {
-        $this->setStatus(TRUE);
+        $this->setStatus(true);
     }
 
     /**
@@ -87,7 +87,7 @@ class FormObject extends ValuesObject
      */
     public function setFail() : void
     {
-        $this->setStatus(FALSE);
+        $this->setStatus(false);
     }
 
     /**
@@ -121,7 +121,7 @@ class FormObject extends ValuesObject
      *
      * @param array $message Message Value
      */
-    public function setMessage(?string $message = NULL) : void
+    public function setMessage(?string $message = null) : void
     {
         $this->message = $message;
     }
