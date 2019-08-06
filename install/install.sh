@@ -15,6 +15,7 @@ cp -r core/examples/protected/res res
 cp -r core/examples/protected/routers routers
 cp -r core/examples/protected/init.php init.php
 cp -r core/examples/protected/api.init.php api.init.php
+cp -r core/examples/protected/deamon.init.php deamon.init.php
 
 mkdir res/logs
 
