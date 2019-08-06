@@ -39,6 +39,14 @@ switch (APP_MODE) {
         require_once __DIR__.'/api.php';
         (new API)->run();
         break;
+    
+    case 'deamon':
+        require_once __DIR__.'/config/deamon.php';
+        require_once $routerPath;
+        require_once __DIR__.'/app.php';
+        require_once __DIR__.'/deamon.php';
+        (new Deamon)->run();
+        break;
 
     case 'default':
         require_once __DIR__.'/config/prod.php';
