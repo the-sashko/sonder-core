@@ -6,7 +6,7 @@ class SMTPProvider extends AbstractMailProvider
 {
     const DEFAULT_SUBJECT = 'Subject not set';
 
-    public function __construct(?string $providerIdent = NULL)
+    public function __construct(?string $providerIdent = null)
     {
         parent::__construct($providerIdent);
 
@@ -16,11 +16,10 @@ class SMTPProvider extends AbstractMailProvider
     public function send(
         string  $email,
         string  $message,
-        ?string $subject    = NULL,
-        ?string $replyEmail = NULL,
-        ?string $senderName = NULL
-    ) : IMailResponse
-    {
+        ?string $subject = null,
+        ?string $replyEmail = null,
+        ?string $senderName = null
+    ) : IMailResponse {
         if (empty($subject)) {
             $subject = static::DEFAULT_SUBJECT;
         }
@@ -51,10 +50,10 @@ class SMTPProvider extends AbstractMailProvider
             throw new Exception('Email (For Replies) Has Bad Format');
         }
 
-        $mail = new PHPMailer\PHPMailer(TRUE);
+        $mail = new PHPMailer\PHPMailer(true);
         $mail->IsSMTP();
-        $mail->IsHTML(TRUE);
-        $mail->SMTPAuth = TRUE;
+        $mail->IsHTML(true);
+        $mail->SMTPAuth = true;
         $mail->SMTPSecure = 'ssl';
 
         $mail->Host     = $this->credentials->getServerAddress();
@@ -72,7 +71,7 @@ class SMTPProvider extends AbstractMailProvider
 
         $this->response->setStatusSuccess();
 
-        if(!$mail->Send()) {
+        if (!$mail->Send()) {
             $this->response->setStatusFail();
             $this->response->setErrorMessage($mail->ErrorInfo);
         }

@@ -3,7 +3,7 @@ use PHPMailer\PHPMailer\Exception;
 
 class MailPlugin
 {
-    private $_provider = NULL;
+    private $_provider = null;
 
     public function setProvider(string $providerIdent = '') : void
     {
@@ -31,7 +31,6 @@ class MailPlugin
             !is_file($responseProviderFile)
         ) {
             throw new Exception('Invalid Mail Provider');
-        
         }
 
         if (!file_exists($providerFile) || !is_file($providerFile)) {
@@ -58,14 +57,13 @@ class MailPlugin
     }
 
     public function send(
-        ?string $email      = NULL,
-        ?string $message    = NULL,
-        ?string $subject    = NULL,
-        ?string $replyEmail = NULL,
-        ?string $senderName = NULL
-    ) : IMailResponse
-    {
-        if ($this->_provider === NULL) {
+        ?string $email = null,
+        ?string $message = null,
+        ?string $subject = null,
+        ?string $replyEmail = null,
+        ?string $senderName = null
+    ) : IMailResponse {
+        if ($this->_provider === null) {
             throw new Exception('Mail Provider Is Not Set');
         }
 
@@ -133,14 +131,13 @@ class MailPlugin
     }
 
     private function _handleSendingError(
-        ?string $email        = NULL,
-        ?string $message      = NULL,
-        ?string $subject      = NULL,
-        ?string $senderName   = NULL,
-        ?string $replyEmail   = NULL,
-        ?string $errorMessage = NULL
-    ) : void
-    {
+        ?string $email = null,
+        ?string $message = null,
+        ?string $subject = null,
+        ?string $senderName = null,
+        ?string $replyEmail = null,
+        ?string $errorMessage = null
+    ) : void {
         $failedMailData = [
             'email'       => $email,
             'subject'     => $subject,
