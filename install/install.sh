@@ -4,7 +4,7 @@ currDir=$(pwd)
 scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 cd "$scriptDir/../.."
-
+cp core/examples/.gitignore .gitignore
 cp -r core/examples/public ../public
 cp -r core/examples/protected/config config
 cp -r core/examples/protected/controllers controllers
@@ -22,10 +22,6 @@ chmod -R 775 res/logs
 cd core
 
 git submodule update --init --recursive
-
-cd ../..
-
-cp core/examples/.gitignore .gitignore
 
 cd "$currDir"
 
