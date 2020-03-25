@@ -11,7 +11,7 @@ function renderPage(string $templatePage = '') : void
     }
 
     $templatePageFile = $GLOBALS['templateDir'].$GLOBALS['templateScope'].
-                        '/pages/'.$templatePage.'.tpl';
+                        '/pages/'.$templatePage.'.phtml';
 
     if (!file_exists($templatePageFile)) {
         throw new Exception('Template Page "'.$templatePage.'" Missing');
@@ -65,7 +65,7 @@ function renderPart(
     }
 
     $templatePartFile = $GLOBALS['templateDir'].$GLOBALS['templateScope'].
-                        '/parts/'.$templatePart.'.tpl';
+                        '/parts/'.$templatePart.'.phtml';
 
     if (!file_exists($templatePartFile)) {
         throw new Exception(

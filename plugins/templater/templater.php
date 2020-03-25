@@ -70,12 +70,12 @@ class TemplaterPlugin
         }
 
         if (
-            !file_exists(static::TEMPLATE_DIR.$this->scope.'/index.tpl')
+            !file_exists(static::TEMPLATE_DIR.$this->scope.'/index.phtml')
         ) {
             throw new Exception('Template "'.$this->scope.'" Missing');
         }
 
-        include_once(static::TEMPLATE_DIR.$this->scope.'/index.tpl');
+        include_once(static::TEMPLATE_DIR.$this->scope.'/index.phtml');
 
         exit(0);
     }

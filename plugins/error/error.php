@@ -71,7 +71,7 @@ class ErrorPlugin
             return FALSE;
         }
 
-        include __DIR__.'/tpl/error.tpl';
+        include __DIR__.'/tpl/error.phtml';
 
         return TRUE;
     }
@@ -153,7 +153,7 @@ class ErrorPlugin
      */
     private function _displayHTMLException(string $expMessage) : bool
     {
-        include __DIR__.'/tpl/exception.tpl';
+        include __DIR__.'/tpl/exception.phtml';
 
         return TRUE;
     }
