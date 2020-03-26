@@ -15,11 +15,11 @@ interface DBCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool;
+        string $sql,
+        array  $data,
+        string $scope,
+        int    $ttl
+    ): bool;
 
     /**
      * Get Data From Cache
@@ -29,10 +29,7 @@ interface DBCacheProvider
      *
      * @return array Cached Data
      */
-    public function get(
-        string $sql   = '',
-        string $scope = 'default'
-    ) : array;
+    public function get(string $sql, string $scope): array;
 
     /**
      * Remove All Cached Data Of Data Base Request Scope
@@ -41,6 +38,5 @@ interface DBCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data
      */
-    public function flush(string $scope = 'default') : bool;
+    public function flush(string $scope): bool;
 }
-?>

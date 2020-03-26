@@ -7,35 +7,40 @@ class DBCache
     /**
      * @var object Instance OF Data Base Cache Provider
      */
-    public $provider = NULL;
+    private $_provider = null;
 
-    public function __construct(string $provider = '')
+    public function __construct(string $provider)
     {
-        $error = NULL;
+        $error = null;
+
+        if (empty($provider)) {
+            throw new Exception('DB Cache Provider Is Not Set');
+        }
 
         switch ($provider) {
             case 'redis':
-                $this->provider = new DBRedisCacheProvider();
+                $this->_provider = new DBRedisCacheProvider();
                 break;
 
             case 'memcache':
-                $this->provider = new DBMemcacheCacheProvider();
+                $this->_provider = new DBMemcacheCacheProvider();
                 break;
 
             case 'file':
-                $this->provider = new DBFileCacheProvider();
+                $this->_provider = new DBFileCacheProvider();
                 break;
 
             case 'mock':
-                $this->provider = new DBMockCacheProvider();
+                $this->_provider = new DBMockCacheProvider();
                 break;
 
             default:
-                $error = "DB Cache Provider \"{$provider}\" Is Not Allowed";
+                $error = 'DB Cache Provider Is Not Allowed';
+
                 break;
         }
 
-        if (NULL !== $error) {
+        if (null !== $error) {
             throw new Exception($error);
         }
     }
@@ -43,65 +48,66 @@ class DBCache
     /**
      * Save Cached Data To Provider
      *
-     * @param string $sql   SQL Query
-     * @param array  $data  Data Base Data
-     * @param string $scope Scope Of Data Base Request
-     * @param int    $ttl   Time To Live Of Cache
+     * @param ?string $sql   SQL Query
+     * @param ?array  $data  Data Base Data
+     * @param ?string $scope Scope Of Data Base Request
+     * @param int     $ttl   Time To Live Of Cache
      *
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
+        ?string $sql   = nulll,
+        ?array  $data  = null,
+        ?string $scope = null,
+        int     $ttl   = -1
+    ): bool
     {
-        if (strlen($sql) < 12) {
-            return FALSE;
+        if (empty($sql)) {
+            return false;
         }
 
-        if (count($data) < 1) {
-            return FALSE;
+        if (empty($data)) {
+            return false;
         }
 
         if ($ttl < 1) {
-            return FALSE;
+            return false;
         }
 
-        $scope = strlen($scope) < 1 ? 'default' : $scope;
+        $scope = empty($scope) ? 'default' : $scope;
 
-        return $this->provider->set($sql, $data, $scope, $ttl);
+        return $this->_provider->set($sql, $data, $scope, $ttl);
     }
 
     /**
      * Get Cached Data From Provider
      *
-     * @param string $sql   SQL Query
-     * @param string $scope Scope Of Data Base Request
+     * @param ?string $sql   SQL Query
+     * @param ?string $scope Scope Of Data Base Request
+     * @param int     $ttl   Time To Live Of Cache
      *
      * @return array Cached Data
      */
     public function get(
-        string $sql   = '',
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : array
+        ?string $sql   = null,
+        ?string $scope = null,
+        int     $ttl   = -1
+    ): ?array
     {
-        if (strlen($sql) < 12) {
-            return [];
+        if (empty($sql)) {
+            return null;
         }
 
         if ($ttl < 1) {
-            return [];
+            return null;
         }
 
-        $scope = strlen($scope) < 1 ? 'default' : $scope;
+        $scope = empty($scope) ? 'default' : $scope;
 
-        $data = $this->provider->get($sql, $scope);
+        $data = $this->_provider->get($sql, $scope);
 
-        if (count($data) < 1) {
-            return [];
+        if (empty($data)) {
+            return null;
         }
 
         $this->set($sql, $data, $scope, $ttl);
@@ -112,15 +118,14 @@ class DBCache
     /**
      * Remove From Provider All Cached Data Of Data Base Request Scope
      *
-     * @param string $scope Scope Of Data Base Request
+     * @param ?string $scope Scope Of Data Base Request
      *
      * @return bool Is Successfully Removed Cached Data
      */
-    public function flush(string $scope = 'default') : bool
+    public function flush(?string $scope = null): bool
     {
-        $scope = strlen($scope) < 1 ? 'default' : $scope;
+        $scope = empty($scope) ? 'default' : $scope;
 
-        return $this->provider->flush($scope);
+        return $this->_provider->flush($scope);
     }
 }
-?>

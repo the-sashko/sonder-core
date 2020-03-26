@@ -37,11 +37,11 @@ class DBRedisCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
+        string $sql,
+        array  $data,
+        string $scope,
+        int    $ttl
+    ): bool
     {
         $redisKey = $scope.':'.md5($sql);
 
@@ -71,10 +71,7 @@ class DBRedisCacheProvider
      *
      * @return array Cached Data
      */
-    public function get(
-        string $sql   = '',
-        string $scope = 'default'
-    ) : array
+    public function get(string $sql, string $scope): ?array
     {
         $redisKey = $scope.':'.md5($sql);
 
@@ -107,7 +104,7 @@ class DBRedisCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data
      */
-    public function flush(string $scope = 'default') : bool
+    public function flush(string $scope): bool
     {
         $this->fileProvider->flush($scope);
 
@@ -116,4 +113,3 @@ class DBRedisCacheProvider
         return $res && $this->redis->delByPattern('data_list:'.$scope.':*');
     }
 }
-?>

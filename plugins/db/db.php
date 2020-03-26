@@ -12,19 +12,19 @@ class DB
     /**
      * @var PDO Instance Of PDO
      */
-    public $dbInstance = NULL;
+    public $dbInstance = null;
 
     /**
      * @var object Instance Of Data Base Cache
      */
-    public $dbCache = NULL;
+    public $dbCache = null;
 
     /**
      * Set Data Base Config And Data Base Cache
      *
      * @param array $config Data Base Config Data
      **/
-    public function initDB(array $config = []) : void
+    public function initDB(array $config = []): void
     {
         $this->config = $config;
         $this->_setDBCache();
@@ -33,7 +33,7 @@ class DB
     /**
      * Connect To Data Base And Set PDO Instance
      */
-    private function _setDBInstance() : void
+    private function _setDBInstance(): void
     {
         list(
             $dsn,
@@ -52,7 +52,7 @@ class DB
     /**
      * Set Data Base Cache Provider
      */
-    private function _setDBCache() : void
+    private function _setDBCache(): void
     {
         $cacheProvider = $this->_getDBCacheProvider();
         $this->dbCache = new DBCache($cacheProvider);
@@ -71,7 +71,7 @@ class DB
         string $dsn      = '',
         string $user     = '',
         string $password = ''
-    ) : PDO
+    ): PDO
     {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -91,31 +91,39 @@ class DB
     /**
      * Execute SQL SELECT Query
      *
-     * @param string $sql   SQL SELECT Query
-     * @param string $scope Scope Of SQL Query
-     * @param int    $ttl   Data Base Cache Time To Live
+     * @param ?string $sql   SQL SELECT Query
+     * @param ?string $scope Scope Of SQL Query
+     * @param int     $ttl   Data Base Cache Time To Live
      *
      * @return array Data From Data Base
      */
     public function select(
-        string $sql   = '',
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : array
+        ?string $sql   = null,
+        ?string $scope = null,
+        int     $ttl   = -1
+    ): ?array
     {
+        if (empty($sql)) {
+            return null;
+        }
+
         $res = $this->dbCache->get($sql, $scope, $ttl);
 
-        if (count($res) > 0) {
+        if (!empty($res)) {
             return $res;
         }
 
-        if (NULL === $this->dbInstance) {
+        if (null === $this->dbInstance) {
             $this->_setDBInstance();
         }
 
         try {
             $res = $this->dbInstance->query($sql);
             $res = (array) $res->fetchALL();
+
+            if (empty($res)) {
+                $res = null;
+            }
 
             $this->dbCache->set($sql, $res, $scope, $ttl);
 
@@ -133,19 +141,20 @@ class DB
     /**
      * Execute SQL Query
      *
-     * @param string $sql   SQL Query
-     * @param string $scope Scope Of SQL Query
+     * @param ?string $sql   SQL Query
+     * @param ?string $scope Scope Of SQL Query
      *
      * @return bool Is SQL Query Successfully Executed
      */
-    public function query(
-        string $sql   = '',
-        string $scope = 'default'
-    ) : bool
+    public function query(?string $sql = null, ?string $scope = null): bool
     {
-        $scope = '' !== $scope ? $scope : 'default';
+        if (empty($sql)) {
+            return null;
+        }
 
-        if (NULL === $this->dbInstance) {
+        $scope = empty($scope) ? 'default' : $scope;
+
+        if (null === $this->dbInstance) {
             $this->_setDBInstance();
         }
 
@@ -170,7 +179,7 @@ class DB
      *
      * @return bool Is SQL Transaction Successfully Start
      */
-    public function transactionStart() : bool
+    public function transactionStart(): bool
     {
         $sql = 'START TRANSACTION;';
 
@@ -182,7 +191,7 @@ class DB
      *
      * @return bool Is SQL Query Successfully Commited
      */
-    public function transactionCommit() : bool
+    public function transactionCommit(): bool
     {
         $sql = 'COMMIT;';
 
@@ -194,7 +203,7 @@ class DB
      *
      * @return bool Is SQL Query Successfully Rollback
      */
-    public function transactionRollback() : bool
+    public function transactionRollback(): bool
     {
         $sql = 'ROLLBACK;';
 
@@ -206,7 +215,7 @@ class DB
      *
      * @return array Data Base Credentials
      */
-    private function _getDBCredentials() : array
+    private function _getDBCredentials(): array
     {
         $config = $this->config;
 
@@ -227,7 +236,7 @@ class DB
      *
      * @return string Data Base Cache Provider Name
      */
-    private function _getDBCacheProvider() : string
+    private function _getDBCacheProvider(): string
     {
         if (!array_key_exists('cache_provider', $this->config)) {
             return 'mock';
@@ -239,23 +248,29 @@ class DB
     /**
      * Handle Data Base Errors
      *
-     * @param string $error Data Base Error
+     * @param ?string $error Data Base Error
      */
-    private function _dbError(string $error = '') : void
+    private function _dbError(?string $error = null): void
     {
-        throw new Exception($error, 500);
+        $error = empty($error) ? 'Unknown DataBase Error' : $error;
+
+        throw new Exception($error);
     }
 
     /**
      * Execute Transaction SQL Query
      *
-     * @param string $transactionSQL SQL Query
+     * @param ?string $transactionSQL SQL Query
      *
      * @return bool Is Transaction SQL Query Successfully Executed
      */
-    private function _transaction(string $transactionSQL = '') : bool
+    private function _transaction(?string $transactionSQL = null): bool
     {
-        if (NULL === $this->dbInstance) {
+        if (empty($transactionSQL)) {
+            return false;
+        }
+
+        if (null === $this->dbInstance) {
             $this->_setDBInstance();
         }
 
@@ -273,4 +288,3 @@ class DB
         }
     }
 }
-?>

@@ -15,13 +15,13 @@ class DBMockCacheProvider
      * @return bool Is Successfully Saved Cached Data (Always Returns true)
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
+        string $sql,
+        array  $data,
+        string $scope,
+        int    $ttl
+    ): bool
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -32,12 +32,9 @@ class DBMockCacheProvider
      *
      * @return array Cached Data (Always Returns Empty Array)
      */
-    public function get(
-        string $sql   = '',
-        string $scope = 'default'
-    ) : array
+    public function get(string $sql, string $scope): ?array
     {
-        return [];
+        return null;
     }
 
     /**
@@ -47,9 +44,8 @@ class DBMockCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data (Always Returns true)
      */
-    public function flush(string $scope = 'default') : bool
+    public function flush(string $scope): bool
     {
-        return TRUE;
+        return true;
     }
 }
-?>

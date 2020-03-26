@@ -20,18 +20,18 @@ class DBFileCacheProvider
      * @return bool Is Successfully Saved Cached Data
      */
     public function set(
-        string $sql   = '',
-        array  $data  = [],
-        string $scope = 'default',
-        int    $ttl   = -1
-    ) : bool
+        string $sql,
+        array  $data,
+        string $scope,
+        int    $ttl
+    ): bool
     {
         $cacheFilePath = $this->_getCacheFilePath($sql, $scope);
 
         $content = base64_encode(json_encode($data));
 
         $cacheData = [
-            'time' => time()+$ttl,
+            'time'    => time()+$ttl,
             'content' => $content
         ];
 
@@ -47,7 +47,7 @@ class DBFileCacheProvider
         file_put_contents($cacheFilePath, json_encode($cacheData));
         chmod($cacheFilePath, 0775);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -58,10 +58,7 @@ class DBFileCacheProvider
      *
      * @return array Cached Data
      */
-    public function get(
-        string $sql   = '',
-        string $scope = 'default'
-    ) : array
+    public function get(string $sql, string $scope): ?array
     {
         $cacheFilePath = $this->_getCacheFilePath($sql, $scope);
 
@@ -75,10 +72,10 @@ class DBFileCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data
      */
-    public function flush(string $scope = 'default') : bool
+    public function flush(string $scope): bool
     {
         if (!is_dir($this::DB_CACHE_DIR.'/'.$scope)) {
-            return FALSE;
+            return false;
         }
 
         foreach (scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem) {
@@ -91,7 +88,7 @@ class DBFileCacheProvider
             }
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -102,10 +99,7 @@ class DBFileCacheProvider
      *
      * @return string Value
      */
-    private function _getCacheFilePath(
-        string $sql = '',
-        string $scope = ''
-    ) : string
+    private function _getCacheFilePath(string $sql, string $scope): string
     {
         $hash = hash('md5', $sql).
                 hash('sha512', $sql).
@@ -121,23 +115,23 @@ class DBFileCacheProvider
      *
      * @return array Cached Data
      */
-    private function _getDataFromCache(string $cacheFilePath = '') : array
+    private function _getDataFromCache(string $cacheFilePath): ?array
     {
         if (!is_file($cacheFilePath)) {
-            return [];
+            return null;
         }
 
         $cacheData = file_get_contents($cacheFilePath);
-        $cacheData = json_decode($cacheData, TRUE);
+        $cacheData = json_decode($cacheData, true);
 
         if (!$this->_validateCache($cacheData)) {
             unlink($cacheFilePath);
 
-            return [];
+            return null;
         }
 
         $cacheData = base64_decode($cacheData['content']);
-        $cacheData = (array) json_decode($cacheData, TRUE);
+        $cacheData = (array) json_decode($cacheData, true);
 
         return $cacheData;
     }
@@ -149,11 +143,16 @@ class DBFileCacheProvider
      *
      * @return bool Is Cached Data Valid
      */
-    private function _validateCache(array $cacheData = []) : bool
+    private function _validateCache($cacheData): bool
     {
-        return isset($cacheData['time']) &&
-               intval($cacheData['time']) > time() &&
-               isset($cacheData['content']);
+        if (!array_key_exists('time', $cacheData)) {
+            return false;
+        }
+
+        if (!array_key_exists('content', $cacheData)) {
+            return false;
+        }
+
+        return intval($cacheData['time']) > time();
     }
 }
-?>

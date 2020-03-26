@@ -34,10 +34,14 @@ class ModelCore extends CommonCore
     /**
      * Set Model Object Class Instance
      *
-     * @param string Model Object Class Name
+     * @param ?string Model Object Class Name
      */
-    public function setObject(string $objectClassName = '') : void
+    public function setObject(?string $objectClassName = null): void
     {
+        if (empty($objectClassName)) {
+            throw new Exception('Model`s Object Class Name Is Not Set!');
+        }
+
         if (NULL === $this->object) {
             $this->object = new $objectClassName();
             $this->object->initStore();
@@ -47,17 +51,23 @@ class ModelCore extends CommonCore
     /**
      * Set Model Value Object Class Name
      *
-     * @param string Model Value Object Class Name
+     * @param ?string Model Value Object Class Name
      */
-    public function setValuesObjectClass(string $voClassName = '') : void
+    public function setValuesObjectClass(?string $voClassName = null): void
     {
+        if (empty($voClassName)) {
+            throw new Exception(
+                'Model`s Values Object Class Name Is Not Set!'
+            );
+        }
+
         $this->voClassName = $voClassName;
     }
 
     /**
      * Set Config Main Data
      */
-    public function setConfigData() : void
+    public function setConfigData(): void
     {
         $configDataJSON   = file_get_contents(self::MAIN_CONFIG_PATH);
         $this->configData = json_decode($configDataJSON, TRUE);
@@ -68,63 +78,85 @@ class ModelCore extends CommonCore
      *
      * @param string $valueName Value Name
      *
-     * @return string Value Data
+     * @return ?string Value Data
      */
-    public function getConfigValue(string $valueName = '') : string
+    public function getConfigValue(?string $valueName = null): ?string
     {
-        if (isset($this->configData[$valueName])) {
-            return (string) $this->configData[$valueName];
+        if (empty($valueName)) {
+            return null;
         }
 
-        return NULL;
+        if (!isset($this->configData[$valueName])) {
+            return null;
+        }
+
+        return (string) $this->configData[$valueName];
     }
 
     /**
      * Get Array Value From Main Config Data
      *
-     * @param string $valueName Value Name
+     * @param ?string $valueName Value Name
      *
-     * @return array Value Data
+     * @return ?array Value Data
      */
-    public function getConfigArrayValue(string $valueName = '') : array
+    public function getConfigArrayValue(?string $valueName = null): ?array
     {
-        if (isset($this->configData[$valueName])) {
-            return (array) $this->configData[$valueName];
+        if (empty($valueName)) {
+            return null;
         }
 
-        return [];
+        if (!isset($this->configData[$valueName])) {
+            return null;
+        }
+
+        return (array) $this->configData[$valueName];
     }
 
     /**
      * Get Model Value Object Instance
      *
-     * @param array $inputArray List Of Values
+     * @param ?array $row List Of Values
      *
-     * @return ValuesObject Values Object Instance
+     * @return ?ValuesObject Values Object Instance
      */
-    public function getVO(array $inputArray = []) : ValuesObject
+    public function getVO(?array $row = null): ?ValuesObject
     {
-        if (NULL === $this->voClassName) {
+        if (null === $row) {
+            return null;
+        }
+
+        if (null === $this->voClassName) {
             throw new Exception('Value Object class not set');
         }
 
-        return new $this->voClassName($inputArray);
+        return new $this->voClassName($row);
     }
 
     /**
      * Get List Of Model Value Object Instances
      *
-     * @param array $inputArray List Of Values
+     * @param ?array $rows List Of Values
      *
-     * @return array List Of Model Value Object Instances
+     * @return ?array List Of Model Value Object Instances
      */
-    public function getVOArray(array $inputArrays = []) : array
+    public function getVOArray(?array $rows = null): ?array
     {
-        foreach ($inputArrays as $inputArraysIDX => $inputArray) {
-            $inputArrays[$inputArraysIDX] = $this->getVO($inputArray);
+        $voArray = [];
+
+        if (null === $rows) {
+            return null;
         }
 
-        return $inputArrays;
+        foreach ($rows as $row) {
+            $vo = $this->getVO($row);
+
+            if (!empty($vo)) {
+                $voArray[] = $vo;
+            }
+        }
+
+        return $voArray;
     }
 
     /**
@@ -132,9 +164,9 @@ class ModelCore extends CommonCore
      *
      * @param int $id ID Value
      *
-     * @return ValuesObject Values Object Instance
+     * @return ?ValuesObject Values Object Instance
      */
-    public function getByID(int $id = -1) : ?ValuesObject
+    public function getByID(int $id = -1): ?ValuesObject
     {
         $values = $this->object->getByID(
             $this->object->getDefaultTableName(),
@@ -142,7 +174,7 @@ class ModelCore extends CommonCore
         );
 
         if (empty($values)) {
-            return NULL;
+            return null;
         }
 
         return $this->getVO($values);
@@ -151,12 +183,16 @@ class ModelCore extends CommonCore
     /**
      * Get Model Value Object Instance By Slug Value
      *
-     * @param string $slug Slug Value
+     * @param ?string $slug Slug Value
      *
-     * @return ValuesObject Values Object Instance
+     * @return ?ValuesObject Values Object Instance
      */
-    public function getBySlug(string $slug = '') : ValuesObject
+    public function getBySlug(?string $slug = null): ?ValuesObject
     {
+        if (empty($slug)) {
+            return null;
+        }
+
         $values = $this->object->getBySlug(
             $this->object->getDefaultTableName(),
             $slug
@@ -170,9 +206,9 @@ class ModelCore extends CommonCore
      *
      * @param int $page Page Number
      *
-     * @return array List Of Model Value Object Instances
+     * @return ?array List Of Model Value Object Instances
      */
-    public function getByPage(int $page = 1) : array
+    public function getByPage(int $page = 1): ?array
     {
         $values = $this->object->getAllByPage(
             $this->object->getDefaultTableName(),
@@ -190,7 +226,7 @@ class ModelCore extends CommonCore
      *
      * @return bool Is Data From Data Base Successffuly Removed
      */
-    public function removeByID(int $id = -1) : bool
+    public function removeByID(int $id = -1): bool
     {
         return $this->object->removeByID(
             $this->object->getDefaultTableName(),
@@ -206,7 +242,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Slug Value
      */
-    public function getSlug(string $input = '', int $id = -1) : string
+    public function getSlug(string $input = '', int $id = -1): string
     {
         $translit = $this->getPlugin('translit');
         $slug     = $translit->getSlug($input);
@@ -222,10 +258,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Slug Value
      */
-    private function _getUniqSlug(
-        string $slug = '',
-        int    $id   = -1
-    ) : string
+    private function _getUniqSlug(string $slug = '', int $id = -1): string
     {
         $condition = "\"slug\" = '{$slug}' AND \"id\" != {$id}";
 
@@ -262,7 +295,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Title Value
      */
-    public function formatTitle(string $title = '') : string
+    public function formatTitle(string $title = ''): string
     {
         $title = preg_replace('/\s+/su', ' ', $title);
         $title = preg_replace('/(^\s)|(\s$)/su', '', $title);
@@ -277,7 +310,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Text Value
      */
-    public function formatText(string $text = '') : string
+    public function formatText(string $text = ''): string
     {
         $text = preg_replace('/\n+/su', "\n", $text);
         $text = preg_replace('/\n+/su', '<br>', $text);
@@ -298,7 +331,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Email Value
      */
-    public function formatEmail(string $email = '') : string
+    public function formatEmail(string $email = ''): string
     {
         $email = preg_replace('/\s+/su', '', $email);
 
@@ -312,7 +345,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output Slug Value
      */
-    public function formatSlug(string $slug = '') : string
+    public function formatSlug(string $slug = ''): string
     {
         $slug = preg_replace('/\s+/su', '', $slug);
         $slug = mb_convert_case($slug, MB_CASE_LOWER);
@@ -327,7 +360,7 @@ class ModelCore extends CommonCore
      *
      * @return string Output URL Value
      */
-    public function formatURL(string $url = '') : string
+    public function formatURL(string $url = ''): string
     {
         $url = preg_replace('/\s+/su', '', $url);
 
@@ -342,4 +375,3 @@ class ModelCore extends CommonCore
         return $url;
     }
 }
-?>

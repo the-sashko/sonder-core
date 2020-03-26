@@ -27,32 +27,40 @@ class DBObjectClass extends DB
     /**
      * Create Connection To DB
      */
-    public function initStore() : void
+    public function initStore(): void
     {
         $config = file_get_contents($this::DB_CONFIG_PATH);
-        $config = json_decode($config, TRUE);
+        $config = json_decode($config, true);
         parent::initDB($config);
     }
 
     /**
      * Execute SQL SELECT Query And Get Once Or Muliple Rows From Data Base
      *
-     * @param string $sql        SQL SELECT Query
-     * @param bool   $isMultiple Is Getting Multiple Rows From Data Base
-     * @param int    $ttl        Time To Live Data Base Cache
+     * @param ?string $sql        SQL SELECT Query
+     * @param bool    $isMultiple Is Getting Multiple Rows From Data Base
+     * @param int     $ttl        Time To Live Data Base Cache
      *
      * @return array Rows From Data Base
      */
     public function get(
-        string $sql        = '',
-        bool   $isMultiple = TRUE,
+        ?string $sql       = null,
+        bool   $isMultiple = true,
         int    $ttl        = self::DB_DEFAULT_TTL
-    ) : array
+    ): ?array
     {
+        if (empty($sql)) {
+            return null;
+        }
+
         $res = $this->select($sql, $this->scope, $ttl);
 
+        if (empty($res)) {
+            return null;
+        }
+
         if (!$isMultiple) {
-            $res = count($res)>0 ? $res[0] : $res;
+            $res = count($res) > 0 ? $res[0] : $res;
         }
 
         return $res;
@@ -61,18 +69,30 @@ class DBObjectClass extends DB
     /**
      * Execute SQL INSERT Query
      *
-     * @param string $table   Data Base Table
-     * @param array  $columns Data Base Table Columns
-     * @param array  $values  Inserted Values
+     * @param ?string $table   Data Base Table
+     * @param ?array  $columns Data Base Table Columns
+     * @param ?array  $values  Inserted Values
      *
      * @return bool Is Data Successfully Inserted
      */
     public function insert(
-        string $table   = '',
-        array  $columns = [],
-        array  $values  = []
-    ) : bool
+        ?string $table   = null,
+        ?array  $columns = null,
+        ?array  $values  = null
+    ): bool
     {
+        if (empty($table)) {
+            return false;
+        }
+
+        if (empty($columns)) {
+            return false;
+        }
+
+        if (empty($values)) {
+            return false;
+        }
+
         $columns = $this->_prepareInsertColumns($columns);
         $values  = $this->_prepareInsertValues($values);
 
@@ -87,20 +107,32 @@ class DBObjectClass extends DB
     /**
      * Execute SQL UPDATE Query
      *
-     * @param string $table     Data Base Table
-     * @param array  $columns   Data Base Table Columns
-     * @param array  $values    Update Values
-     * @param string $condition Update Condition
+     * @param ?string $table     Data Base Table
+     * @param ?array  $columns   Data Base Table Columns
+     * @param ?array  $values    Update Values
+     * @param string  $condition Update Condition
      *
      * @return bool Is Data Successfully Updated
      */
     public function update(
-        string $table     = '',
-        array  $columns   = [],
-        array  $values    = [],
-        string $condition = 'FALSE'
-    ) : bool
+        ?string $table     = null,
+        ?array  $columns   = null,
+        ?array  $values    = null,
+        string  $condition = 'false'
+    ): bool
     {
+        if (empty($table)) {
+            return false;
+        }
+
+        if (empty($columns)) {
+            return false;
+        }
+
+        if (empty($values)) {
+            return false;
+        }
+
         $updateValues = $this->_prepareUpdateValues($columns, $values);
 
         $sql = "
@@ -115,20 +147,36 @@ class DBObjectClass extends DB
     /**
      * Execute SQL UPDATE Query By ID Value
      *
-     * @param string $table   Data Base Table
-     * @param array  $columns Data Base Table Columns
-     * @param array  $values  Update Values
-     * @param int    $id      ID Value Condition
+     * @param ?string $table   Data Base Table
+     * @param ?array  $columns Data Base Table Columns
+     * @param ?array  $values  Update Values
+     * @param int     $id      ID Value Condition
      *
      * @return bool Is Data Successfully Updated
      */
     public function updateByID(
-        string $table   = '',
-        array  $columns = [],
-        array  $values  = [],
-        int    $id      = -1
-    ) : bool
+        ?string $table   = null,
+        ?array  $columns = null,
+        ?array  $values  = null,
+        int     $id      = -1
+    ): bool
     {
+        if (empty($table)) {
+            return false;
+        }
+
+        if (empty($columns)) {
+            return false;
+        }
+
+        if (empty($values)) {
+            return false;
+        }
+
+        if ($id < 1) {
+            return false;
+        }
+
         $updateValues = $this->_prepareUpdateValues($columns, $values);
         $condition    = "\"id\" = {$id}";
 
@@ -152,13 +200,21 @@ class DBObjectClass extends DB
      * @return bool Is Data Successfully Updated
      */
     public function multipleUpdate(
-        string $table           = '',
-        array  $items           = [],
-        string $conditionColumn = '',
+        ?string $table           = null,
+        ?array  $items           = null,
+        ?string $conditionColumn = null,
         bool   $isTransaction   = FALSE
-    ) : bool
+    ): bool
     {
-        if (!strlen($conditionColumn) > 0) {
+        if (empty($table)) {
+            return false;
+        }
+
+        if (empty($items)) {
+            return false;
+        }
+
+        if (empty($conditionColumn)) {
             $conditionColumn = 'id';
         }
 
@@ -192,16 +248,20 @@ class DBObjectClass extends DB
     /**
      * Execute SQL DELETE Query
      *
-     * @param string $table     Data Base Table
-     * @param string $condition Delete Condition
+     * @param ?string $table     Data Base Table
+     * @param string  $condition Delete Condition
      *
      * @return bool Is Data Successfully Removed
      */
     public function remove(
-        string $table     = '',
-        string $condition = 'FALSE'
-    ) : bool
+        ?string $table     = null,
+        string $condition = 'false'
+    ): bool
     {
+        if (empty($table)) {
+            return false;
+        }
+
         $sql = "
             DELETE FROM \"{$table}\"
             WHERE {$condition};
@@ -217,8 +277,12 @@ class DBObjectClass extends DB
      *
      * @return bool Is SQL Query Successfully Executed
      */
-    public function transactionQuery(string $sql = '') : bool
+    public function transactionQuery(?string $sql = null): bool
     {
+        if (empty($sql)) {
+            return false;
+        }
+
         $this->begin();
 
         try {
@@ -230,7 +294,7 @@ class DBObjectClass extends DB
             $this->rollback();
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -238,7 +302,7 @@ class DBObjectClass extends DB
      *
      * @return bool Is SQL Transaction Successfully Started
      */
-    public function begin() : bool
+    public function begin(): bool
     {
         return $this->transactionStart();
     }
@@ -248,7 +312,7 @@ class DBObjectClass extends DB
      *
      * @return bool Is SQL Transaction Successfully Commited
      */
-    public function commit() : bool
+    public function commit(): bool
     {
         return $this->transactionCommit();
     }
@@ -258,7 +322,7 @@ class DBObjectClass extends DB
      *
      * @return bool Is SQL Transaction Was Successfully Rollback
      */
-    public function rollback() : bool
+    public function rollback(): bool
     {
         return $this->transactionRollback();
     }
@@ -270,7 +334,7 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL INSERT Query
      */
-    private function _prepareInsertValues(array $values) : string
+    private function _prepareInsertValues(array $values): string
     {
         if (
             count($values) < 1 ||
@@ -302,7 +366,7 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL INSERT Query
      */
-    private function _prepareInsertColumns(array $columns) : string
+    private function _prepareInsertColumns(array $columns): string
     {
         $columns = implode("\",\"", $columns);
         $columns = "(\"{$columns}\")";
@@ -319,9 +383,9 @@ class DBObjectClass extends DB
      * @return string Part Of SQL UPDATE Query
      */
     private function _prepareUpdateValues(
-        array $columns = [],
-        array $values  = []
-    ) : string
+        array $columns,
+        array $values
+    ): string
     {
         $updateValues = [];
 
@@ -346,9 +410,7 @@ class DBObjectClass extends DB
      *
      * @return string Part Of SQL UPDATE Query
      */
-    private function _prepareMultipleUpdateValues(
-        array $values = []
-    ) : string
+    private function _prepareMultipleUpdateValues(array $values): string
     {
         $updateValues = [];
 
@@ -362,4 +424,3 @@ class DBObjectClass extends DB
         return $updateValues;
     }
 }
-?>
