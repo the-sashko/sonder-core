@@ -476,8 +476,8 @@ class ModelObjectCore extends DBObjectClass
             return '';
         }
 
-        $limit  = (int) $limit[0];
         $offset = (int) $limit[1];
+        $limit  = (int) $limit[0];
 
         if ($offset < 0) {
             throw new Exception("Invalid SQL OFFSET Value");
