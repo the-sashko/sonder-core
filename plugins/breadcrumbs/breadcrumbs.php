@@ -4,7 +4,9 @@
  */
 class BreadcrumbsPlugin
 {
-    const BREADCRUMBS_SEPARATOR = '»';
+    const MAIN_TEMPLATE_PATH         = __DIR__.'/html/main.html';
+    const ELEMENT_TEMPLATE_PATH      = __DIR__.'/html/element.html';
+    const LAST_ELEMENT_TEMPLATE_PATH = __DIR__.'/html/last_element.html';
 
     /**
      * Get HTML Of Breadcrumbs By Path Current Page In Site Structure
@@ -13,30 +15,62 @@ class BreadcrumbsPlugin
      *
      * @return string Output HTML Text
      */
-    public function getHTML(array $pagePath = []) : string
+    public function getHTML(?array $pagePath = null): string
     {
-        $separator = static::BREADCRUMBS_SEPARATOR;
+        $mainHtml = $this->_getMainTemplate();
 
-        if (count($pagePath) < 2) {
-            return '<nav class="breadcrumbs"><span>'._t('Main Page').
-                   '</span></nav>';
+        $lastElementHtml = $this->_getLastElementTemplate();
+
+        if (empty($pagePath)) {
+            $lastElementHtml = sprintf($lastElementHtml, _t('Main Page'));
+
+            return sprintf($mainHtml, $lastElementHtml);
         }
 
-        $html = '<a href="/">'._t('Main Page').'</a>';
+        $elementHtml = $this->_getElementTemplate();
 
-        foreach ($pagePath as $uri => $title) {
-            $html = "{$html}<span>{$separator}</span>";
+        $pagePath = array_merge(['/' => _t('Main Page')], $pagePath);
 
-            $htmlLink = "<span>{$title}</span>";
+        $elements = [];
 
-            if ('#' !== $uri) {
-                $htmlLink = "<a href=\"{$uri}\">{$title}</a>";
-            }
+        $lastElementHtml = sprintf($lastElementHtml, array_pop($pagePath));
 
-            $html = "{$html}{$htmlLink}";
+        foreach ($pagePath as $path => $element) {
+            $elements[] = sprintf($elementHtml, $path, $element);
         }
 
-        return "<nav class=\"breadcrumbs\">{$html}</nav>";
+        $elements[] = $lastElementHtml;
+
+        return sprintf($mainHtml, implode($elements));
+    }
+
+    /**
+     * Get Main Temlate
+     *
+     * @return string Main HTML Template
+     */
+    private function _getMainTemplate(): string
+    {
+        return file_get_contents(static::MAIN_TEMPLATE_PATH);
+    }
+
+    /**
+     * Get Element Temlate
+     *
+     * @return string Element HTML Template
+     */
+    private function _getElementTemplate(): string
+    {
+        return file_get_contents(static::ELEMENT_TEMPLATE_PATH);
+    }
+
+    /**
+     * Get Last Element Temlate
+     *
+     * @return string Last Element HTML Template
+     */
+    private function _getLastElementTemplate(): string
+    {
+        return file_get_contents(static::LAST_ELEMENT_TEMPLATE_PATH);
     }
 }
-?>
