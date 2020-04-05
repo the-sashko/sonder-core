@@ -17,7 +17,7 @@ class ValuesObject
     public function __construct(?array $data = null)
     {
         if (!empty($data)) {
-            $this->data = $data;   
+            $this->data = $data;
         }
     }
 
