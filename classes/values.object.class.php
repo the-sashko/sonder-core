@@ -14,22 +14,32 @@ class ValuesObject
      */
     public $data = [];
 
-    public function __construct(array $data = [])
+    public function __construct(?array $data = null)
     {
-        $this->data = $data;
+        if (!empty($data)) {
+            $this->data = $data;   
+        }
     }
 
     /**
      * Get Data Of Model Instance
      *
-     * @param string $valueName Data Name
+     * @param string|null $valueName Data Name
      *
      * @return mixed Data Value
      */
-    public function get(string $valueName = '')
+    public function get(?string $valueName = null)
     {
+        if (empty($valueName)) {
+            throw new Exception('Value Name Of ValuesObject Is Empty');
+        }
+
         if (!$this->has($valueName)) {
-            throw new Exception("Value {$valueName} Not Found");
+            $errorMessage = sprintf(
+                'Value %s Not Found In ValuesObject',
+                $valueName
+            );
+            throw new Exception($errorMessage);
         }
 
         return $this->data[$valueName];
@@ -38,20 +48,28 @@ class ValuesObject
     /**
      * Get Mustiple Params From Model Data In JSON Format
      *
-     * @param array $params List Of Values
+     * @param array|null $params List Of Values
      *
-     * @return string Data Values In JSON Format
+     * @return string|null Data Values In JSON Format
      */
-    public function getJSON(array $params = [])
+    public function getJSON(?array $params = null): ?string
     {
         $res = [];
 
+        if (empty($params)) {
+            return null;
+        }
+
         foreach ($params as $param) {
-            $res[$param] = '';
+            $res[$param] = null;
 
             if ($this->has($param)) {
                 $res[$param] = (string) $this->get($param);
             }
+        }
+
+        if (empty($res)) {
+            return null;
         }
 
         return json_encode($res);
@@ -60,16 +78,20 @@ class ValuesObject
     /**
      * Get Mustiple Params From Model Data In PHP Array Format
      *
-     * @param array $params List Of Values
+     * @param array|null $params List Of Values
      *
-     * @return array Array Of Data Values
+     * @return array|null Array Of Data Values
      */
-    public function getArray(array $params = [])
+    public function getArray(?array $params = null): ?array
     {
         $res = [];
 
+        if (empty($params)) {
+            return null;
+        }
+
         foreach ($params as $param) {
-            $res[$param] = '';
+            $res[$param] = null;
 
             if ($this->has($param)) {
                 $res[$param] = (string) $this->get($param);
@@ -82,24 +104,31 @@ class ValuesObject
     /**
      * Set Data Of Model Instance
      *
-     * @param string $valueName Data Name
-     * @param mixed  $value     Data Value
+     * @param string|null $valueName Data Name
+     * @param mixed       $value     Data Value
      */
-    public function set(string $valueName = '', $value = NULL) : void
+    public function set(?string $valueName = null, $value = null): void
     {
+        if (empty($valueName)) {
+            throw new Exception('Value Name Of ValuesObject Is Empty');
+        }
+
         $this->data[$valueName] = $value;
     }
 
     /**
      * Check Is Data Value Exists
      *
-     * @param string $valueName Data Name
+     * @param string|null $valueName Data Name
      *
      * @return bool Is Data Value Exists
      */
-    public function has(string $valueName = '') : bool
+    public function has(?string $valueName = null): bool
     {
+        if (empty($valueName)) {
+            throw new Exception('Value Name Of ValuesObject Is Empty');
+        }
+
         return array_key_exists($valueName, $this->data);
     }
 }
-?>

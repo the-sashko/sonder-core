@@ -6,36 +6,43 @@ class HookCore extends CommonCore
 {
     private $_entityData = [];
 
-    public function __construct(array $entityData = [])
+    public function __construct(?array $entityData = null)
     {
         parent::__construct();
-        $this->_entityData = $entityData;
+
+        if (!empty($entityData)) {
+            $this->_entityData = $entityData;
+        }
+
         $this->init();
     }
 
-    public function setEntityParam(
-        string $paramName = '',
-               $paramData = ''
-    ) : void
+    public function setEntityParam(?string $key = null, $value = null): void
     {
-        $this->_entityData[$paramName] = $paramData;
+        if (!empty($key)) {
+            $this->_entityData[$key] = $value;
+        }
     }
 
-    public function hasEntityParam(string $paramName = '') : bool
+    public function hasEntityParam(?string $key = null): bool
     {
-        return array_key_exists($paramName, $this->_entityData);
-    }
-
-    public function getEntityParam(string $paramName = '')
-    {
-        if (!$this->hasEntityParam($paramName)) {
-            return NULL;
+        if (empty($key)) {
+            return false;
         }
 
-        return $this->_entityData[$paramName];
+        return array_key_exists($key, $this->_entityData);
     }
 
-    public function getEntity() : array
+    public function getEntityParam(?string $key = null)
+    {
+        if (!$this->hasEntityParam($key)) {
+            return null;
+        }
+
+        return $this->_entityData[$key];
+    }
+
+    public function getEntity(): array
     {
         return $this->_entityData;
     }
@@ -43,9 +50,8 @@ class HookCore extends CommonCore
     /**
     * Inital Method Of Hook
     */
-    public function init() : void
+    public function init(): void
     {
         // The method can be used by overriding in a child class
     }
 }
-?>

@@ -31,8 +31,8 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get One Item By SQL Query
      *
-     * @param ?string $sql SQL SELECT Query
-     * @param int     $ttl Time To Live Data Base Cache
+     * @param string|null $sql SQL SELECT Query
+     * @param int         $ttl Time To Live Data Base Cache
      *
      * @return array Item Data
      */
@@ -51,38 +51,42 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get List Of Items From Data Base By Condition
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Columns
-     * @param array   $condition       Data Base Selection Condition
-     * @param string  $limit           Limit And Offset Of Items Selection
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table     Data Base Table
+     * @param array|null  $columns   List Of Returned Data Base Table Columns
+     * @param array       $condition Data Base Selection Condition
+     * @param string      $limit     Limit And Offset Of Items Selection
+     * @param string|null $orderBy   SQL Sorting Condition
+     * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return array List Of Items
      */
     public function getByCondition(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        string  $condition       = 'true',
-        array   $limit           = [],
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table     = null,
+        ?array  $columns   = null,
+        string  $condition = 'true',
+        ?array  $limit     = null,
+        ?string $orderBy   = null,
+        int     $ttl       = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
             return null;
         }
 
-        $selectedColumns = $this->_prepareSelectedColumns(
-            $selectedColumns
-        );
+        $columns = $this->_prepareSelectedColumns($columns);
 
         $queryLimit = $this->_prepareQueryLimit($limit);
 
+        if (empty($orderBy)) {
+            $orderBy = '"id" DESC';
+        }
+
         $sql = "
             SELECT
-                {$selectedColumns}    
+                {$columns}    
             FROM \"{$table}\"
             WHERE {$condition}
-            ORDER BY \"id\" DESC
+            ORDER BY {$orderBy}
             {$queryLimit};
         ";
 
@@ -92,29 +96,29 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get One Items From Data Base By Condition
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Columns
-     * @param array   $condition       Data Base Selection Condition
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table     Data Base Table
+     * @param array|null  $columns   List Of Returned Data Base Table Columns
+     * @param array       $condition Data Base Selection Condition
+     * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return array Item Data
      */
     public function getOneByCondition(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        string  $condition       = 'true',
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table     = null,
+        ?array  $columns   = null,
+        string  $condition = 'true',
+        int     $ttl       = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
             return null;
         }
 
-        $selectedColumns = $this->_prepareSelectedColumns($selectedColumns);
+        $columns = $this->_prepareSelectedColumns($columns);
 
         $sql = "
             SELECT
-                {$selectedColumns}    
+                {$columns}    
             FROM \"{$table}\"
             WHERE {$condition}
             OFFSET 0
@@ -127,18 +131,20 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get All Items From Data Base By Condition
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Columns
-     * @param array   $condition       Data Base Selection Condition
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table     Data Base Table
+     * @param array|null  $columns   List Of Returned Data Base Table Columns
+     * @param array       $condition Data Base Selection Condition
+     * @param string|null $orderBy   SQL Sorting Condition
+     * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return array List Of Items
      */
     public function getAllByCondition(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        string  $condition       = 'true',
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table     = null,
+        ?array  $columns   = null,
+        string  $condition = 'true',
+        ?string $orderBy   = null,
+        int     $ttl       = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
@@ -147,9 +153,10 @@ class ModelObjectCore extends DBObjectClass
 
         return $this->getByCondition(
             $table,
-            $selectedColumns,
+            $columns,
             $condition,
-            [],
+            null,
+            $orderBy,
             $ttl
         );
     }
@@ -157,16 +164,18 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get All Items From Data Base Table
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Column
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table   Data Base Table
+     * @param array|null  $columns List Of Returned Data Base Table Columns
+     * @param string|null $orderBy SQL Sorting Condition
+     * @param int         $ttl     Time To Live Data Base Cache
      *
      * @return array List Of Items
      */
     public function getAll(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table   = null,
+        ?array  $columns = null,
+        ?string $orderBy = null,
+        int     $ttl     = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
@@ -175,8 +184,9 @@ class ModelObjectCore extends DBObjectClass
 
         return $this->getAllByCondition(
             $table,
-            $selectedColumns,
-            'TRUE',
+            $columns,
+            'true',
+            $orderBy,
             $ttl
         );
     }
@@ -184,20 +194,22 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get Items From Data Base By Condition And Page
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Columns
-     * @param array   $condition       Data Base Selection Condition
-     * @param int     $page            Page Number
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table     Data Base Table
+     * @param array|null  $columns   List Of Returned Data Base Table Columns
+     * @param array       $condition Data Base Selection Condition
+     * @param int         $page      Page Number
+     * @param string|null $orderBy   SQL Sorting Condition
+     * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return array List Of Items
      */
     public function getByPageWithCondition(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        string  $condition       = 'TRUE',
-        int     $page            = 1,
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table     = null,
+        ?array  $columns   = null,
+        string  $condition = 'true',
+        int     $page      = 1,
+        ?string $orderBy   = null,
+        int     $ttl       = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
@@ -208,9 +220,10 @@ class ModelObjectCore extends DBObjectClass
 
         return $this->getByCondition(
             $table,
-            $selectedColumns,
+            $columns,
             $condition,
             $limit,
+            $orderBy,
             $ttl
         );
     }
@@ -218,18 +231,20 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get All Items From Data Base By Page
      *
-     * @param ?string $table           Data Base Table
-     * @param array   $selectedColumns List Of Returned Data Base Table Columns
-     * @param int     $page            Page Number
-     * @param int     $ttl             Time To Live Data Base Cache
+     * @param string|null $table   Data Base Table
+     * @param array|null  $columns List Of Returned Data Base Table Columns
+     * @param int         $page    Page Number
+     * @param string|null $orderBy SQL Sorting Condition
+     * @param int         $ttl     Time To Live Data Base Cache
      *
      * @return array List Of Items
      */
     public function getAllByPage(
-        ?string $table           = null,
-        array   $selectedColumns = [],
-        int     $page            = 1,
-        int     $ttl             = self::DB_DEFAULT_TTL
+        ?string $table   = null,
+        ?array  $columns = null,
+        int     $page    = 1,
+        ?string $orderBy = null,
+        int     $ttl     = self::DB_DEFAULT_TTL
     ): ?array
     {
         if (empty($table)) {
@@ -238,9 +253,10 @@ class ModelObjectCore extends DBObjectClass
 
         return $this->getByPageWithCondition(
             $table,
-            $selectedColumns,
+            $columns,
             'true',
             $page,
+            $orderBy,
             $ttl
         );
     }
@@ -248,15 +264,15 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get One Item From Data Base By ID
      *
-     * @param ?string $table Data Base Table
-     * @param int     $id    Item ID
-     * @param int     $ttl   Time To Live Data Base Cache
+     * @param string|null $table Data Base Table
+     * @param int         $id    Item ID
+     * @param int         $ttl   Time To Live Data Base Cache
      *
      * @return array Item Data
      */
     public function getByID(
-        ?string $table = '',
-        int     $id    = -1,
+        ?string $table = null,
+        ?int    $id    = null,
         int     $ttl   = self::DB_DEFAULT_TTL
     ): ?array
     {
@@ -264,26 +280,21 @@ class ModelObjectCore extends DBObjectClass
             return null;
         }
 
-        if ($id < 1) {
+        if (empty($id) || $id < 1) {
             return null;
         }
 
         $condition = "\"id\" = {$id}";
 
-        return $this->getOneByCondition(
-            $table,
-            [],
-            $condition,
-            $ttl
-        );
+        return $this->getOneByCondition($table, null, $condition, $ttl);
     }
 
     /**
      * Get One Item From Data Base By Slug
      *
-     * @param string $table Data Base Table
-     * @param string $slug  Item Slug
-     * @param int    $ttl   Time To Live Data Base Cache
+     * @param string|null $table Data Base Table
+     * @param string|null $slug  Item Slug
+     * @param int         $ttl   Time To Live Data Base Cache
      *
      * @return array Item Data
      */
@@ -303,40 +314,36 @@ class ModelObjectCore extends DBObjectClass
 
         $condition = "\"slug\" = '{$slug}'";
 
-        return $this->getOneByCondition(
-            $table,
-            [],
-            $condition,
-            $ttl
-        );
+        return $this->getOneByCondition($table, null, $condition, $ttl);
     }
 
     /**
      * Remove Item From Data Base By ID
      *
-     * @param ?string $table Data Base Table
-     * @param int     $id    Item ID
+     * @param string|null $table Data Base Table
+     * @param int|null     $id    Item ID
      *
      * @return bool Is Item Successfully Removed
      */
-    public function removeByID(?string $table = null, int $id = -1): bool
+    public function removeByID(?string $table = null, ?int $id = null): bool
     {
         if (empty($table)) {
             return false;
         }
 
-        if ($id < 1) {
+        if (empty($id) || (int) $id < 1) {
             return false;
         }
 
         $condition = "\"id\" = {$id}";
+
         return $this->remove($table, $condition);
     }
 
     /**
      * Get Maximum ID In Data Base Table
      *
-     * @param ?string $table Data Base Table
+     * @param string|null $table Data Base Table
      *
      * @return int Maximum ID In Data Base Table
      */
@@ -364,9 +371,9 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Count Items In Data Base Table By Condition
      *
-     * @param ?string $table     Data Base Table
-     * @param array   $condition Data Base Selection Condition
-     * @param int     $ttl       Time To Live Data Base Cache
+     * @param string|null $table     Data Base Table
+     * @param array       $condition Data Base Selection Condition
+     * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return int Count Items In Data Base Table
      */
@@ -407,8 +414,8 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Count Items In Data Base Table By Condition
      *
-     * @param ?string $table Data Base Table
-     * @param int     $ttl   Time To Live Data Base Cache
+     * @param string|nul $table Data Base Table
+     * @param int        $ttl   Time To Live Data Base Cache
      *
      * @return int Count Items In Data Base Table
      */
@@ -442,27 +449,23 @@ class ModelObjectCore extends DBObjectClass
     /**
      * Get SQL SELECT List Of Columns From List Of Columns
      *
-     * @param ?array $selected Columns List Of Columns
+     * @param  array|null $selected Columns List Of Columns
      *
      * @return string SQL SELECT List Of Columns
      */
-    private function _prepareSelectedColumns(
-        ?array $selectedColumns = null
-    ): string
+    private function _prepareSelectedColumns(?array $columns = null): string
     {
-        if (empty($selectedColumns)) {
+        if (empty($columns)) {
             return '*';
         }
 
-        if (count($selectedColumns) > 0) {
-            return implode(',', $selectedColumns);
-        }
+        return implode(',', $columns);
     }
 
     /**
      * Get SQL SELECT Limit From Limit And Offset Params
      *
-     * @param ?array $limit Limit And Offset Params
+     * @param  array|null $limit Limit And Offset Params
      *
      * @return string SQL SELECT Limit
      */
