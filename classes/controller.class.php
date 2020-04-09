@@ -47,9 +47,8 @@ class ControllerCore extends CommonCore
     public function __construct(
         ?string $URLParam = null,
         ?array  $postData = null,
-        int     $page     = 1
-    )
-    {
+        int     $page = 1
+    ) {
         session_start();
 
         parent::__construct();
@@ -117,7 +116,7 @@ class ControllerCore extends CommonCore
         ];
 
         if (!empty($postData)) {
-            $this->post = array_map($escapeMethod, $postData);   
+            $this->post = array_map($escapeMethod, $postData);
         }
     }
 
@@ -177,10 +176,9 @@ class ControllerCore extends CommonCore
      * @param bool        $isPermanent Is Redirect Permanently
      */
     public function redirect(
-        ?string $url         = null,
+        ?string $url = null,
         bool    $isPermanent = false
-    ): void
-    {
+    ): void {
         $url  = empty($url) ? '/' : $url;
         $code = $isPermanent ? 301 : 302;
 
@@ -218,10 +216,9 @@ class ControllerCore extends CommonCore
      */
     public function render(
         ?string $template = null,
-        ?array  $params   = null,
-        int     $ttl      = 0
-    ): void
-    {
+        ?array  $params = null,
+        int     $ttl = 0
+    ): void {
         if (empty($template)) {
             throw new Exception('Template Page Name Is Empty');
         }
@@ -274,24 +271,23 @@ class ControllerCore extends CommonCore
      * @param array|null  $entityData Entity Data
      */
     public function execHook(
-        ?string $hookScope  = null,
+        ?string $hookScope = null,
         ?array  $entityData = null
-    ): array
-    {
+    ): array {
         $hooksData = $this->configData['hooks'];
 
         $entityData = empty($entityData) ? [] : $entityData;
 
-        if (!array_key_exists($hookScope, $hooksData)){
+        if (!array_key_exists($hookScope, $hooksData)) {
             return $entityData;
         }
 
         foreach ($hooksData[$hookScope] as $hookItem) {
-            if (!array_key_exists('hook', $hookItem)){
+            if (!array_key_exists('hook', $hookItem)) {
                 continue;
             }
 
-            if (!array_key_exists('method', $hookItem)){
+            if (!array_key_exists('method', $hookItem)) {
                 continue;
             }
 
@@ -347,9 +343,8 @@ class ControllerCore extends CommonCore
      */
     private function _getMetaParams(
         ?array $pagePath = null,
-        ?array $meta     = null
-    ): array
-    {
+        ?array $meta = null
+    ): array {
         $pagePath = empty($pagePath) ? [] : $pagePath;
         $meta     = empty($meta) ? [] : $meta;
 
