@@ -12,8 +12,9 @@ class BreadcrumbsPluginTest extends TestCase
     const PATH_DATA_SAMPLE = [
         [
             'value'     => [],
-            'expected'  => '<nav class="breadcrumbs">'.
-                           '<span>Main Page</span></nav>'
+            'expected'  => '<ul class="breadcrumbs">'."\n".'    <li>'."\n".
+                           '    <span>Main Page</span>'."\n".'</li>'."\n".
+                           '</ul>'
         ],
         [
             'value'     => [
@@ -21,11 +22,12 @@ class BreadcrumbsPluginTest extends TestCase
                 '/bar/' => 'bar',
                 '#'     => 'current'
             ],
-            'expected'  => '<nav class="breadcrumbs">'.
-                           '<a href="/">Main Page</a><span>»</span>'.
-                           '<a href="/foo/">foo</a><span>»</span>'.
-                           '<a href="/bar/">bar</a><span>»</span>'.
-                           '<span>current</span></nav>'
+            'expected'  => '<ul class="breadcrumbs">'."\n".'    <li>'."\n".
+                           '    <a href="/">Main Page</a>'."\n".'</li><li>'.
+                           "\n".'    <a href="/foo/">foo</a>'."\n".'</li><li>'.
+                           "\n".'    <a href="/bar/">bar</a>'."\n".'</li><li>'.
+                           "\n".'    <span>current</span>'."\n".'</li>'."\n".
+                           '</ul>'
         ]
     ];
 
