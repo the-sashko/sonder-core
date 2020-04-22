@@ -3,22 +3,22 @@ class Cron extends ModelCore implements IModelCRUD
 {
     use CronForm;
 
-    public function getAll() : array
+    public function getAll(): array
     {
         $crons = $this->object->getAllCrons();
         return $this->getVOArray($crons);
     }
 
-    public function getJobs() : array
+    public function getJobs(): array
     {
         $jobs = $this->object->getJobs();
         return $this->getVOArray($jobs);
     }
 
     protected function _isCronExists(
-        string $action   = '',
-        int    $interval = -1
-    ) : bool
+        ?string $action   = null,
+        ?int    $interval = null
+    ): bool
     {
         // To-Do
 
@@ -26,10 +26,10 @@ class Cron extends ModelCore implements IModelCRUD
     }
 
     protected function _create(
-        string $action   = '',
-        int    $interval = -1,
+        ?string $action  = null,
+        ?int   $interval = null,
         bool   $isActive = false
-    ) : bool
+    ): bool
     {
         return $this->object->create([
             $action,
@@ -39,11 +39,11 @@ class Cron extends ModelCore implements IModelCRUD
     }
 
     protected function _updateByID(
-        string $action   = '',
-        int    $interval = -1,
-        bool   $isActive = false,
-        int    $cronID   = -1
-    ) : bool
+        ?string $action   = null,
+        ?int    $interval = null,
+        bool    $isActive = false,
+        ?int    $cronID   = null
+    ): bool
     {
         return $res = $this->object->updateCronByID([
             'action',
@@ -56,7 +56,7 @@ class Cron extends ModelCore implements IModelCRUD
         ], $cronID);
     }
 
-    public function updateByVO(CronVO $cronVO = NULL) : bool
+    public function updateByVO(?CronVO $cronVO = null): bool
     {
         return $res = $this->object->updateCronByID([
             'action',
@@ -75,4 +75,3 @@ class Cron extends ModelCore implements IModelCRUD
         ], $cronVO->getID());
     }
 }
-?>

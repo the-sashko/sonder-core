@@ -9,11 +9,10 @@ class Example extends ModelCore
      *
      * @return array List Of Example Data
      */
-    public function getAll() : array
+    public function getAll(): ?array
     {
         $data = $this->object->getAllExamples();
 
         return $this->getVOArray($data);
     }
 }
-?>

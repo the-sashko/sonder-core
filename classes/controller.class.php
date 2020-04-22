@@ -48,7 +48,8 @@ class ControllerCore extends CommonCore
         ?string $URLParam = null,
         ?array  $postData = null,
         int     $page = 1
-    ) {
+    )
+    {
         session_start();
 
         parent::__construct();
@@ -61,6 +62,9 @@ class ControllerCore extends CommonCore
         $this->_setOutputType();
     }
 
+    /**
+     * Default Error Action
+     */
     public function actionError(): void
     {
         $errorCode    = (int) $this->URLParam;
@@ -77,6 +81,8 @@ class ControllerCore extends CommonCore
 
     /**
      * Handle HTTP Error Page
+     *
+     * @return string HTTP Error Message
      */
     public function handleHttpError(?int $errorCode = null): string
     {
@@ -166,7 +172,7 @@ class ControllerCore extends CommonCore
             }
         }
 
-        $this->session->set('flash_data', []);
+        $this->session->set('flash_data', null);
     }
 
     /**
@@ -176,9 +182,10 @@ class ControllerCore extends CommonCore
      * @param bool        $isPermanent Is Redirect Permanently
      */
     public function redirect(
-        ?string $url = null,
+        ?string $url         = null,
         bool    $isPermanent = false
-    ): void {
+    ): void
+    {
         $url  = empty($url) ? '/' : $url;
         $code = $isPermanent ? 301 : 302;
 
@@ -199,6 +206,7 @@ class ControllerCore extends CommonCore
             'status' => $status,
             'data'   => $data
         ];
+
         $dataJSON = json_encode($dataJSON);
 
         header('Content-Type: application/json');
@@ -216,9 +224,10 @@ class ControllerCore extends CommonCore
      */
     public function render(
         ?string $template = null,
-        ?array  $params = null,
-        int     $ttl = 0
-    ): void {
+        ?array  $params   = null,
+        int     $ttl      = 0
+    ): void
+    {
         if (empty($template)) {
             throw new Exception('Template Page Name Is Empty');
         }
@@ -269,11 +278,14 @@ class ControllerCore extends CommonCore
      *
      * @param string|null $hookScope  Scope Of Hooks
      * @param array|null  $entityData Entity Data
+     *
+     * @return array Entity Data
      */
     public function execHook(
-        ?string $hookScope = null,
+        ?string $hookScope  = null,
         ?array  $entityData = null
-    ): array {
+    ): array
+    {
         $hooksData = $this->configData['hooks'];
 
         $entityData = empty($entityData) ? [] : $entityData;
@@ -343,8 +355,9 @@ class ControllerCore extends CommonCore
      */
     private function _getMetaParams(
         ?array $pagePath = null,
-        ?array $meta = null
-    ): array {
+        ?array $meta     = null
+    ): array
+    {
         $pagePath = empty($pagePath) ? [] : $pagePath;
         $meta     = empty($meta) ? [] : $meta;
 

@@ -34,7 +34,7 @@ class ModelObjectCore extends DBObjectClass
      * @param string|null $sql SQL SELECT Query
      * @param int         $ttl Time To Live Data Base Cache
      *
-     * @return array Item Data
+     * @return array|null Item Data
      */
     public function getOne(
         ?string $sql = null,
@@ -53,12 +53,12 @@ class ModelObjectCore extends DBObjectClass
      *
      * @param string|null $table     Data Base Table
      * @param array|null  $columns   List Of Returned Data Base Table Columns
-     * @param array       $condition Data Base Selection Condition
-     * @param string      $limit     Limit And Offset Of Items Selection
+     * @param string      $condition Data Base Selection Condition
+     * @param array|null  $limit     Limit And Offset Of Items Selection
      * @param string|null $orderBy   SQL Sorting Condition
      * @param int         $ttl       Time To Live Data Base Cache
      *
-     * @return array List Of Items
+     * @return array|null List Of Items
      */
     public function getByCondition(
         ?string $table     = null,
@@ -98,10 +98,10 @@ class ModelObjectCore extends DBObjectClass
      *
      * @param string|null $table     Data Base Table
      * @param array|null  $columns   List Of Returned Data Base Table Columns
-     * @param array       $condition Data Base Selection Condition
+     * @param string      $condition Data Base Selection Condition
      * @param int         $ttl       Time To Live Data Base Cache
      *
-     * @return array Item Data
+     * @return array|null Item Data
      */
     public function getOneByCondition(
         ?string $table     = null,
@@ -133,11 +133,11 @@ class ModelObjectCore extends DBObjectClass
      *
      * @param string|null $table     Data Base Table
      * @param array|null  $columns   List Of Returned Data Base Table Columns
-     * @param array       $condition Data Base Selection Condition
+     * @param string      $condition Data Base Selection Condition
      * @param string|null $orderBy   SQL Sorting Condition
      * @param int         $ttl       Time To Live Data Base Cache
      *
-     * @return array List Of Items
+     * @return array|null List Of Items
      */
     public function getAllByCondition(
         ?string $table     = null,
@@ -169,7 +169,7 @@ class ModelObjectCore extends DBObjectClass
      * @param string|null $orderBy SQL Sorting Condition
      * @param int         $ttl     Time To Live Data Base Cache
      *
-     * @return array List Of Items
+     * @return array|null List Of Items
      */
     public function getAll(
         ?string $table   = null,
@@ -196,12 +196,12 @@ class ModelObjectCore extends DBObjectClass
      *
      * @param string|null $table     Data Base Table
      * @param array|null  $columns   List Of Returned Data Base Table Columns
-     * @param array       $condition Data Base Selection Condition
+     * @param string      $condition Data Base Selection Condition
      * @param int         $page      Page Number
      * @param string|null $orderBy   SQL Sorting Condition
      * @param int         $ttl       Time To Live Data Base Cache
      *
-     * @return array List Of Items
+     * @return array|null List Of Items
      */
     public function getByPageWithCondition(
         ?string $table     = null,
@@ -237,7 +237,7 @@ class ModelObjectCore extends DBObjectClass
      * @param string|null $orderBy SQL Sorting Condition
      * @param int         $ttl     Time To Live Data Base Cache
      *
-     * @return array List Of Items
+     * @return array|null List Of Items
      */
     public function getAllByPage(
         ?string $table   = null,
@@ -268,7 +268,7 @@ class ModelObjectCore extends DBObjectClass
      * @param int         $id    Item ID
      * @param int         $ttl   Time To Live Data Base Cache
      *
-     * @return array Item Data
+     * @return array|null Item Data
      */
     public function getByID(
         ?string $table = null,
@@ -296,7 +296,7 @@ class ModelObjectCore extends DBObjectClass
      * @param string|null $slug  Item Slug
      * @param int         $ttl   Time To Live Data Base Cache
      *
-     * @return array Item Data
+     * @return array|null Item Data
      */
     public function getBySlug(
         ?string $table = null,
@@ -372,7 +372,7 @@ class ModelObjectCore extends DBObjectClass
      * Count Items In Data Base Table By Condition
      *
      * @param string|null $table     Data Base Table
-     * @param array       $condition Data Base Selection Condition
+     * @param string       $condition Data Base Selection Condition
      * @param int         $ttl       Time To Live Data Base Cache
      *
      * @return int Count Items In Data Base Table

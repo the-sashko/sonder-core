@@ -55,4 +55,3 @@ switch (APP_MODE) {
         (new App)->run();
         break;
 }
-?>

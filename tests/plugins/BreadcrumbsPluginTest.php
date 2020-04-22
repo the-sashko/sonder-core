@@ -44,4 +44,3 @@ class BreadcrumbsPluginTest extends TestCase
         }
     }
 }
-?>

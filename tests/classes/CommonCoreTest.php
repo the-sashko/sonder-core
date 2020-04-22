@@ -18,4 +18,3 @@ class CommonCoreTest extends TestCase
         $this->assertTrue($mockPlugin->mockAction());
     }
 }
-?>

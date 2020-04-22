@@ -29,7 +29,7 @@ class FormObject extends ValuesObject
     *
     * @return bool Processing Form Status Value
     */
-    public function getStatus() : bool
+    public function getStatus(): bool
     {
         return $this->status;
     }
@@ -37,9 +37,9 @@ class FormObject extends ValuesObject
     /**
      * Get Form Errors
      *
-     * @return array List Of Errors
+     * @return array|null List Of Errors
      */
-    public function getErrors() : ?array
+    public function getErrors(): ?array
     {
         if ($this->getStatus()) {
             return null;
@@ -47,7 +47,7 @@ class FormObject extends ValuesObject
         
         $errors = $this->errors;
 
-        if (count($errors) < 1) {
+        if (empty($errors)) {
             $errors[] = static::DEFAULT_ERROR_MESSAGE;
         }
 
@@ -57,9 +57,9 @@ class FormObject extends ValuesObject
     /**
      * Get Message For User
      *
-     * @return string Message Value
+     * @return string|null Message Value
      */
-    public function getMessage() : ?string
+    public function getMessage(): ?string
     {
         return $this->message;
     }
@@ -69,7 +69,7 @@ class FormObject extends ValuesObject
      *
      * @param bool $status Processing Form Status Value
      */
-    public function setStatus(bool $status = false) : void
+    public function setStatus(bool $status = false): void
     {
         $this->status = $status;
     }
@@ -77,7 +77,7 @@ class FormObject extends ValuesObject
     /**
      * Set Processing Form Success Status
      */
-    public function setSuccess() : void
+    public function setSuccess(): void
     {
         $this->setStatus(true);
     }
@@ -85,7 +85,7 @@ class FormObject extends ValuesObject
     /**
      * Set Processing Form Fail Status
      */
-    public function setFail() : void
+    public function setFail(): void
     {
         $this->setStatus(false);
     }
@@ -93,11 +93,11 @@ class FormObject extends ValuesObject
     /**
      * Set Form Errors
      *
-     * @param array $errors List Of Errors
+     * @param array|null $errors List Of Errors
      */
-    public function setErrors(array $errors = []) : void
+    public function setErrors(?array $errors = null): void
     {
-        $this->errors = array_merge($this->errors, $errors);
+        $this->errors = array_merge($this->errors, (array) $errors);
         $this->errors = array_unique($this->errors);
 
         $this->setFail();
@@ -106,9 +106,9 @@ class FormObject extends ValuesObject
     /**
      * Set Form Error
      *
-     * @param array $error Error Message
+     * @param string|null $error Error Message
      */
-    public function setError(string $error = '') : void
+    public function setError(?string $error = null): void
     {
         $this->errors[] = $error;
         $this->errors = array_unique($this->errors);
@@ -119,11 +119,10 @@ class FormObject extends ValuesObject
     /**
      * Set Message For User
      *
-     * @param array $message Message Value
+     * @param string|null $message Message Value
      */
-    public function setMessage(?string $message = null) : void
+    public function setMessage(?string $message = null): void
     {
         $this->message = $message;
     }
 }
-?>

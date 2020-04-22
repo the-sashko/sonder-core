@@ -27,6 +27,6 @@ $_SERVER = [
     'PHP_SELF'             => '/index.php'
 ];
 
-$_POST = [];
-$_GET  = [];
-?>
+$_POST    = [];
+$_GET     = [];
+$_REQUEST = [];

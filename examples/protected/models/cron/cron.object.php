@@ -8,7 +8,7 @@ class CronObject extends ModelObjectCore
     /**
      * summary
      */
-    public function create(array $values = []) : bool
+    public function create(?array $values = null): bool
     {
         $columns = [
             'action',
@@ -23,10 +23,10 @@ class CronObject extends ModelObjectCore
      * summary
      */
     public function updateCronByID(
-        array  $columns = [],
-        array  $values  = [],
-        int    $id      = -1
-    ) : bool
+        ?array  $columns = null,
+        ?array  $values  = null,
+        ?int    $id      = null
+    ): bool
     {
         return $this->updateByID($this->tableCrons, $columns, $values, $id);
     }
@@ -34,7 +34,7 @@ class CronObject extends ModelObjectCore
     /**
      * summary
      */
-    public function getAllCrons() : array
+    public function getAllCrons(): array
     {
         return $this->getAll($this->tableCrons);
     }
@@ -42,10 +42,9 @@ class CronObject extends ModelObjectCore
     /**
      * summary
      */
-    public function getJobs() : array
+    public function getJobs(): array
     {
         $condition = '"time_next_exec" <= '.time().' AND "is_active" = true';
-        return $this->getAllByCondition($this->tableCrons, [], $condition);
+        return $this->getAllByCondition($this->tableCrons, null, $condition);
     }
 }
-?>

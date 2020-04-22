@@ -1,13 +1,16 @@
 <?php
 trait CronForm
 {
-    public function formHandler(array $formData = [], int $cronID = -1) : array
+    public function formHandler(
+        ?array $formData = null,
+        ?int   $cronID   = null
+    ): array
     {
         list(
             $action,
             $interval,
             $isActive
-        ) = $this->_getFormFields($formData, $cronID);
+        ) = $this->_getFormFields($formData);
 
         list($res, $error) = $this->_validateFormFields(
             $action,
@@ -22,10 +25,12 @@ trait CronForm
             ];
         }
 
-        if ($cronID > 0) {
-            $res = $this->_updateByID($action, $interval, $isActive, $cronID);
-        } else {
+        if (empty($cronID)) {
             $res = $this->_create($action, $interval, $isActive);
+        }
+
+        if (!empty($cronID)) {
+            $res = $this->_updateByID($action, $interval, $isActive, $cronID);
         }
 
         if (!$res) {
@@ -36,17 +41,14 @@ trait CronForm
             ];
         }
 
-        return [true, ''];
+        return [true, null];
     }
 
-    protected function _getFormFields(
-        array $formData = [],
-        int   $tagID    = -1
-    ) : array
+    protected function _getFormFields(?array $formData = null): array
     {
         $cronVO = $this->getVO($formData);
 
-        $action = $cronVO->getAction();
+        $action   = $cronVO->getAction();
         $interval = $cronVO->getInterval();
         $isActive = $cronVO->getIsActive();
 
@@ -56,10 +58,10 @@ trait CronForm
     }
 
     protected function _validateFormFields(
-        string $action   = '',
-        int    $interval = -1,
-        bool   $isActive = false
-    ) : array
+        ?string $action   = null,
+        ?int    $interval = null,
+        bool    $isActive = false
+    ): array
     {
         if (!preg_match('/^job([A-Z])([a-z]+)$/su', $action)) {
             $error = 'Cron Job Has Invalid Format';
@@ -85,7 +87,6 @@ trait CronForm
             ];
         }
 
-        return [true, ''];
+        return [true, null];
     }
 }
-?>

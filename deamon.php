@@ -16,7 +16,7 @@ class Deamon extends App
     /**
      * Main Method For Application Test
      */
-    public function run() : void
+    public function run(): void
     {
         list(
             $controller,
@@ -53,7 +53,7 @@ class Deamon extends App
     /**
      * Mock Method Of Performing Redirects By Rules
      */
-    private function _redirect() : void
+    private function _redirect(): void
     {
         //Mock For App::_redirect()
     }
@@ -61,7 +61,7 @@ class Deamon extends App
     /**
      * Mock Rewrite URI By Rules Method
      */
-    private function _replaceURI() : void
+    private function _replaceURI(): void
     {
         //Mock For App::_replaceURI()
     }
@@ -69,14 +69,14 @@ class Deamon extends App
     /**
      *  Mock Parsing URI Method
      */
-    private function _parseURI() : array
+    private function _parseURI(): ?array
     {
         //Mock For App::_parseURI()
 
-        return [];
+        return null;
     }
 
-    private function _parseCLIOptions() : array
+    private function _parseCLIOptions(): array
     {
         $cliOptions = getopt('', ['controller:', 'action:', 'param:']);
 
@@ -89,7 +89,7 @@ class Deamon extends App
         }
 
         if (!array_key_exists('param', $cliOptions)) {
-            $cliOptions['param'] = NULL;
+            $cliOptions['param'] = null;
         }
 
         return [
@@ -104,10 +104,14 @@ class Deamon extends App
     /**
      * Require All Plugins
      *
-     * @param string $controller Name Of Controller Class
+     * @param string|null $controller Name Of Controller Class
      */
-    private function _autoLoad(string $controller = '') : void
+    private function _autoLoad(?string $controller = null): void
     {
+        if (empty($controller)) {
+            throw new Exception('CLI Controller Is Not Set');
+        }
+
         require_once __DIR__.'/autoload.php';
         require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
@@ -115,7 +119,7 @@ class Deamon extends App
     /**
      *  Mock Redirect Rules
      */
-    public function routeRedirect(string $uri = '') : void
+    public function routeRedirect(?string $uri = null): void
     {
         //Mock For App::routeRedirect()
     }
@@ -123,22 +127,26 @@ class Deamon extends App
     /**
      *  Mock Rewrite Rules
      */
-    public function routeRewrite(string $uri = '') : string
+    public function routeRewrite(?string $uri = null): ?string
     {
         //Mock For App::routeRewrite()
 
-        return '';
+        return null;
     }
 
     /**
      * Check Is Controller Exists
      *
-     * @param string $controller Var
+     * @param string|null $controller Var
      *
      * @return bool Is Controller Exists
      */
-    private function _isControllerExist(string $controller = '') : bool
+    private function _isControllerExist(?string $controller = null): bool
     {
+        if (empty($controller)) {
+            return false;
+        }
+
         return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
     }
 
@@ -153,25 +161,25 @@ class Deamon extends App
     private function _isValidControllerAction(
         ControllerCore $controller,
         string         $action
-    ) : bool
+    ): bool
     {
         if (!method_exists($controller, $action)) {
-            return FALSE;
+            return false;
         }
 
         $reflection = new ReflectionMethod($controller, $action);
 
         if (!$reflection->isPublic()) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
      * Handler For Only App Class Errors
      */
-    private function _error() : void
+    private function _error(): void
     {
         throw new Exception('Internal Server Error');
     }
@@ -179,9 +187,9 @@ class Deamon extends App
     /**
      * Exceptions Handler
      *
-     * @param Exception $exp Exception Instance
+     * @param Exception|null $exp Exception Instance
      */
-    private function _exception(Exception $exp = NULL) : void
+    private function _exception(?Exception $exp = null): void
     {
         $expMessage = $exp->getMessage();
 
@@ -192,4 +200,3 @@ class Deamon extends App
         exit(0);
     }
 }
-?>

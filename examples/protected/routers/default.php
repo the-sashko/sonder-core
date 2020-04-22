@@ -9,8 +9,12 @@ trait Router
      *
      * @param string $uri HTTP Request URI
      */
-    public function routeRedirect(string $uri = '') : void
+    public function routeRedirect(?string $uri = null): void
     {
+        if (empty($uri)) {
+            $uri = '/';
+        }
+
         if (!preg_match('/^\/$/su', $uri)) {
             header('Location: /');
             exit(0);
@@ -24,8 +28,11 @@ trait Router
      *
      * @return string Rewrited HTTP Request URI
      */
-    public function routeRewrite(string $uri = '') : string
+    public function routeRewrite(?string $uri = null): string
     {
+        if (empty($uri)) {
+            $uri = '/';
+        }
 
         if (preg_match('/^\/$/su', $uri)) {
             return '/main/index/';
@@ -34,4 +41,3 @@ trait Router
         return $uri;
     }
 }
-?>

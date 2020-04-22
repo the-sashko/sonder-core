@@ -12,9 +12,8 @@ class MainController extends ControllerCore
     /**
      * Default Site Action
      */
-    public function actionIndex() : void
+    public function actionIndex(): void
     {
         $this->render('example');
     }
 }
-?>

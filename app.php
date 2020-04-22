@@ -15,7 +15,7 @@ class App
     /**
      * Main Method For Application
      */
-    public function run() : void
+    public function run(): void
     {
         list(
             $controller,
@@ -63,7 +63,8 @@ class App
         string $errMessage,
         string $errFile,
         int    $errLine
-    ) : void {
+    ): void
+    {
         $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
@@ -102,7 +103,7 @@ class App
     /**
      * Perform Redirects By Rules
      */
-    private function _redirect() : void
+    private function _redirect(): void
     {
         $uri = $_SERVER['REQUEST_URI'];
 
@@ -112,7 +113,7 @@ class App
     /**
      * Rewrite URI By Rules
      */
-    private function _replaceURI() : void
+    private function _replaceURI(): void
     {
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 
@@ -130,11 +131,11 @@ class App
     /**
      * Parse Controller, Method Of Cotroller And Params From URI
      */
-    private function _parseURI() : array
+    private function _parseURI(): ?array
     {
-        $page       = NULL;
-        $param      = NULL;
-        $controller = NULL;
+        $page       = null;
+        $param      = null;
+        $controller = null;
         $uri        = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
@@ -167,7 +168,7 @@ class App
             $controller = $uriData[0];
         }
 
-        if (NULL === $controller || NULL === $action) {
+        if (null === $controller || null === $action) {
             $this->_error();
         }
 
@@ -187,12 +188,16 @@ class App
     /**
      * Check Is Controller Exists
      *
-     * @param string $controller Var
+     * @param string|null $controller Var
      *
      * @return bool Is Controller Exists
      */
-    private function _isControllerExist(string $controller = '') : bool
+    private function _isControllerExist(?string $controller = null): bool
     {
+        if (empty($controller)) {
+            return false;
+        }
+
         return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
     }
 
@@ -205,29 +210,33 @@ class App
      * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidControllerAction(
-        ControllerCore $controller,
-        string         $action
-    ) : bool
+        ?ControllerCore $controller = null,
+        ?string         $action     = null
+    ): bool
     {
+        if (empty($controller) || empty($action)) {
+            return false;
+        }
+
         if (!method_exists($controller, $action)) {
-            return FALSE;
+            return false;
         }
 
         $reflection = new ReflectionMethod($controller, $action);
 
         if (!$reflection->isPublic()) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
      * Handler For Only App Class Errors
      */
-    private function _error() : void
+    private function _error(): void
     {
-        header('Location: /', TRUE, 302);
+        header('Location: /', true, 302);
         exit(0);
     }
 
@@ -236,8 +245,12 @@ class App
      *
      * @param string $controller Name Of Controller Class
      */
-    private function _autoLoad(string $controller = '') : void
+    private function _autoLoad(?string $controller = null): void
     {
+        if (empty($controller)) {
+            throw new Exception('App Controller Is Not Set');
+        }
+
         require_once __DIR__.'/autoload.php';
         require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
@@ -245,11 +258,15 @@ class App
     /**
      * Exceptions Handler
      *
-     * @param Exception $exp Exception Instance
+     * @param Exception|null $exception Exception Instance
      */
-    private function _exception(Exception $exp = NULL) : void
+    private function _exception(?Exception $exception = null): void
     {
-        $expMessage = $exp->getMessage();
+        if (empty($exception)) {
+            exit(0);
+        }
+
+        $expMessage = $exception->getMessage();
 
         (new ErrorPlugin)->displayException($expMessage, OUTPUT_FORMAT_JSON);
 
@@ -258,4 +275,3 @@ class App
         exit(0);
     }
 }
-?>

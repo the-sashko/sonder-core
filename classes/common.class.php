@@ -7,12 +7,12 @@ class CommonCore
     /**
      * @var object Session Plugin Instance
      * */
-    public $session = NULL;
+    public $session = null;
 
     /**
      * @var object ServerInfo Plugin Instance
      * */
-    public $serverInfo = NULL;
+    public $serverInfo = null;
 
     public function __construct()
     {
@@ -23,12 +23,16 @@ class CommonCore
     /**
     * Get Model Instance By Name
     *
-    * @param string $model Name Of Model
+    * @param string|null $model Name Of Model
     *
-    * @return Object ModelCore Insnace Of Model
+    * @return ModelCore|null Insnace Of Model
     */
-    public function getModel(string $model = '') : ModelCore
+    public function getModel(?string $model = null): ?ModelCore
     {
+        if (empty($model)) {
+            return null;
+        }
+
         $modelsDir  = __DIR__.'/../../models';
         $modelClass = mb_convert_case($model, MB_CASE_TITLE);
 
@@ -59,16 +63,21 @@ class CommonCore
     /**
     * Get Plugin Instance By Name
     *
-    * @param string $plugin Name Of Plugin
+    * @param string|null $pluginName Name Of Plugin
     *
-    * @return Object Insnace Of Plugin
+    * @return Object|null Insnace Of Plugin
     */
-    public function getPlugin(string $plugin = '') : Object
+    public function getPlugin(?string $pluginName = null): ?Object
     {
-        $pluginClass = "{$plugin}Plugin";
+        if (empty($pluginName)) {
+            return null;
+        }
+
+        $pluginClass = sprintf('%sPlugin', $pluginName);
 
         if (!class_exists($pluginClass)) {
-            throw new Exception("Plugin {$plugin} Is Missing!");
+            $errorMessage = sprintf('Plugin %s Is Not Exists!', $pluginName);
+            throw new Exception($errorMessage);
         }
 
         return new $pluginClass();
@@ -77,12 +86,16 @@ class CommonCore
     /**
     * Get Config Data By Config File Name
     *
-    * @param string $configName Name Of Config File
+    * @param string|null $configName Name Of Config File
     *
-    * @return array Data From Config File
+    * @return array|null Data From Config File
     */
-    public function getConfig(string $configName = '') : array
+    public function getConfig(?string $configName = null): ?array
     {
+        if (empty($configName)) {
+            return null;
+        }
+
         $configPath = __DIR__."/../../config/{$configName}.json";
 
         if (!file_exists($configPath)) {
@@ -91,7 +104,6 @@ class CommonCore
 
         $configJSON = file_get_contents($configPath);
 
-        return (array) json_decode($configJSON, TRUE);
+        return (array) json_decode($configJSON, true);
     }
 }
-?>

@@ -31,7 +31,7 @@ class Test extends App
         string $errMessage,
         string $errFile,
         int    $errLine
-    ) : void
+    ): void
     {
         throw new Exception($errMessage);
     }
@@ -39,7 +39,7 @@ class Test extends App
     /**
      * Mock Method Of Performing Redirects By Rules
      */
-    private function _redirect() : void
+    private function _redirect(): void
     {
         //Mock For App::_redirect()
     }
@@ -47,7 +47,7 @@ class Test extends App
     /**
      * Mock Rewrite URI By Rules Method
      */
-    private function _replaceURI() : void
+    private function _replaceURI(): void
     {
         //Mock For App::_replaceURI()
     }
@@ -55,21 +55,21 @@ class Test extends App
     /**
      *  Mock Parsing URI Method
      */
-    private function _parseURI() : array
+    private function _parseURI(): ?array
     {
         //Mock For App::_parseURI()
 
-        return [];
+        return null;
     }
 
     /**
      * Mock Checking Controller Existsting Method
      */
-    private function _isControllerExist(string $controller = '') : bool
+    private function _isControllerExist(?string $controller = null): bool
     {
         //Mock For App::_isControllerExist()
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -83,17 +83,17 @@ class Test extends App
     private function _isValidControllerAction(
         ControllerCore $controller,
         string         $action
-    ) : bool
+    ): bool
     {
         //Mock For App::_isValidControllerAction()
 
-        return TRUE;
+        return true;
     }
 
     /**
      * Handler For Only Test Class Errors
      */
-    private function _error() : void
+    private function _error(): void
     {
         throw new Exception('Test App Init Eror!');
     }
@@ -103,7 +103,7 @@ class Test extends App
      *
      * @param string $controller Name Of Controller Class
      */
-    private function _autoLoad(string $controller = '') : void
+    private function _autoLoad(?string $controller = null): void
     {
         require_once __DIR__.'/autoload.php';
     }
@@ -113,7 +113,7 @@ class Test extends App
      *
      * @param Exception $exp Exception Instance
      */
-    private function _exception(Exception $exp) : void
+    private function _exception(Exception $exp): void
     {
         $expMessage = $exp->getMessage();
 
@@ -123,7 +123,7 @@ class Test extends App
     /**
      *  Mock Redirect Rules
      */
-    public function routeRedirect(string $uri = '') : void
+    public function routeRedirect(?string $uri = null): void
     {
         //Mock For App::routeRedirect()
     }
@@ -131,11 +131,10 @@ class Test extends App
     /**
      *  Mock Rewrite Rules
      */
-    public function routeRewrite(string $uri = '') : string
+    public function routeRewrite(?string $uri = null): ?string
     {
         //Mock For App::routeRewrite()
 
-        return '';
+        return null;
     }
 }
-?>

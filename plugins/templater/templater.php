@@ -80,4 +80,3 @@ class TemplaterPlugin
         exit(0);
     }
 }
-?>

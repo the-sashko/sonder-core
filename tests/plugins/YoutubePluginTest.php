@@ -20,16 +20,16 @@ class YoutubePluginTest extends TestCase
         ],
         [
             'value'    => 'Lorem ipsum dolor https://www.youtube.com/watch?'.
-                          'v=UnitTest1 sit amet, consectetur http://m.youtu.be'.
-                          '/UnitTest3?t=333 adipiscing elit. Nullam finibus '.
-                          'semper diam at dapibus. Donec https://www.youtube'.
-                          '.com/watch?v=UnitTest2&t=111 at convallis dui. '.
-                          'Proin et velit enim.',
+                          'v=UnitTest1 sit amet, consectetur '.
+                          'http://m.youtu.be/UnitTest3?t=333 adipiscing '.
+                          'elit. Nullam finibus semper diam at dapibus. '.
+                          'Donec https://www.youtube.com/'.
+                          'watch?v=UnitTest2&t=111 Proin et velit enim.',
             'expected' => 'Lorem ipsum dolor [Youtube:UnitTest1] sit amet, '.
                           'consectetur [Youtube:UnitTest3?t=333s] adipiscing '.
-                          'elit. Nullam finibus semper diam at dapibus. Donec '.
-                          '[Youtube:UnitTest2?t=111s] at convallis dui. Proin '.
-                          'et velit enim.'
+                          'elit. Nullam finibus semper diam at dapibus. '.
+                          'Donec [Youtube:UnitTest2?t=111s] at convallis '.
+                          'dui. Proin et velit enim.'
         ]
     ];
 
@@ -46,4 +46,3 @@ class YoutubePluginTest extends TestCase
         }
     }
 }
-?>

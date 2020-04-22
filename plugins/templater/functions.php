@@ -4,7 +4,7 @@
  *
  * @param string $templatePage Template Page Name
  */
-function renderPage(string $templatePage = '') : void
+function renderPage(string $templatePage = ''): void
 {
     foreach ($GLOBALS['templateParams'] as $param => $value) {
         $$param = $value;
@@ -33,7 +33,7 @@ function renderPart(
     string $templatePart = '',
     int    $ttl          = 0,
     array  $templateData = []
-) : bool
+): bool
 {
     if ($ttl > 0) {
         if (is_file($GLOBALS['templateCacheDir'].'/'.$templatePart.'.dat')) {
@@ -99,7 +99,7 @@ function renderPart(
  *
  * @param string $templatePage Template Page Name
  */
-function _page(string $templatePage = '') : void
+function _page(string $templatePage = ''): void
 {
     renderPage($templatePage);
 }
@@ -117,9 +117,8 @@ function _part(
     string $templatePart = '',
     array  $templateData = [],
     bool   $cache        = FALSE
-) : void
+): void
 {
-    $ttl = $cache ? (int)$GLOBALS['templateTTL'] : 0;
+    $ttl = $cache ? (int) $GLOBALS['templateTTL'] : 0;
     renderPart($templatePart, $ttl, $templateData);
 }
-?>

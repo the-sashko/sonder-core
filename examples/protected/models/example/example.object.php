@@ -24,9 +24,8 @@ class ExampleObject extends ModelObjectCore
      *
      * @return array List Of Example Data
      */
-    public function getAllExamples() : array
+    public function getAllExamples(): ?array
     {
         return $this->getAll($this->tableExample);
     }
 }
-?>

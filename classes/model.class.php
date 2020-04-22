@@ -12,12 +12,12 @@ class ModelCore extends CommonCore
     /**
      * @var object Model Object Class Instance
      */
-    public $object = NULL;
+    public $object = null;
 
     /**
      * @var string Model Values Object Class Name
      */
-    public $voClassName = NULL;
+    public $voClassName = null;
 
     /**
      * @var array Data From JSON Config Files
@@ -34,7 +34,7 @@ class ModelCore extends CommonCore
     /**
      * Set Model Object Class Instance
      *
-     * @param ?string Model Object Class Name
+     * @param string|null Model Object Class Name
      */
     public function setObject(?string $objectClassName = null): void
     {
@@ -42,7 +42,7 @@ class ModelCore extends CommonCore
             throw new Exception('Model`s Object Class Name Is Not Set!');
         }
 
-        if (NULL === $this->object) {
+        if (null === $this->object) {
             $this->object = new $objectClassName();
             $this->object->initStore();
         }
@@ -51,7 +51,7 @@ class ModelCore extends CommonCore
     /**
      * Set Model Value Object Class Name
      *
-     * @param ?string Model Value Object Class Name
+     * @param string|null Model Value Object Class Name
      */
     public function setValuesObjectClass(?string $voClassName = null): void
     {
@@ -70,15 +70,15 @@ class ModelCore extends CommonCore
     public function setConfigData(): void
     {
         $configDataJSON   = file_get_contents(self::MAIN_CONFIG_PATH);
-        $this->configData = json_decode($configDataJSON, TRUE);
+        $this->configData = json_decode($configDataJSON, true);
     }
 
     /**
      * Get String Value From Main Config Data
      *
-     * @param string $valueName Value Name
+     * @param string|null $valueName Value Name
      *
-     * @return ?string Value Data
+     * @return string|null Value Data
      */
     public function getConfigValue(?string $valueName = null): ?string
     {
@@ -96,9 +96,9 @@ class ModelCore extends CommonCore
     /**
      * Get Array Value From Main Config Data
      *
-     * @param ?string $valueName Value Name
+     * @param string|null $valueName Value Name
      *
-     * @return ?array Value Data
+     * @return array|null Value Data
      */
     public function getConfigArrayValue(?string $valueName = null): ?array
     {
@@ -116,9 +116,9 @@ class ModelCore extends CommonCore
     /**
      * Get Model Value Object Instance
      *
-     * @param ?array $row List Of Values
+     * @param array|null $row List Of Values
      *
-     * @return ?ValuesObject Values Object Instance
+     * @return ValuesObject|null Values Object Instance
      */
     public function getVO(?array $row = null): ?ValuesObject
     {
@@ -136,9 +136,9 @@ class ModelCore extends CommonCore
     /**
      * Get List Of Model Value Object Instances
      *
-     * @param ?array $rows List Of Values
+     * @param array|null $rows List Of Values
      *
-     * @return ?array List Of Model Value Object Instances
+     * @return array|null List Of Model Value Object Instances
      */
     public function getVOArray(?array $rows = null): ?array
     {
@@ -162,12 +162,16 @@ class ModelCore extends CommonCore
     /**
      * Get Model Value Object Instance By ID Value
      *
-     * @param int $id ID Value
+     * @param int|null $id ID Value
      *
-     * @return ?ValuesObject Values Object Instance
+     * @return ValuesObject|null Values Object Instance
      */
-    public function getByID(int $id = -1): ?ValuesObject
+    public function getByID(?int $id = null): ?ValuesObject
     {
+        if (empty($id)) {
+            return null;
+        }
+
         $values = $this->object->getByID(
             $this->object->getDefaultTableName(),
             $id
@@ -183,9 +187,9 @@ class ModelCore extends CommonCore
     /**
      * Get Model Value Object Instance By Slug Value
      *
-     * @param ?string $slug Slug Value
+     * @param string|null $slug Slug Value
      *
-     * @return ?ValuesObject Values Object Instance
+     * @return ValuesObject|null Values Object Instance
      */
     public function getBySlug(?string $slug = null): ?ValuesObject
     {
@@ -206,7 +210,7 @@ class ModelCore extends CommonCore
      *
      * @param int $page Page Number
      *
-     * @return ?array List Of Model Value Object Instances
+     * @return array|null List Of Model Value Object Instances
      */
     public function getByPage(int $page = 1): ?array
     {
@@ -222,12 +226,16 @@ class ModelCore extends CommonCore
     /**
      * Remove Model Data From Data Base By ID Value
      *
-     * @param int $id ID Value
+     * @param int|null $id ID Value
      *
      * @return bool Is Data From Data Base Successffuly Removed
      */
-    public function removeByID(int $id = -1): bool
+    public function removeByID(?int $id = null): bool
     {
+        if (empty($id)) {
+            throw new Exception('Model ID For Removing Is Not Set');
+        }
+
         return $this->object->removeByID(
             $this->object->getDefaultTableName(),
             $id
@@ -237,13 +245,17 @@ class ModelCore extends CommonCore
     /**
      * Get Slug Value From String And Model Value ID
      *
-     * @param string $input Input String
-     * @param int    $id    ID Value
+     * @param string|null $input Input String
+     * @param int|null    $id    ID Value
      *
-     * @return string Output Slug Value
+     * @return string|null Output Slug Value
      */
-    public function getSlug(string $input = '', int $id = -1): string
+    public function getSlug(?string $input = null, ?int $id = null): ?string
     {
+        if (empty($input)) {
+            return null;
+        }
+
         $translit = $this->getPlugin('translit');
         $slug     = $translit->getSlug($input);
 
@@ -253,24 +265,37 @@ class ModelCore extends CommonCore
     /**
      * Get Unique Slug Value From Slug And Model Value ID
      *
-     * @param string $input Input Slug Value
-     * @param int    $id    ID Value
+     * @param string|null $input Input Slug Value
+     * @param int|null    $id    ID Value
      *
-     * @return string Output Slug Value
+     * @return string|null Output Slug Value
      */
-    private function _getUniqSlug(string $slug = '', int $id = -1): string
+    private function _getUniqSlug(
+        ?string $slug = null,
+        ?int    $id = null
+    ): ?string
     {
-        $condition = "\"slug\" = '{$slug}' AND \"id\" != {$id}";
+        if (empty($slug)) {
+            return null;
+        }
 
-        $value = $this->object->getOneByCondition(
+        $condition = sprintf('"slug = \'%s\'', $slug);
+
+        if (!empty($id)) {
+            $condition = sprintf('%s AND "id" != %d', $id);
+        }
+
+        $row = $this->object->getOneByCondition(
             $this->object->getDefaultTableName(),
             [],
             $condition
         );
 
-        if (!count($value) > 0) {
+        if (!empty($row)) {
             return $slug;
         }
+
+        $slugNumber = 1;
 
         if (preg_match('/^(.*?)\-([0-9]+)$/su', $slug)) {
             $slugNumber = (int) preg_replace(
@@ -278,25 +303,30 @@ class ModelCore extends CommonCore
                 '$2',
                 $slug
             );
-            $slugNumber++;
-            $slug = preg_replace('/^(.*?)\-([0-9]+)/su', '$1', $slug);
-            $slug = $slug.'-'.$slugNumber;
 
-            return $this->_getUniqSlug($slug, $id);
+            $slugNumber++;
+
+            $slug = preg_replace('/^(.*?)\-([0-9]+)/su', '$1', $slug);
         }
 
-        return $this->_getUniqSlug($slug.'-1', $id);
+        $slug = sprintf('%s-%d', $slug, $slugNumber);
+
+        return $this->_getUniqSlug($slug, $id);
     }
 
     /**
      * Format Title Value
      *
-     * @param string $title Input Title Value
+     * @param string|null $title Input Title Value
      *
-     * @return string Output Title Value
+     * @return string|null Output Title Value
      */
-    public function formatTitle(string $title = ''): string
+    public function formatTitle(?string $title = null): ?string
     {
+        if (empty($title)) {
+            return null;
+        }
+
         $title = preg_replace('/\s+/su', ' ', $title);
         $title = preg_replace('/(^\s)|(\s$)/su', '', $title);
 
@@ -306,12 +336,16 @@ class ModelCore extends CommonCore
     /**
      * Format Text Value
      *
-     * @param string $text Input Text Value
+     * @param string|null $text Input Text Value
      *
-     * @return string Output Text Value
+     * @return string|null Output Text Value
      */
-    public function formatText(string $text = ''): string
+    public function formatText(?string $text = null): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = preg_replace('/\n+/su', "\n", $text);
         $text = preg_replace('/\n+/su', '<br>', $text);
         $text = preg_replace('/\s+/su', ' ', $text);
@@ -327,12 +361,16 @@ class ModelCore extends CommonCore
     /**
      * Format Email Value
      *
-     * @param string $email Input Email Value
+     * @param string|null $email Input Email Value
      *
-     * @return string Output Email Value
+     * @return string|null Output Email Value
      */
-    public function formatEmail(string $email = ''): string
+    public function formatEmail(?string $email = null): ?string
     {
+        if (empty($email)) {
+            return null;
+        }
+
         $email = preg_replace('/\s+/su', '', $email);
 
         return $email;
@@ -341,12 +379,16 @@ class ModelCore extends CommonCore
     /**
      * Format Slug Value
      *
-     * @param string $slug Input Slug Value
+     * @param string|null $slug Input Slug Value
      *
-     * @return string Output Slug Value
+     * @return string|null Output Slug Value
      */
-    public function formatSlug(string $slug = ''): string
+    public function formatSlug(?string $slug = null): ?string
     {
+        if (empty($slug)) {
+            return null;
+        }
+
         $slug = preg_replace('/\s+/su', '', $slug);
         $slug = mb_convert_case($slug, MB_CASE_LOWER);
 
@@ -356,20 +398,24 @@ class ModelCore extends CommonCore
     /**
      * Format URL Value
      *
-     * @param string $url Input URL Value
+     * @param string|null $url Input URL Value
      *
-     * @return string Output URL Value
+     * @return string|null Output URL Value
      */
-    public function formatURL(string $url = ''): string
+    public function formatURL(?string $url = null): ?string
     {
+        if (empty($url)) {
+            return null;
+        }
+
         $url = preg_replace('/\s+/su', '', $url);
 
         if (!preg_match('/^((http)|(https))\:\/\/(.*?)$/su', $url)) {
-            $url = 'http://'.$url;
+            $url = sprintf('http://%s', $url);
         }
 
         if (strlen($url) < 10) {
-            $url = '';
+            $url = null;
         }
 
         return $url;

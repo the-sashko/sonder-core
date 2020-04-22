@@ -1,13 +1,15 @@
 [submodule "plugins/redis/vendor"]
-    path = plugins/redis/vendor
-    url = https://github.com/the-sashko/predis
+    path =  plugins/redis/vendor
+    url =   https://github.com/the-sashko/predis
 [submodule "plugins/share/twitter/vendor"]
-    path = plugins/share/twitter/vendor
-    url = https://github.com/the-sashko/codebird-php
+    path =  plugins/share/twitter/vendor
+    url =   https://github.com/the-sashko/codebird-php
 [submodule "plugins/qr/vendor"]
-    path = plugins/qr/vendor
-    url = https://github.com/the-sashko/for_php_qr_core
-
+    path =  plugins/qr/vendor
+    url =   https://github.com/the-sashko/for_php_qr_core
 [submodule "plugins/mail/providers/SMTP/vendor"]
-	path = plugins/mail/providers/SMTP/vendor
-	url = https://github.com/the-sashko/PHPMailer.git
+    path =  plugins/mail/providers/SMTP/vendor
+    url =   https://github.com/the-sashko/PHPMailer.git
+[submodule "plugins/language/vendor"]
+    path =  plugins/language/vendor
+    url =   https://github.com/the-sashko/php.mo.git

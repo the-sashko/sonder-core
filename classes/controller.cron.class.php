@@ -7,7 +7,7 @@ class CronControllerCore extends ControllerCore
     /**
      * Method That Running All Cron Jobs
      */
-    public function actionRun() : void
+    public function actionRun(): void
     {
         if ($this->URLParam !== $this->getConfig('cron')['token']) {
             throw new Exception('Invalid Token');
@@ -15,30 +15,38 @@ class CronControllerCore extends ControllerCore
 
         $logger = $this->getPlugin('logger');
 
-        $cron = $this->getModel('cron');
-
+        $cron     = $this->getModel('cron');
         $cronJobs = $cron->getJobs();
 
         foreach ($cronJobs as $cronJob) {
             $method = $cronJob->getAction();
+
             $cronJob->setTimeNextExec();
 
             try {
-                $logger->log('Job '.$method.' Start', 'cron');
+                $logMessage = sprintf('Job %s Start', $method);
+                $logger->log($logMessage, 'cron');
+
                 $this->$method();
-                $cronJob->setLastExecStatus(TRUE);
-                $cronJob->setErrorMessage('');
-                $logger->log('Job '.$method.' Done', 'cron');
+
+                $cronJob->setLastExecStatus(true);
+                $cronJob->setErrorMessage(null);
+
+                $logMessage = sprintf('Job %s Done', $method);
+                $logger->log($logMessage, 'cron');
             } catch (Exception $exp) {
-                $message = $exp->getMessage();
-                $cronJob->setErrorMessage($message);
-                $cronJob->setLastExecStatus(FALSE);
-                $logger->logError($message, FALSE);
-                $logger->log('Job '.$method.' Fail', 'cron');
+                $logMessage = $exp->getMessage();
+
+                $cronJob->setErrorMessage($logMessage);
+                $cronJob->setLastExecStatus(false);
+
+                $logger->logError($logMessage, false);
+
+                $logMessage = sprintf('Job %s Fail', $logMessage);
+                $logger->log($logMessage, 'cron');
             }
 
             $cron->updateByVO($cronJob);
         }
     }
 }
-?>

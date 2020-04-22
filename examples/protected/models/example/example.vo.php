@@ -9,7 +9,7 @@ class ExampleVO extends ValuesObject
      *
      * @return int Example ID
      */
-    public function getID() : int
+    public function getID(): int
     {
         return (int) $this->get('id');
     }
@@ -19,7 +19,7 @@ class ExampleVO extends ValuesObject
      *
      * @return string Foo Param Value
      */
-    public function getFoo() : string
+    public function getFoo(): string
     {
         return (string) $this->get('foo');
     }
@@ -31,9 +31,8 @@ class ExampleVO extends ValuesObject
      *
      * @return bool Is Foo Param Value Set
      */
-    public function setFoo(string $value = '') : bool
+    public function setFoo(?string $value = null): bool
     {
         return $this->set('foo', $value);
     }
 }
-?>
