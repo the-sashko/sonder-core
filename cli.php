@@ -2,7 +2,7 @@
 /**
  * Application Class For Deamon Workers
  */
-class Deamon extends App
+class CLI extends App
 {
     const DEFAULT_PAGE = 1;
 
@@ -25,7 +25,8 @@ class Deamon extends App
         ) = $this->_parseCLIOptions();
 
         if (!$this->_isControllerExist($controller)) {
-            $this->_error();
+            $errorMessage = sprintf('Controller %s Not Found', $controller);
+            throw new Exception($errorMessage);
         }
 
         $this->_autoLoad($controller);
@@ -37,7 +38,7 @@ class Deamon extends App
         );
 
         if (!$this->_isValidControllerAction($controller, $action)) {
-            $this->_error();
+            throw new Exception(sprintf('Not Fount Valid Action %s', $action));
         }
 
         try {
