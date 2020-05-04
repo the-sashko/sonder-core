@@ -5,17 +5,19 @@ scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 cd "$scriptDir/../.."
 
-cp core/examples/.gitignore .gitignore
-cp -r core/examples/public ../public
-cp -r core/examples/protected/config config
-cp -r core/examples/protected/controllers controllers
-cp -r core/examples/protected/models models
-cp -r core/examples/protected/hooks hooks
-cp -r core/examples/protected/res res
-cp -r core/examples/protected/routers routers
-cp -r core/examples/protected/init.php init.php
-cp -r core/examples/protected/api.init.php api.init.php
-cp -r core/examples/protected/deamon.init.php deamon.init.php
+cp core/install/samples/.gitignore .gitignore
+cp -r core/install/samples/public ../public
+cp -r core/install/samples/cli ../cli
+cp -r core/install/samples/api ../api
+cp -r core/install/samples/protected/config config
+cp -r core/install/samples/protected/controllers controllers
+cp -r core/install/samples/protected/models models
+cp -r core/install/samples/protected/hooks hooks
+cp -r core/install/samples/protected/res res
+cp -r core/install/samples/protected/routers routers
+cp -r core/install/samples/protected/init.php init.php
+cp -r core/install/samples/protected/api.init.php api.init.php
+cp -r core/install/samples/protected/cli.init.php cli.init.php
 
 mkdir res/logs
 
@@ -27,4 +29,4 @@ git submodule update --init --recursive
 
 cd "$currDir"
 
-exit
+exit 1
