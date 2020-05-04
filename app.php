@@ -21,7 +21,8 @@ class App
             $controller,
             $action,
             $param,
-            $page
+            $page,
+            $language
         ) = $this->_parseURI();
 
         if (!$this->_isControllerExist($controller)) {
@@ -33,7 +34,8 @@ class App
         $controller = new $controller(
             $param,
             $_POST,
-            $page
+            $page,
+            $language
         );
 
         if (!$this->_isValidControllerAction($controller, $action)) {
@@ -133,45 +135,47 @@ class App
      */
     private function _parseURI(): ?array
     {
-        $page       = null;
-        $param      = null;
+        $language   = null;
         $controller = null;
-        $uri        = $_SERVER['REQUEST_URI'];
+        $action     = null;
+        $param      = null;
+        $page       = null;
+
+        $uri = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
-            $page = preg_replace(
-                '/^\/(.*?)\/page-([0-9]+)\/$/su',
-                '$2',
-                $uri
-            );
-
-            $uri = preg_replace(
-                '/^\/(.*?)\/page-([0-9]+)\/$/su',
-                '$1',
-                $uri
-            );
+            $uri = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1/$2/', $uri);
         }
 
         $uri = preg_replace('/^\/(.*?)\/$/su', '$1', $uri);
 
         $uriData = explode('/', $uri);
 
-        if (isset($uriData[2])) {
-            $param = $uriData[2];
+        if (!empty($uriData)) {
+            $language = array_shift($uriData);
         }
 
-        if (isset($uriData[1])) {
-            $action = $uriData[1];
+        if (!empty($uriData)) {
+            $controller = array_shift($uriData);
         }
 
-        if (isset($uriData[0])) {
-            $controller = $uriData[0];
+        if (!empty($uriData)) {
+            $action = array_shift($uriData);
+        }
+
+        if (!empty($uriData)) {
+            $param = array_shift($uriData);
+        }
+
+        if (!empty($uriData)) {
+            $page = array_shift($uriData);
         }
 
         if (null === $controller || null === $action) {
             $this->_error();
         }
 
+        $language   = (string) $language;
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
         $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
         $param      = (string) $param;
@@ -181,7 +185,8 @@ class App
             $controller,
             $action,
             $param,
-            $page
+            $page,
+            $language
         ];
     }
 
