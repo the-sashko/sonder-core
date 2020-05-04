@@ -10,6 +10,11 @@ class ControllerCore extends CommonCore
     const PAGE_TITLE_SEPARATOR = ' / ';
 
     /**
+     * @var string Default Language Of Application
+     */
+    const DEFAULT_LANGUAGE = 'en';
+
+    /**
      * @var array POST Request Data
      */
     public $post = null;
@@ -44,10 +49,16 @@ class ControllerCore extends CommonCore
      */
     public $isOutputJSON = false;
 
+    /**
+     * @var string|null Current Language Of User
+     */
+    public $language = null;
+
     public function __construct(
         ?string $URLParam = null,
         ?array  $postData = null,
-        int     $page = 1
+        int     $page     = 1,
+        ?string $language = null
     )
     {
         session_start();
@@ -57,6 +68,7 @@ class ControllerCore extends CommonCore
         $this->_setURLParam($URLParam);
         $this->_setPostData($postData);
         $this->_setPage($page);
+        $this->_setLanguage($language);
         $this->_setFlashSessionData();
         $this->_initConfigs();
         $this->_setOutputType();
@@ -176,6 +188,50 @@ class ControllerCore extends CommonCore
     }
 
     /**
+     * Set Laguage Value To Session
+     */
+    private function _setLanguage(?string $language = null): void
+    {
+        if (!empty($language)) {
+            $this->session->set('language', $language);
+        }
+
+        $this->language = $this->_getLanguage();
+    }
+
+    /**
+     * Set Laguage Value To Session
+     *
+     * @return string|nulll Language Value Of Current User
+     */
+    private function _getLanguage(): string
+    {
+        if (!$this->session->has('language')) {
+            return null;
+        }
+
+        $language = $this->session->get('language');
+
+        if (empty($language)) {
+            $language = $this->_getDefaultLanguage();
+        }
+
+        return $language;
+    }
+
+    /**
+     * Get Default Language
+     */
+    private function _getDefaultLanguage(): string
+    {
+        if (defined('DEFAULT_LANGUAGE')) {
+            return DEFAULT_LANGUAGE;
+        }
+
+        return static::DEFAULT_LANGUAGE;
+    }
+
+    /**
      * Redirect To URL
      *
      * @param string|null $url         URL Value
@@ -262,7 +318,8 @@ class ControllerCore extends CommonCore
         $breadcrumbs = $this->getPlugin('breadcrumbs');
         $breadcrumbs = $breadcrumbs->getHTML($dataParams['pagePath']);
 
-        $dataParams['breadcrumbs'] = $breadcrumbs;
+        $dataParams['breadcrumbs']     = $breadcrumbs;
+        $dataParams['currentLanguage'] = $this->language;
 
         $templater = $this->getPlugin('templater');
 
