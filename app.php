@@ -144,10 +144,11 @@ class App
         $uri = $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
-            $uri = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1/$2/', $uri);
+            $page = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$2', $uri);
+            $uri  = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1', $uri);
         }
 
-        $uri = preg_replace('/^\/(.*?)\/$/su', '$1', $uri);
+        $uri = preg_replace('/((^\/)|(\/$))/su', '', $uri);
 
         $uriData = explode('/', $uri);
 
@@ -165,10 +166,6 @@ class App
 
         if (!empty($uriData)) {
             $param = array_shift($uriData);
-        }
-
-        if (!empty($uriData)) {
-            $page = array_shift($uriData);
         }
 
         if (null === $controller || null === $action) {
