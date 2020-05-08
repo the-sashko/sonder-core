@@ -45,12 +45,11 @@ class PagePlugin
      * @return StaticPageValuesObject Values Object Of Static Page
      */
     public function getVO(
-        ?string $staticPageName = null, 
-        ?string $templateName   = null,
-        ?string $templatePage   = null,
-        ?string $notFoundURI    = null
-    ): StaticPageValuesObject
-    {
+        ?string $staticPageName = null,
+        ?string $templateName = null,
+        ?string $templatePage = null,
+        ?string $notFoundURI = null
+    ): StaticPageValuesObject {
         $staticPagePath = $this->_getStaticPagePath($staticPageName);
 
         if (!$this->_isTemplatePageExists($templateName, $templatePage)) {
@@ -75,9 +74,8 @@ class PagePlugin
      */
     private function _getStaticPagePath(
         ?string $staticPageName = null,
-        ?string $notFoundURI    = null
-    ): string
-    {
+        ?string $notFoundURI = null
+    ): string {
         if (empty($staticPageName)) {
             throw new PageException(
                 'Static Page Name Is Not Set',
@@ -114,8 +112,7 @@ class PagePlugin
     public function _isTemplatePageExists(
         ?string $templateName = null,
         ?string $templatePage = null
-    ): bool
-    {
+    ): bool {
         if (empty($templateName)) {
             $templateName = static::DEFAULT_TEMPLATE_NAME;
         }

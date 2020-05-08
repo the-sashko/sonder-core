@@ -5,8 +5,9 @@ class StaticPageValuesObject
 
     public function __construct(?array $staticPageData = null)
     {
-        if (!empty($staticPageData))
+        if (!empty($staticPageData)) {
             $this->_data = new ValuesObject($staticPageData);
+        }
     }
 
     public function getTitle(): ?string
