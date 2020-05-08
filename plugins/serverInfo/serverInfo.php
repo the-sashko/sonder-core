@@ -19,14 +19,14 @@ class ServerInfoPlugin
     /**
      * Get Server Meta Data By Value Name
      *
-     * @param string $valueName Name Of Value
+     * @param string|null $valueName Name Of Value
      *
      * @return mixed Server Value Data
      */
-    public function get(string $valueName = '')
+    public function get(?string $valueName = null)
     {
         if (!$this->_data->has($valueName)) {
-            return NULL;
+            return null;
         }
 
         return $this->_data->get($valueName);
@@ -35,13 +35,12 @@ class ServerInfoPlugin
     /**
      * Check Is Server Meta Data Value Exists
      *
-     * @param string $vaueName Name Of Value
+     * @param string|null $vaueName Name Of Value
      *
      * @return bool Is Value Exists In Server Meta Data
      */
-    public function has(string $valueName = '')
+    public function has(?string $valueName = null)
     {
         return $this->_data->has($valueName);
     }
 }
-?>

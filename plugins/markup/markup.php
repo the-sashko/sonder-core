@@ -160,4 +160,3 @@ class MarkupPlugin
         return $text;
     }
 }
-?>

@@ -1,5 +1,6 @@
 <?php
-class LanguageException extends Exception {
+class LanguageException extends Exception
+{
     const INVALID_LANGUAGE_FORMAT   = 100;
     const LANGUAGE_IS_NOT_SUPPORTED = 101;
     const PO_FILE_IS_NOT_SET        = 102;
