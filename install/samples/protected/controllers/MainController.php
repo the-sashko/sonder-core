@@ -14,6 +14,22 @@ class MainController extends ControllerCore
      */
     public function actionIndex(): void
     {
-        $this->render('example');
+        $this->render('main');
+    }
+
+    /**
+     * Site Action For Static Pages
+     */
+    public function actionPage(): void
+    {
+        $this->displayStaticPage();
+    }
+
+    /**
+     * Site Action For Error Pages
+     */
+    public function actionError(): void
+    {
+        $this->displayErrorPage();
     }
 }
