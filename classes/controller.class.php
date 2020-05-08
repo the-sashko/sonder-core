@@ -15,6 +15,16 @@ class ControllerCore extends CommonCore
     const DEFAULT_LANGUAGE = 'en';
 
     /**
+     * @var string Default Teplate Page For Static Pages
+     */
+    const DEFAULT_STATIC_PAGE_TEMPLATE = 'page';
+
+    /**
+     * @var string Default Teplate Page For Error Pages
+     */
+    const DEFAULT_ERROR_PAGE_TEMPLATE = 'error';
+
+    /**
      * @var array POST Request Data
      */
     public $post = null;
@@ -80,7 +90,7 @@ class ControllerCore extends CommonCore
     public function actionError(): void
     {
         $errorCode    = (int) $this->URLParam;
-        $errorMessage = $this->handleHttpError($errorCode);
+        $errorMessage = $this->_handleHttpError($errorCode);
 
         $errorMessage = sprintf(
             'HTTP Error #%d (%s)',
@@ -96,7 +106,7 @@ class ControllerCore extends CommonCore
      *
      * @return string HTTP Error Message
      */
-    public function handleHttpError(?int $errorCode = null): string
+    private function _handleHttpError(?int $errorCode = null): string
     {
         if (empty($errorCode)) {
             $this->redirect('/', true);
@@ -491,5 +501,75 @@ class ControllerCore extends CommonCore
         $pagePath = array_values($pagePath);
 
         return implode(static::PAGE_TITLE_SEPARATOR, $pagePath);
+    }
+
+    /**
+     * Display Static Page
+     *
+     * @param string|null $staticPageName Static Page File Name
+     * @param string|null $templatePage   Site Template Page Name
+     * @param string|null $notFoundURI    Not Found Page URI
+     */
+    public function displayStaticPage(
+        ?string $staticPageName = null,
+        ?string $templatePage   = null,
+        ?string $notFoundURI    = null
+    ): void
+    {
+        $pagePlugin = $this->getPlugin('page');
+
+        if (empty($staticPageName)) {
+            $staticPageName = $this->URLParam;
+        }
+
+        if (empty($templatePage)) {
+            $templatePage = PagePlugin::DEFAULT_TEMPLATE_PAGE;
+        }
+
+        $staticPageVO = $pagePlugin->getVO(
+            $staticPageName,
+            $this->templaterScope,
+            $templatePage,
+            $notFoundURI
+        );
+
+        $pagePath = [
+            '#' => $staticPageVO->getTitle()
+        ];
+
+        $this->render(
+            $templatePage,
+            [
+                'staticPage' => $staticPageVO,
+                'pagePath'   => $pagePath
+            ]
+        );
+    }
+
+    /**
+     * Display Error Page
+     *
+     * @param int|null $error HTTP Error Code
+     */
+    public function displayErrorPage(?int $errorCode = null): void
+    {
+        if (empty($errorCode)) {
+            $errorCode = (int) $this->URLParam;
+        }
+
+        $errorMessage = $this->_handleHttpError($errorCode);
+
+        $pagePath = [
+            '#' => $errorMessage
+        ];
+
+        $this->render(
+            'error',
+            [
+                'errorMessage' => $errorMessage,
+                'errorCode'    => $errorCode,
+                'pagePath'     => $pagePath
+            ]
+        );
     }
 }
