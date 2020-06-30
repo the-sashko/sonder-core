@@ -1,4 +1,4 @@
 {
-    "mode" : "<all or listed>",
-    "list" : [<list of plugins>]
+    "mode": "all",
+    "list": []
 }
