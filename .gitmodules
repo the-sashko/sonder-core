@@ -10,3 +10,6 @@
 [submodule "plugins/mail/providers/SMTP/vendor"]
 	path = plugins/mail/providers/SMTP/vendor
 	url = https://github.com/the-sashko/PHPMailer.git
+[submodule "plugins/language/vendor"]
+	path = plugins/language/vendor
+	url = https://github.com/the-sashko/php.mo
