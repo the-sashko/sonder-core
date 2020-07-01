@@ -35,7 +35,7 @@ trait Router
         }
 
         if (preg_match('/^\/$/su', $uri)) {
-            return '/main/index/';
+            return '/en/main/index/';
         }
 
         return $uri;

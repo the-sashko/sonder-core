@@ -178,14 +178,6 @@ class CLI extends App
     }
 
     /**
-     * Handler For Only App Class Errors
-     */
-    private function _error(): void
-    {
-        throw new Exception('Internal Server Error');
-    }
-
-    /**
      * Exceptions Handler
      *
      * @param Exception|null $exp Exception Instance

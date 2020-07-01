@@ -33,7 +33,7 @@ class Test extends App
         int    $errLine
     ): void
     {
-        throw new Exception($errMessage);
+        throw new TestException($errMessage);
     }
 
     /**
@@ -88,14 +88,6 @@ class Test extends App
         //Mock For App::_isValidControllerAction()
 
         return true;
-    }
-
-    /**
-     * Handler For Only Test Class Errors
-     */
-    private function _error(): void
-    {
-        throw new Exception('Test App Init Eror!');
     }
 
     /**

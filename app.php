@@ -26,7 +26,12 @@ class App
         ) = $this->_parseURI();
 
         if (!$this->_isControllerExist($controller)) {
-            $this->_error();
+            $errorMessage = sprintf('Controller %s Is Not Exist', $controller);
+
+            throw new AppException(
+                $errorMessage,
+                AppException::CONTROLLER_IS_NOT_EXIST
+            );
         }
 
         $this->_autoLoad($controller);
@@ -39,7 +44,16 @@ class App
         );
 
         if (!$this->_isValidControllerAction($controller, $action)) {
-            $this->_error();
+            $errorMessage = sprintf(
+                'Invalid Action %s For Controller %s',
+                $action,
+                $controller
+            );
+
+            throw new AppException(
+                $errorMessage,
+                AppException::INVALID_CONTROLLER_ACTION
+            );
         }
 
         try {
@@ -168,8 +182,18 @@ class App
             $param = array_shift($uriData);
         }
 
-        if (null === $controller || null === $action) {
-            $this->_error();
+        if (null === $controller) {
+            throw new AppException(
+                'Controller Is Not Set',
+                AppException::CONTROLLER_IS_NOT_SET
+            );
+        }
+
+        if (null === $action) {
+            throw new AppException(
+                'Action For Controller Is Not Set',
+                AppException::CONTROLLER_ACTION_IS_NOT_SET
+            );
         }
 
         $language   = (string) $language;
@@ -234,15 +258,6 @@ class App
     }
 
     /**
-     * Handler For Only App Class Errors
-     */
-    private function _error(): void
-    {
-        header('Location: /', true, 302);
-        exit(0);
-    }
-
-    /**
      * Require All Plugins And Controller Classes
      *
      * @param string $controller Name Of Controller Class
@@ -250,7 +265,10 @@ class App
     private function _autoLoad(?string $controller = null): void
     {
         if (empty($controller)) {
-            throw new Exception('App Controller Is Not Set');
+            throw new AppException(
+                'Controller Is Not Set',
+                AppException::CONTROLLER_IS_NOT_SET
+            );
         }
 
         require_once __DIR__.'/autoload.php';

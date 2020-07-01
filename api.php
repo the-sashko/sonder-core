@@ -10,15 +10,6 @@ class API extends App
     }
 
     /**
-     * Handler For Only Api Class Errors
-     */
-    private function _error(): void
-    {
-        header('Location: /', TRUE, 302);
-        exit(0);
-    }
-
-    /**
      * Require All Plugins And Controller Classes
      *
      * @param string $controller Name Of Controller Class
