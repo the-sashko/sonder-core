@@ -8,7 +8,6 @@ cd "$scriptDir/../.."
 cp core/install/samples/.gitignore .gitignore
 cp -r core/install/samples/public ../public
 cp -r core/install/samples/cli ../cli
-cp -r core/install/samples/api ../api
 cp -r core/install/samples/config config
 cp -r core/install/samples/protected/controllers controllers
 cp -r core/install/samples/protected/models models
