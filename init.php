@@ -3,10 +3,14 @@ if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');
 }
 
-$routerPath = __DIR__.'/examples/protected/routers/default.php';
+if (!defined('APP_ROUTER')) {
+    define('APP_ROUTER', 'default');
+}
 
-if (file_exists(__DIR__.'/../routers/default.php')) {
-    $routerPath = __DIR__.'/../routers/default.php';
+$routerPath = __DIR__.'/../routers/'.APP_ROUTER.'.php';
+
+if (!file_exists($routerPath)) {
+    throw new Exception('Router File Not Found');
 }
 
 switch (APP_MODE) {
