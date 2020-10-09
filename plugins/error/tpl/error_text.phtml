@@ -1,0 +1,13 @@
+Error #<?=$code?>: <?=$message;?>
+
+File: <?=$file;?> (<?=$line;?>)
+Trace:
+<?php
+if (!empty($debugBacktrace)):
+    foreach ($debugBacktrace as $debugBacktraceStep):
+?>
+<?=$debugBacktraceStep."\n";?>
+<?php
+    endforeach;
+endif;
+?>

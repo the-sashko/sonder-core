@@ -5,6 +5,16 @@
 class ErrorPlugin
 {
     /**
+     * Output Format In HTML Format
+     */
+    const OUTPUT_FORMAT_HTML = 'html';
+
+    /**
+     * Output Format In JSON Format
+     */
+    const OUTPUT_FORMAT_JSON = 'json';
+
+    /**
      * HTTP Bad Request Error Code
      */
     const HTTP_BAD_REQUEST = 400;
@@ -68,7 +78,12 @@ class ErrorPlugin
     /**
      * Error HTML Template File Path
      */
-    const ERROR_TEMPLATE_PATH = __DIR__.'/tpl/error.phtml';
+    const HTML_ERROR_TEMPLATE_PATH = __DIR__.'/tpl/error_html.phtml';
+
+    /**
+     * Error Text Template File Path
+     */
+    const TEXT_ERROR_TEMPLATE_PATH = __DIR__.'/tpl/error_text.phtml';
 
     /**
      * Exception HTML Template File Path
@@ -77,6 +92,10 @@ class ErrorPlugin
 
     /**
      * Handle HTTP Error
+     *
+     * @param int $code HTTP Responce Code
+     *
+     * @return bool Is Successfully Handled HTTP Error
      */
     public function handleHttpError(int $code): bool
     {
@@ -95,6 +114,10 @@ class ErrorPlugin
 
     /**
      * Get HTTP Error Message
+     *
+     * @param int $code HTTP Responce Code
+     *
+     * @return string HTTP Error Message
      */
     public function getHttpErrorMessage(int $code): string
     {
@@ -113,20 +136,20 @@ class ErrorPlugin
      * @param string     $file           PHP File That Contain Error
      * @param int        $line           Line In PHP File That Contain Error
      * @param array|null $debugBacktrace Backtrace Of Calls That Contain Error
-     * @param bool       $isJsonOutput   Display Error In JSON Format
+     * @param string     $outputFormat   Display Error Format
      *
      * @return bool Is Successfully Displayed Error
      */
     public function displayError(
-        int    $code,
-        string $message,
-        string $file,
-        int    $line,
-        ?array $debugBacktrace = null,
-        bool   $isJsonOutput   = false
+        int     $code,
+        string  $message,
+        string  $file,
+        int     $line,
+        ?array  $debugBacktrace = null,
+        ?string $outputFormat   = null
     ): bool
     {
-        if (!$isJsonOutput) {
+        if ($outputFormat  == static::OUTPUT_FORMAT_HTML) {
             return $this->_displayHtmlError(
                 $code,
                 $message,
@@ -136,33 +159,23 @@ class ErrorPlugin
             );
         }
 
-        return $this->_displayJsonError(
+        if ($outputFormat == static::OUTPUT_FORMAT_JSON) {
+            return $this->_displayJsonError(
+                $code,
+                $message,
+                $file,
+                $line,
+                $debugBacktrace
+            );
+        }
+
+        return $this->_displayTextError(
             $code,
             $message,
             $file,
             $line,
             $debugBacktrace
         );
-    }
-
-    /**
-     * Display Exception
-     *
-     * @param string $message      Exception Message
-     * @param bool   $isJsonOutput Display Exception In JSON Format
-     *
-     * @return bool Is Successfully Displayed Exception
-     */
-    public function displayException(
-        string $message,
-        bool   $isJsonOutput = false
-    ): bool
-    {
-        if (!$isJsonOutput) {
-            return $this->_displayHtmlException($message);
-        }
-
-        return $this->_displayJsonException($message);
     }
 
     /**
@@ -192,7 +205,7 @@ class ErrorPlugin
             return false;
         }
 
-        include static::ERROR_TEMPLATE_PATH;
+        include static::HTML_ERROR_TEMPLATE_PATH;
 
         return true;
     }
@@ -246,37 +259,33 @@ class ErrorPlugin
     }
 
     /**
-     * Display Exception In HTML Format
+     * Display Error In Text Format
      *
-     * @param string $message Exception Message
+     * @param int        $code           HTTP Responce Code
+     * @param string     $message        Error Message
+     * @param string     $file           PHP File That Contain Error
+     * @param int        $line           Line In PHP File That Contain Error
+     * @param array|null $debugBacktrace Backtrace Of Calls That Contain Error
      *
-     * @return bool Is Successfully Displayed Exception
+     * @return bool Is Successfully Displayed Error
      */
-    private function _displayHtmlException(string $message): bool
+    private function _displayTextError(
+        int    $code,
+        string $message,
+        string $file,
+        int    $line,
+        ?array $debugBacktrace
+    ): bool
     {
-        include static::EXCEPTION_TEMPLATE_PATH;
+        $isDisplay = (bool) ini_get('display_errors');
 
-        return true;
-    }
+        if (!$isDisplay) {
+            echo 'Internal Server Error!';
 
-    /**
-     * Display Exception In JSON Format
-     *
-     * @param string $message Exception Message
-     *
-     * @return bool Is Successfully Displayed Exception
-     */
-    private function _displayJsonException(string $message): bool
-    {
-        $output           = [];
-        $output['status'] = 'error';
+            return false;
+        }
 
-        $output['data'] = [
-            'message' => $message
-        ];
-
-        header('Content-Type: application/json');
-        echo json_encode($output);
+        include static::TEXT_ERROR_TEMPLATE_PATH;
 
         return true;
     }

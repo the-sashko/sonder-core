@@ -30,3 +30,8 @@ $_SERVER = [
 $_POST    = [];
 $_GET     = [];
 $_REQUEST = [];
+
+trait Router
+{
+    //Mock Router
+}

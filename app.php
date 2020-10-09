@@ -8,8 +8,13 @@ class App
 
     public function __construct()
     {
+        require_once __DIR__.'/autoload.php';
+
+        set_exception_handler([$this, 'exceptionHandler']);
+        set_error_handler([$this, 'errorHandler']);
+
         $this->_redirect();
-        $this->_replaceURI();
+        $this->_replaceUrl();
     }
 
     /**
@@ -20,47 +25,50 @@ class App
         list(
             $controller,
             $action,
-            $param,
+            $urlParams,
             $page,
             $language
-        ) = $this->_parseURI();
+        ) = $this->_parseUrl();
 
-        if (!$this->_isControllerExist($controller)) {
-            $errorMessage = sprintf('Controller %s Is Not Exist', $controller);
+        if (!$this->isControllerExist($controller)) {
+            $errorMessage = '%s. Controller: %s';
 
-            throw new AppException(
-                $errorMessage,
-                AppException::CONTROLLER_IS_NOT_EXIST
-            );
-        }
-
-        $this->_autoLoad($controller);
-
-        $controller = new $controller(
-            $param,
-            $_POST,
-            $page,
-            $language
-        );
-
-        if (!$this->_isValidControllerAction($controller, $action)) {
             $errorMessage = sprintf(
-                'Invalid Action %s For Controller %s',
-                $action,
+                $errorMessage,
+                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_EXIST,
                 $controller
             );
 
             throw new AppException(
                 $errorMessage,
-                AppException::INVALID_CONTROLLER_ACTION
+                AppException::CODE_APP_CONTROLLER_IS_NOT_EXIST
             );
         }
 
+        require_once __DIR__.'/../controllers/'.$controller.'.php';
+
         try {
-            set_error_handler([$this, 'errorHandler']);
+            $controller = new $controller($urlParams, $page, $language);
+
+            if (!$this->isValidControllerAction($controller, $action)) {
+                $errorMessage = '%s. Controller: %s. Action: %s';
+
+                $errorMessage = sprintf(
+                    $errorMessage,
+                    AppException::MESSAGE_APP_INVALID_ACTION_CONTROLLER,
+                    get_class($controller),
+                    $action
+                );
+
+                throw new AppException(
+                    $errorMessage,
+                    AppException::CODE_APP_INVALID_ACTION_CONTROLLER
+                );
+            }
+
             $controller->$action();
-        } catch (\Exception $exp) {
-            $this->_exception($exp);
+        } catch (Exception $exp) {
+            $this->exceptionHandler($exp);
         }
 
         exit(0);
@@ -69,162 +77,82 @@ class App
     /**
      * Errors Handler
      *
-     * @param int    $errCode    HTTP Response Code
-     * @param string $errMessage Error Message
-     * @param string $errFile    File With Error
-     * @param int    $errLine    Line In File With Error
+     * @param int    $errorCode    HTTP Response Code
+     * @param string $errorMessage Error Message
+     * @param string $errorFile    File With Error
+     * @param int    $errorLine    Line In File With Error
      */
     public function errorHandler(
-        int    $errCode,
-        string $errMessage,
-        string $errFile,
-        int    $errLine
+        int    $errorCode,
+        string $errorMessage,
+        string $errorFile,
+        int    $errorLine
     ): void
     {
-        $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $debugBacktrace = $this->_getDebugBacktrace();
 
-        foreach ($debugBacktrace as $idx => $debugBacktraceStep) {
-            $debugBacktrace[$idx] = '…';
-
-            if (array_key_exists('file', $debugBacktraceStep)) {
-                $debugBacktrace[$idx] = $debugBacktraceStep['file'];
-            }
-
-            if (array_key_exists('line', $debugBacktraceStep)) {
-                $debugBacktrace[$idx] = $debugBacktrace[$idx].
-                                        ' ('.$debugBacktraceStep['line'].')';
-            }
-        }
-
-        $debugBacktraceStr = implode(' -> ', array_reverse($debugBacktrace));
-
-        $logMessage = "Error [$errCode]: $errMessage. ".
-                      "File: $errFile ($errLine). ".
-                      "Trace: $errFile ($debugBacktraceStr)";
-
-        (new ErrorPlugin)->displayError(
-            $errCode,
-            $errMessage,
-            $errFile,
-            $errLine,
-            $debugBacktrace,
-            OUTPUT_FORMAT_JSON
+        $logMessage = sprintf(
+            'Error #%d: %s. File: %s (%d). Trace: %s',
+            $errorCode,
+            $errorMessage,
+            $errorFile,
+            $errorLine,
+            implode(' -> ', array_reverse($debugBacktrace))
         );
 
         (new LoggerPlugin)->logError($logMessage);
+
+        (new ErrorPlugin)->displayError(
+            $errorCode,
+            $errorMessage,
+            $errorFile,
+            $errorLine,
+            $debugBacktrace,
+            OUTPUT_FORMAT
+        );
 
         exit(0);
     }
 
     /**
-     * Perform Redirects By Rules
-     */
-    private function _redirect(): void
-    {
-        $uri = $_SERVER['REQUEST_URI'];
-
-        $this->routeRedirect($uri);
-    }
-
-    /**
-     * Rewrite URI By Rules
-     */
-    private function _replaceURI(): void
-    {
-        $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
-
-        $uri = $_SERVER['REQUEST_URI'];
-
-        if ('' === $uri) {
-            $uri = '/';
-        }
-
-        $uri = $this->routeRewrite($uri);
-
-        $_SERVER['REQUEST_URI'] = $uri;
-    }
-
-    /**
-     * Parse Controller, Method Of Cotroller And Params From URI
-     */
-    private function _parseURI(): ?array
-    {
-        $language   = null;
-        $controller = null;
-        $action     = null;
-        $param      = null;
-        $page       = null;
-
-        $uri = $_SERVER['REQUEST_URI'];
-
-        if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $uri)) {
-            $page = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$2', $uri);
-            $uri  = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1', $uri);
-        }
-
-        $uri = preg_replace('/((^\/)|(\/$))/su', '', $uri);
-
-        $uriData = explode('/', $uri);
-
-        if (!empty($uriData)) {
-            $language = array_shift($uriData);
-        }
-
-        if (!empty($uriData)) {
-            $controller = array_shift($uriData);
-        }
-
-        if (!empty($uriData)) {
-            $action = array_shift($uriData);
-        }
-
-        if (!empty($uriData)) {
-            $param = array_shift($uriData);
-        }
-
-        if (null === $controller) {
-            throw new AppException(
-                'Controller Is Not Set',
-                AppException::CONTROLLER_IS_NOT_SET
-            );
-        }
-
-        if (null === $action) {
-            throw new AppException(
-                'Action For Controller Is Not Set',
-                AppException::CONTROLLER_ACTION_IS_NOT_SET
-            );
-        }
-
-        $language   = (string) $language;
-        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
-        $param      = (string) $param;
-        $page       = (int) $page;
-
-        return [
-            $controller,
-            $action,
-            $param,
-            $page,
-            $language
-        ];
-    }
-
-    /**
-     * Check Is Controller Exists
+     * Exceptions Handler
      *
-     * @param string|null $controller Var
-     *
-     * @return bool Is Controller Exists
+     * @param Exception|null $exception Exception Instance
      */
-    private function _isControllerExist(?string $controller = null): bool
+    public function exceptionHandler(?Throwable $exception = null): void
     {
-        if (empty($controller)) {
-            return false;
+        if (empty($exception)) {
+            exit(0);
         }
 
-        return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
+        $debugBacktrace = $this->_getDebugBacktrace();
+
+        $logMessage = sprintf(
+            'Error #%d: %s. File: %s (%d). Trace: %s',
+            $exception->getCode(),
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine(),
+            implode(' -> ', array_reverse($debugBacktrace))
+        );
+
+        $logName = get_class($exception);
+        $logName = explode('\\', $logName);
+        $logName = (string) end($logName);
+        $logName = preg_replace('/^(.*?)Exception$/sui', '$1', $logName);
+
+        (new LoggerPlugin)->logError($logMessage, $logName);
+
+        (new ErrorPlugin)->displayError(
+            $exception->getCode(),
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine(),
+            $debugBacktrace,
+            OUTPUT_FORMAT
+        );
+
+        exit(0);
     }
 
     /**
@@ -235,7 +163,7 @@ class App
      *
      * @return bool Is Method Public And Exists In Controller
      */
-    private function _isValidControllerAction(
+    protected function isValidControllerAction(
         ?ControllerCore $controller = null,
         ?string         $action     = null
     ): bool
@@ -258,40 +186,171 @@ class App
     }
 
     /**
-     * Require All Plugins And Controller Classes
+     * Check Is Controller Exists
      *
-     * @param string $controller Name Of Controller Class
+     * @param string|null $controller Var
+     *
+     * @return bool Is Controller Exists
      */
-    private function _autoLoad(?string $controller = null): void
+    protected function isControllerExist(?string $controller = null): bool
     {
         if (empty($controller)) {
-            throw new AppException(
-                'Controller Is Not Set',
-                AppException::CONTROLLER_IS_NOT_SET
-            );
+            return false;
         }
 
-        require_once __DIR__.'/autoload.php';
-        require_once __DIR__.'/../controllers/'.$controller.'.php';
+        return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
     }
 
     /**
-     * Exceptions Handler
-     *
-     * @param Exception|null $exception Exception Instance
+     * Clean URL From Params
      */
-    private function _exception(?Exception $exception = null): void
+    private function _cleanUrl(): void
     {
-        if (empty($exception)) {
-            exit(0);
+        $_SERVER['REQUEST_URI'] = parse_url(
+            $_SERVER['REQUEST_URI'],
+            PHP_URL_PATH
+        );
+
+        $url = $_SERVER['REQUEST_URI'];
+        $url = explode('&', $url);
+        $url = array_shift($url);
+        $url = explode('=', $url);
+        $url = array_shift($url);
+
+        if ($_SERVER['REQUEST_URI'] != $url) {
+            header("Location: {$url}", true, 301);
+            die();
+        }
+    }
+
+    /**
+     * Perform Redirects By Rules
+     */
+    private function _redirect(): void
+    {
+        $this->_cleanUrl();
+
+        $this->routeRedirect($_SERVER['REQUEST_URI']);
+    }
+
+    /**
+     * Rewrite URL By Rules
+     */
+    private function _replaceUrl(): void
+    {
+        $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
+
+        $url = $_SERVER['REQUEST_URI'];
+
+        if ('' === $url) {
+            $url = '/';
         }
 
-        $expMessage = $exception->getMessage();
+        $url = $this->routeRewrite($url);
 
-        (new ErrorPlugin)->displayException($expMessage, OUTPUT_FORMAT_JSON);
+        $_SERVER['REQUEST_URI'] = $url;
+    }
 
-        (new LoggerPlugin)->logError($expMessage);
+    /**
+     * Parse Controller, Method Of Cotroller And Params From URL
+     */
+    private function _parseUrl(): ?array
+    {
+        $language   = null;
+        $controller = null;
+        $action     = null;
+        $urlParams  = null;
+        $page       = null;
 
-        exit(0);
+        $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+        parse_str($urlParams, $urlParams);
+
+        $_SERVER['REQUEST_URI'] = parse_url(
+            $_SERVER['REQUEST_URI'],
+            PHP_URL_PATH
+        );
+
+        $url = $_SERVER['REQUEST_URI'];
+
+        if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $url)) {
+            $page = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$2', $url);
+            $url  = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1', $url);
+        }
+
+        $url = preg_replace('/((^\/)|(\/$))/su', '', $url);
+
+        $urlData = explode('/', $url);
+
+        if (!empty($urlData)) {
+            $language = array_shift($urlData);
+        }
+
+        if (!empty($urlData)) {
+            $controller = array_shift($urlData);
+        }
+
+        if (!empty($urlData)) {
+            $action = array_shift($urlData);
+        }
+
+        if (null === $controller) {
+            throw new AppException(
+                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_APP_CONTROLLER_IS_NOT_SET
+            );
+        }
+
+        if (null === $action) {
+            throw new AppException(
+                AppException::MESSAGE_APP_ACTION_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_APP_ACTION_CONTROLLER_IS_NOT_SET
+            );
+        }
+
+        $language   = (string) $language;
+        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
+        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        $urlParams  = (array) $urlParams;
+        $page       = (int) $page;
+
+        return [
+            $controller,
+            $action,
+            $urlParams,
+            $page,
+            $language
+        ];
+    }
+
+    /**
+     * Get Backtrace For Debug
+     *
+     * @return array Backtrace
+     */
+    private function _getDebugBacktrace(): array
+    {
+        $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        if (!empty($debugBacktrace)) {
+            array_shift($debugBacktrace);
+        }
+
+        foreach ($debugBacktrace as $key => $debugBacktraceStep) {
+            $debugBacktrace[$key] = '…';
+
+            if (array_key_exists('file', $debugBacktraceStep)) {
+                $debugBacktrace[$key] = $debugBacktraceStep['file'];
+            }
+
+            if (array_key_exists('line', $debugBacktraceStep)) {
+                $debugBacktrace[$key] = sprintf(
+                    '%s (%d)',
+                    $debugBacktrace[$key],
+                    $debugBacktraceStep['line']
+                );
+            }
+        }
+
+        return $debugBacktrace;
     }
 }

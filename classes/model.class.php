@@ -15,6 +15,11 @@ class ModelCore extends CommonCore
     public $object = null;
 
     /**
+     * @var object Model API Class Instance
+     */
+    public $api = null;
+
+    /**
      * @var string Model Values Object Class Name
      */
     public $voClassName = null;
@@ -62,6 +67,22 @@ class ModelCore extends CommonCore
         }
 
         $this->voClassName = $voClassName;
+    }
+
+    /**
+     * Set Model API Class Name
+     *
+     * @param string|null Model Api Object
+     */
+    public function setApi(?string $apiClassName = null): void
+    {
+        if (empty($apiClassName)) {
+            throw new Exception(
+                'Model`s API Class Name Is Not Set!'
+            );
+        }
+
+        $this->api = new $apiClassName();
     }
 
     /**

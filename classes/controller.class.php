@@ -30,9 +30,9 @@ class ControllerCore extends CommonCore
     public $post = null;
 
     /**
-     * @var string Param Data From URL
+     * @var array GET Request Data
      */
-    public $URLParam = null;
+    public $get = null;
 
     /**
      * @var array Common Data For Templates, Cross-Model And Cross-Plugin Usage
@@ -64,24 +64,28 @@ class ControllerCore extends CommonCore
      */
     public $language = null;
 
+    /**
+     * @var array List Of Params From URL
+     */
+    private $_urlParams = [];
+
     public function __construct(
-        ?string $URLParam = null,
-        ?array  $postData = null,
-        int     $page     = 1,
-        ?string $language = null
+        ?array  $urlParams = null,
+        int     $page      = 1,
+        ?string $language  = null
     )
     {
         session_start();
 
         parent::__construct();
 
-        $this->_setURLParam($URLParam);
-        $this->_setPostData($postData);
+        $this->_setUrlParams($urlParams);
+        $this->_setPostData($_POST);
+        $this->_setGetData($_GET);
         $this->_setPage($page);
         $this->_setLanguage($language);
         $this->_setFlashSessionData();
         $this->_initConfigs();
-        $this->_setOutputType();
     }
 
     /**
@@ -89,7 +93,7 @@ class ControllerCore extends CommonCore
      */
     public function actionError(): void
     {
-        $errorCode    = (int) $this->URLParam;
+        $errorCode    = (int) $this->getValueFromUrl('code');
         $errorMessage = $this->_handleHttpError($errorCode);
 
         $errorMessage = sprintf(
@@ -122,14 +126,6 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set Output Format Type
-     */
-    private function _setOutputType(): void
-    {
-        define('OUTPUT_FORMAT_JSON', $this->isOutputJSON);
-    }
-
-    /**
      * Set POST Request Data
      *
      * @param array $postData|null POST Request Data
@@ -145,6 +141,25 @@ class ControllerCore extends CommonCore
 
         if (!empty($postData)) {
             $this->post = array_map($escapeMethod, $postData);
+        }
+    }
+
+    /**
+     * Set GET Request Data
+     *
+     * @param array $getData|null GET Request Data
+     */
+    private function _setGetData(?array $getData = null): void
+    {
+        $securityPlugin = $this->getPlugin('security');
+
+        $escapeMethod = [
+            $securityPlugin,
+            'escapeInput'
+        ];
+
+        if (!empty($getData)) {
+            $this->get = array_map($escapeMethod, $getData);
         }
     }
 
@@ -168,15 +183,22 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set Param Data From URL
+     * Set List Of Params From URL
      *
-     * @param string|null $URLParam Param Data From URL
+     * @param array|null $urlParams List Of Params From URL
      */
-    private function _setURLParam(?string $URLParam = null): void
+    private function _setURLParams(?array $urlParams = null): void
     {
         $securityPlugin = $this->getPlugin('security');
 
-        $this->URLParam = $securityPlugin->escapeInput($URLParam);
+        $escapeMethod = [
+            $securityPlugin,
+            'escapeInput'
+        ];
+
+        if (!empty($getData)) {
+            $this->_urlParams = array_map($escapeMethod, $urlParams);
+        }
     }
 
     /**
@@ -203,10 +225,15 @@ class ControllerCore extends CommonCore
     private function _setLanguage(?string $language = null): void
     {
         if (!empty($language)) {
-            $this->session->set('language', $language);
+            $language = $this->_getDefaultLanguage();
         }
 
-        $this->language = $this->_getLanguage();
+        if (!empty($language)) {
+            $language = $this->_getDefaultLanguage();
+        }
+
+        $this->session->set('language', $language);
+        $this->language = $language;
     }
 
     /**
@@ -214,7 +241,7 @@ class ControllerCore extends CommonCore
      *
      * @return string|nulll Language Value Of Current User
      */
-    private function _getLanguage(): string
+    private function _getLanguage(): ?string
     {
         if (!$this->session->has('language')) {
             return null;
@@ -223,7 +250,7 @@ class ControllerCore extends CommonCore
         $language = $this->session->get('language');
 
         if (empty($language)) {
-            $language = $this->_getDefaultLanguage();
+            return null;
         }
 
         return $language;
@@ -519,7 +546,7 @@ class ControllerCore extends CommonCore
         $pagePlugin = $this->getPlugin('page');
 
         if (empty($staticPageName)) {
-            $staticPageName = $this->URLParam;
+            $staticPageName = $this->getValueFromUrl('slug');
         }
 
         if (empty($templatePage)) {
@@ -554,7 +581,7 @@ class ControllerCore extends CommonCore
     public function displayErrorPage(?int $errorCode = null): void
     {
         if (empty($errorCode)) {
-            $errorCode = (int) $this->URLParam;
+            $errorCode = (int) $this->getValueFromUrl('code');
         }
 
         $errorMessage = $this->_handleHttpError($errorCode);
@@ -571,5 +598,31 @@ class ControllerCore extends CommonCore
                 'pagePath'     => $pagePath
             ]
         );
+    }
+
+    /**
+     * Get Value From URL Params By Name
+     *
+     * @param string|null $valueName Name Of Value
+     *
+     * @return string|null Value
+     */
+    public function getValueFromUrl(?string $valueName = null): ?string
+    {
+        if (empty($valueName)) {
+            return null;
+        }
+
+        if (!array_key_exists($valueName, $this->_urlParams)) {
+            return null;
+        }
+
+        $value = $this->_urlParams[$valueName];
+
+        if (empty($value) || !is_scalar($value)) {
+            return null;
+        }
+
+        return (string) $value;
     }
 }

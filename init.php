@@ -1,69 +1,83 @@
 <?php
+require_once __DIR__.'/classes/app.exception.class.php';
+
 if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');
 }
 
-if (!defined('APP_ROUTER')) {
-    define('APP_ROUTER', 'default');
+$routerPath = null;
+
+if (defined('APP_ROUTER')) {
+    $routerPath = __DIR__.'/../routers/'.APP_ROUTER.'.php';
 }
 
-$routerPath = __DIR__.'/../routers/'.APP_ROUTER.'.php';
+if (
+    !empty($routerPath) &&
+    (
+        !file_exists($routerPath) ||
+        !is_file($routerPath)
+    )
+) {
+    $errorMessage = '%s. Router: %s';
 
-if (!file_exists($routerPath)) {
-    throw new Exception('Router File Not Found');
+    $errorMessage = sprintf(
+        $errorMessage,
+        AppException::MESSAGE_APP_ROUTER_FILE_NOT_FOUND,
+        APP_ROUTER
+    );
+
+    throw new AppException(
+        $errorMessage,
+        AppException::CODE_APP_ROUTER_FILE_NOT_FOUND
+    );
+}
+
+if (!empty($routerPath)) {
+    require_once $routerPath;
 }
 
 switch (APP_MODE) {
     case 'dev':
+        define('OUTPUT_FORMAT', 'html');
         require_once __DIR__.'/env/dev.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
         require_once __DIR__.'/app.php';
         (new App)->run();
         break;
 
     case 'prod':
+        define('OUTPUT_FORMAT', 'html');
         require_once __DIR__.'/env/prod.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
         require_once __DIR__.'/app.php';
         (new App)->run();
         break;
 
     case 'test':
+        define('OUTPUT_FORMAT', 'text');
         require_once __DIR__.'/env/test.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
-        require_once __DIR__.'/exceptions/test.exception.php';
         require_once __DIR__.'/app.php';
         require_once __DIR__.'/test.php';
         (new Test)->run();
         break;
 
     case 'api':
+        define('OUTPUT_FORMAT', 'json');
         require_once __DIR__.'/env/api.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
-        require_once __DIR__.'/exceptions/api.exception.php';
         require_once __DIR__.'/app.php';
         require_once __DIR__.'/api.php';
         (new API)->run();
         break;
     
     case 'cli':
+        define('OUTPUT_FORMAT', 'text');
         require_once __DIR__.'/env/cli.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
-        require_once __DIR__.'/exceptions/cli.exception.php';
         require_once __DIR__.'/app.php';
         require_once __DIR__.'/cli.php';
         (new CLI)->run();
         break;
 
     case 'default':
+        define('OUTPUT_FORMAT', 'html');
         require_once __DIR__.'/env/prod.php';
-        require_once $routerPath;
-        require_once __DIR__.'/exceptions/app.exception.php';
         require_once __DIR__.'/app.php';
         (new App)->run();
         break;

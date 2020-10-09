@@ -57,6 +57,11 @@ class CommonCore
             $modelInstance->setValuesObjectClass("{$modelClass}VO");
         }
 
+        if (file_exists("{$modelsDir}/{$model}/{$model}.api.php")) {
+            require_once("{$modelsDir}/{$model}/{$model}.api.php");
+            $modelInstance->setApi("{$modelClass}Api");
+        }
+
         return $modelInstance;
     }
 
@@ -105,5 +110,31 @@ class CommonCore
         $configJSON = file_get_contents($configPath);
 
         return (array) json_decode($configJSON, true);
+    }
+
+    /**
+     * Create Log
+     *
+     * @param string $errMessage Message
+     */
+    public function log(string $message): void
+    {
+        $logName = explode('\\', static::class);
+        $logName = (string) end($logName);
+
+        $this->getPlugin('logger')->log($message, $logName, APP_MODE);
+    }
+
+    /**
+     * Create Error Log
+     *
+     * @param string $errMessage Error Message
+     */
+    public function logError(string $message): void
+    {
+        $logName = explode('\\', static::class);
+        $logName = (string) end($logName);
+
+        $this->getPlugin('logger')->logError($message, $logName);
     }
 }

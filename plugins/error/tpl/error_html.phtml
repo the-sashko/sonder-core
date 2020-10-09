@@ -1,0 +1,45 @@
+<div class="error_wrapper">
+    <div>
+        Error #<?=$code;?> <strong><?=$message;?></strong>
+    </div>
+    <div>
+        File: <strong><?=$file;?></strong> (<?=$line;?>)
+    </div>
+    <div>
+    <strong>Trace:</strong>
+    <?php
+    if (!empty($debugBacktrace)):
+    ?>
+    <?php
+        foreach ($debugBacktrace as $debugBacktraceStep):
+    ?>
+    <div>
+        <?=$debugBacktraceStep;?>
+    </div>
+    <?php
+        endforeach;
+    endif;
+    ?>
+    </div>
+</div>
+<style type="text/css">
+    * {
+        font-size:     18px;
+        font-family:   Arial, sans-serif;
+        color:         #FEFEFE;
+        line-height:   1.5rem;
+    }
+
+    div {
+        padding: .125rem;
+        margin:  .125rem;
+    }
+
+    .error_wrapper {
+        background:    #C00;
+        padding:       .5rem;
+        margin:        .5rem;
+        border:        1px solid #333;
+        border-radius: .125rem;
+    }
+</style>

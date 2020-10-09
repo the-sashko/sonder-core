@@ -4,10 +4,6 @@
  */
 class CLI extends App
 {
-    const DEFAULT_PAGE = 1;
-
-    const DEFAULT_POST_ARRAY = [];
-
     public function __construct()
     {
         parent::__construct();
@@ -21,100 +17,89 @@ class CLI extends App
         list(
             $controller,
             $action,
-            $param
+            $cliParams
         ) = $this->_parseCLIOptions();
 
-        if (!$this->_isControllerExist($controller)) {
-            $errorMessage = sprintf('Controller %s Not Found', $controller);
-            throw new Exception($errorMessage);
+        if (!$this->isControllerExist($controller)) {
+            $errorMessage = '%s. Controller: %s';
+
+            $errorMessage = sprintf(
+                $errorMessage,
+                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_EXIST,
+                $controller
+            );
+
+            throw new AppException(
+                $errorMessage,
+                AppException::CODE_APP_CONTROLLER_IS_NOT_EXIST
+            );
         }
 
-        $this->_autoLoad($controller);
-
-        $controller = new $controller(
-            $param,
-            static::DEFAULT_POST_ARRAY,
-            static::DEFAULT_PAGE
-        );
-
-        if (!$this->_isValidControllerAction($controller, $action)) {
-            throw new Exception(sprintf('Not Fount Valid Action %s', $action));
-        }
+        require_once __DIR__.'/../controllers/'.$controller.'.php';
 
         try {
+            $controller = new $controller($cliParams);
+
+            if (!$this->isValidControllerAction($controller, $action)) {
+                $errorMessage = '%s. Controller: %s. Action: %s';
+
+                $errorMessage = sprintf(
+                    $errorMessage,
+                    AppException::MESSAGE_APP_INVALID_ACTION_CONTROLLER,
+                    get_class($controller),
+                    $action
+                );
+
+                throw new AppException(
+                    $errorMessage,
+                    AppException::CODE_APP_INVALID_ACTION_CONTROLLER
+                );
+            }
+
             set_error_handler([$this, 'errorHandler']);
             $controller->$action();
-        } catch (\Exception $exp) {
-            $this->_exception($exp);
+        } catch (Exception $exp) {
+            $this->exceptionHandler($exp);
         }
 
         exit(0);
     }
 
-    /**
-     * Mock Method Of Performing Redirects By Rules
-     */
-    private function _redirect(): void
-    {
-        //Mock For App::_redirect()
-    }
-
-    /**
-     * Mock Rewrite URI By Rules Method
-     */
-    private function _replaceURI(): void
-    {
-        //Mock For App::_replaceURI()
-    }
-
-    /**
-     *  Mock Parsing URI Method
-     */
-    private function _parseURI(): ?array
-    {
-        //Mock For App::_parseURI()
-
-        return null;
-    }
-
     private function _parseCLIOptions(): array
     {
-        $cliOptions = getopt('', ['controller:', 'action:', 'param:']);
+        $cliOptions = getopt('', ['controller:', 'action:', 'params:']);
 
         if (!array_key_exists('controller', $cliOptions)) {
-            throw new Exception('Missing Controller Option');
+            throw new AppException(
+                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_APP_CONTROLLER_IS_NOT_SET
+            );
         }
 
         if (!array_key_exists('action', $cliOptions)) {
-            throw new Exception('Missing Action Option');
+            throw new AppException(
+                AppException::MESSAGE_APP_ACTION_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_APP_ACTION_CONTROLLER_IS_NOT_SET
+            );
         }
 
-        if (!array_key_exists('param', $cliOptions)) {
-            $cliOptions['param'] = null;
+        if (!array_key_exists('params', $cliOptions)) {
+            $cliOptions['params'] = null;
         }
+
+        $controller = $cliOptions['controller'];
+        $action     = $cliOptions['action'];
+        $cliParams  = $cliOptions['params'];
+
+        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
+        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        parse_str($cliParams, $cliParams);
 
         return [
-            mb_convert_case($cliOptions['controller'], MB_CASE_TITLE).
-                'Controller',
-            'action'.
-                mb_convert_case($cliOptions['action'], MB_CASE_TITLE),
-            (string) $cliOptions['param']
+            $controller,
+            $action,
+            $cliParams
         ];
-    }
-
-    /**
-     * Require All Plugins
-     *
-     * @param string|null $controller Name Of Controller Class
-     */
-    private function _autoLoad(?string $controller = null): void
-    {
-        if (empty($controller)) {
-            throw new Exception('CLI Controller Is Not Set');
-        }
-
-        require_once __DIR__.'/autoload.php';
-        require_once __DIR__.'/../controllers/'.$controller.'.php';
     }
 
     /**
@@ -133,63 +118,5 @@ class CLI extends App
         //Mock For App::routeRewrite()
 
         return null;
-    }
-
-    /**
-     * Check Is Controller Exists
-     *
-     * @param string|null $controller Var
-     *
-     * @return bool Is Controller Exists
-     */
-    private function _isControllerExist(?string $controller = null): bool
-    {
-        if (empty($controller)) {
-            return false;
-        }
-
-        return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
-    }
-
-    /**
-     * Check Is Method Public And Exists In Controller
-     *
-     * @param ControllerCore $controller ControllerCore Instance
-     * @param string         $action     Name Of Method
-     *
-     * @return bool Is Method Public And Exists In Controller
-     */
-    private function _isValidControllerAction(
-        ControllerCore $controller,
-        string         $action
-    ): bool
-    {
-        if (!method_exists($controller, $action)) {
-            return false;
-        }
-
-        $reflection = new ReflectionMethod($controller, $action);
-
-        if (!$reflection->isPublic()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Exceptions Handler
-     *
-     * @param Exception|null $exp Exception Instance
-     */
-    private function _exception(?Exception $exp = null): void
-    {
-        $expMessage = $exp->getMessage();
-
-        (new ErrorPlugin)->displayException($expMessage, true);
-
-        (new LoggerPlugin)->logError($expMessage);
-
-        exit(0);
     }
 }
