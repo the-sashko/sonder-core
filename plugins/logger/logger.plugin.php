@@ -217,7 +217,7 @@ class LoggerPlugin
             $logType = static::DEFAULT_LOG_TYPE;
         }
 
-        return sprintf('%s/../../../res/logs/%s', __DIR__, $logType);
+        return sprintf('%s/../../../res/log/%s', __DIR__, $logType);
     }
 
     /**
