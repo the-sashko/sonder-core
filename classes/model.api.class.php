@@ -1,6 +1,6 @@
 <?php
 /**
- * Class For API Model 
+ * Class For API Model
  */
 abstract class ModelApiCore
 {
@@ -16,10 +16,9 @@ abstract class ModelApiCore
     }
     
     public function loadInputData(
-        ?array $get  = null,
+        ?array $get = null,
         ?array $post = null
-    ): void
-    {
+    ): void {
         $this->get  = $get;
         $this->post = $post;
     }

@@ -69,7 +69,7 @@ class ApiControllerCore extends ControllerCore
         $result = $this->model->api->$action();
 
         if (!$result->getStatus()) {
-            $this->returnJSON($result->getStatus(), $result->getErrors());   
+            $this->returnJSON($result->getStatus(), $result->getErrors());
         }
 
         $this->returnJSON($result->getStatus(), $result->getValues());
@@ -129,9 +129,8 @@ class ApiControllerCore extends ControllerCore
      */
     private function _isValidModelAction(
         ?ModelApiCore $apiModel = null,
-        ?string       $action   = null
-    ): bool
-    {
+        ?string       $action = null
+    ): bool {
         if (empty($apiModel) || empty($action)) {
             return false;
         }
