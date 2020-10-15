@@ -156,7 +156,7 @@ class ModelObjectCore
             return false;
         }
 
-        $condition = sprintf('id = %d', $id)
+        $condition = sprintf('id = %d', $id);
 
         return $this->updateRows($table, $row, $condition);
     }

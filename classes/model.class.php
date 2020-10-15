@@ -46,7 +46,7 @@ class ModelCore extends CommonCore
         }
 
         if (null === $this->object) {
-            $dbConfig = $this->getConfig('db');
+            $dbConfig = $this->getConfig('database');
             $this->object = new $objectClassName($dbConfig);
         }
     }
