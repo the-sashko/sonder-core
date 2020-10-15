@@ -1,8 +1,12 @@
 <?php
+namespace Core\Plugins\Database\Classes;
+
+use Core\Plugins\Database\Interfaces\IDataBaseCacheAdapter;
+
 /**
  * Mock For Data Base Cahe Provider
  */
-class DBMockCacheProvider
+class DatabaseMockCacheAdapter implements IDataBaseCacheAdapter
 {
     /**
      * Mock Of Saving Data To Cache
@@ -44,7 +48,7 @@ class DBMockCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data (Always Returns true)
      */
-    public function flush(string $scope): bool
+    public function clean(string $scope): bool
     {
         return true;
     }

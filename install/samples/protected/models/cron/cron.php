@@ -6,12 +6,14 @@ class Cron extends ModelCore implements IModelCRUD
     public function getAll(): array
     {
         $crons = $this->object->getAllCrons();
+
         return $this->getVOArray($crons);
     }
 
     public function getJobs(): array
     {
         $jobs = $this->object->getJobs();
+
         return $this->getVOArray($jobs);
     }
 
@@ -31,47 +33,30 @@ class Cron extends ModelCore implements IModelCRUD
         bool   $isActive = false
     ): bool
     {
-        return $this->object->create([
-            $action,
-            $interval,
-            $isActive
-        ]);
-    }
+        $values = [
+            'action'    => $action,
+            'interval'  => $interval,
+            'is_active' => $isActive
+        ];
 
-    protected function _updateByID(
-        ?string $action   = null,
-        ?int    $interval = null,
-        bool    $isActive = false,
-        ?int    $cronID   = null
-    ): bool
-    {
-        return $res = $this->object->updateCronByID([
-            'action',
-            'interval',
-            'isActive'
-        ], [
-            $action,
-            $interval,
-            $isActive
-        ], $cronID);
+        return $this->object->create($values);
     }
 
     public function updateByVO(?CronVO $cronVO = null): bool
     {
-        return $res = $this->object->updateCronByID([
-            'action',
-            'interval',
-            'time_next_exec',
-            'last_exec_status',
-            'is_active',
-            'error_message'
-        ], [
-            $cronVO->getAction(),
-            $cronVO->getInterval(),
-            $cronVO->getTimeNextExec(),
-            $cronVO->getLastExecStatus(),
-            $cronVO->getIsActive(),
-            $cronVO->getErrorMessage()
-        ], $cronVO->getID());
+        if (empty($cronVO)) {
+            return false;
+        }
+
+        return $values = [
+            'action'           => $cronVO->getAction(),
+            'interval'         => $cronVO->getInterval(),
+            'time_next_exec'   => $cronVO->getTimeNextExec(),
+            'last_exec_status' => $cronVO->getLastExecStatus(),
+            'is_active'        => $cronVO->getIsActive(),
+            'error_message'    => $cronVO->getErrorMessage()
+        ];
+
+        return $this->object->updateCronByID($values, $cronVO->getID());
     }
 }

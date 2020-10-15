@@ -40,11 +40,6 @@ class ControllerCore extends CommonCore
     public $commonData = [];
 
     /**
-     * @var array Data From JSON Config Files
-     */
-    public $configData = [];
-
-    /**
      * @var string HTML Termplates Scope
      */
     public $templaterScope = 'site';

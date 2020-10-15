@@ -1,13 +1,17 @@
 <?php
+namespace Core\Plugins\Database\Classes;
+
+use Core\Plugins\Database\Interfaces\IDataBaseCacheAdapter;
+
 /**
  * Data Base Cahe Provider For Files
  */
-class DBFileCacheProvider
+class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
 {
     /**
      * @var string Cache Files Directory
      */
-    const DB_CACHE_DIR = __DIR__.'/../../../../res/cache/db';
+    const DB_CACHE_DIR = __DIR__.'/../../../../../res/cache/db';
 
     /**
      * Save Cached Data To File
@@ -35,17 +39,20 @@ class DBFileCacheProvider
             'content' => $content
         ];
 
-        if (is_file($cacheFilePath)) {
+        $cacheData = json_encode($cacheData);
+
+        if (file_exists($cacheFilePath) && is_file($cacheFilePath)) {
             unlink($cacheFilePath);
         }
 
-        if (!is_dir($this::DB_CACHE_DIR.'/'.$scope)) {
-            mkdir($this::DB_CACHE_DIR.'/'.$scope);
-            chmod($this::DB_CACHE_DIR.'/'.$scope, 0775);
+        if (
+            !file_exists($this::DB_CACHE_DIR.'/'.$scope) ||
+            !is_dir($this::DB_CACHE_DIR.'/'.$scope)
+        ) {
+            mkdir($this::DB_CACHE_DIR.'/'.$scope, 0775, true);
         }
 
-        file_put_contents($cacheFilePath, json_encode($cacheData));
-        chmod($cacheFilePath, 0775);
+        file_put_contents($cacheFilePath, $cacheData);
 
         return true;
     }
@@ -72,9 +79,12 @@ class DBFileCacheProvider
      *
      * @return bool Is Successfully Removed Cached Data
      */
-    public function flush(string $scope): bool
+    public function clean(string $scope): bool
     {
-        if (!is_dir($this::DB_CACHE_DIR.'/'.$scope)) {
+        if (
+            !file_exists($this::DB_CACHE_DIR.'/'.$scope) ||
+            !is_dir($this::DB_CACHE_DIR.'/'.$scope)
+        ) {
             return false;
         }
 
@@ -117,7 +127,7 @@ class DBFileCacheProvider
      */
     private function _getDataFromCache(string $cacheFilePath): ?array
     {
-        if (!is_file($cacheFilePath)) {
+        if (!file_exists($cacheFilePath) || !is_file($cacheFilePath) ) {
             return null;
         }
 

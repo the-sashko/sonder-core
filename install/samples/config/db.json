@@ -1,9 +1,9 @@
 {
-    "type"           : "<DATA_BASE_TYPE>",
-    "host"           : "<DATA_BASE_HOST>",
-    "port"           : "<DATA_BASE_POST>",
-    "db"             : "<DATA_BASE_NAME>",
-    "user"           : "<DATA_BASE_USER>",
-    "password"       : "<DATA_BASE_PASSWORD>",
-    "cache_provider" : "<DATA_BASE_CACHE_PROVIDER>"
+    "type"       : "<DATABASE_TYPE>",
+    "host"       : "<DATABASE_HOST>",
+    "port"       : "<DATABASE_POST>",
+    "db"         : "<DATABASE_NAME>",
+    "user"       : "<DATABASE_USER>",
+    "password"   : "<DATABASE_PASSWORD>",
+    "cache_type" : "<DATABASE_CACHE_PROVIDER_TYPE>"
 }

@@ -10,6 +10,11 @@ class CommonCore
     public $session = null;
 
     /**
+     * @var array Data From JSON Config Files
+     */
+    public $configData = [];
+
+    /**
      * @var object ServerInfo Plugin Instance
      * */
     public $serverInfo = null;

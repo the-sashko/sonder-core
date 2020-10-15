@@ -1,50 +1,87 @@
 <?php
 class CronObject extends ModelObjectCore
 {
-    public $defaultTableName = 'cron_jobs';
-    public $tableCrons       = 'cron_jobs';
-    public $scope            = 'cron';
+    const CRON_TABLE = 'cron_jobs';
 
-    /**
-     * summary
-     */
+    public $scope = 'cron';
+
     public function create(?array $values = null): bool
     {
-        $columns = [
-            'action',
-            'interval',
-            'is_active'
-        ];
+        if (empty($values)) {
+            return false;
+        }
 
-        return $this->insert($this->tableCrons, $columns, $values);
+        $columns = array_keys($values);
+        $columns = implode(', ', $columns);
+        $values  = implode(', ', $values);
+
+        $sql = '
+            INSERT INTO %s (
+                %s
+            ) VALUES (
+                %s
+            );
+        ';
+
+        $sql = sprintf($sql, static::CRON_TABLE, $columns, $values);
+
+        return $this->insert($sql);
     }
 
-    /**
-     * summary
-     */
     public function updateCronByID(
-        ?array  $columns = null,
-        ?array  $values  = null,
-        ?int    $id      = null
+        ?array $values = null,
+        ?int   $id     = null
     ): bool
     {
-        return $this->updateByID($this->tableCrons, $columns, $values, $id);
+        if (empty($values)) {
+            return false;
+        }
+
+        if (empty($id)) {
+            return false;
+        }
+
+        foreach ($values as $key => $value) {
+            $values[$key] = sprintf('%s = %s', $key, $values);
+        }
+
+        $values = implode(', ', $values);
+
+        $sql = '
+            UPDATE %s
+            SET %s
+            WHERE id = %d;
+        ';
+
+        $sql = sprintf($sql, static::CRON_TABLE, $values, $id)
+
+        return $this->query($sql);
     }
 
-    /**
-     * summary
-     */
     public function getAllCrons(): array
     {
-        return $this->getAll($this->tableCrons);
+        $sql = '
+            SELECT *
+            FROM %s;
+        ';
+
+        $sql = sprintf($sql, static::CRON_TABLE);
+
+        return $this->getRows($sql);
     }
 
-    /**
-     * summary
-     */
     public function getJobs(): array
     {
-        $condition = '"time_next_exec" <= '.time().' AND "is_active" = true';
-        return $this->getAllByCondition($this->tableCrons, null, $condition);
+        $sql = '
+            SELECT *
+            FROM %s
+            WHERE
+                time_next_exec <= %d AND
+                is_active = true;
+        ';
+
+        $sql = sprintf($sql, static::CRON_TABLE, time());
+
+        return $this->getRows($sql);
     }
 }
