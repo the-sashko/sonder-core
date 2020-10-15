@@ -39,7 +39,7 @@ class Cron extends ModelCore implements IModelCRUD
             'is_active' => $isActive
         ];
 
-        return $this->object->create($values);
+        return $this->object->createCron($values);
     }
 
     public function updateByVO(?CronVO $cronVO = null): bool

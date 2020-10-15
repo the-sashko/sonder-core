@@ -5,27 +5,13 @@ class CronObject extends ModelObjectCore
 
     public $scope = 'cron';
 
-    public function create(?array $values = null): bool
+    public function createCron(?array $values = null): bool
     {
         if (empty($values)) {
             return false;
         }
 
-        $columns = array_keys($values);
-        $columns = implode(', ', $columns);
-        $values  = implode(', ', $values);
-
-        $sql = '
-            INSERT INTO %s (
-                %s
-            ) VALUES (
-                %s
-            );
-        ';
-
-        $sql = sprintf($sql, static::CRON_TABLE, $columns, $values);
-
-        return $this->insert($sql);
+        return $this->addRows(static::CRON_TABLE, $values);
     }
 
     public function updateCronByID(
@@ -41,21 +27,7 @@ class CronObject extends ModelObjectCore
             return false;
         }
 
-        foreach ($values as $key => $value) {
-            $values[$key] = sprintf('%s = %s', $key, $values);
-        }
-
-        $values = implode(', ', $values);
-
-        $sql = '
-            UPDATE %s
-            SET %s
-            WHERE id = %d;
-        ';
-
-        $sql = sprintf($sql, static::CRON_TABLE, $values, $id)
-
-        return $this->query($sql);
+        return $this->updateRowByID(static::CRON_TABLE, $values, $id);
     }
 
     public function getAllCrons(): array
