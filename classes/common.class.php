@@ -59,7 +59,7 @@ class CommonCore
 
         if (file_exists("{$modelsDir}/{$model}/{$model}.vo.php")) {
             require_once("{$modelsDir}/{$model}/{$model}.vo.php");
-            $modelInstance->setValuesObjectClass("{$modelClass}VO");
+            $modelInstance->setValuesObjectClass("{$modelClass}ValuesObject");
         }
 
         if (file_exists("{$modelsDir}/{$model}/{$model}.api.php")) {
