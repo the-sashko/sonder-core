@@ -46,59 +46,27 @@ class ValuesObject
     }
 
     /**
-     * Get Mustiple Params From Model Data In JSON Format
-     *
-     * @param array|null $params List Of Values
-     *
-     * @return string|null Data Values In JSON Format
-     */
-    public function getJSON(?array $params = null): ?string
-    {
-        $res = [];
-
-        if (empty($params)) {
-            return null;
-        }
-
-        foreach ($params as $param) {
-            $res[$param] = null;
-
-            if ($this->has($param)) {
-                $res[$param] = (string) $this->get($param);
-            }
-        }
-
-        if (empty($res)) {
-            return null;
-        }
-
-        return json_encode($res);
-    }
-
-    /**
      * Get Mustiple Params From Model Data In PHP Array Format
      *
      * @param array|null $params List Of Values
      *
      * @return array|null Array Of Data Values
      */
-    public function getArray(?array $params = null): ?array
+    public function exportRow(?array $params = null): ?array
     {
-        $res = [];
+        $row = $this->data;
 
         if (empty($params)) {
-            return null;
+            return $row;
         }
 
         foreach ($params as $param) {
-            $res[$param] = null;
-
-            if ($this->has($param)) {
-                $res[$param] = (string) $this->get($param);
+            if (array_key_exists($param, $row)) {
+                unset($row[$param]);
             }
         }
 
-        return $res;
+        return $row;
     }
 
     /**
