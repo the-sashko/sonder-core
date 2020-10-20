@@ -33,13 +33,11 @@ class UploadPlugin implements IUploadPlugin
      *
      * @return array List Of Uploaded Files
      */
-    public function upload
-    (
+    public function upload(
         ?array  $extensions = null,
-        ?int    $maxSize    = null,
+        ?int    $maxSize = null,
         ?string $uploadsDir = null
-    ): void
-    {
+    ): void {
         $this->_settings = new UploadSettings(
             $extensions,
             $maxSize,
@@ -49,7 +47,7 @@ class UploadPlugin implements IUploadPlugin
         try {
             foreach ($this->_files as $groupKey => $groupFiles) {
                 $this->_files[$groupKey] = $this->_uploadByGroup($groupFiles);
-            } 
+            }
         } catch (UploadException $ext) {
             $this->_error = $ext->getMessage();
         }
@@ -111,7 +109,7 @@ class UploadPlugin implements IUploadPlugin
             );
         }
 
-        if ($file->getSize() > $this->_settings->getMaxSize()) { 
+        if ($file->getSize() > $this->_settings->getMaxSize()) {
             throw new UploadPluginException(
                 UploadPluginException::MESSAGE_PLUGIN_FILE_TOO_LARGE,
                 UploadPluginException::CODE_PLUGIN_FILE_TOO_LARGE
@@ -213,7 +211,7 @@ class UploadPlugin implements IUploadPlugin
                 empty($file['tmp_name'])
             ) {
                 unset($groupFiles[$fileKey]);
-                continue; 
+                continue;
             }
 
             $groupFiles[$fileKey] = new UploadFile(
@@ -283,8 +281,7 @@ class UploadPlugin implements IUploadPlugin
         array  $mappedFiles,
         string $valuesName,
         array  $valuesSet
-    ): array
-    {
+    ): array {
         foreach ($valuesSet as $valuesKey => $value) {
             if (!array_key_exists($valuesKey, $mappedFiles)) {
                 $mappedFiles[$valuesKey] = [];
