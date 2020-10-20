@@ -1,5 +1,5 @@
 <?php
-class CronVO extends ValuesObject
+class CronValuesObject extends ValuesObject
 {
     const STATUS_WAITING = 'waiting';
     const STATUS_FAILED  = 'fail';
