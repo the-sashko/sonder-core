@@ -16,23 +16,44 @@ class ModelObjectCore
         $this->_db->initDB($configData);
     }
 
-    protected function getOne(?string $sql = null, ?int $ttl = null): ?array
+    public function start(): bool
+    {
+        return $this->_db->transactionStart();
+    }
+
+    public function commit(): bool
+    {
+        return $this->_db->transactionCommit();
+    }
+
+    public function rollback(): bool
+    {
+        return $this->_db->transactionRollback();
+    }
+
+    protected function getOne(?string $sql = null, ?int $ttl = null): ?string
     {
         if (empty($sql)) {
             return null;
         }
 
         if (empty($ttl)) {
-            $tll = $this->ttl;
+            $ttl = $this->ttl;
         }
 
-        $row = $this->selectRow($sql, $ttl);
+        $row = $this->getRow($sql, $ttl);
 
         if (empty($row) || !is_array($row)) {
             return null;
         }
 
-        return array_shift($row);
+        $value = array_shift($row);
+
+        if (empty($value) || !is_scalar($value)) {
+            return null;
+        }
+
+        return (string) $value;
     }
 
     protected function getRow(?string $sql = null, ?int $ttl = null): ?array
@@ -42,10 +63,10 @@ class ModelObjectCore
         }
 
         if (empty($ttl)) {
-            $tll = $this->ttl;
+            $ttl = $this->ttl;
         }
 
-        $rows = $this->selectRows($sql, $ttl);
+        $rows = $this->getRows($sql, $ttl);
 
         if (empty($rows) || !is_array($rows)) {
             return null;
@@ -61,7 +82,7 @@ class ModelObjectCore
         }
 
         if (empty($ttl)) {
-            $tll = $this->ttl;
+            $ttl = $this->ttl;
         }
 
         $rows = $this->_db->select($sql, $this->scope, $ttl);
@@ -73,28 +94,28 @@ class ModelObjectCore
         return $rows;
     }
 
-    protected function addRows(
+    protected function addRow(
         ?string $table = null,
-        ?array  $rows  = null
+        ?array  $row  = null
     ): bool
     {
         if (empty($table)) {
             return false;
         }
 
-        if (empty($rows)) {
+        if (empty($row)) {
             return false;
         }
 
-        $columns = array_keys($values);
-        $columns = implode(', ', $columns);
-        $values  = implode(', ', $rows);
+        $columns = array_keys($row);
+        $columns = implode('","', $columns);
+        $values  = implode('\',\'', $row);
 
         $sql = '
-            INSERT INTO %s (
-                %s
+            INSERT INTO "%s" (
+                "%s"
             ) VALUES (
-                %s
+                \'%s\'
             );
         ';
 
@@ -122,20 +143,20 @@ class ModelObjectCore
         }
 
         foreach ($rows as $key => $row) {
-            $rows[$key] = sprintf('%s = %s', $key, $row);
+            $rows[$key] = sprintf('%s = \'%s\'', $key, $row);
         }
 
-        $rows = implode(', ', $rows);
+        $rows = implode(',', $rows);
 
         $sql = '
-            UPDATE %s
+            UPDATE "%s"
             SET %s
             WHERE %s;
         ';
 
-        $sql = sprintf($sql, static::CRON_TABLE, $rows, $condition);
+        $sql = sprintf($sql, $table, $rows, $condition);
 
-        return $this->query($sql, $this->scope);
+        return $this->_db->query($sql, $this->scope);
     }
 
     protected function updateRowByID(
@@ -175,13 +196,14 @@ class ModelObjectCore
         }
 
         $sql = '
-            DELETE FROM %s
+            DELETE
+            FROM "%s"
             WHERE %s;
         ';
 
         $sql = sprintf($sql, $table, $condition);
 
-        return $this->query($sql, $this->scope);
+        return $this->_db->query($sql, $this->scope);
     }
 
     protected function deteleRowByID(
@@ -200,20 +222,5 @@ class ModelObjectCore
         $condition = sprintf('id = %d', $id);
 
         return $this->deleteRows($table, $condition);
-    }
-
-    protected function start(): bool
-    {
-        return $this->_db->select();
-    }
-
-    protected function commit(): bool
-    {
-        return $this->_db->select();
-    }
-
-    protected function rollback(): bool
-    {
-        return $this->_db->select();
     }
 }
