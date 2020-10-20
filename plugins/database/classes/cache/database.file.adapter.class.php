@@ -46,10 +46,10 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
         }
 
         if (
-            !file_exists($this::DB_CACHE_DIR.'/'.$scope) ||
-            !is_dir($this::DB_CACHE_DIR.'/'.$scope)
+            !file_exists(static::DB_CACHE_DIR.'/'.$scope) ||
+            !is_dir(static::DB_CACHE_DIR.'/'.$scope)
         ) {
-            mkdir($this::DB_CACHE_DIR.'/'.$scope, 0775, true);
+            mkdir(static::DB_CACHE_DIR.'/'.$scope, 0775, true);
         }
 
         file_put_contents($cacheFilePath, $cacheData);
@@ -82,19 +82,26 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
     public function clean(string $scope): bool
     {
         if (
-            !file_exists($this::DB_CACHE_DIR.'/'.$scope) ||
-            !is_dir($this::DB_CACHE_DIR.'/'.$scope)
+            !file_exists(static::DB_CACHE_DIR.'/'.$scope) ||
+            !is_dir(static::DB_CACHE_DIR.'/'.$scope)
         ) {
             return false;
         }
 
-        foreach (scandir($this::DB_CACHE_DIR.'/'.$scope) as $fileItem) {
+        $cacheFiles = scandir(static::DB_CACHE_DIR.'/'.$scope);
+
+        foreach ($cacheFiles as $cacheFile) {
             if (
-                '.' !== $fileItem &&
-                '..' !== $fileItem &&
-                is_file($this::DB_CACHE_DIR.$scope.'/'.$fileItem)
+                '.' == $cacheFile ||
+                '..' == $cacheFile
             ) {
-                unlink($this::DB_CACHE_DIR.$scope.'/'.$fileItem);
+                continue;
+            }
+
+            $cacheFilePath = static::DB_CACHE_DIR.'/'.$scope.'/'.$cacheFile;
+
+            if (is_file($cacheFilePath)) {
+                unlink($cacheFilePath);
             }
         }
 
@@ -115,7 +122,7 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
                 hash('sha512', $sql).
                 hash('md5', $scope.$sql);
 
-        return $this::DB_CACHE_DIR.'/'.$scope.'/'.$hash;
+        return static::DB_CACHE_DIR.'/'.$scope.'/'.$hash;
     }
 
     /**

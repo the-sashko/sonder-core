@@ -4,7 +4,7 @@ use Core\Plugins\Database\Classes\DatabaseCache;
 
 use Core\Plugins\Database\Interfaces\IDataBasePlugin;
 
-use Core\Plugins\Exceptions\DatabasePluginException;
+use Core\Plugins\Database\Exceptions\DatabasePluginException;
 
 /**
  * Plugin For Working With Data Base
@@ -78,6 +78,10 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         try {
+            if (defined('DEBUG_SQL')) {
+                echo sprintf("\n%s\n", $sql);
+            }
+
             $rows = (array) $this->_instance->query($sql)->fetchALL();
 
             if (empty($rows)) {
@@ -127,12 +131,16 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         try {
+            if (defined('DEBUG_SQL')) {
+                echo sprintf("\n%s\n", $sql);
+            }
+
             $result = (bool) $this->_instance->query($sql);
 
             $this->_cache->clean($scope);
 
             return $result;
-        } catch (\PDOException $errorMessage) {
+        } catch (\PDOException $exp) {
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
 
             $errorMessage = sprintf(
@@ -230,6 +238,10 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         try {
+            if (defined('DEBUG_SQL')) {
+                echo sprintf("\n%s\n", $sql);
+            }
+
             return (bool) $this->_instance->query($sql);
         } catch (\PDOException $errorMessage) {
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
