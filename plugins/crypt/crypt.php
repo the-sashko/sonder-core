@@ -13,10 +13,18 @@ class CryptPlugin
      * @return string Hash
      */
     public function getHash(
-        string $input = '',
-        string $salt  = ''
-    ) : string
+        ?string $input = null,
+        ?string $salt  = null
+    ): ?string
     {
+        if (empty($input)) {
+            return null;
+        }
+
+        if (empty($salt)) {
+            return null;
+        }
+
         $md5Hash    = hash('md5', $input);
         $sha256Hash = hash('sha256', strlen($salt).$input.$salt);
 
@@ -30,19 +38,21 @@ class CryptPlugin
      *
      * @return string Trip Code
      */
-    public function getTripCode(string $input = '') : string
+    public function getTripCode(?string $input = null): ?string
     {
-        if (!strlen($input) > 0) {
-            return '';
+        if (empty($input)) {
+            return null;
         }
 
-        $salt = substr($input."H.", 1, 2);
+        $salt = sprintf('%sH.', $input);
+        $salt = substr($salt, 1, 2);
         $salt = preg_replace('/[^\.-z]/su', '.', $salt);
+
         $salt = str_replace(
             [
                 ':', ';', '<',
                 '=', '>', '?',
-                '@', '[', "\\",
+                '@', '[', '\\',
                 ']', '^', '_',
                 '`'
             ],
@@ -56,7 +66,6 @@ class CryptPlugin
             $salt
         );
 
-        return '!'.substr(crypt($input, $salt), -10);
+        return sprintf('!%s', substr(crypt($input, $salt), -10));
     }
 }
-?>
