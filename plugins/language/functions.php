@@ -6,7 +6,7 @@
  *
  * @return string|null Translated String Value
  */
-function _t(?string $string = null): ?string
+function _t(?string $string = null): string
 {
-    return (new LanguagePlugin)->translate($string);
+    return (string) (new LanguagePlugin)->translate($string);
 }
