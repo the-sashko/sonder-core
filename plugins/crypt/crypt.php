@@ -7,10 +7,10 @@ class CryptPlugin
     /**
      * Get Hash From Input String And Salt
      *
-     * @param string $input Input String Value
-     * @param string $salt  Salt Value
+     * @param string|null $input Input String Value
+     * @param string|null $salt  Salt Value
      *
-     * @return string Hash
+     * @return string|null Hash
      */
     public function getHash(
         ?string $input = null,
@@ -34,9 +34,9 @@ class CryptPlugin
     /**
      * Get Trip Code From Input String
      *
-     * @param string $input Input String Value
+     * @param string|null $input Input String Value
      *
-     * @return string Trip Code
+     * @return string|null Trip Code
      */
     public function getTripCode(?string $input = null): ?string
     {
