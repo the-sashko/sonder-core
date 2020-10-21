@@ -94,7 +94,7 @@ class DatabaseCache implements IDataBaseCache
      * @param string|null $sql   SQL Query
      * @param string|null $scope Scope Of Data Base Request
      *
-     * @return array Cached Data
+     * @return array|null Cached Data
      */
     public function get(?string $sql = null, ?string $scope = null): ?array
     {

@@ -15,8 +15,10 @@ class DataBasePlugin implements IDataBasePlugin
 
     private $_credentials = null;
 
+    private $_cache = null;
+
     /**
-     * @var PDO Instance
+     * @var PDO|null Instance
      */
     private $_instance = null;
 
@@ -48,7 +50,7 @@ class DataBasePlugin implements IDataBasePlugin
      * @param string|null $scope Scope Of SQL Query
      * @param int|null    $ttl   Data Base Cache Time To Live
      *
-     * @return array Data From Data Base
+     * @return array|null Data From Data Base
      */
     public function select(
         ?string $sql   = null,
@@ -243,7 +245,7 @@ class DataBasePlugin implements IDataBasePlugin
             }
 
             return (bool) $this->_instance->query($sql);
-        } catch (\PDOException $errorMessage) {
+        } catch (\PDOException $exp) {
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
 
             $errorMessage = sprintf(
@@ -297,7 +299,7 @@ class DataBasePlugin implements IDataBasePlugin
     /**
      * Handle Data Base Errors
      *
-     * @param string|null $error Data Base Error
+     * @param string|null $errorMessage Data Base Error Message
      */
     private function _error(?string $errorMessage = null): void
     {

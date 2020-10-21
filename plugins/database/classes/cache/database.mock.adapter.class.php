@@ -34,7 +34,7 @@ class DatabaseMockCacheAdapter implements IDataBaseCacheAdapter
      * @param string $sql   SQL Query
      * @param string $scope Scope Of Data Base Request
      *
-     * @return array Cached Data (Always Returns Empty Array)
+     * @return array|null Cached Data (Always Returns Empty Array)
      */
     public function get(string $sql, string $scope): ?array
     {

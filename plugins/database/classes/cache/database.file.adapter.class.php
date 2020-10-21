@@ -63,7 +63,7 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
      * @param string $sql   SQL Query
      * @param string $scope Scope Of Data Base Request
      *
-     * @return array Cached Data
+     * @return array|null Cached Data
      */
     public function get(string $sql, string $scope): ?array
     {
@@ -130,7 +130,7 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
      *
      * @param string $cacheFilePath Cache File Path
      *
-     * @return array Cached Data
+     * @return array|null Cached Data
      */
     private function _getDataFromCache(string $cacheFilePath): ?array
     {
@@ -144,6 +144,13 @@ class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
         if (!$this->_validateCache($cacheData)) {
             unlink($cacheFilePath);
 
+            return null;
+        }
+
+        if (
+            !array_key_exists('content', $cacheData) ||
+            empty($cacheData['content'])
+        ) {
             return null;
         }
 
