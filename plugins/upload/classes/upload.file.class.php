@@ -65,15 +65,15 @@ class UploadFile implements IUploadFile
     public function getName(): string
     {
         if (empty($this->_name)) {
-            return DEFAULT_FILE_NAME;
+            return static::DEFAULT_FILE_NAME;
         }
 
         return $this->_name;
     }
 
-    public function getExtension(): ?string
+    public function getExtension(): string
     {
-        return $this->_extension;
+        return (string) $this->_extension;
     }
 
     public function getFilePath(): string

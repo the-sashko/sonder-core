@@ -11,7 +11,7 @@ class UploadSettings implements IUploadSettings
 
     const UPLOADS_DIR_PATH = __DIR__.'/../../../../res/uploads';
 
-    private $_uploadsDir = null;
+    private $_uploadsDirPath = null;
 
     private $_extensions = null;
 
@@ -80,7 +80,7 @@ class UploadSettings implements IUploadSettings
         return $this->_maxSize;
     }
 
-    private function _setUploadDirPath(string $uploadsDir = null): void
+    private function _setUploadDirPath(string $uploadsDir): void
     {
         $this->_uploadsDirPath = sprintf(
             '%s/%s/%s',

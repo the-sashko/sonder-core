@@ -30,8 +30,6 @@ class UploadPlugin implements IUploadPlugin
      * @param array|null  $extensions List Of Allowed Files Extensions
      * @param int|null    $maxSize    Max Allowed Size Of File (Bytes)
      * @param string|null $uploadsDir Path To Directory Of Uploaded Files
-     *
-     * @return array List Of Uploaded Files
      */
     public function upload
     (
@@ -170,12 +168,16 @@ class UploadPlugin implements IUploadPlugin
         return realpath($uploadedFilePath);
     }
 
-    private function _setFileObjects()
+    private function _setFileObjects(): bool
     {
         $this->_files = [];
 
         $this->_mapSingleFiles();
         $this->_mapMultipleFiles();
+
+        if (empty($this->_files)) {
+            return false;
+        }
 
         foreach ($this->_files as $groupName => $groupFiles) {
             $groupFiles = $this->_setGroupFileObjects($groupFiles);
@@ -187,6 +189,8 @@ class UploadPlugin implements IUploadPlugin
 
             $this->_files[$groupName] = $groupFiles;
         }
+
+        return true;
     }
 
     private function _setGroupFileObjects(?array $groupFiles = null): ?array
