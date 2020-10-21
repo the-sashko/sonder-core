@@ -238,7 +238,10 @@ class ImagePlugin implements IImagePlugin
         }
 
         if (empty($size->getWidth()) && empty($size->getHeight())) {
-            throw new Exception("Image Size \"{$size}\" Have Bad Format");
+            throw new ImagePluginException(
+                ImagePluginException::MESSAGE_PLUGIN_VALUES_HAS_BAD_FORMAT,
+                ImagePluginException::CODE_PLUGIN_VALUES_HAS_BAD_FORMAT
+            );
         }
 
         $newWidth  = $originalWidth;
