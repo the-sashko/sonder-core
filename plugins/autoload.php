@@ -1,46 +1,23 @@
 <?php
-
 class PluginsAutoload
 {
-    public $loadAll     = TRUE;
+    public $loadAll     = true;
     public $configFile  = __DIR__.'/../../config/plugins.json';
     public $list        = [];
 
-    public function __construct()
-    {
-        if (!file_exists($this->configFile) || !is_file($this->configFile)) {
-            return FALSE;
-        }
-
-        $config = file_get_contents($this->configFile);
-        $config = json_decode($config, TRUE);
-
-        if (!array_key_exists('mode', $config) || $config['mode'] === 'all') {
-            return FALSE;
-        }
-
-        $this->loadAll = FALSE;
-
-        if (!array_key_exists('list', $config) || is_array($config['list'])) {
-            return FALSE;
-        }
-
-        $this->list = $config['list'];
-
-        return TRUE;
-    }
-
     public function init() : bool
     {
+        $this->_initConfig();
+
         if ($this->loadAll) {
             $this->_loadAll();
 
-            return FALSE;
+            return false;
         }
 
         $this->_loadListed();
 
-        return TRUE;
+        return true;
     }
 
     private function _loadAll() : void
@@ -69,7 +46,30 @@ class PluginsAutoload
             require_once "{$pluginDir}/init.php";
         }
     }
+
+    private function _initConfig(): bool
+    {
+        if (!file_exists($this->configFile) || !is_file($this->configFile)) {
+            return false;
+        }
+
+        $config = file_get_contents($this->configFile);
+        $config = json_decode($config, true);
+
+        if (!array_key_exists('mode', $config) || $config['mode'] === 'all') {
+            return false;
+        }
+
+        $this->loadAll = false;
+
+        if (!array_key_exists('list', $config) || is_array($config['list'])) {
+            return false;
+        }
+
+        $this->list = $config['list'];
+
+        return true;
+    }
 }
 
 (new PluginsAutoload)->init();
-?>
