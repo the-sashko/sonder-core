@@ -3,7 +3,7 @@ namespace Core\Plugins\Image\Classes;
 
 use Core\Plugins\Image\Interfaces\IImageSize;
 
-use Core\Plugins\Image\Exceptions\ImagePluginException;
+use Core\Plugins\Image\Exceptions\ImageSizeException;
 
 class ImageSize implements IImageSize
 {
@@ -90,9 +90,9 @@ class ImageSize implements IImageSize
         }
 
         if ($values['file_prefix'] == static::PREFIX_FULL) {
-            throw new ImagePluginException(
-                ImagePluginException::MESSAGE_SIZE_FULL_PREFIX_NOT_ALLOWED,
-                ImagePluginException::CODE_SIZE_FULL_PREFIX_NOT_ALLOWED
+            throw new ImageSizeException(
+                ImageSizeException::MESSAGE_SIZE_FULL_PREFIX_NOT_ALLOWED,
+                ImageSizeException::CODE_SIZE_FULL_PREFIX_NOT_ALLOWED
             );
         }
 

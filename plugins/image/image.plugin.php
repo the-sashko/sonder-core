@@ -4,6 +4,7 @@ use Core\Plugins\Image\Interfaces\IImagePlugin;
 use Core\Plugins\Image\Classes\ImageSize;
 
 use Core\Plugins\Image\Exceptions\ImagePluginException;
+
 /**
  * Plugin For Resizing Images
  */
@@ -188,14 +189,14 @@ class ImagePlugin implements IImagePlugin
 
         if (empty($size->getWidth())) {
             $size->setWidth(
-                (int) ($originalWidth / $originalHeight) * $size->getheight()
+                (int) (($originalWidth / $originalHeight) * $size->getheight())
             );
 
             return $size;
         }
 
         $size->setHeight(
-            (int) ($originalHeight / $originalWidth) * $size->getWidth()
+            (int) (($originalHeight / $originalWidth) * $size->getWidth())
         );
 
         return $size;
@@ -241,13 +242,17 @@ class ImagePlugin implements IImagePlugin
         }
 
         $newWidth  = $originalWidth;
-        $newHeight = ($size->getHeight() / $size->getWidth()) * $newWidth;
-        $newHeight = (int) $newHeight;
+
+        $newHeight = (int) (
+            ($size->getHeight() / $size->getWidth()) * $newWidth
+        );
 
         if ($newHeight > $originalHeight) {
             $newHeight = $originalHeight;
-            $newWidth  = ($size->getWidth() / $size->getHeight()) * $newHeight;
-            $newWidth  = (int) $newWidth;
+
+            $newWidth  = (int) (
+                ($size->getWidth() / $size->getHeight()) * $newHeight
+            );
         }
 
         $positionX = 0;
