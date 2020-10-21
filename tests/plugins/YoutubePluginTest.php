@@ -28,8 +28,8 @@ class YoutubePluginTest extends TestCase
             'expected' => 'Lorem ipsum dolor [Youtube:UnitTest1] sit amet, '.
                           'consectetur [Youtube:UnitTest3?t=333s] adipiscing '.
                           'elit. Nullam finibus semper diam at dapibus. '.
-                          'Donec [Youtube:UnitTest2?t=111s] at convallis '.
-                          'dui. Proin et velit enim.'
+                          'Donec [Youtube:UnitTest2?t=111s] Proin et velit '.
+                          'enim.'
         ]
     ];
 

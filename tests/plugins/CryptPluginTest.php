@@ -31,9 +31,7 @@ class CryptPluginTest extends TestCase
         [
             'value'    => '',
             'expected' => [
-                'hash'     =>  '9b8277f7d6bb58e5a38a71c38e34ddf267240b5f1a82d'.
-                               '25b57cfd48441b1f586871818db9558dec9a5355f0639'.
-                               'b7cfe3dcb12a3080731745d1283beae904a5fc',
+                'hash'     =>  '',
                 'trip_code' => ''
             ]
         ]
