@@ -70,8 +70,6 @@ class App
         } catch (Exception $exp) {
             $this->exceptionHandler($exp);
         }
-
-        exit(0);
     }
 
     /**
@@ -219,7 +217,7 @@ class App
 
         if ($_SERVER['REQUEST_URI'] != $url) {
             header("Location: {$url}", true, 301);
-            die();
+            exit(0);
         }
     }
 

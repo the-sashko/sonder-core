@@ -61,8 +61,6 @@ class CLI extends App
         } catch (Exception $exp) {
             $this->exceptionHandler($exp);
         }
-
-        exit(0);
     }
 
     private function _parseCLIOptions(): array
