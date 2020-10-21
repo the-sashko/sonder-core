@@ -492,12 +492,16 @@ class ControllerCore extends CommonCore
             $meta['canonical_url'] = '/';
 
             if (
-                $this->serverInfo->has('REAL_REQUEST_URI') &&
-                strlen($this->serverInfo->get('REAL_REQUEST_URI')) > 0
+                array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
+                !empty($_SERVER['REAL_REQUEST_URI'])
             ) {
-                $meta['canonical_url'] = $this->serverInfo->get(
-                    'REAL_REQUEST_URI'
+                $security = $this->getPlugin('security');
+
+                $meta['canonical_url'] = $security->escapeInput(
+                    $_SERVER['REAL_REQUEST_URI']
                 );
+
+                $meta['canonical_url'] = $_SERVER['REAL_REQUEST_URI'];
             }
         }
 

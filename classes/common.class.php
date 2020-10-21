@@ -14,15 +14,9 @@ class CommonCore
      */
     public $configData = [];
 
-    /**
-     * @var object ServerInfo Plugin Instance
-     * */
-    public $serverInfo = null;
-
     public function __construct()
     {
         $this->session    = $this->getPlugin('session');
-        $this->serverInfo = $this->getPlugin('serverInfo');
     }
 
     /**
