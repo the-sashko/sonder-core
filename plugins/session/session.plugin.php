@@ -1,20 +1,29 @@
 <?php
+use Core\Plugins\Session\Interfaces\ISessionPlugin;
+
+use Core\Plugins\Session\Classes\SessionSecurity;
+use Core\Plugins\Session\Classes\SessionValuesObject;
+
 /**
  * Plugin For Working With Session Data
  */
-class SessionPlugin
+class SessionPlugin implements ISessionPlugin
 {
     /**
-     * @var array Session Data
+     * @var SessionValuesObject|null Session Data
      */
-    private $_data = [];
+    private $_data = null;
 
     public function __construct()
     {
-        $securityPlugin = new SecurityPlugin();
-        $_SESSION       = $securityPlugin->escapeInput($_SESSION);
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
-        $this->_data = new ValuesObject($_SESSION);
+        $sessionSecurity = new SessionSecurity();
+        $_SESSION        = $sessionSecurity->escapeInput($_SESSION);
+
+        $this->_data = new SessionValuesObject($_SESSION);
     }
 
     /**
@@ -48,7 +57,7 @@ class SessionPlugin
     /**
      * Check Is Session Value Exists
      *
-     * @param string|null $vaueName Name Of Value
+     * @param string|null $valueName Name Of Value
      *
      * @return bool Is Value Exists In Session
      */
