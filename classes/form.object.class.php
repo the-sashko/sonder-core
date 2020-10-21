@@ -5,6 +5,11 @@
 class FormObject extends ValuesObject
 {
     /**
+    * @var string Default Error Message
+    */
+    const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
+
+    /**
      * @var array List Of Form Data Values
      */
     public $data = [];

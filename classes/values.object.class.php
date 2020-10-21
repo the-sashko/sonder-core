@@ -5,11 +5,6 @@
 class ValuesObject
 {
     /**
-    * @var string Default Error Message
-    */
-    const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
-
-    /**
      * @var array List Of Model Instance Data
      */
     public $data = [];
@@ -55,6 +50,12 @@ class ValuesObject
     public function exportRow(?array $params = null): ?array
     {
         $row = $this->data;
+
+        foreach ($row as $param => $value) {
+            if (!is_scalar($value)) {
+                unset($row[$param]);
+            }
+        }
 
         if (empty($params)) {
             return $row;
