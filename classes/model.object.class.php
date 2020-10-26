@@ -109,13 +109,13 @@ class ModelObjectCore
 
         $columns = array_keys($row);
         $columns = implode('","', $columns);
-        $values  = implode('\',\'', $row);
+        $values  = $this->_getInsertValues($row);
 
         $sql = '
             INSERT INTO "%s" (
                 "%s"
             ) VALUES (
-                \'%s\'
+                %s
             );
         ';
 
@@ -126,7 +126,7 @@ class ModelObjectCore
 
     protected function updateRows(
         ?string $table     = null,
-        ?array  $rows      = null,
+        ?array  $row       = null,
         ?string $condition = null
     ): bool
     {
@@ -134,7 +134,7 @@ class ModelObjectCore
             return false;
         }
 
-        if (empty($rows)) {
+        if (empty($row)) {
             return false;
         }
 
@@ -142,11 +142,11 @@ class ModelObjectCore
             return false;
         }
 
-        foreach ($rows as $key => $row) {
-            $rows[$key] = sprintf('%s = \'%s\'', $key, $row);
-        }
+        $values = $this->_getUpdateValues($row);
 
-        $rows = implode(',', $rows);
+        if (empty($values)) {
+            return false;
+        }
 
         $sql = '
             UPDATE "%s"
@@ -154,7 +154,7 @@ class ModelObjectCore
             WHERE %s;
         ';
 
-        $sql = sprintf($sql, $table, $rows, $condition);
+        $sql = sprintf($sql, $table, $values, $condition);
 
         return $this->_db->query($sql, $this->scope);
     }
@@ -222,5 +222,63 @@ class ModelObjectCore
         $condition = sprintf('id = %d', $id);
 
         return $this->deleteRows($table, $condition);
+    }
+
+    private function _getInsertValues(?array $row = null): ?string
+    {
+        if (empty($row)) {
+            return null;
+        }
+
+        foreach ($row as $key => $value) {
+            $row[$key] = $this->_getValueString($value);
+        }
+
+        return implode(',', $row);
+    }
+
+    private function _getUpdateValues(?array $row = null): ?string
+    {
+        if (empty($row)) {
+            return null;
+        }
+
+        foreach ($row as $key => $value) {
+            $value = $this->_getValueString($value);
+            $row[$key] = sprintf('"%s" = %s', (string) $key, (string) $value);
+        }
+
+        return implode(',', $row);
+    }
+
+    private function _getValueString($value = null): ?string
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+
+            return sprintf('\'%s\'', $value);
+        }
+
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_string($value)) {
+            return sprintf('\'%s\'', $value);
+        }
+
+        if (!is_scalar($value)) {
+            $value = json_encode($value);
+
+            return sprintf('\'%s\'', $value);
+        }
+
+        $value = (string) $value;
+
+        return sprintf('\'%s\'', $value);
     }
 }
