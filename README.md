@@ -4,8 +4,7 @@ Some useful PHP tools
 
 ## Documentation
     
-*  [Installation Guide](docs/install.md)
-
+*   [Installation Guide](docs/install.md)
 
 [![CodeFactor](https://www.codefactor.io/repository/github/the-sashko/php-common-toolkit/badge)](https://www.codefactor.io/repository/github/the-sashko/php-common-toolkit)
 
