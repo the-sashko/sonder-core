@@ -34,7 +34,7 @@ class FormObject extends ValuesObject
     *
     * @return bool Processing Form Status Value
     */
-    public function getStatus(): bool
+    public function isStatusSuccess(): bool
     {
         return $this->status;
     }
