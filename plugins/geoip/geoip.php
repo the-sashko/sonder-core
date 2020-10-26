@@ -2,7 +2,7 @@
 /**
  * Plugin For Getting User IP Address And Getting IP Address Metadata
  */
-class GeoIPPlugin
+class GeoIpPlugin
 {
     const DEFAULT_IP = '0.0.0.0';
 
@@ -11,7 +11,7 @@ class GeoIPPlugin
      *
      * @return string IP Address
      */
-    public function getIP(): string
+    public function getIp(): string
     {
         if (
             array_key_exists('HTTP_CF_CONNECTING_IP', $_SERVER) &&
@@ -70,7 +70,7 @@ class GeoIPPlugin
      *
      * @return string IP Address
      */
-    public function getIPHash(): string
+    public function getIpHash(): string
     {
         return hash('sha256', $this->getIP());
     }
