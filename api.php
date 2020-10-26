@@ -90,16 +90,16 @@ class API extends App
         }
 
         if (null === $model) {
-            throw new AppException(
-                AppException::MESSAGE_APP_MODEL_IS_NOT_SET,
-                AppException::CODE_APP_MODEL_IS_NOT_SET
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_MODEL_IS_NOT_SET,
+                CoreException::CODE_CORE_MODEL_IS_NOT_SET
             );
         }
 
         if (null === $action) {
-            throw new AppException(
-                AppException::MESSAGE_APP_ACTION_MODEL_IS_NOT_SET,
-                AppException::CODE_APP_ACTION_MODEL_IS_NOT_SET
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_ACTION_MODEL_IS_NOT_SET,
+                CoreException::CODE_CORE_ACTION_MODEL_IS_NOT_SET
             );
         }
 

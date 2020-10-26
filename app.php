@@ -35,13 +35,13 @@ class App
 
             $errorMessage = sprintf(
                 $errorMessage,
-                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_EXIST,
+                CoreException::MESSAGE_CORE_CONTROLLER_IS_NOT_EXIST,
                 $controller
             );
 
-            throw new AppException(
+            throw new CoreException(
                 $errorMessage,
-                AppException::CODE_APP_CONTROLLER_IS_NOT_EXIST
+                CoreException::CODE_CORE_CONTROLLER_IS_NOT_EXIST
             );
         }
 
@@ -55,14 +55,14 @@ class App
 
                 $errorMessage = sprintf(
                     $errorMessage,
-                    AppException::MESSAGE_APP_INVALID_ACTION_CONTROLLER,
+                    CoreException::MESSAGE_CORE_INVALID_ACTION_CONTROLLER,
                     get_class($controller),
                     $action
                 );
 
-                throw new AppException(
+                throw new CoreException(
                     $errorMessage,
-                    AppException::CODE_APP_INVALID_ACTION_CONTROLLER
+                    CoreException::CODE_CORE_INVALID_ACTION_CONTROLLER
                 );
             }
 
@@ -70,6 +70,8 @@ class App
         } catch (Exception $exp) {
             $this->exceptionHandler($exp);
         }
+
+        exit(0);
     }
 
     /**
@@ -292,16 +294,16 @@ class App
         }
 
         if (null === $controller) {
-            throw new AppException(
-                AppException::MESSAGE_APP_CONTROLLER_IS_NOT_SET,
-                AppException::CODE_APP_CONTROLLER_IS_NOT_SET
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_CONTROLLER_IS_NOT_SET,
+                CoreException::CODE_CORE_CONTROLLER_IS_NOT_SET
             );
         }
 
         if (null === $action) {
-            throw new AppException(
-                AppException::MESSAGE_APP_ACTION_CONTROLLER_IS_NOT_SET,
-                AppException::CODE_APP_ACTION_CONTROLLER_IS_NOT_SET
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_ACTION_CONTROLLER_IS_NOT_SET,
+                CoreException::CODE_CORE_ACTION_CONTROLLER_IS_NOT_SET
             );
         }
 

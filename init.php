@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/classes/app.exception.class.php';
+require_once __DIR__.'/exceptions/autoload.php';
 
 if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');
@@ -22,13 +22,13 @@ if (
 
     $errorMessage = sprintf(
         $errorMessage,
-        AppException::MESSAGE_APP_ROUTER_FILE_NOT_FOUND,
+        CoreException::MESSAGE_CORE_ROUTER_FILE_NOT_FOUND,
         APP_ROUTER
     );
 
-    throw new AppException(
+    throw new CoreException(
         $errorMessage,
-        AppException::CODE_APP_ROUTER_FILE_NOT_FOUND
+        CoreException::CODE_CORE_ROUTER_FILE_NOT_FOUND
     );
 }
 
