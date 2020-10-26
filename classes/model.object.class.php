@@ -162,7 +162,7 @@ class ModelObjectCore
     protected function updateRowByID(
         ?string $table = null,
         ?array  $row   = null,
-        ?int    $id    = null
+        ?int    $idRow = null
     ): bool
     {
         if (empty($table)) {
@@ -173,11 +173,11 @@ class ModelObjectCore
             return false;
         }
 
-        if (empty($id)) {
+        if (empty($idRow)) {
             return false;
         }
 
-        $condition = sprintf('id = %d', $id);
+        $condition = sprintf('id = %d', $idRow);
 
         return $this->updateRows($table, $row, $condition);
     }
@@ -208,18 +208,18 @@ class ModelObjectCore
 
     protected function deteleRowByID(
         ?string $table = null,
-        ?id     $id    = null
+        ?int    $idRow = null
     ): bool
     {
         if (empty($table)) {
             return false;
         }
 
-        if (empty($id)) {
+        if (empty($idRow)) {
             return false;
         }
 
-        $condition = sprintf('id = %d', $id);
+        $condition = sprintf('id = %d', $idRow);
 
         return $this->deleteRows($table, $condition);
     }
