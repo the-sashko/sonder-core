@@ -15,22 +15,22 @@
 
 -   Wrapper For Working With PostgreSQL (By PDO)
 -   Wrapper For Working With Redis (By Predis)
--   Wrapper For Working With Twitter API (By CodeBird)
 -   Wrapper For Working With Images (By Imagick)
+-   Wrapper For Working With Twitter API (By CodeBird)
 
 #### Features
 
 ##### Common Features
 
--   Simple Plain PHP Templater
--   Uploading Files In Secure Way
--   Validaton Input Values By Type
+-   Converting Numbers Fron Base 10 To Others Bases (From 2 To 64)
 -   Handling Errors And Exceptions
 -   Logging
+-   Simple Plain PHP Templater
 -   Sharing Links Via Twitter (By CodeBird) And Telegram (By Curl)
 -   Translation By Dictionary
 -   Transliteration Cyrillic To Latin
--   Converting Numbers Fron Base 10 To Others Bases (From 2 To 64)
+-   Uploading Files In Secure Way
+-   Validaton Input Values By Type
 
 ##### Working With Input Data
 
@@ -40,19 +40,19 @@
 ##### Working With HTML
 
 -   Generating HTML Breadcrumbs
--   Generating HTML From Markdown-Like Markup
 -   Generating HTML From External Web Page Link
+-   Generating HTML From Markdown-Like Markup
 -   Generating HTML From Youtube Video Link
 -   Generating HTML Pagination
 
 ##### Unstable And Experimental Features
 
--   Sending E-mails (Unstable Feature)
--   Resizing And Converting Images (Unstable Feature)
--   Creating Short Links Via Shortener API (Unstable Feature)
--   Helpers For Generation Sitemaps (Unstable Feature)
 -   Caching Data Base Requests By Redis, Files Or Memcache (Unstable Feature)
+-   Creating Short Links Via Shortener API (Unstable Feature)
 -   Caching Templater Data By Redis, Files Or Memcache (Unstable Feature)
+-   Helpers For Generation Sitemaps (Unstable Feature)
+-   Resizing And Converting Images (Unstable Feature)
+-   Sending E-mails (Unstable Feature)
 
 ---
 
