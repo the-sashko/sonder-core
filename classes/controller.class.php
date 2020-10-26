@@ -190,7 +190,7 @@ class ControllerCore extends CommonCore
             'escapeInput'
         ];
 
-        if (!empty($getData)) {
+        if (!empty($urlParams)) {
             $this->_urlParams = array_map($escapeMethod, $urlParams);
         }
     }
