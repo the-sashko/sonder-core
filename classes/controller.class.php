@@ -213,26 +213,6 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set Laguage Value To Session
-     *
-     * @return string|nulll Language Value Of Current User
-     */
-    private function _getLanguage(): ?string
-    {
-        if (!$this->session->has('language')) {
-            return null;
-        }
-
-        $language = $this->session->get('language');
-
-        if (empty($language)) {
-            return null;
-        }
-
-        return $language;
-    }
-
-    /**
      * Get Default Language
      */
     private function _getDefaultLanguage(): string

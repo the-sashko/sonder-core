@@ -46,7 +46,7 @@ class FormObject extends ValuesObject
      */
     public function getErrors(): ?array
     {
-        if ($this->getStatus()) {
+        if ($this->isStatusSuccess()) {
             return null;
         }
         
