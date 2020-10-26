@@ -19,9 +19,9 @@ class OneSignalResponse implements IPushResponse
         $this->_errorMessage = $errorMessage;
     }
 
-    public function setRemoteCode(string $_remoteCode = '') : void
+    public function setRemoteCode(string $remoteCode = '') : void
     {
-        $this->_remoteCode = $_remoteCode;
+        $this->_remoteCode = $remoteCode;
     }
 
     public function setRecipientsCount(int $recipientsCount = 0) : void

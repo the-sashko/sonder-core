@@ -183,8 +183,8 @@ class ModelObjectCore
     }
 
     protected function deteleRows(
-        ?string $table    = null,
-        ?string $codition = null
+        ?string $table     = null,
+        ?string $condition = null
     ): bool
     {
         if (empty($table)) {
