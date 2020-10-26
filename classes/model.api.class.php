@@ -1,6 +1,6 @@
 <?php
 /**
- * Class For API Model 
+ * Class For API Model
  */
 abstract class ModelApiCore
 {

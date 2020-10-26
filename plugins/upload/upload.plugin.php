@@ -31,7 +31,7 @@ class UploadPlugin implements IUploadPlugin
      * @param int|null    $maxSize    Max Allowed Size Of File (Bytes)
      * @param string|null $uploadsDir Path To Directory Of Uploaded Files
      */
-    public function upload (
+    public function upload(
         ?array  $extensions = null,
         ?int    $maxSize    = null,
         ?string $uploadsDir = null

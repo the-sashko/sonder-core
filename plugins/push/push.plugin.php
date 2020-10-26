@@ -29,13 +29,12 @@ class PushPlugin
             !is_file($responseProviderFile)
         ) {
             throw new Exception('Invalid Push Provider');
-        
         }
 
         if (!file_exists($providerFile) || !is_file($providerFile)) {
             throw new Exception('Invalid Push Provider');
         }
-        
+
         include_once $credentialsProviderFile;
         include_once $responseProviderFile;
         include_once $providerFile;
