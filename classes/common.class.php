@@ -16,7 +16,9 @@ class CommonCore
 
     public function __construct()
     {
-        $this->session    = $this->getPlugin('session');
+        $this->_requireAppException();
+
+        $this->session = $this->getPlugin('session');
     }
 
     /**
@@ -33,32 +35,72 @@ class CommonCore
         }
 
         $modelsDir  = __DIR__.'/../../models';
+        $modelsDir  = sprintf('%s/%s', $modelsDir, $model);
         $modelClass = mb_convert_case($model, MB_CASE_TITLE);
 
-        if (!file_exists("{$modelsDir}/{$model}/{$model}.php")) {
-            throw new Exception("Missing {$modelClass} Model!");
+        $exceptionsDir  = __DIR__.'/../../exceptions';
+        $exceptionClass = mb_convert_case($model, MB_CASE_TITLE);
+        $exceptionClass = sprintf('%sException', $exceptionClass);
+
+        $modelFilePath = sprintf('%s/%s.php', $modelsDir, $model);
+        $modelFormFilePath = sprintf('%s/%s.form.php', $modelsDir, $model);
+        $modelObjectFilePath = sprintf('%s/%s.object.php', $modelsDir, $model);
+        $modelApiFilePath = sprintf('%s/%s.api.php', $modelsDir, $model);
+
+        $modelValuesObjectFilePath = sprintf(
+            '%s/%s.vo.php',
+            $modelsDir,
+            $model
+        );
+
+        $exceptionFilePath = sprintf(
+            '%s/%s.php',
+            $exceptionsDir,
+            $exceptionClass
+        );
+
+        if (!file_exists($modelFilePath) ||!is_file($modelFilePath)) {
+            $errorMessage = CoreException::MESSAGE_CORE_MODEL_NOT_FOUND;
+            $errorMessage = sprintf('%s. Model: %s', $errorMessage, $model);
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_MODEL_NOT_FOUND
+            );
         }
 
-        if (file_exists("{$modelsDir}/{$model}/{$model}.form.php")) {
-            require_once("{$modelsDir}/{$model}/{$model}.form.php");
+        if (file_exists($modelFormFilePath) && is_file($modelFormFilePath)) {
+            require_once($modelFormFilePath);
         }
 
-        require_once("{$modelsDir}/{$model}/{$model}.php");
+        require_once($modelFilePath);
+
         $modelInstance = new $modelClass();
 
-        if (file_exists("{$modelsDir}/{$model}/{$model}.object.php")) {
-            require_once("{$modelsDir}/{$model}/{$model}.object.php");
-            $modelInstance->setObject("{$modelClass}Object");
+        if (
+            file_exists($modelObjectFilePath) &&
+            is_file($modelObjectFilePath)
+        ) {
+            require_once($modelObjectFilePath);
+            $modelInstance->setObject(sprintf('%sObject', $modelClass));
         }
 
-        if (file_exists("{$modelsDir}/{$model}/{$model}.vo.php")) {
-            require_once("{$modelsDir}/{$model}/{$model}.vo.php");
-            $modelInstance->setValuesObjectClass("{$modelClass}ValuesObject");
+        if (file_exists($modelApiFilePath) && is_file($modelApiFilePath)) {
+            require_once($modelApiFilePath);
+            $modelInstance->setApi(sprintf('%sApi', $modelClass));
         }
 
-        if (file_exists("{$modelsDir}/{$model}/{$model}.api.php")) {
-            require_once("{$modelsDir}/{$model}/{$model}.api.php");
-            $modelInstance->setApi("{$modelClass}Api");
+        if (
+            file_exists($modelValuesObjectFilePath) &&
+            is_file($modelValuesObjectFilePath)
+        ) {
+            require_once($modelValuesObjectFilePath);
+            $modelValuesObjectClass = sprintf('%sValuesObject',$modelClass);
+            $modelInstance->setValuesObjectClass($modelValuesObjectClass);
+        }
+
+        if (file_exists($exceptionFilePath) && is_file($exceptionFilePath)) {
+            require_once($exceptionFilePath);
         }
 
         return $modelInstance;
@@ -80,8 +122,18 @@ class CommonCore
         $pluginClass = sprintf('%sPlugin', $pluginName);
 
         if (!class_exists($pluginClass)) {
-            $errorMessage = sprintf('Plugin %s Is Not Exists!', $pluginName);
-            throw new Exception($errorMessage);
+            $errorMessage = CoreException::MESSAGE_CORE_PLUGIN_IS_NOT_EXISTS;
+
+            $errorMessage = sprintf(
+                '%s. Plugin: %s Is Not Exists!',
+                $errorMessage,
+                $pluginName
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_PLUGIN_IS_NOT_EXISTS
+            );
         }
 
         return new $pluginClass();
@@ -103,7 +155,18 @@ class CommonCore
         $configPath = __DIR__."/../../config/{$configName}.json";
 
         if (!file_exists($configPath)) {
-            throw new Exception("Config File {$configName} Missing");
+            $errorMessage = CoreException::MESSAGE_CORE_CONFIG_IS_NOT_EXISTS;
+
+            $errorMessage = sprintf(
+                '%s. Config: %s',
+                $errorMessage,
+                $configName
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_CONFIG_IS_NOT_EXISTS
+            );
         }
 
         $configJSON = file_get_contents($configPath);
@@ -114,7 +177,7 @@ class CommonCore
     /**
      * Create Log
      *
-     * @param string $errMessage Message
+     * @param string $message Message
      */
     public function log(string $message): void
     {
@@ -127,7 +190,7 @@ class CommonCore
     /**
      * Create Error Log
      *
-     * @param string $errMessage Error Message
+     * @param string $message Error Message
      */
     public function logError(string $message): void
     {
@@ -135,5 +198,19 @@ class CommonCore
         $logName = (string) end($logName);
 
         $this->getPlugin('logger')->logError($message, $logName);
+    }
+
+    /**
+     * Require AppException Class If It Exists And Not Included
+     */
+    private function _requireAppException(): void
+    {
+        if (
+            !defined('AppException') &&
+            file_exists(__DIR__.'/../../exceptions/AppException.php') &&
+            is_file(__DIR__.'/../../exceptions/AppException.php')
+        ) {
+            require_once __DIR__.'/../../exceptions/AppException.php';
+        }
     }
 }
