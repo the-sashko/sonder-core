@@ -31,8 +31,7 @@ class UploadPlugin implements IUploadPlugin
      * @param int|null    $maxSize    Max Allowed Size Of File (Bytes)
      * @param string|null $uploadsDir Path To Directory Of Uploaded Files
      */
-    public function upload
-    (
+    public function upload (
         ?array  $extensions = null,
         ?int    $maxSize    = null,
         ?string $uploadsDir = null
@@ -47,7 +46,7 @@ class UploadPlugin implements IUploadPlugin
         try {
             foreach ($this->_files as $groupKey => $groupFiles) {
                 $this->_files[$groupKey] = $this->_uploadByGroup($groupFiles);
-            } 
+            }
         } catch (UploadException $ext) {
             $this->_error = $ext->getMessage();
         }
@@ -109,7 +108,7 @@ class UploadPlugin implements IUploadPlugin
             );
         }
 
-        if ($file->getSize() > $this->_settings->getMaxSize()) { 
+        if ($file->getSize() > $this->_settings->getMaxSize()) {
             throw new UploadPluginException(
                 UploadPluginException::MESSAGE_PLUGIN_FILE_TOO_LARGE,
                 UploadPluginException::CODE_PLUGIN_FILE_TOO_LARGE
@@ -217,7 +216,7 @@ class UploadPlugin implements IUploadPlugin
                 empty($file['tmp_name'])
             ) {
                 unset($groupFiles[$fileKey]);
-                continue; 
+                continue;
             }
 
             $groupFiles[$fileKey] = new UploadFile(
