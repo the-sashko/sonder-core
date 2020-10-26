@@ -31,7 +31,7 @@ class ModelApiResultObject
     }
 
     public function getErrors(): ?array
-    {        
+    {
         $errors = $this->_errors;
 
         if ($this->getStatus() && !empty($errors)) {

@@ -3,8 +3,7 @@ namespace Core\Plugins\Upload\Interfaces;
 
 interface IUploadPlugin
 {
-    public function upload
-    (
+    public function upload(
         ?array  $extensions = null,
         ?int    $maxSize    = null,
         ?string $uploadsDir = null
