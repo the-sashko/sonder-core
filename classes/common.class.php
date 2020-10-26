@@ -95,7 +95,7 @@ class CommonCore
             is_file($modelValuesObjectFilePath)
         ) {
             require_once($modelValuesObjectFilePath);
-            $modelValuesObjectClass = sprintf('%sValuesObject',$modelClass);
+            $modelValuesObjectClass = sprintf('%sValuesObject', $modelClass);
             $modelInstance->setValuesObjectClass($modelValuesObjectClass);
         }
 
