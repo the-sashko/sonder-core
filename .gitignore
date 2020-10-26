@@ -1,3 +1,5 @@
 plugins/media/youtube/res/
 plugins/media/youtube/cache/
 plugins/link/cache/
+tests/phan.phar
+
