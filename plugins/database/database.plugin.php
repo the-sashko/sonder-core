@@ -97,7 +97,7 @@ class DataBasePlugin implements IDataBasePlugin
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
 
             $errorMessage = sprintf(
-                '%s Error: "%s" Query: %s"',
+                '%s. Error: "%s". Query: %s"',
                 $errorMessage,
                 $exp->getMessage(),
                 $sql
@@ -146,7 +146,7 @@ class DataBasePlugin implements IDataBasePlugin
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
 
             $errorMessage = sprintf(
-                '%s Error: "%s" Query: %s"',
+                '%s. Error: "%s". Query: %s"',
                 $errorMessage,
                 $exp->getMessage(),
                 $sql
@@ -249,7 +249,7 @@ class DataBasePlugin implements IDataBasePlugin
             $errorMessage = DatabasePluginException::MESSAGE_PLUGIN_SQL_ERROR;
 
             $errorMessage = sprintf(
-                '%s Error: "%s" Query: %s"',
+                '%s. Error: "%s". Query: %s"',
                 $errorMessage,
                 $exp->getMessage(),
                 $sql
@@ -290,7 +290,7 @@ class DataBasePlugin implements IDataBasePlugin
             return new \PDO($dsn, $user, $password, $options);
         } catch (\PDOException $error) {
             $error = "
-                Could not connect to database!
+                Could Not Connect To Database!
                 Error: \"{$error}\"";
             $this->_error($error);
         }
