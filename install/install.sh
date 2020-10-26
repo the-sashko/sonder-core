@@ -3,7 +3,7 @@
 currDir=$(pwd)
 scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
-cd "$scriptDir/../.."
+cd "$scriptDir/../.." || exit 1
 
 cp core/install/samples/.gitignore .gitignore
 cp -r core/install/samples/public ../public
@@ -23,10 +23,10 @@ mkdir res/logs
 
 chmod -R 775 res/logs
 
-cd core
+cd core || exit 1
 
 git submodule update --init --recursive
 
-cd "$currDir"
+cd "$currDir" || exit 1
 
 exit 1
