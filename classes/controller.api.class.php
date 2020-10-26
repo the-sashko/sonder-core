@@ -27,9 +27,9 @@ class ApiControllerCore extends ControllerCore
         $action = $securityPlugin->escapeInput($action);
 
         if (empty($this->model)) {
-            throw new AppException(
-                AppException::MESSAGE_APP_MODEL_IS_NOT_SET,
-                AppException::CODE_APP_MODEL_IS_NOT_SET
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_MODEL_IS_NOT_SET,
+                CoreException::CODE_CORE_MODEL_IS_NOT_SET
             );
         }
 
@@ -38,13 +38,13 @@ class ApiControllerCore extends ControllerCore
 
             $errorMessage = sprintf(
                 $errorMessage,
-                AppException::MESSAGE_APP_MODEL_API_IS_NOT_SET,
+                CoreException::MESSAGE_CORE_MODEL_API_IS_NOT_SET,
                 get_class($model)
             );
 
-            throw new AppException(
+            throw new CoreException(
                 $errorMessage,
-                AppException::CODE_APP_MODEL_API_IS_NOT_SET
+                CoreException::CODE_CORE_MODEL_API_IS_NOT_SET
             );
         }
 
@@ -53,14 +53,14 @@ class ApiControllerCore extends ControllerCore
 
             $errorMessage = sprintf(
                 $errorMessage,
-                AppException::MESSAGE_APP_INVALID_API_ACTION_MODEL,
+                CoreException::MESSAGE_CORE_INVALID_API_ACTION_MODEL,
                 get_class($model),
                 $action
             );
 
-            throw new AppException(
-                 $errorMessage,
-                AppException::CODE_APP_INVALID_API_ACTION_MODEL
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_INVALID_API_ACTION_MODEL
             );
         }
 
@@ -93,13 +93,13 @@ class ApiControllerCore extends ControllerCore
 
             $errorMessage = sprintf(
                 $errorMessage,
-                AppException::MESSAGE_APP_MODEL_NOT_FOUND,
+                CoreException::MESSAGE_CORE_MODEL_NOT_FOUND,
                 $modelName
             );
 
-            throw new AppException(
+            throw new CoreException(
                 $errorMessage,
-                AppException::CODE_APP_MODEL_API_NOT_FOUND
+                CoreException::CODE_CORE_MODEL_API_NOT_FOUND
             );
         }
 
@@ -108,13 +108,13 @@ class ApiControllerCore extends ControllerCore
 
             $errorMessage = sprintf(
                 $errorMessage,
-                AppException::MESSAGE_APP_MODEL_API_IS_NOT_SET,
+                CoreException::MESSAGE_CORE_MODEL_API_IS_NOT_SET,
                 get_class($model)
             );
 
-            throw new AppException(
+            throw new CoreException(
                 $errorMessage,
-                AppException::CODE_APP_MODEL_API_IS_NOT_SET
+                CoreException::CODE_CORE_MODEL_API_IS_NOT_SET
             );
         }
     }
