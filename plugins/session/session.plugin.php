@@ -43,6 +43,26 @@ class SessionPlugin implements ISessionPlugin
     }
 
     /**
+     * Get Session Data By Value Name (Single Use)
+     *
+     * @param string|null $valueName Name Of Value
+     *
+     * @return mixed Session Value Data
+     */
+    public function getFlash(?string $valueName = null)
+    {
+        if (!$this->_data->hasFlash($valueName)) {
+            return null;
+        }
+
+        if (array_key_exists('flash_data', $_SESSION)) {
+            $_SESSION['flash_data'][$valueName] = null;
+        }
+
+        return $this->_data->getFlash($valueName);
+    }
+
+    /**
      * Set Data To Session Value
      *
      * @param string|null $valueName Name Of Value
@@ -55,6 +75,26 @@ class SessionPlugin implements ISessionPlugin
     }
 
     /**
+     * Set Data To Session Value (Single Use)
+     *
+     * @param string|null $valueName Name Of Value
+     * @param mixed       $valueData Data Of Value
+     */
+    public function setFlash(
+        ?string $valueName = null,
+                $valueData = null
+    ): void
+    {
+        $this->_data->setFlash($valueName, $valueData);
+
+        if (!array_key_exists('flash_data', $_SESSION)) {
+            $_SESSION['flash_data'] = [];
+        }
+
+        $_SESSION['flash_data'][$valueName] = $valueData;
+    }
+
+    /**
      * Check Is Session Value Exists
      *
      * @param string|null $valueName Name Of Value
@@ -64,5 +104,17 @@ class SessionPlugin implements ISessionPlugin
     public function has(?string $valueName = null): bool
     {
         return $this->_data->has($valueName);
+    }
+
+    /**
+     * Check Is Session Single Use Value Exists
+     *
+     * @param string|null $valueName Name Of Value
+     *
+     * @return bool Is Value Exists In Session
+     */
+    public function hasFlash(?string $valueName = null): bool
+    {
+        return $this->_data->hasFlash($valueName);
     }
 }

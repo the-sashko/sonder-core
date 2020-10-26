@@ -79,7 +79,6 @@ class ControllerCore extends CommonCore
         $this->_setGetData($_GET);
         $this->_setPage($page);
         $this->_setLanguage($language);
-        $this->_setFlashSessionData();
         $this->_initConfigs();
     }
 
@@ -194,24 +193,6 @@ class ControllerCore extends CommonCore
         if (!empty($getData)) {
             $this->_urlParams = array_map($escapeMethod, $urlParams);
         }
-    }
-
-    /**
-     * Set Data From One Use Session Param To Common Data
-     */
-    private function _setFlashSessionData(): void
-    {
-        if (
-            $this->session->has('flash_data') &&
-            is_array($this->session->get('flash_data'))
-        ) {
-            $flashData = $this->session->get('flash_data');
-            foreach ($flashData as $flashDataIDX => $flashDataVal) {
-                $this->commonData[$flashDataIDX] = $flashDataVal;
-            }
-        }
-
-        $this->session->set('flash_data', null);
     }
 
     /**
