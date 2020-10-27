@@ -313,6 +313,14 @@ class ControllerCore extends CommonCore
 
         $dataParams['breadcrumbs']     = $breadcrumbs;
         $dataParams['currentLanguage'] = $this->language;
+        $dataParams['currentUrl'] = '/';
+
+        if (
+            array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
+            !empty($_SERVER['REAL_REQUEST_URI'])
+        ) {
+            $dataParams['currentUrl'] = $_SERVER['REAL_REQUEST_URI'];
+        }
 
         $templater = $this->getPlugin('templater');
 
