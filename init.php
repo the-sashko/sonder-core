@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/exceptions/autoload.php';
+require_once __DIR__.'/classes/exception.class.php';
 
 if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');

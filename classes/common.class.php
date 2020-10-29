@@ -5,7 +5,12 @@
 class CommonCore
 {
     /**
-     * @var object Session Plugin Instance
+     * @var string Path To Hooks Directory
+     * */
+    const HOOKS_DIR_PATH = __DIR__.'/../../hooks/';
+
+    /**
+     * @var object|null Session Plugin Instance
      * */
     public $session = null;
 
@@ -17,6 +22,8 @@ class CommonCore
     public function __construct()
     {
         $this->_requireAppException();
+
+        $this->_setConfigs();
 
         $this->session = $this->getPlugin('session');
     }
@@ -180,70 +187,139 @@ class CommonCore
      * @param string|null $hookScope  Scope Of Hooks
      * @param array|null  $entityData Entity Data
      *
-     * @return array Entity Data
+     * @return bool Is Hooks Successfully Execured
      */
-    public function execHook(
-        ?string $hookScope  = null,
-        ?array  $entityData = null
-    ): array
+    public function execHooks(
+        ?string $hookScope   = null,
+        ?array  &$entityData = null
+    ): bool
     {
         $hooksData = $this->configData['hooks'];
 
         $entityData = empty($entityData) ? [] : $entityData;
 
         if (!array_key_exists($hookScope, $hooksData)) {
-            return $entityData;
+            return false;
         }
 
         foreach ($hooksData[$hookScope] as $hookItem) {
-            if (!array_key_exists('hook', $hookItem)) {
+            if (
+                !array_key_exists('hook', $hookItem) ||
+                empty($hookItem['hook'])
+            ) {
                 continue;
             }
 
-            if (!array_key_exists('method', $hookItem)) {
+            if (
+                !array_key_exists('method', $hookItem) ||
+                empty($hookItem['method'])
+            ) {
                 continue;
             }
 
-            $hookClass        = $hookItem['hook'];
-            $hookFile         = $hookItem['hook'];
-            $hookAutoloadFile = $hookItem['hook'];
-            $hookMethod       = $hookItem['method'];
+            $hookName   = $hookItem['hook'];
+            $hookMethod = $hookItem['method'];
 
-            $hookClass = mb_convert_case($hookClass, MB_CASE_TITLE).'Hook';
-           
-            $hookFile = __DIR__.'/../../hooks/'.$hookFile.'/'.$hookFile.'.php';
-
-            $hookAutoloadFile = __DIR__.'/../../hooks/'.
-                                $hookAutoloadFile.'/autoload.php';
-
-            if (file_exists($hookAutoloadFile) && is_file($hookAutoloadFile)) {
-                $hookFile = $hookAutoloadFile;
-            }
-
-            if (!file_exists($hookFile) || !is_file($hookFile)) {
-                throw new Exception('Hook '.$hookItem['hook'].' Is Not Exists');
-            }
-
-            require_once $hookFile;
-
-            if (!class_exists($hookClass)) {
-                throw new Exception('Hook Class '.$hookClass.' Is Not Exists');
-            }
-
-            $hookInstance = new $hookClass($entityData);
-
-            if (!method_exists($hookInstance, $hookMethod)) {
-                $errorMessage = 'Hook Method '.$hookMethod.
-                                ' In Class '.$hookClass.' Is Not Exists';
-                throw new Exception($errorMessage);
-            }
-
-            $hookInstance->$hookMethod();
-
-            $entityData = $hookInstance->getEntity();
+            $this->_execHook($hookName, $hookMethod, $entityData);
         }
 
-        return $entityData;
+        return true;
+    }
+
+    /**
+     * Execute Hook
+     *
+     * @param string|null $hookName   Name Of Hook
+     * @param string|null $hookMethod Method Of Hook
+     * @param array|null  $entityData Entity Data
+     */
+    public function _execHook(
+        string $hookName,
+        string $hookMethod,
+        array  &$entityData
+    ): void
+    {
+        $hookClass = mb_convert_case($hookName, MB_CASE_TITLE);
+        $hookClass = sprintf('%sHook', $hookClass);
+
+        $hookFile = '%s/%s/%s.php';
+
+        $hookFile = sprintf(
+            $hookFile,
+            static::HOOKS_DIR_PATH,
+            $hookName,
+            $hookName
+        );
+
+        $hookAutoloadFile = '%s/%s/autoload.php';
+
+        $hookAutoloadFile = sprintf(
+            $hookAutoloadFile,
+            static::HOOKS_DIR_PATH,
+            $hookName
+        );
+
+        if (file_exists($hookAutoloadFile) && is_file($hookAutoloadFile)) {
+            $hookFile = $hookAutoloadFile;
+        }
+
+        if (!file_exists($hookFile) || !is_file($hookFile)) {
+            $errorMessage = sprintf(
+                '%s. Hook: %s',
+                CoreException::MESSAGE_CORE_HOOK_IS_NOT_EXISTS,
+                $hookName
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_HOOK_IS_NOT_EXISTS
+            );
+        }
+
+        require_once $hookFile;
+
+        if (!class_exists($hookClass)) {
+            $errorMessage = sprintf(
+                '%s. Class: %s',
+                CoreException::MESSAGE_CORE_HOOK_CLASS_IS_NOT_EXISTS,
+                $hookClass
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_HOOK_CLASS_IS_NOT_EXISTS
+            );
+        }
+
+        $hookInstance = new $hookClass($entityData);
+
+        if (!method_exists($hookInstance, $hookMethod)) {
+            $errorMessage = sprintf(
+                '%s. Class: %s. Method: %s',
+                CoreException::MESSAGE_CORE_HOOK_METHOD_IS_NOT_EXISTS,
+                $hookClass,
+                $hookMethod
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_HOOK_METHOD_IS_NOT_EXISTS
+            );
+        }
+
+        $hookInstance->$hookMethod();
+
+        $entityData = $hookInstance->getEntity();
+    }
+
+    /**
+     * Set Data From JSON Config Files
+     */
+    private function _setConfigs(): void
+    {
+        $this->configData['main']  = $this->getConfig('main');
+        $this->configData['hooks'] = $this->getConfig('hooks');
+        $this->configData['seo']   = $this->getConfig('seo');
     }
 
     /**

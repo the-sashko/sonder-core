@@ -13,6 +13,9 @@ class CoreException extends \Exception
     const CODE_CORE_INVALID_API_ACTION_MODEL     = 1010;
     const CODE_CORE_PLUGIN_IS_NOT_EXISTS         = 1011;
     const CODE_CORE_CONFIG_IS_NOT_EXISTS         = 1012;
+    const CODE_CORE_HOOK_IS_NOT_EXISTS           = 1013;
+    const CODE_CORE_HOOK_CLASS_IS_NOT_EXISTS     = 1014;
+    const CODE_CORE_HOOK_METHOD_IS_NOT_EXISTS    = 1015;
 
     const MESSAGE_CORE_ROUTER_FILE_NOT_FOUND = 'Router File Not Found';
 
@@ -40,4 +43,10 @@ class CoreException extends \Exception
     const MESSAGE_CORE_PLUGIN_IS_NOT_EXISTS = 'Plugin Is Not Exists';
 
     const MESSAGE_CORE_CONFIG_IS_NOT_EXISTS = 'Config Is Not Exists';
+
+    const MESSAGE_CORE_HOOK_IS_NOT_EXISTS = 'Hook Is Not Exists';
+
+    const MESSAGE_CORE_HOOK_CLASS_IS_NOT_EXISTS = 'Hook Class Is Not Exists';
+
+    const MESSAGE_CORE_HOOK_METHOD_IS_NOT_EXISTS = 'Hook Method Is Not Exists';
 }

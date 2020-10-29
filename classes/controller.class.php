@@ -79,7 +79,6 @@ class ControllerCore extends CommonCore
 
         parent::__construct();
 
-        $this->_setConfigs();
         $this->_setUrlParams($urlParams);
         $this->_setPostData($_POST);
         $this->_setGetData($_GET);
@@ -297,7 +296,7 @@ class ControllerCore extends CommonCore
 
         $templater->scope = $this->templaterScope;
 
-        $dataParams = $this->execHook('onBeforeRender', $dataParams);
+        $this->execHooks('onBeforeRender', $dataParams);
 
         $templater->render($template, $dataParams, $ttl);
     }
@@ -385,16 +384,6 @@ class ControllerCore extends CommonCore
     private function _setPage(int $page = 1): void
     {
         $this->page = $page < 1 ? 1 : $page;
-    }
-
-    /**
-     * Set Data From JSON Config Files
-     */
-    private function _setConfigs(): void
-    {
-        $this->configData['main']  = $this->getConfig('main');
-        $this->configData['hooks'] = $this->getConfig('hooks');
-        $this->configData['seo']   = $this->getConfig('seo');
     }
 
     /**
