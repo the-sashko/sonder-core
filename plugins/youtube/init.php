@@ -1,3 +1,2 @@
 <?php
-require_once __DIR__.'/youtube.php';
-?>
+require_once __DIR__.'/youtube.plugin.php';
