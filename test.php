@@ -20,7 +20,7 @@ class Test extends App
     /**
      *  Mock Redirect Rules
      */
-    public function routeRedirect(?string $uri = null): void
+    public function routeRedirect(): void
     {
         //Mock For App::routeRedirect()
     }
@@ -28,7 +28,7 @@ class Test extends App
     /**
      *  Mock Rewrite Rules
      */
-    public function routeRewrite(?string $uri = null): ?string
+    public function routeRewrite(): ?string
     {
         //Mock For App::routeRewrite()
 

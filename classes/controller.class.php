@@ -85,6 +85,7 @@ class ControllerCore extends CommonCore
         $this->_setPage($page);
         $this->_setLanguage($language);
         $this->_setCurrentUrl();
+        $this->_setCurrentHost();
     }
 
     /**
