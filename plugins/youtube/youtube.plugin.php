@@ -175,10 +175,9 @@ class YoutubePlugin
      * @return string|null Youtube Video Code
      */
     public function getVideoCodeFromUrl(
-        ?string $url               = null,
+        ?string $url = null,
         bool    $isReturnTimeParam = true
-    ): ?string
-    {
+    ): ?string {
         $code = null;
 
         if (!$this->_isValidUrl($url)) {
@@ -315,7 +314,7 @@ class YoutubePlugin
      * @param string $code Youtube Video Code
      */
     private function _uploadThumbnail(string $code): void
-    {        
+    {
         $filePath = sprintf('%s/%s.jpg', static::IMAGE_DIR_PATH, $code);
         $urls     = $this->_getThumbnailUrls($code);
         $content  = null;
