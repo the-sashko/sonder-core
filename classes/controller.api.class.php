@@ -69,10 +69,10 @@ class ApiControllerCore extends ControllerCore
         $result = $this->model->api->$action();
 
         if (!$result->getStatus()) {
-            $this->returnJSON($result->getStatus(), $result->getErrors());
+            $this->returnJson($result->getStatus(), $result->getErrors());
         }
 
-        $this->returnJSON($result->getStatus(), $result->getValues());
+        $this->returnJson($result->getStatus(), $result->getValues());
     }
 
     /**
