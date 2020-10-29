@@ -175,10 +175,9 @@ class YoutubePlugin
      * @return string|null Youtube Video Code
      */
     public function getVideoCodeFromUrl(
-        ?string $url               = null,
+        ?string $url = null,
         bool    $isReturnTimeParam = true
-    ): ?string
-    {
+    ): ?string {
         $code = null;
 
         if (!$this->_isValidUrl($url)) {
