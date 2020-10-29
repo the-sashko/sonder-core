@@ -25,8 +25,6 @@ class DatabaseCache implements IDataBaseCache
 
     public function __construct(?string $adapter = null)
     {
-        $error = null;
-
         if (empty($adapter)) {
             $adapter = static::ADAPTER_MOCK;
         }

@@ -109,7 +109,7 @@ class ApiControllerCore extends ControllerCore
             $errorMessage = sprintf(
                 $errorMessage,
                 CoreException::MESSAGE_CORE_MODEL_API_IS_NOT_SET,
-                get_class($model)
+                $modelName
             );
 
             throw new CoreException(

@@ -59,9 +59,8 @@ class API extends App
      */
     private function _parseUrl(): ?array
     {
-        $controller = null;
-        $model      = null;
-        $action     = null;
+        $model  = null;
+        $action = null;
 
         $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
         parse_str($urlParams, $urlParams);
