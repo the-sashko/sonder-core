@@ -15,8 +15,8 @@
 
 -   Wrapper For Working With PostgreSQL (By PDO)
 -   Wrapper For Working With Redis (By Predis)
--   Wrapper For Working With Images (By Imagick)
 -   Wrapper For Working With Twitter API (By CodeBird)
+-   Wrapper For Working With Images (By Imagick)
 
 #### Features
 
