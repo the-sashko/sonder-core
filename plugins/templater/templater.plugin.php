@@ -38,7 +38,7 @@ class TemplaterPlugin
      * Generate And Display HTML Page From Template File
      *
      * @param string|null $template   Template File Name
-     * @param array|null  $dataParams Array Of Values For Using In Template 
+     * @param array|null  $dataParams Array Of Values For Using In Template
      *                                Page
      * @param int         $ttl        Time To Live Template Cache
      */
@@ -115,7 +115,7 @@ class TemplaterPlugin
             mkdir($cacheDir, 0775, true);
         }
 
-        $GLOBALS['template_cache_dir'] = $cacheDir;    
+        $GLOBALS['template_cache_dir'] = $cacheDir;
     }
 
     /**

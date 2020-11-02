@@ -279,7 +279,8 @@ class YoutubePlugin
 
         $metaDataUrl = 'https://www.youtube.com/get_video_info?video_id=%s';
         $metaDataUrl = sprintf($metaDataUrl, $code);
-        var_dump($metaDataUrl); die();
+        var_dump($metaDataUrl);
+        die();
         $metaData    = file_get_contents($metaDataUrl);
 
         parse_str($metaData, $metaData);
