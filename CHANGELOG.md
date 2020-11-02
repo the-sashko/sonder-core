@@ -11,14 +11,12 @@
 -   Helpers For Using MVC Patern
 -   Helpers For Using ValueObject Patern In Models
 
-
 #### Wrappers
 
 -   Wrapper For Working With PostgreSQL (By PDO)
 -   Wrapper For Working With Redis (By Predis)
 -   Wrapper For Working With Twitter API (By CodeBird)
 -   Wrapper For Working With Images (By Imagick)
-
 
 #### Features
 
@@ -34,12 +32,10 @@
 -   Uploading Files In Secure Way
 -   Validaton Input Values By Type
 
-
 ##### Working With Input Data
 
 -   Getting Input Data From HTTP Requsts And Server Environment In Secure Way
 -   Getting User IP And Hash Of User IP
-
 
 ##### Working With HTML
 
