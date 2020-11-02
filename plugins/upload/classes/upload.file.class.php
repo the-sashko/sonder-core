@@ -111,21 +111,25 @@ class UploadFile implements IUploadFile
         return preg_replace('/^(.*?)\.([a-z]+)$/su', '$2', $fileName);
     }
 
-    private function _normalizeFileName(?string $fileName = null): ?string
+    private function _normalizeFileName(?string $fileName = null): string
     {
         if (empty($fileName)) {
-            return null;
+            return static::DEFAULT_FILE_NAME;
         }
 
         if (!preg_match('/^(.*?)\.([a-z]+)$/su', $fileName)) {
-            return null;
+            return static::DEFAULT_FILE_NAME;
         }
 
         $fileName = preg_replace('/^(.*?)\.([a-z]+)$/su', '$1', $fileName);
-        $fileName = $this->_getTranslit($fileName);
+        $fileName = (string) $this->_getTranslit($fileName);
         $fileName = preg_replace('/([^a-z0-9]+)/su', '-', $fileName);
         $fileName = preg_replace('/([\-]+)/su', '-', $fileName);
         $fileName = preg_replace('/(^\-)|(\-$)/su', '', $fileName);
+
+        if (empty($fileName)) {
+            $fileName = static::DEFAULT_FILE_NAME;
+        }
 
         return $fileName;
     }

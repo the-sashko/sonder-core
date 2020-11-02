@@ -148,36 +148,38 @@ class YoutubePlugin
      *
      * @param string|null $code Youtube Video Code
      *
-     * @return string Youtube Video Thumbnail File Path
+     * @return string|null Youtube Video Thumbnail File Path
      */
     public function getThumbnailByCode(?string $code = null): ?string
     {
+        $code = $this->_sanitizeVideoCode($code);
+
         if (empty($code)) {
             return null;
         }
 
-        $code     = $this->_sanitizeVideoCode($code);
         $filePath = sprintf('%s/%s.jpg', static::IMAGE_DIR_PATH, $code);
 
         if (!file_exists($filePath) || !is_file($filePath)) {
             $this->_uploadThumbnail($code);
         }
 
-        return $filePath;
+        return realpath($filePath);
     }
 
     /**
      * Get Youtube Video Code From URL
      *
      * @param string|null $url               Youtube Video URL
-     * @param boll        $isReturnTimeParam Is Return Code With Time Param
+     * @param bool        $isReturnTimeParam Is Return Code With Time Param
      *
      * @return string|null Youtube Video Code
      */
     public function getVideoCodeFromUrl(
-        ?string $url = null,
+        ?string $url               = null,
         bool    $isReturnTimeParam = true
-    ): ?string {
+    ): ?string
+    {
         $code = null;
 
         if (!$this->_isValidUrl($url)) {
@@ -261,21 +263,23 @@ class YoutubePlugin
      */
     private function _getMetaData(?string $code = null): ?array
     {
+        $code = $this->_sanitizeVideoCode($code);
+
         if (empty($code)) {
             return null;
         }
 
-        $code          = $this->_sanitizeVideoCode($code);
         $cacheFilePath = sprintf('%s/%s.json', static::CACHE_DIR_PATH, $code);
 
-        if (file_exists($cacheFilePath) && is_file($cacheFilePath)) {
+        /*if (file_exists($cacheFilePath) && is_file($cacheFilePath)) {
             $cacheData = file_get_contents($cacheFilePath);
 
             return (array) json_decode($cacheData, true);
-        }
+        }*/
 
         $metaDataUrl = 'https://www.youtube.com/get_video_info?video_id=%s';
         $metaDataUrl = sprintf($metaDataUrl, $code);
+        var_dump($metaDataUrl); die();
         $metaData    = file_get_contents($metaDataUrl);
 
         parse_str($metaData, $metaData);
@@ -349,7 +353,7 @@ class YoutubePlugin
      *
      * @param string $code Youtube Video Code
      *
-     * @return string List Of Youtube Video Thumbnail URLs
+     * @return array List Of Youtube Video Thumbnail URLs
      */
     private function _getThumbnailUrls(string $code): array
     {
@@ -378,6 +382,10 @@ class YoutubePlugin
         }
 
         $metaData = $this->_getMetaData($code);
+
+        if (empty($metaData)) {
+            return $title;
+        }
 
         if (
             array_key_exists('title', $metaData) &&
@@ -483,7 +491,7 @@ class YoutubePlugin
      *
      * @return string Output Text With Shortcodes
      */
-    private function _parseYoutubeShortUrls(?string $text = nul): string
+    private function _parseYoutubeShortUrls(?string $text = null): string
     {
         $text = (string) $text;
 

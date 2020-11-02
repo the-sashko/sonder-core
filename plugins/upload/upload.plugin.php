@@ -138,7 +138,7 @@ class UploadPlugin implements IUploadPlugin
             '%s/%s.%s',
             $uploadsDirPath,
             $file->getName(),
-            $file->getExtension()
+            (string) $file->getExtension()
         );
 
         $fileUniqNumber = 0;
@@ -151,7 +151,7 @@ class UploadPlugin implements IUploadPlugin
                 $uploadsDirPath,
                 $file->getName(),
                 $fileUniqNumber,
-                $file->getExtension()
+                (string) $file->getExtension()
             );
         }
 

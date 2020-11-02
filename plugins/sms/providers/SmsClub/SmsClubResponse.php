@@ -1,55 +1,54 @@
 <?php
-class SMSClubResponse implements ISMSResponse
+class SmsClubResponse implements ISmsResponse
 {
-    private $_data = [];
+    private $_data = null;
 
-    public function __construct($data = [])
+    public function __construct(?array $data = null)
     {
-        $this->_data = $data;
+        $this->_data = (array) $data;
     }
 
-    public function getStatus() : bool
+    public function getStatus(): bool
     {
         if (!array_key_exists('status', $this->_data)) {
-            return FALSE;
+            return false;
         }
 
         return (bool) $this->_data['status'];
     }
 
-    public function getErrorMessage() : string
+    public function getErrorMessage(): ?string
     {
         if (!array_key_exists('error_message', $this->_data)) {
-            return '';
+            return null;
         }
 
         return (string) $this->_data['error_message'];
     }
 
-    public function getRemoteMessageCode() : string
+    public function getRemoteMessageCode(): ?string
     {
         if (!array_key_exists('remote_message_code', $this->_data)) {
-            return '';
+            return null;
         }
 
         return (string) $this->_data['remote_message_code'];
     }
 
-    public function setStatus(bool $status = FALSE) : void
+    public function setStatus(bool $status = false): void
     {
         $this->_data['status'] = $status;
     }
 
-    public function setErrorMessage(string $errorMessage = '') : void
+    public function setErrorMessage(?string $errorMessage = null): void
     {
         $this->_data['error_message'] = $errorMessage;
     }
 
     public function setRemoteMessageCode(
-        string $remoteMessageCode = ''
-    ) : void
+        ?string $remoteMessageCode = null
+    ): void
     {
         $this->_data['remote_message_code'] = $remoteMessageCode;
     }
 }
-?>

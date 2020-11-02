@@ -295,7 +295,7 @@ class ControllerCore extends CommonCore
 
         $templater = $this->getPlugin('templater');
 
-        $templater->scope = $this->templaterScope;
+        $templater->setScope($this->templaterScope);
 
         $this->execHooks('onBeforeRender', $dataParams);
 

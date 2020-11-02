@@ -33,12 +33,16 @@ class TranslitPlugin
     /**
      * Convert Cyrillic String Value To Latin Translit
      *
-     * @param string $cyrillicString Cyrillic String Value
+     * @param string|null $cyrillicString Cyrillic String Value
      *
-     * @return string Value Of Latin Translit String
+     * @return string|null Value Of Latin Translit String
      */
-    public function cyr2lat(string $cyrillicString = '') : string
+    public function cyr2lat(?string $cyrillicString = null): ?string
     {
+        if (empty($cyrillicString)) {
+            return null;
+        }
+
         return str_replace(
             static::CYRILLIC_ALPHABET,
             static::LATIN_ALPHABET,
@@ -49,23 +53,23 @@ class TranslitPlugin
     /**
      * Convert Cyrillic String Value To URL Slug
      *
-     * @param string $cyrillicString Cyrillic String Value
+     * @param string|null $cyrillicString Cyrillic String Value
      *
-     * @return string URL Slug
+     * @return string|null URL Slug
      */
-    public function getSlug(string $inputString = '') : string
+    public function getSlug(?string $cyrillicString = null): ?string
     {
-        $inputString = $this->cyr2lat($inputString);
-        $inputString = mb_convert_case($inputString, MB_CASE_LOWER);
-        $inputString = preg_replace(
-            '/([^a-z0-9-]+)/su',
-            '-',
-            $inputString
-        );
-        $inputString = preg_replace('/([\-]+)/su', '-', $inputString);
-        $inputString = preg_replace('/(^-)|(-$)/su', '', $inputString);
+        if (empty($cyrillicString)) {
+            return null;
+        }
 
-        return $inputString;
+        $latinString = (string) $this->cyr2lat($cyrillicString);
+        $latinString = mb_convert_case($latinString, MB_CASE_LOWER);
+
+        $slug = preg_replace('/([^a-z0-9-]+)/su', '-', $latinString);
+        $slug = preg_replace('/([\-]+)/su', '-', $slug);
+        $slug = preg_replace('/(^-)|(-$)/su', '', $slug);
+
+        return $slug;
     }
 }
-?>

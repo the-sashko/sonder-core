@@ -184,14 +184,28 @@ class LinkPlugin
                                 '(.*?)\>(.*?)$/su';
 
     /**
+     * @var string Regexp For Link Shortcode
+     */
+    const SHORTCODE_REGEXP = '/\[Link\:(.*?)\:\"(.*?)\"\]/su';
+
+    /**
+     * @var string Path To Cache Directory
+     */
+    const CACHE_DIR_PATH = __DIR__.'/../../../res/cache/link';
+
+    /**
      * Replace URL Links In Text By Shortcodes
      *
-     * @param string $text Input Plain Text Value
+     * @param string|null $text Input Plain Text Value
      *
-     * @return string Output Text Value With Shortcodes
+     * @return string|null Output Text Value With Shortcodes
      */
-    public function parseLinkURL(string $text = '') : string
+    public function parseLinkUrls(?string $text = null): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = preg_replace_callback(
             '/(https|http)\:\/\/(.*?)(\s|$)/su',
             [
@@ -207,16 +221,20 @@ class LinkPlugin
     /**
      * Replace URL Links Shortcodes In Text By HTML Tags
      *
-     * @param string $text Input Plain Text Value With Shortcodes
+     * @param string|null $text Input Plain Text Value With Shortcodes
      *
-     * @return string Output Text Value With HTML Tags
+     * @return string|null Output Text Value With HTML Tags
      */
-    public function parseLinkShortCode(string $text = '') : string
+    public function parseLinkShortCodes(?string $text = null): ?string
     {
-        return  preg_replace(
-            '/\[Link\:(.*?)\:\"(.*?)\"\]/su',
+        if (empty($text)) {
+            return null;
+        }
+
+        return preg_replace(
+            static::SHORTCODE_REGEXP,
             '<a href="$1"'.
-            'target="_blank" rel="nofollow" class="post_external_link">'.
+            'target="_blank" rel="nofollow" class="external_link">'.
             '<i class="fas fa-link"></i>&nbsp;$2'.
             '</a>',
             $text
@@ -226,23 +244,31 @@ class LinkPlugin
     /**
      * Get Web Page Meta Data
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
-     * @return array Meta Data Of Web Page
+     * @return array|null Meta Data Of Web Page
      */
-    private function _getWebPageMetaData(string $url = '') : array
+    private function _getWebPageMetaData(?string $url = null): ?array
     {
-        $cacheFile = __DIR__.'/cache/'.hash('sha512', $url).'_'.
-                     hash('md5', $url).'.dat';
-
-        if (file_exists($cacheFile) && is_file($cacheFile)) {
-            return $this->_getWebPageMetaDataFromCache($cacheFile);
+        if (empty($url)) {
+            return null;
         }
 
-        $pageHTML    = $this->_getPageContent($url);
-        $title       = $this->_getPageTitle($pageHTML, $url);
-        $description = $this->_getPageDescription($pageHTML);
-        $image       = $this->_getPageImage($pageHTML);
+        $cacheFilePath = sprintf(
+            '%s/%s_%s.json',
+            static::CACHE_DIR_PATH,
+            hash('sha256', $url),
+            hash('md5', $url)
+        );
+
+        if (file_exists($cacheFilePath) && is_file($cacheFilePath)) {
+            return $this->_getWebPageMetaDataFromCache($cacheFilePath);
+        }
+
+        $html        = $this->_getPageContent($url);
+        $title       = $this->_getPageTitle($html, $url);
+        $description = $this->_getPageDescription($html);
+        $image       = $this->_getPageImage($html, $url);
 
         $metaData = [
             'url'         => $url,
@@ -251,7 +277,7 @@ class LinkPlugin
             'image'       => $image
         ];
 
-        $this->_saveWebPageMetaDataToCache($metaData, $cacheFile);
+        $this->_saveWebPageMetaDataToCache($metaData, $cacheFilePath);
 
         return $metaData;
     }
@@ -259,34 +285,42 @@ class LinkPlugin
     /**
      * Saving Web Page Meta Data To Cache
      *
-     * @param array  $metaData  Meta Data Of Web Page
-     * @param string $cacheFile Cached File Path
+     * @param array  $metaData      Meta Data Of Web Page
+     * @param string $cacheFilePath Cache File Path
      */
     private function _saveWebPageMetaDataToCache(
-        array  $metaData  = [],
-        string $cacheFile = ''
-    ) : void
+        array  $metaData,
+        string $cacheFilePath
+    ): void
     {
-        $metaData['url'] = base64_encode($metaData['url']);
-        file_put_contents($urlCacheFile, json_encode($metaDataJSON));
+        file_put_contents($cacheFilePath, json_encode($metaData));
     }
 
     /**
      * Get Web Page Main Image Link
      *
-     * @param string $url Web Page URL
+     * @param string|null $html Web Page HTML
+     * @param string|null $url Web Page URL
      *
-     * @return string Web Page Main Image
+     * @return string|null Web Page Main Image
      */
     private function _getPageImage(
-        string $pageHTML = '',
-        string $url      = ''
-    ) : string
+        ?string $html = null,
+        ?string $url  = null
+    ): ?string
     {
-        $image = $this->_getPageImageFromMetaTags($pageHTML);
+        if (empty($html)) {
+            return null;
+        }
 
-        if (trim($image) < 5) {
-            $image = _getPageImageFromBody($pageHTML);
+        if (empty($url)) {
+            return null;
+        }
+
+        $image = $this->_getPageImageFromMetaTags($html);
+
+        if (empty($image) || strlen($image) < 5) {
+            $image = _getPageImageFromBody($html);
         }
 
         return $this->_normalizeImage($image, $url);
@@ -737,7 +771,7 @@ class LinkPlugin
      */
     private function _getPageContent(string $url = '') : string
     {
-        $html = _getPageHTMLFromCurl($url);
+        $html = $this->_getPageHTMLFromCurl($url);
 
         $html = (string) mb_convert_encoding($html, 'UTF-8');
         $html = htmlspecialchars_decode($html);
@@ -917,4 +951,3 @@ class LinkPlugin
         return preg_match($regexp, $html);
     }
 }
-?>

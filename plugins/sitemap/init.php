@@ -1,3 +1,2 @@
 <?php
-require_once __DIR__.'/sitemap.php';
-?>
+require_once __DIR__.'/sitemap.plugin.php';
