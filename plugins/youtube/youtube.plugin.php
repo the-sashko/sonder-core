@@ -176,10 +176,9 @@ class YoutubePlugin
      * @return string|null Youtube Video Code
      */
     public function getVideoCodeFromUrl(
-        ?string $url               = null,
+        ?string $url = null,
         bool    $isReturnTimeParam = true
-    ): ?string
-    {
+    ): ?string {
         $code = null;
 
         if (!$this->_isValidUrl($url)) {
@@ -279,7 +278,8 @@ class YoutubePlugin
 
         $metaDataUrl = 'https://www.youtube.com/get_video_info?video_id=%s';
         $metaDataUrl = sprintf($metaDataUrl, $code);
-        var_dump($metaDataUrl); die();
+        var_dump($metaDataUrl);
+        die();
         $metaData    = file_get_contents($metaDataUrl);
 
         parse_str($metaData, $metaData);

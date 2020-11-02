@@ -38,16 +38,15 @@ class TemplaterPlugin
      * Generate And Display HTML Page From Template File
      *
      * @param string|null $template   Template File Name
-     * @param array|null  $dataParams Array Of Values For Using In Template 
+     * @param array|null  $dataParams Array Of Values For Using In Template
      *                                Page
      * @param int         $ttl        Time To Live Template Cache
      */
     public function render(
-        ?string $template   = null,
+        ?string $template = null,
         ?array  $dataParams = null,
-        int     $ttl        = 0
-    ): void
-    {
+        int     $ttl = 0
+    ): void {
         if (empty($template)) {
             $template = static::DEFAULT_TEMPLATE;
         }
@@ -115,7 +114,7 @@ class TemplaterPlugin
             mkdir($cacheDir, 0775, true);
         }
 
-        $GLOBALS['template_cache_dir'] = $cacheDir;    
+        $GLOBALS['template_cache_dir'] = $cacheDir;
     }
 
     /**
