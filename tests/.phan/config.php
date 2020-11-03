@@ -7,6 +7,12 @@ return [
         '../'
     ],
 
+    'exclude_file_list' => [
+        '../plugins/qr/vendor/bindings/tcpdf/qrcode.php',
+        '../plugins/qr/vendor/lib/full/qrencode.php',
+        '../plugins/qr/vendor/lib/merged/phpqrcode.php'
+    ],
+
     'exclude_analysis_directory_list' => [
         '../tests',
         '../plugins/captcha/tests/',

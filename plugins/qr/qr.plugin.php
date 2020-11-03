@@ -12,25 +12,25 @@ class QrPlugin
 
     const ERROR_CORRECTION_LEVEL_BEST = 'H';
 
+    const PUBLIC_DIR_PATH = __DIR__.'/../../../../public';
+
     const DEFAULT_CELL_SIZE = 5;
 
     const DEFAULT_CELL_INDENT = 2;
 
-    const DEFAULT_FILE_PATH = '/';
-
     const DEFAULT_FILE_NAME = 'qr.png';
 
     public function create(
-        ?string $text                 = NULL,
-        ?string $filePath             = NULL,
-        ?string $fileName             = NULL,
-        ?int    $cellSize             = NULL,
-        ?int    $cellIndent           = NULL,
-        ?string $errorCorrectionLevel = NULL
-    ) : ?string
+        ?string $text                 = null,
+        ?string $filePath             = null,
+        ?string $fileName             = null,
+        ?int    $cellSize             = null,
+        ?int    $cellIndent           = null,
+        ?string $errorCorrectionLevel = null
+    ): ?string
     {
         if (empty($text)) {
-            throw new Exception('Text Value Is Empty');
+            throw new \Exception('Text Value Is Empty');
         }
 
         $filePath   = $this->_getFilePath($filePath);
@@ -38,49 +38,50 @@ class QrPlugin
         $cellSize   = $this->_getCellSize($cellSize);
         $cellIndent = $this->_getCellIndent($cellIndent);
 
+        if (empty($filePath)) {
+            return null;
+        }
+
+        $filePath = sprintf('%s/%s', $filePath, $fileName);
+
         $errorCorrectionLevel = $this->_getErrorCorrectionLevel(
             $errorCorrectionLevel
         );
 
         QRcode::png(
             $text,
-            $filePath.$fileName,
+            $filePath,
             $errorCorrectionLevel,
             $cellSize,
             $cellIndent
         );
 
-        if (
-            !file_exists($filePath.$fileName) ||
-            !is_file($filePath.$fileName)
-        ) {
-            return NULL;
+        if (!file_exists($filePath) || !is_file($filePath)) {
+            return null;
         }
-
-        return $filePath.$fileName;
-    }
-
-    private function _getFilePath(?string $filePath = NULL) : string
-    {
-        if (empty($filePath)) {
-            $filePath = static::DEFAULT_FILE_PATH;
-        }
-
-        $filePath = realpath(__DIR__.'/../../../../public/').$filePath;
-        $filePath = realpath($filePath);
-
-        if (empty($filePath)) {
-            throw new Exception('Invalid File Path Value');
-        }
-
-        $filePath = $filePath.'/';
 
         return $filePath;
     }
 
-    private function _getFileName(?string $fileName = NULL) : string
+    private function _getFilePath(?string $filePath = null): ?string
     {
-        $fileName = (string) mb_convert_case($fileName, MB_CASE_LOWER);
+        if (empty($filePath)) {
+            return null;
+        }
+
+        $filePath = sprintf('%s/%s', static::PUBLIC_DIR_PATH, $filePath);
+        $filePath = realpath($filePath);
+
+        if (empty($filePath)) {
+            throw new \Exception('Invalid File Path Value');
+        }
+
+        return $filePath;
+    }
+
+    private function _getFileName(?string $fileName = null): string
+    {
+        $fileName = mb_convert_case((string) $fileName, MB_CASE_LOWER);
         $fileName = preg_replace('/\s/su', '_', $fileName);
         $fileName = preg_replace('/^(.*?)\.png$/su', '$1', $fileName);
         $fileName = preg_replace('/([^a-z0-9_]+)/su', '_', $fileName);
@@ -92,13 +93,13 @@ class QrPlugin
         }
 
         if (!preg_match('/^(.*?)\.png$/su', $fileName)) {
-            $fileName = $fileName.'.png';
+            $fileName = sprintf('%s.png', $fileName);
         }
 
         return $fileName;
     }
 
-    private function _getCellSize(?int $cellSize = NULL) : int
+    private function _getCellSize(?int $cellSize = null): int
     {
         if (empty($cellSize)) {
             $cellSize = static::DEFAULT_CELL_SIZE;
@@ -107,7 +108,7 @@ class QrPlugin
         return $cellSize;
     }
 
-    private function _getCellIndent(?int $cellIndent = NULL) : int
+    private function _getCellIndent(?int $cellIndent = null): int
     {
         if (empty($cellIndent)) {
             $cellIndent = static::DEFAULT_CELL_INDENT;
@@ -117,8 +118,8 @@ class QrPlugin
     }
 
     private function _getErrorCorrectionLevel(
-        ?string $errorCorrectionLevel = NULL
-    ) : string
+        ?string $errorCorrectionLevel = null
+    ): string
     {
         if (empty($errorCorrectionLevel)) {
             $errorCorrectionLevel = static::ERROR_CORRECTION_LEVEL_MIDDLE;
@@ -137,13 +138,12 @@ class QrPlugin
     }
 
     private function _isValidErrorCorrectionLevel(
-        string $errorCorrectionLevel = ''
-    ) : bool
+        ?string $errorCorrection = null
+    ): bool
     {
-        return $errorCorrectionLevel == static::ERROR_CORRECTION_LEVEL_LOW ||
-               $errorCorrectionLevel == static::ERROR_CORRECTION_LEVEL_MIDDLE ||
-               $errorCorrectionLevel == static::ERROR_CORRECTION_LEVEL_HIGHT ||
-               $errorCorrectionLevel == static::ERROR_CORRECTION_LEVEL_BEST;
+        return $errorCorrection == static::ERROR_CORRECTION_LEVEL_LOW ||
+               $errorCorrection == static::ERROR_CORRECTION_LEVEL_MIDDLE ||
+               $errorCorrection == static::ERROR_CORRECTION_LEVEL_HIGHT ||
+               $errorCorrection == static::ERROR_CORRECTION_LEVEL_BEST;
     }
 }
-?>
