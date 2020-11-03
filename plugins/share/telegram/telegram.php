@@ -125,8 +125,7 @@ class TelegramPlugin
      */
     private function _validateApiResponse(
         ?string $apiResponseJson = null
-    ): void
-    {
+    ): void {
         if (empty($apiResponseJson)) {
             throw new \Exception('Invalid Telegram API Response');
         }
@@ -179,8 +178,8 @@ class TelegramPlugin
     {
         $token = null;
 
-        if (array_key_exists('token', $this->_credentials)){
-            $token = $this->_credentials['token'];   
+        if (array_key_exists('token', $this->_credentials)) {
+            $token = $this->_credentials['token'];
         }
 
         return sprintf(
