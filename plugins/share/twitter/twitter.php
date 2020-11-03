@@ -10,76 +10,130 @@ class TwitterPlugin
     const MESSAGE_MAX_LENGTH = 140;
 
     /**
-     * @var object Instance Of Codebird
+     * @var object|null Instance Of Codebird
      */
-    public $codebird = NULL;
+    private $_codebird = null;
 
     /**
-     * @var array Credentials
+     * @var array|null Credentials
      */
-    public $credentials = [];
+    private $_credentials = null;
 
     /**
      * Set Twitter API Credentials
      *
-     * @param array $credentials Twitter API Credentials
+     * @param array|null $credentials Twitter API Credentials
      */
-    public function setCredentials(array $credentials = []) : void
+    public function setCredentials(?array $credentials = null): void
     {
         if (!$this->_validateCredentials($credentials)) {
             throw new Exception('Twitter Credentials Has Bad Format');
         }
 
-        $this->credentials = $credentials;
+        $this->_credentials = $credentials;
     }
 
     /**
      * Sending Message To Twitter
      *
-     * @param string $message Message Text
+     * @param string|null $message Message Text
      */
-    public function send(string $message = '') : void
+    public function send(?string $message = null): void
     {
         $this->_validateMessage($message);
 
-        if (NULL === $this->codebird) {
+        if (null === $this->_codebird) {
             $this->_setCodebirdInstance();
         }
 
-        $status = 'status='.$message;
-        $res    = (array) $this->codebird->statuses_update($status);
+        $status   = sprintf('status=%s', $message);
+        $response = (array) $this->_codebird->statuses_update($status);
 
-        $this->_validateResponse($res);
+        $this->_validateResponse($response);
     }
 
     /**
      * Set Codebird Instance
      */
-    private function _setCodebirdInstance() : void
+    private function _setCodebirdInstance(): void
     {
-        $consumerKey    = $this->credentials['consumer']['key'];
-        $consumerSecret = $this->credentials['consumer']['secret'];
-        $accessToken    = $this->credentials['access']['token'];
-        $accessSecret   = $this->credentials['access']['secret'];
+        $consumerCredentials = null;
+        $accessCredentials   = null;
 
-        \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
+        $consumerKey    = null;
+        $consumerSecret = null;
+        $accessToken    = null;
+        $accessSecret   = null;
 
-        $this->codebird = \Codebird\Codebird::getInstance();
-        $this->codebird->setToken($accessToken, $accessSecret);
+        if (
+            !empty($this->_credentials) &&
+            array_key_exists('consumer', $this->_credentials)
+        ) {
+            $consumerCredentials = $this->_credentials['consumer'];
+        }
+
+        if (
+            !empty($this->_credentials) &&
+            array_key_exists('access', $this->_credentials)
+        ) {
+            $accessCredentials = $this->_credentials['access'];
+        }
+
+        if (
+            !empty($consumerCredentials) &&
+            array_key_exists('key', $consumerCredentials)
+        ) {
+            $consumerKey = $consumerCredentials['key'];
+        }
+
+        if (
+            !empty($consumerCredentials) &&
+            array_key_exists('secret', $consumerCredentials)
+        ) {
+            $consumerSecret = $consumerCredentials['secret'];
+        }
+
+        if (
+            !empty($accessCredentials) &&
+            array_key_exists('token', $accessCredentials)
+        ) {
+            $accessToken = $accessCredentials['token'];
+        }
+
+        if (
+            !empty($accessCredentials) &&
+            array_key_exists('secret', $accessCredentials)
+        ) {
+            $accessSecret = $accessCredentials['secret'];
+        }
+
+        if (!empty($consumerKey) && !empty($consumerSecret)) {
+            \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
+        }
+
+        $this->_codebird = \Codebird\Codebird::getInstance();
+
+        if (!empty($accessToken) && !empty($accessSecret)) {
+            $this->_codebird->setToken($accessToken, $accessSecret);
+        }
     }
 
     /**
      * Check Is Message Has Valid Format
      *
-     * @param string $message Message Text
+     * @param string|null $message Message Text
      */
-    private function _validateMessage(string $message = '') : void
+    private function _validateMessage(?string $message = null): void
     {
+        if (empty($message)) {
+            throw new Exception('Twitter Message Is Not Set');
+        }
+
         if (strlen($message) > static::MESSAGE_MAX_LENGTH) {
             throw new Exception('Twitter API Error: Message Too Long');
         }
 
-        if (!strlen(trim($message)) > 0) {
+        if (empty(trim($message))) {
             throw new Exception('Twitter API Error: Message Empty');
         }
     }
@@ -87,85 +141,86 @@ class TwitterPlugin
     /**
      * Validate Twitter API Credentials
      *
-     * @param array $credentials Twitter API Credentials
+     * @param array|null $credentials Twitter API Credentials
      *
      * @return bool Is Twitter API Credentials Data Has Valid Format
      */
-    private function _validateCredentials(array $credentials = []) : bool
+    private function _validateCredentials(?array $credentials = null): bool
     {
+        if (empty($credentials)) {
+            throw new Exception('Twitter Credentials Is Not Set');
+        }
+
         if (!array_key_exists('consumer', $credentials)) {
-            return FALSE;
+            return false;
         }
 
         if (!is_array($credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('key', $credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('secret', $credentials['consumer'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('access', $credentials)) {
-            return FALSE;
+            return false;
         }
 
         if (!is_array($credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('token', $credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
         if (!array_key_exists('secret', $credentials['access'])) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
      * Check Is Valid Respose From Twitter API
      *
-     * @param array $res Respose From Twitter API
+     * @param array|null $response Respose From Twitter API
      *
      * @return bool Is Twitter API Respose Has Valid Format
      */
-    private function _validateResponse(array $res = []) : bool
+    private function _validateResponse(?array $response = null): bool
     {
-        if (!count($res) > 0) {
-            throw new Exception('Twitter Response Has Bad Format');
+        if (empty($response)) {
+            throw new \Exception('Twitter Response Has Bad Format');
         }
 
-        if (!array_key_exists('errors', $res)) {
-            return TRUE;
+        if (!array_key_exists('errors', $response)) {
+            return true;
         }
 
-        $message = 'Unknow Twitter API Errror';
+        $errors = (array) $response['errors'];
 
-        $error = (array) $res['errors'];
-
-        if (!count($error) > 0) {
-            throw new Exception($error);
+        if (empty($errors)) {
+            throw new \Exception('Unknow Twitter API Errror');
         }
 
-        $error = (array) $error[0];
+        $error = (array) array_shift($errors);
 
         if (!array_key_exists('message', $error)) {
-            throw new Exception($error);
+            throw new \Exception('Unknow Twitter API Errror');
         }
 
         $error['message'] = (string) $error['message'];
 
-        if (strlen($error['message']) > 0) {
-            throw new Exception('Twitter API Error: '.$error['message']);
+        if (empty($error['message'])) {
+            throw new \Exception('Unknow Twitter API Errror');
         }
 
-        throw new Exception($error);
+        throw new \Exception($error['message']);
     }
 }
-?>
