@@ -179,7 +179,7 @@ class TelegramPlugin
     {
         $token = null;
 
-        if (array_key_exists('token', $this->_credentials)){
+        if (array_key_exists('token', $this->_credentials)) {
             $token = $this->_credentials['token'];
         }
 
