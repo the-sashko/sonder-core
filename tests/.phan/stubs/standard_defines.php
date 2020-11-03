@@ -1,5 +1,4 @@
 <?php
-
 class QRcode
 {
     public static function png(
@@ -10,6 +9,6 @@ class QRcode
         int    $cellIndent
     ): ?string
     {
-    	// Mock QR Class From Vendor
+        // Mock QR Class From Vendor
     }
 }
