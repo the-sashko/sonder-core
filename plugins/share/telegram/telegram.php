@@ -180,7 +180,7 @@ class TelegramPlugin
         $token = null;
 
         if (array_key_exists('token', $this->_credentials)){
-            $token = $this->_credentials['token'];   
+            $token = $this->_credentials['token'];
         }
 
         return sprintf(
