@@ -8,8 +8,7 @@ class QRcode
         string $errorCorrectionLevel,
         int    $cellSize,
         int    $cellIndent
-    ): ?string
-    {
-    	// Mock QR Class From Vendor
+    ): ?string {
+        // Mock QR Class From Vendor
     }
 }
