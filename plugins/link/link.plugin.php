@@ -319,8 +319,8 @@ class LinkPlugin
 
         $image = $this->_getPageImageFromMetaTags($html);
 
-        if (empty($image) || strlen($image) < 5) {
-            $image = _getPageImageFromBody($html);
+        if (empty($image) || empty($image)) {
+            //$image = _getPageImageFromBody($html);
         }
 
         return $this->_normalizeImage($image, $url);
@@ -329,18 +329,18 @@ class LinkPlugin
     /**
      * Get Web Page Main Image Link From Meta Tags
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Main Image Link
+     * @return string|null Web Page Main Image Link
      */
-    private function _getPageImageFromMetaTags(string $html = '') : string
+    private function _getPageImageFromMetaTags(?string $html = null): ?string
     {
         if ($this->_isTagExists('META_TAG_OG_IMAGE_REGEX', $html)) {
-            return $this->_parseHTMLTag('META_TAG_OG_IMAGE_REGEX', 7, $html);
+            return $this->_parseHtmlTag('META_TAG_OG_IMAGE_REGEX', 7, $html);
         }
 
         if ($this->_isTagExists('META_TAG_OG_IMAGE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_OG_IMAGE_REGEX_ALT',
                 4,
                 $html
@@ -348,7 +348,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_TWITTER_IMAGE_REGEX', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_IMAGE_REGEX',
                 7,
                 $html
@@ -356,7 +356,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_TWITTER_IMAGE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_IMAGE_REGEX_ALT',
                 4,
                 $html
@@ -364,58 +364,71 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('LINK_IMAGE_REGEX', $html)) {
-            return $this->_parseHTMLTag('LINK_IMAGE_REGEX', 7, $html);
+            return $this->_parseHtmlTag('LINK_IMAGE_REGEX', 7, $html);
         }
 
         if ($this->_isTagExists('LINK_IMAGE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag('LINK_IMAGE_REGEX_ALT', 4, $html);
+            return $this->_parseHtmlTag('LINK_IMAGE_REGEX_ALT', 4, $html);
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Get Web Page Main Image Link From HTML Body
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Main Image Link
+     * @return string|null Web Page Main Image Link
      */
-    private function _getPageImageFromBody(string $html = '') : string
+    private function _getPageImageFromBody(?string $html = null): ?string
     {
         if ($this->_isTagExists('IMG_IMAGE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag('IMG_IMAGE_REGEX_ALT', 4, $html);
+            return $this->_parseHtmlTag('IMG_IMAGE_REGEX_ALT', 4, $html);
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Check Image Link Format
      *
-     * @param string $image Image Link
+     * @param string|null $image Image Link
      *
      * @return bool Is Image Link Has Valid Format
      */
-    private function _isImageValid(string $image = '') : bool
+    private function _isImageValid(?string $image = null): bool
     {
-        return strlen($image) >= 5 &&
-        preg_match('/^(.*?)\.((jpg)|(jpeg)|(bmp)|(gif)|(png))$/su', $image);
+        if (empty($image)) {
+            return false;
+        }
+
+        if (preg_match(
+            '/^(.*?)\.((jpg)|(jpeg)|(bmp)|(gif)|(png))$/su',
+            $image
+        )) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Change Web Page Main Image Link To Valid Format
      *
-     * @param string $image Web Page Main Image Link
-     * @param string $url   Web Page URL
+     * @param string|null $image Web Page Main Image Link
+     * @param string|null $url   Web Page URL
      *
      * @return string Nomalized Web Page Main Image Link
      */
     private function _normalizeImage(
-        string $image = '',
-        string $url   = ''
-    ) : string
+        ?string $image = null,
+        ?string $url   = null
+    ): string
     {
+        $url   = (string) $url;
+        $image = (string) $image;
+
         $image = trim($image);
 
         if (!$this->_isImageValid($image)) {
@@ -425,26 +438,29 @@ class LinkPlugin
         if (preg_match('/^\/\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
 
-            return "{$protocol}:{$image}";
+            return sprintf('%s:%s', $protocol, $image);
         }
 
         if (preg_match('/^\/(.*?)$/su', $image)) {
             $protocol = $this->_getProtocol($url);
             $domain   = $this->_getDomain($url);
 
-            return  "{$protocol}://{$domain}/{$image}";
+            return sprintf('%s://%s/%s', $protocol, $domain, $image);
         }
 
         if (!preg_match('/^http(s|)\:\/\/(.*?)$/su', $image)) {
-            $url = exeplode('#', $url)[0];
-            $url = exeplode('&', $url)[0];
-            $url = exeplode('?', $url)[0];
+            $urlChunks = explode('#', $url);
+            $url       = array_shift($urlChunks);
 
-            if (!preg_match('/^(.*?)\/$/su', $url)) {
-                $url = $url.'/';
-            }
+            $urlChunks = explode('&', $url);
+            $url       = array_shift($urlChunks);
 
-            return "{$url}{$image}";
+            $urlChunks = explode('?', $url);
+            $url       = array_shift($urlChunks);
+
+            $url = preg_replace('/^(.*?)\/$/su', '$1', $url);
+
+            return sprintf('%s/%s', $url, $image);
         }
 
         return $image;
@@ -453,15 +469,15 @@ class LinkPlugin
     /**
      * Get Web Page Description From HTML
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
      * @return string Web Page Description
      */
-    private function _getPageDescription(string $html = '') : string
+    private function _getPageDescription(?string $html = null): string
     {
         $description = $this->_getPageDescriptionFromMetaTags($html);
 
-        if (trim($description) < 3) {
+        if (empty($description)) {
             $description = $this->_getPageDescriptionFromBody($html);
         }
 
@@ -471,28 +487,26 @@ class LinkPlugin
     /**
      * Get Web Page Description From HTML Body
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Description
+     * @return string|null Web Page Description
      */
-    private function _getPageDescriptionFromBody(
-        string $html = ''
-    ) : string
+    private function _getPageDescriptionFromBody(?string $html = null): ?string
     {
         if ($this->_isTagExists('ARTICLE_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag('ARTICLE_DESCRIPTION_REGEX', 3, $html);
+            return $this->_parseHtmlTag('ARTICLE_DESCRIPTION_REGEX', 3, $html);
         }
 
         if ($this->_isTagExists('MAIN_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag('MAIN_DESCRIPTION_REGEX', 3, $html);
+            return $this->_parseHtmlTag('MAIN_DESCRIPTION_REGEX', 3, $html);
         }
 
         if ($this->_isTagExists('P_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag('P_DESCRIPTION_REGEX', 3, $html);
+            return $this->_parseHtmlTag('P_DESCRIPTION_REGEX', 3, $html);
         }
 
         if ($this->_isTagExists('BODY_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag('BODY_DESCRIPTION_REGEX', 3, $html);
+            return $this->_parseHtmlTag('BODY_DESCRIPTION_REGEX', 3, $html);
         }
 
         return $html;
@@ -501,16 +515,16 @@ class LinkPlugin
     /**
      * Get Web Page Description From HTML Body
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Description
+     * @return string|null Web Page Description
      */
     private function _getPageDescriptionFromMetaTags(
-        string $html = ''
-    ) : string
+        ?string $html = null
+    ): ?string
     {
         if ($this->_isTagExists('META_TAG_OG_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_OG_DESCRIPTION_REGEX',
                 7,
                 $html
@@ -518,7 +532,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_OG_DESCRIPTION_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_OG_DESCRIPTION_REGEX_ALT',
                 4,
                 $html
@@ -526,7 +540,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_TWITTER_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_DESCRIPTION_REGEX',
                 7,
                 $html
@@ -537,7 +551,7 @@ class LinkPlugin
             'META_TAG_TWITTER_DESCRIPTION_REGEX_ALT',
             $html
         )) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_DESCRIPTION_REGEX_ALT',
                 4,
                 $html
@@ -545,40 +559,40 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_DESCRIPTION_REGEX', $html)) {
-            return $this->_parseHTMLTag('META_DESCRIPTION_REGEX', 7, $html);
+            return $this->_parseHtmlTag('META_DESCRIPTION_REGEX', 7, $html);
         }
 
         if ($this->_isTagExists('META_DESCRIPTION_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_DESCRIPTION_REGEX_ALT',
                 4,
                 $html
             );
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Get Web Page Title From HTML
      *
-     * @param string $html Web Page HTML
-     * @param string $url  Web Page URL
+     * @param string|null $html Web Page HTML
+     * @param string|null $url  Web Page URL
      *
-     * @return string Web Page Title
+     * @return string|null Web Page Title
      */
     private function _getPageTitle(
-        string $html = '',
-        string $url  = ''
-    ) : string
+        ?string $html = null,
+        ?string $url  = null
+    ): ?string
     {
         $title = $this->_getPageTitleFromMetaTags($html);
 
-        if (strlen(trim($title)) < 3) {
+        if (empty(trim((string) $title))) {
             $title = $this->_getPageTitleFromBody($html);
         }
 
-        if (strlen(trim($title)) < 3) {
+        if (empty(trim((string) $title))) {
             $title = $this->_getPageTitleFromURL($url);
         }
 
@@ -588,13 +602,13 @@ class LinkPlugin
     /**
      * Change Web Page Title To Valid Format
      *
-     * @param string $title Web Page Title
+     * @param string|null $title Web Page Title
      *
      * @return string Nomalized Web Page Title
      */
-    private function _normalizeTitle(string $title = '') : string
+    private function _normalizeTitle(?string $title = null): string
     {
-        $title = strip_tags($title);
+        $title = strip_tags((string) $title);
         $title = htmlspecialchars_decode($title);
         $title = preg_replace('/\s+/su', ' ', $title);
         $title = preg_replace('/(^\s)|(\s$)/su', '', $title);
@@ -612,13 +626,13 @@ class LinkPlugin
     /**
      * Change Web Page Description To Valid Format
      *
-     * @param string $description Web Page Description
+     * @param string|null $description Web Page Description
      *
      * @return string Nomalized Web Page Description
      */
-    private function _normalizeDescription(string $description = '') : string
+    private function _normalizeDescription(?string $description = null): string
     {
-        $description = strip_tags($description);
+        $description = strip_tags((string) $description);
         $description = htmlspecialchars_decode($description);
         $description = preg_replace('/\s+/su', ' ', $description);
         $description = preg_replace('/(^\s)|(\s$)/su', '', $description);
@@ -636,11 +650,11 @@ class LinkPlugin
     /**
      * Get Web Page Title From URL
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
      * @return string Web Page Title
      */
-    private function _getPageTitleFromURL(string $url = '') : string
+    private function _getPageTitleFromURL(?string $url = null): string
     {
         $title = $this->_getDomain($url);
 
@@ -654,22 +668,29 @@ class LinkPlugin
     /**
      * Get Web Page Domain From URL
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
      * @return string Web Page Domain
      */
-    private function _getDomain(string $url = '') : string
+    private function _getDomain(?string $url = null): string
     {
         $domain = preg_replace(
             '/^(http|https)\:\/\/(.*?)(\/(.*?)$|$)/su',
             '$1://$2',
-            $url
+            (string) $url
         );
 
-        $domain = explode('#', $domain)[0];
-        $domain = explode('&', $domain)[0];
-        $domain = explode('?', $domain)[0];
-        $domain = explode('/', $domain)[0];
+        $domainChunks = explode('#', $domain);
+        $domain       = array_shift($domainChunks);
+
+        $domainChunks = explode('&', $domain);
+        $domain       = array_shift($domainChunks);
+
+        $domainChunks = explode('?', $domain);
+        $domain       = array_shift($domainChunks);
+
+        $domainChunks = explode('/', $domain);
+        $domain       = array_shift($domainChunks);
 
         return $domain;
     }
@@ -677,13 +698,13 @@ class LinkPlugin
     /**
      * Get Web Page HTTP Protocol From URL
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
      * @return string Web Page HTTP Protocol
      */
-    private function _getProtocol(string $url = '') : string
+    private function _getProtocol(?string $url = null): string
     {
-        if (preg_match('/^https\:\/\/(.*?)$/su', $url)) {
+        if (preg_match('/^https\:\/\/(.*?)$/su', (string) $url)) {
             return 'https';
         }
 
@@ -693,18 +714,18 @@ class LinkPlugin
     /**
      * Get Web Page Title From Meta Tags
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Title
+     * @return string|null Web Page Title
      */
-    private function _getPageTitleFromMetaTags(string $html = '') : string
+    private function _getPageTitleFromMetaTags(?string $html = null): ?string
     {
         if ($this->_isTagExists('META_TAG_OG_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag('META_TAG_OG_TITLE_REGEX', 7, $html);
+            return $this->_parseHtmlTag('META_TAG_OG_TITLE_REGEX', 7, $html);
         }
 
         if ($this->_isTagExists('META_TAG_OG_TITLE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_OG_TITLE_REGEX_ALT',
                 4,
                 $html
@@ -712,7 +733,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_TWITTER_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_TITLE_REGEX',
                 7,
                 $html
@@ -720,7 +741,7 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TAG_TWITTER_TITLE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag(
+            return $this->_parseHtmlTag(
                 'META_TAG_TWITTER_TITLE_REGEX_ALT',
                 4,
                 $html
@@ -728,48 +749,48 @@ class LinkPlugin
         }
 
         if ($this->_isTagExists('META_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag('META_TITLE_REGEX', 3, $html);
+            return $this->_parseHtmlTag('META_TITLE_REGEX', 3, $html);
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Get Web Page Title From HTML Body
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
-     * @return string Web Page Title
+     * @return string|null Web Page Title
      */
-    private function _getPageTitleFromBody(string $html = '') : string
+    private function _getPageTitleFromBody(?string $html = null): ?string
     {
         if ($this->_isTagExists('H1_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag('H1_TITLE_REGEX', 3, $html);
+            return $this->_parseHtmlTag('H1_TITLE_REGEX', 3, $html);
         }
 
         if ($this->_isTagExists('H1_TITLE_REGEX_ALT', $html)) {
-            return $this->_parseHTMLTag('H1_TITLE_REGEX_ALT', 3, $html);
+            return $this->_parseHtmlTag('H1_TITLE_REGEX_ALT', 3, $html);
         }
 
         if ($this->_isTagExists('MAIN_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag('MAIN_TITLE_REGEX', 3, $html);
+            return $this->_parseHtmlTag('MAIN_TITLE_REGEX', 3, $html);
         }
 
         if ($this->_isTagExists('BODY_TITLE_REGEX', $html)) {
-            return $this->_parseHTMLTag('BODY_TITLE_REGEX', 3, $html);
+            return $this->_parseHtmlTag('BODY_TITLE_REGEX', 3, $html);
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Get Web Page HTML From URL
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
      * @return string Web Page HTML
      */
-    private function _getPageContent(string $url = '') : string
+    private function _getPageContent(?string $url = null): string
     {
         $html = $this->_getPageHTMLFromCurl($url);
 
@@ -783,22 +804,25 @@ class LinkPlugin
     /**
      * Removing Extra Tags From Web Page HTML
      *
-     * @param string $html Web Page HTML
+     * @param string|null $html Web Page HTML
      *
      * @return string $html Web Page HTML Without Extra Tags
      */
-    private function _removePageHTMLTags(string $html = '') : string
+    private function _removePageHTMLTags(?string $html = null): string
     {
         $html = preg_replace('/\<script(.*?)\>(.*?)\<\/script\>/su',
             '',
-            $html
+            (string) $html
         );
+
         $html = preg_replace('/\<script(.*?)\>/su', '', $html);
+
         $html = preg_replace(
             '/\<noscript(.*?)\>(.*?)\<\/noscript\>/su',
             '',
             $html
         );
+
         $html = preg_replace('/\<noscript(.*?)\>/su', '', $html);
         $html = preg_replace('/\<style(.*?)\>(.*?)\<\/style\>/su', '', $html);
         $html = preg_replace('/\<style(.*?)\>/su', '', $html);
@@ -809,47 +833,47 @@ class LinkPlugin
     /**
      * Get Web Page HTML From Curl Request
      *
-     * @param string $url Web Page URL
+     * @param string|null $url Web Page URL
      *
      * @return string Web Page HTML
      */
-    private function _getPageHTMLFromCurl(string $url = '') : string
+    private function _getPageHTMLFromCurl(?string $url = null): string
     {
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_COOKIESESSION, TRUE);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($curl, CURLOPT_COOKIESESSION, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
-        curl_setopt($curl, CURLOPT_FORBID_REUSE, TRUE);
+        curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         $html = curl_exec($curl);
 
         curl_close($curl);
 
-        return $html;
+        return (string) $html;
     }
 
     /**
      * Get Web Page Meta Data From Cache
      *
-     * @param string $fileCache Web Page Cache File Path
+     * @param string|null $fileCache Web Page Cache File Path
      *
      * @return array Web Page Web Page Meta Data
      */
     private function _getWebPageMetaDataFromCache(
-        string $fileCache = ''
-    ) : array
+        ?string $fileCache = null
+    ): array
     {
-        $metaDataJSON = file_get_contents($fileCache);
-        $metaData     = json_decode($metaDataJSON, TRUE);
+        $metaDataJson = file_get_contents($fileCache);
+        $metaData     = (array) json_decode($metaDataJson, true);
 
-        $metaData['url'] = '#';
+        $metaData['url'] = null;
 
         if (array_key_exists('url', $metaData)) {
-            $metaData['url'] = base64_decode($metaData['url']);
+            $metaData['url'] = base64_decode((string) $metaData['url']);
         }
 
         if (!array_key_exists('title', $metaData)) {
@@ -870,23 +894,34 @@ class LinkPlugin
     /**
      * Get Web Page Link Shortcode From Rergexp URL Parts
      *
-     * @param arrat $URLParts Rergexp URL Parts
+     * @param array|null $urlParts Rergexp URL Parts
      *
-     * @return string Web Page Link Shortcode
+     * @return string|null Web Page Link Shortcode
      */
-    private function _getLinkShortCode(array $URLParts = []) : string
+    private function _getLinkShortCode(?array $urlParts = null): ?string
     {
-        $shortCode = '';
+        $shortCode = null;
+        $url       = null;
+        $metaData  = null;
 
-        if (count($URLParts) > 0 && strlen($URLParts[0]) > 0) {
-            $url = $URLParts[0];
+        if (!empty($urlParts)) {
+            $urlParts = array_shift($urlParts);
+        }
+
+        if (!empty($url)) {
             $url = trim($url);
             $url = preg_replace('/([^0-9a-z\/_=\-]+)$/su', '', $url);
 
             $metaData = $this->_getWebPageMetaData($url);
         }
 
-        $shortCode = " [Link:{$url}:\"{$metaData['title']}\"] ";
+        if (
+            !empty($url) &&
+            !empty($metaData) &&
+            array_key_exists('title', $metaData)
+        ) {
+            $shortCode = sprintf(' [Link:%s:"%s"] ', $url, $metaData['title']);
+        }
 
         return $shortCode;
     }
@@ -894,33 +929,33 @@ class LinkPlugin
     /**
      * Parsing HTML Tag Value By Regexp Rule
      *
-     * @param string $regexp     Regexp Rule Name
-     * @param int    $partNumber Number Part Of HTML Tag That Contain Value
-     * @param string $html       Web Page HTML
+     * @param string|null $regexp     Regexp Rule Name
+     * @param int|null    $partNumber Number Part Of HTML Tag
+     * @param string|null $html       Web Page HTML
      *
-     * @return string Output Value Of HTML Tag
+     * @return string|null Output Value Of HTML Tag
      */
-    private function _parseHTMLTag(
-        string $regexp     = '',
-        int    $partNumber = 1,
-        string $html       = ''
-    ) : string
+    private function _parseHtmlTag(
+        ?string $regexp     = null,
+        ?int    $partNumber = null,
+        ?string $html       = null
+    ): ?string
     {
-        if (strlen($regexp) < 1) {
-            return '';
+        if (empty($regexp)) {
+            return null;
         }
 
-        $regexp = static::$regexp;
+        // $regexp = static::$regexp;
 
-        if ($partNumber < 1) {
-            return '';
+        if (empty($partNumber)) {
+            return null;
         }
 
-        $part = '$'.$partNumber;
-
-        if (strlen($html) < 8) {
-            return '';
+        if (empty($html)) {
+            return null;
         }
+
+        $part = sprintf('$\d', $partNumber);
 
         return (string) preg_replace($regexp, $part, $html);
     }
@@ -928,25 +963,25 @@ class LinkPlugin
     /**
      * Chack Is Tag Exist In HTML By Regexp Rule
      *
-     * @param string $regexp     Regexp Rule Name
-     * @param string $html       Web Page HTML
+     * @param string|null $regexp     Regexp Rule Name
+     * @param string|null $html       Web Page HTML
      *
      * @return bool Is Tag Exist In HTML
      */
     private function _isTagExists(
-        string $regexp = '',
-        string $html   = ''
-    ) : bool
+        ?string $regexp = null,
+        ?string $html   = null
+    ): bool
     {
-        if (strlen($regexp) < 1) {
-            return FALSE;
+        if (empty($regexp)) {
+            return false;
         }
 
-        $regexp = static::$regexp;
-
-        if (strlen($html) < 8) {
-            return FALSE;
+        if (empty($html)) {
+            return false;
         }
+
+        // $regexp = static::$regexp;
 
         return preg_match($regexp, $html);
     }
