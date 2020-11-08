@@ -2,11 +2,11 @@
 interface IPushProvider
 {
     public function sendMessage(
-        string $message,
-        string $title,
-        string $image,
-        string $url
+        ?string $message = null,
+        ?string $title   = null,
+        ?string $image   = null,
+        ?string $url     = null
     ): IPushResponse;
 
-    public function getHTMLSnippet(): string;
+    public function getHtmlSnippet(): string;
 }

@@ -8,7 +8,7 @@ class OneSignalCredentials implements IPushCredentials
         $configFile = __DIR__.'/../../../../../config/push.json';
 
         if (!file_exists($configFile) || !is_file($configFile)) {
-            throw new Exception('Missing Push Config');
+            throw new \Exception('Missing Push Config');
         }
 
         $credentialsData = file_get_contents($configFile);
@@ -17,58 +17,58 @@ class OneSignalCredentials implements IPushCredentials
         $this->_data = $credentialsData;
     }
 
-    public function getURL(): string
+    public function getUrl(): ?string
     {
         if (!array_key_exists('url', $this->_data)) {
-            return '';
+            return null;
         }
 
-        return (string) $this->_data['url'];
+        return $this->_data['url'];
     }
     
-    public function getLogin(): string
+    public function getLogin(): ?string
     {
         if (!array_key_exists('login', $this->_data)) {
-            return '';
+            return null;
         }
 
-        return (string) $this->_data['login'];
+        return $this->_data['login'];
     }
 
-    public function getToken(): string
+    public function getToken(): ?string
     {
         if (!array_key_exists('token', $this->_data)) {
-            return '';
+            return null;
         }
         
-        return (string) $this->_data['token'];
+        return $this->_data['token'];
     }
 
-    public function getSubscribersGroup(): string
+    public function getSubscribersGroup(): ?string
     {
         if (!array_key_exists('subscribers_group', $this->_data)) {
-            return '';
+            return null;
         }
 
-        return (string) $this->_data['subscribers_group'];
+        return $this->_data['subscribers_group'];
     }
 
-    public function getOptions(): array
+    public function getOptions(): ?array
     {
         if (!array_key_exists('options', $this->_data)) {
-            return [];
+            return null;
         }
         
-        return (array) $this->_data['options'];
+        return $this->_data['options'];
     }
 
-    public function getDefaultMessageURL(): string
+    public function getDefaultMessageUrl(): ?string
     {
         if (!array_key_exists('default_message_url', $this->_data)) {
-            return [];
+            return null;
         }
         
-        return (string) $this->_data['default_message_url'];
+        return $this->_data['default_message_url'];
     }
 
     public function getDefaultMessageTitle(): ?string
@@ -77,54 +77,54 @@ class OneSignalCredentials implements IPushCredentials
             return null;
         }
         
-        return (string) $this->_data['default_message_title'];
+        return $this->_data['default_message_title'];
     }
 
-    public function getDefaultMessageImage(): string
+    public function getDefaultMessageImage(): ?string
     {
         if (!array_key_exists('default_message_image', $this->_data)) {
-            return [];
+            return null;
         }
         
-        return (string) $this->_data['default_message_image'];
+        return $this->_data['default_message_image'];
     }
 
-    public function setURL(string $url = '#'): void
+    public function setUrl(?string $url = null): void
     {
         $this->_data['url'] = $url;
     }
 
-    public function setLogin(string $login = ''): void
+    public function setLogin(?string $login = null): void
     {
         $this->_data['login'] = $login;
     }
 
-    public function setToken(string $token = ''): void
+    public function setToken(?string $token = null): void
     {
         $this->_data['token'] = $token;
     }
 
-    public function setSubscribersGroup(string $subscribersGroup = ''): void
+    public function setSubscribersGroup(?string $subscribersGroup = null): void
     {
         $this->_data['subscribers_group'] = $subscribersGroup;
     }
 
-    public function setOptions(array $options = []): void
+    public function setOptions(?array $options = null): void
     {
         $this->_data['options'] = $options;
     }
 
-    public function setDefaultMessageURL(string $url = '#'): void
+    public function setDefaultMessageUrl(?string $url = null): void
     {
         $this->_data['default_message_url'] = $url;
     }
 
-    public function setDefaultMessageTitle(string $title = ''): void
+    public function setDefaultMessageTitle(?string $title = null): void
     {
         $this->_data['default_message_title'] = $title;
     }
 
-    public function setDefaultMessageImage(string $image = ''): void
+    public function setDefaultMessageImage(?string $image = null): void
     {
         $this->_data['default_message_image'] = $image;
     }

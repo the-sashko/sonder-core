@@ -1,35 +1,37 @@
 <?php
 interface IPushCredentials
 {
-    public function getURL(): string;
+    public function getUrl(): ?string;
 
-    public function getLogin(): string;
+    public function getLogin(): ?string;
 
-    public function getToken(): string;
+    public function getToken(): ?string;
 
-    public function getSubscribersGroup(): string;
+    public function getSubscribersGroup(): ?string;
 
-    public function getOptions(): array;
+    public function getOptions(): ?array;
 
-    public function getDefaultMessageURL(): string;
+    public function getDefaultMessageURL(): ?string;
 
-    public function getDefaultMessageTitle(): string;
+    public function getDefaultMessageTitle(): ?string;
 
-    public function getDefaultMessageImage(): string;
+    public function getDefaultMessageImage(): ?string;
 
-    public function setURL(string $url = '#'): void;
+    public function setUrl(?string $url = null): void;
 
-    public function setLogin(string $login = ''): void;
+    public function setLogin(?string $login = null): void;
 
-    public function setToken(string $token = ''): void;
+    public function setToken(?string $token = null): void;
 
-    public function setSubscribersGroup(string $subscribersGroup = ''): void;
+    public function setSubscribersGroup(
+        ?string $subscribersGroup = null
+    ): void;
 
-    public function setOptions(array $options = []): void;
+    public function setOptions(?array $options = null): void;
 
-    public function setDefaultMessageURL(string $url = '#'): void;
+    public function setDefaultMessageUrl(?string $url = null): void;
 
-    public function setDefaultMessageTitle(string $title = ''): void;
+    public function setDefaultMessageTitle(?string $title = null): void;
 
-    public function setDefaultMessageImage(string $image = ''): void;
+    public function setDefaultMessageImage(?string $image = null): void;
 }

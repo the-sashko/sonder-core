@@ -20,7 +20,7 @@ class OneSignalProvider implements IPushProvider
     {
         $title = $this->_getMessageTitle($title);
         $image = $this->_getMessageImage($image);
-        $url   = $this->_getMessageURL($url);
+        $url   = $this->_getMessageUrl($url);
 
         $this->_sendRemoteRequest($message, $title, $image, $url);
 
@@ -30,20 +30,21 @@ class OneSignalProvider implements IPushProvider
     public function getHTMLSnippet(): string
     {
         $htmlSnippet = file_get_contents(__DIR__.'/static/client.html');
+
         $htmlSnippet = str_replace(
             '{{login}}',
-            $this->_credentials->getLogin(),
-            $htmlSnippet
+            (string) $this->_credentials->getLogin(),
+            (string) $htmlSnippet
         );
 
         return $htmlSnippet;
     }
 
     private function _sendRemoteRequest(
-        string $message = '',
-        string $title   = '',
-        string $image   = '',
-        string $url     = '#'
+        ?string $message = null,
+        ?string $title   = null,
+        ?string $image   = null,
+        ?string $url     = null
     ): bool
     {
         $curl        = curl_init();
@@ -57,24 +58,29 @@ class OneSignalProvider implements IPushProvider
 
         curl_close($curl);
 
-        if (strlen(trim($curlErr))) {
-            $this->_setResponseError('cURL Error '.$curlErr);
+        if (!empty(trim($curlErr))) {
+            $this->_setResponseError(sprintf('cURL Error: %s', $curlErr));
 
             return false;
         }
 
         if ($curlHTTPCode != 200) {
-            $this->_setResponseError('HTTP Response Code #'.$curlHTTPCode);
+            $errorMessage = sprintf(
+                'HTTP Response Code #%d',
+                (int) $curlHTTPCode
+            );
+
+            $this->_setResponseError($errorMessage);
 
             return false;
         }
 
-        return $this->_parseJSONResponse($curlResponse);
+        return $this->_parseJsonResponse($curlResponse);
     }
 
-    private function _parseJSONResponse(string $jsonResponse = ''): bool
+    private function _parseJsonResponse(?string $jsonResponse = null): bool
     {
-        $response = (array) json_decode($jsonResponse, true);
+        $response = (array) json_decode((string) $jsonResponse, true);
 
         if (!count($response) > 0) {
             $this->_setResponseError('Error Parsing JSON Response');
@@ -86,7 +92,7 @@ class OneSignalProvider implements IPushProvider
         $recipientsCount = $this->_getResponseRecipientsCount($response);
         $errorMessage    = $this->_getResponseErrorMessage($response);
 
-        if (strlen($messageCode) > 0) {
+        if (!empty($messageCode)) {
             $this->_setResponseSuccess($messageCode, $recipientsCount);
 
             return true;
@@ -98,16 +104,16 @@ class OneSignalProvider implements IPushProvider
     }
 
     private function _getCurlHeaders(
-        string $message = '',
-        string $title   = '',
-        string $image   = '',
-        string $url     = '#'
-    ) : array
+        ?string $message = null,
+        ?string $title   = null,
+        ?string $image   = null,
+        ?string $url     = null
+    ): array
     {
-        $jsonRequest = $this->_getJSONRequest($message, $title, $image, $url);
+        $jsonRequest = $this->_getJsonRequest($message, $title, $image, $url);
 
         return [
-            CURLOPT_URL            => $this->_credentials->getURL(),
+            CURLOPT_URL            => $this->_credentials->getUrl(),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS      => 10,
             CURLOPT_TIMEOUT        => 30,
@@ -121,13 +127,17 @@ class OneSignalProvider implements IPushProvider
         ];
     }
 
-    private function _getJSONRequest(
-        string $message = '',
-        string $title   = '',
-        string $image   = '',
-        string $url     = '#'
-    ) : string
+    private function _getJsonRequest(
+        ?string $message = null,
+        ?string $title   = null,
+        ?string $image   = null,
+        ?string $url     = null
+    ): string
     {
+        $title = (string) $title;
+        $image = (string) $image;
+        $url   = (string) $url;
+
         $request = [
             'app_id'   => $this->_credentials->getLogin(),
             'contents' => [
@@ -138,27 +148,29 @@ class OneSignalProvider implements IPushProvider
             ]
         ];
 
-        if (strlen(trim($title)) > 0 ) {
+        if (!empty(trim($title))) {
             $request['headings'] = [
                 'en' => $title
             ];
         }
 
-        if (strlen(trim($image)) > 0 ) {
+        if (!empty(trim($image))) {
             $request['large_icon'] = $image;
             $request['small_icon'] = $image;
         }
 
-        if (strlen(trim($url)) > 0 && $url != '#') {
+        if (!empty(trim($url))) {
             $request['url'] = $url;
         }
     
         return json_encode($request);
     }
 
-    private function _setResponseError(string $errorMessage = '') : void
+    private function _setResponseError(?string $errorMessage = null): void
     {
-        if (strlen(trim($errorMessage)) < 1) {
+        $errorMessage = (string) $errorMessage;
+
+        if (!empty(trim($errorMessage))) {
             $errorMessage = 'Unknown Server Error';
         }
 
@@ -167,21 +179,17 @@ class OneSignalProvider implements IPushProvider
         $this->_response->setErrorMessage($errorMessage);
         $this->_response->setRecipientsCount(0);
     }
-    
+
     private function _setResponseSuccess(
-        string $remoteCode   = '',
-        int    $recipientsCount = 0
-    ) : void
+        ?string $remoteCode      = null,
+        ?int    $recipientsCount = null
+    ): void
     {
+        $remoteCode = (string) $remoteCode;
         $remoteCode = trim($remoteCode);
 
-        if (strlen($remoteCode) < 1) {
-            $remoteCode = '';
-        }
-        
-        if ($recipientsCount < 0) {
-            $recipientsCount = 0;
-        }
+        $recipientsCount = (int) $recipientsCount;
+        $recipientsCount = $recipientsCount > 0 ? $recipientsCount : 0;
 
         $this->_response->setStatus(true);
         $this->_response->setRemoteCode($remoteCode);
@@ -189,19 +197,19 @@ class OneSignalProvider implements IPushProvider
         $this->_response->setRecipientsCount($recipientsCount);
     }
 
-    private function _getResponseRemoteCode(array $response = []) : string
+    private function _getResponseRemoteCode(?array $response = null): ?string
     {
-        if (!array_key_exists('id', $response)) {
-            return '';
+        if (!is_array($response) || !array_key_exists('id', $response)) {
+            return null;
         }
 
         return (string) $response['id'];
     }
 
-    private function _getResponseErrorMessage(array $response = []) : string
+    private function _getResponseErrorMessage(?array $response = null): ?string
     {
-        if (!array_key_exists('errors', $response)) {
-            return '';
+        if (empty($response) || !array_key_exists('errors', $response)) {
+            return null;
         }
 
         $errors = $response['errors'];
@@ -213,41 +221,41 @@ class OneSignalProvider implements IPushProvider
         return implode('. ', $errors);
     }
 
-    private function _getResponseRecipientsCount(array $response = []) : int
+    private function _getResponseRecipientsCount(?array $response = null): int
     {
-        if (!array_key_exists('recipients', $response)) {
+        if (empty($response) || !array_key_exists('recipients', $response)) {
             return 0;
         }
 
         return (int) $response['recipients'];
     }
 
-    private function _getMessageTitle(?string $title = null): string
+    private function _getMessageTitle(?string $title = null): ?string
     {
-        if (empty($title) {
+        if (empty($title)) {
             $title = $this->_credentials->getDefaultMessageTitle();
         }
 
         return $title;
     }
 
-    private function _getMessageImage(string $image = '') : string
+    private function _getMessageImage(?string $image = null): ?string
     {
-        if (strlen(trim($image)) < 1) {
+        $image = (string) $image;
+
+        if (empty(trim($image))) {
             $image = $this->_credentials->getDefaultMessageImage();
         }
 
         return $image;
     }
 
-    private function _getMessageURL(string $url = '#') : string
+    private function _getMessageURL(?string $url = null): ?string
     {
-        if (strlen(trim($url)) < 10) {
-            $url = $this->_credentials->getDefaultMessageURL();
-        }
+        $url = (string) $url;
 
-        if (strlen(trim($url)) < 10) {
-            $url = '#';
+        if (empty(trim($url))) {
+            return $this->_credentials->getDefaultMessageURL();
         }
 
         return $url;
