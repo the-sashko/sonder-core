@@ -37,7 +37,7 @@ class ModelCore extends CommonCore
     /**
      * Set Model Object Class Instance
      *
-     * @param string|null Model Object Class Name
+     * @param string|null $objectClassName Model Object Class Name
      */
     public function setObject(?string $objectClassName = null): void
     {
@@ -54,7 +54,7 @@ class ModelCore extends CommonCore
     /**
      * Set Model Value Object Class Name
      *
-     * @param string|null Model Value Object Class Name
+     * @param string|null $voClassName Model Value Object Class Name
      */
     public function setValuesObjectClass(?string $voClassName = null): void
     {
@@ -70,7 +70,7 @@ class ModelCore extends CommonCore
     /**
      * Set Model API Class Name
      *
-     * @param string|null Model Api Object
+     * @param string|null $apiClassName Model Api Class Name
      */
     public function setApi(?string $apiClassName = null): void
     {

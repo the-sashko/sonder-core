@@ -109,7 +109,7 @@ class ModelObjectCore
 
         $columns = array_keys($row);
         $columns = implode('","', $columns);
-        $values  = $this->_getInsertValues($row);
+        $values  = (string) $this->_getInsertValues($row);
 
         $sql = '
             INSERT INTO "%s" (
@@ -182,7 +182,7 @@ class ModelObjectCore
         return $this->updateRows($table, $row, $condition);
     }
 
-    protected function deteleRows(
+    protected function deleteRows(
         ?string $table     = null,
         ?string $condition = null
     ): bool

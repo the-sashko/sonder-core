@@ -9,7 +9,9 @@ class CronControllerCore extends ControllerCore
      */
     public function actionRun(): void
     {
-        if ($this->URLParam !== $this->getConfig('cron')['token']) {
+        $token = $this->getValueFromUrl('token');
+
+        if ($token !== $this->getConfig('cron')['token']) {
             throw new Exception('Invalid Token');
         }
 

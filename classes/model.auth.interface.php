@@ -16,8 +16,8 @@ interface IModelAuth
     /**
      * Check Login And Password
      *
-     * @param string $login    User Login
-     * @param string $password User Password
+     * @param string|null $login    User Login
+     * @param string|null $password User Password
      *
      * @return bool Are Login And Password Valid
      */
@@ -46,7 +46,7 @@ interface IModelAuth
     public function signinByLoginAndPassword(
         ?string $login    = null,
         ?string $password = null
-    ): void;
+    ): bool;
 
     /**
      * Check Is User Signed In
