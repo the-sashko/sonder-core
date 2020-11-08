@@ -20,17 +20,27 @@ CREATE TABLE "cron_jobs" (
 );
 
 CREATE TABLE "example" (
-	"id" integer DEFAULT nextval('example_id_seq') NOT NULL,
-	"foo" character varying(8) NOT NULL,
-	CONSTRAINT "example_id" PRIMARY KEY ("id")
+    "id" integer DEFAULT nextval('example_id_seq') NOT NULL,
+    "foo" character varying(8) NOT NULL,
+    CONSTRAINT "example_id" PRIMARY KEY ("id")
 );
 
 CREATE INDEX "cron_action" ON "cron_jobs" USING btree ("action");
-CREATE INDEX "cron_action_time_next_exec" ON "cron_jobs" USING btree ("action", "time_next_exec");
-CREATE INDEX "cron_action_time_next_exec_is_active" ON "cron_jobs" USING btree ("action", "time_next_exec", "is_active");
-CREATE INDEX "cron_is_active" ON "cron_jobs" USING btree ("is_active");
-CREATE INDEX "cron_last_next_status" ON "cron_jobs" USING btree ("last_exec_status");
-CREATE INDEX "cron_time_next_exec" ON "cron_jobs" USING btree ("time_next_exec");
+
+CREATE INDEX "cron_action_time_next_exec"
+    ON "cron_jobs" USING btree ("action", "time_next_exec");
+
+CREATE INDEX "cron_action_time_next_exec_is_active"
+    ON "cron_jobs" USING btree ("action", "time_next_exec", "is_active");
+
+CREATE INDEX "cron_is_active"
+    ON "cron_jobs" USING btree ("is_active");
+
+CREATE INDEX "cron_last_next_status"
+    ON "cron_jobs" USING btree ("last_exec_status");
+
+CREATE INDEX "cron_time_next_exec"
+    ON "cron_jobs" USING btree ("time_next_exec");
 
 CREATE INDEX "example_foo" ON "example" USING btree ("foo");
 
