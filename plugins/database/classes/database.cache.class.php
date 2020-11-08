@@ -14,8 +14,6 @@ class DatabaseCache implements IDataBaseCache
 
     const DEFAULT_TTL = 60 * 15;
 
-    const ADAPTER_MOCK = 'mock';
-
     const ADAPTER_FILE = 'file';
 
     /**
@@ -26,16 +24,12 @@ class DatabaseCache implements IDataBaseCache
     public function __construct(?string $adapter = null)
     {
         if (empty($adapter)) {
-            $adapter = static::ADAPTER_MOCK;
+            $adapter = static::ADAPTER_FILE;
         }
 
         switch ($adapter) {
             case static::ADAPTER_FILE:
                 $this->_adapter = new DatabaseFileCacheAdapter();
-                break;
-
-            case static::ADAPTER_MOCK:
-                $this->_adapter = new DatabaseMockCacheAdapter();
                 break;
 
             default:
