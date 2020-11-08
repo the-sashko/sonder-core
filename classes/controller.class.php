@@ -325,7 +325,7 @@ class ControllerCore extends CommonCore
     /**
      * Set POST Request Data
      *
-     * @param array $postData|null POST Request Data
+     * @param array|null $postData POST Request Data
      */
     private function _setPostData(?array $postData = null): void
     {
