@@ -11,19 +11,9 @@ class DatabaseMockCacheAdapter implements IDataBaseCacheAdapter
     /**
      * Mock Of Saving Data To Cache
      *
-     * @param string $sql   SQL Query
-     * @param array  $data  Data Base Data
-     * @param string $scope Scope Of Data Base Request
-     * @param int    $ttl   Time To Live Of Cache
-     *
      * @return bool Is Successfully Saved Cached Data (Always Returns true)
      */
-    public function set(
-        string $sql,
-        array  $data,
-        string $scope,
-        int    $ttl
-    ): bool
+    public function set(): bool
     {
         return true;
     }
@@ -31,12 +21,9 @@ class DatabaseMockCacheAdapter implements IDataBaseCacheAdapter
     /**
      * Mock Of Get Data From Cache
      *
-     * @param string $sql   SQL Query
-     * @param string $scope Scope Of Data Base Request
-     *
      * @return array|null Cached Data (Always Returns Empty Array)
      */
-    public function get(string $sql, string $scope): ?array
+    public function get(): ?array
     {
         return null;
     }
@@ -44,11 +31,9 @@ class DatabaseMockCacheAdapter implements IDataBaseCacheAdapter
     /**
      * Mock Of Removing All Cached Data Of Data Base Request Scope
      *
-     * @param string $scope Scope Of Data Base Request
-     *
      * @return bool Is Successfully Removed Cached Data (Always Returns true)
      */
-    public function clean(string $scope): bool
+    public function clean(): bool
     {
         return true;
     }
