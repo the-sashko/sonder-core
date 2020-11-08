@@ -1,9 +1,9 @@
 <?php
 class OneSignalProvider implements IPushProvider
 {
-    private $_response = NULL;
+    private $_response = null;
 
-    private $_credentials = NULL;
+    private $_credentials = null;
 
     public function __construct()
     {
@@ -12,11 +12,11 @@ class OneSignalProvider implements IPushProvider
     }
 
     public function sendMessage(
-        string $message = '',
-        string $title   = '',
-        string $image   = '',
-        string $url     = '#'
-    ) : IPushResponse
+        ?string $message = null,
+        ?string $title   = null,
+        ?string $image   = null,
+        ?string $url     = null
+    ): IPushResponse
     {
         $title = $this->_getMessageTitle($title);
         $image = $this->_getMessageImage($image);
@@ -27,7 +27,7 @@ class OneSignalProvider implements IPushProvider
         return $this->_response;
     }
 
-    public function getHTMLSnippet() : string
+    public function getHTMLSnippet(): string
     {
         $htmlSnippet = file_get_contents(__DIR__.'/static/client.html');
         $htmlSnippet = str_replace(
@@ -44,7 +44,7 @@ class OneSignalProvider implements IPushProvider
         string $title   = '',
         string $image   = '',
         string $url     = '#'
-    ) : bool
+    ): bool
     {
         $curl        = curl_init();
         $curlHeaders = $this->_getCurlHeaders($message, $title, $image, $url);
@@ -60,26 +60,26 @@ class OneSignalProvider implements IPushProvider
         if (strlen(trim($curlErr))) {
             $this->_setResponseError('cURL Error '.$curlErr);
 
-            return FALSE;
+            return false;
         }
 
         if ($curlHTTPCode != 200) {
             $this->_setResponseError('HTTP Response Code #'.$curlHTTPCode);
 
-            return FALSE;
+            return false;
         }
 
         return $this->_parseJSONResponse($curlResponse);
     }
 
-    private function _parseJSONResponse(string $jsonResponse = '') : bool
+    private function _parseJSONResponse(string $jsonResponse = ''): bool
     {
-        $response = (array) json_decode($jsonResponse, TRUE);
+        $response = (array) json_decode($jsonResponse, true);
 
         if (!count($response) > 0) {
             $this->_setResponseError('Error Parsing JSON Response');
 
-            return FALSE;
+            return false;
         }
 
         $messageCode     = $this->_getResponseRemoteCode($response);
@@ -89,12 +89,12 @@ class OneSignalProvider implements IPushProvider
         if (strlen($messageCode) > 0) {
             $this->_setResponseSuccess($messageCode, $recipientsCount);
 
-            return TRUE;
+            return true;
         }
 
         $this->_setResponseError($errorMessage);
 
-        return FALSE;
+        return false;
     }
 
     private function _getCurlHeaders(
@@ -108,7 +108,7 @@ class OneSignalProvider implements IPushProvider
 
         return [
             CURLOPT_URL            => $this->_credentials->getURL(),
-            CURLOPT_RETURNTRANSFER => TRUE,
+            CURLOPT_RETURNTRANSFER => true,
             CURLOPT_MAXREDIRS      => 10,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
@@ -162,8 +162,8 @@ class OneSignalProvider implements IPushProvider
             $errorMessage = 'Unknown Server Error';
         }
 
-        $this->_response->setStatus(FALSE);
-        $this->_response->setRemoteCode('');
+        $this->_response->setStatus(false);
+        $this->_response->setRemoteCode(null);
         $this->_response->setErrorMessage($errorMessage);
         $this->_response->setRecipientsCount(0);
     }
@@ -183,9 +183,9 @@ class OneSignalProvider implements IPushProvider
             $recipientsCount = 0;
         }
 
-        $this->_response->setStatus(TRUE);
+        $this->_response->setStatus(true);
         $this->_response->setRemoteCode($remoteCode);
-        $this->_response->setErrorMessage('');
+        $this->_response->setErrorMessage(null);
         $this->_response->setRecipientsCount($recipientsCount);
     }
 
@@ -222,9 +222,9 @@ class OneSignalProvider implements IPushProvider
         return (int) $response['recipients'];
     }
 
-    private function _getMessageTitle(string $title = '') : string
+    private function _getMessageTitle(?string $title = null): string
     {
-        if (strlen(trim($title)) < 1) {
+        if (empty($title) {
             $title = $this->_credentials->getDefaultMessageTitle();
         }
 
@@ -253,4 +253,3 @@ class OneSignalProvider implements IPushProvider
         return $url;
     }
 }
-?>

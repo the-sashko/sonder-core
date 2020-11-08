@@ -11,7 +11,7 @@ class BreadcrumbsPlugin
     /**
      * Get HTML Of Breadcrumbs By Path Current Page In Site Structure
      *
-     * @param array $pagePath Path Current Page In Site Structure
+     * @param array|null $pagePath Path Current Page In Site Structure
      *
      * @return string Output HTML Text
      */
@@ -22,14 +22,22 @@ class BreadcrumbsPlugin
         $lastElementHtml = $this->_getLastElementTemplate();
 
         if (empty($pagePath)) {
-            $lastElementHtml = sprintf($lastElementHtml, _t('Main Page'));
+            $lastElementHtml = sprintf(
+                $lastElementHtml,
+                $this->_getTranslation('Main Page')
+            );
 
             return sprintf($mainHtml, $lastElementHtml);
         }
 
         $elementHtml = $this->_getElementTemplate();
 
-        $pagePath = array_merge(['/' => _t('Main Page')], $pagePath);
+        $pagePath = array_merge(
+            [
+                '/' => $this->_getTranslation('Main Page')
+            ],
+            $pagePath
+        );
 
         $elements = [];
 
@@ -72,5 +80,21 @@ class BreadcrumbsPlugin
     private function _getLastElementTemplate(): string
     {
         return file_get_contents(static::LAST_ELEMENT_TEMPLATE_PATH);
+    }
+
+    /**
+     * Get Translation Of String If Translation Plugin Included
+     *
+     * @param string $inputString Input String
+     *
+     * @return string Translated String
+     */
+    public function _getTranslation(string $inputString): string
+    {
+        if (function_exists('__t')) {
+            return __t($inputString);
+        }
+
+        return $inputString;
     }
 }

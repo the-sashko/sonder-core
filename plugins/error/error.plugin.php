@@ -121,22 +121,26 @@ class ErrorPlugin
      */
     public function getHttpErrorMessage(int $code): string
     {
-        if (array_key_exists($code, static::HTTP_ERROR_LIST)) {
-            return _t(static::HTTP_ERROR_LIST[$code]);
+        if (!array_key_exists($code, static::HTTP_ERROR_LIST)) {
+            return static::DEFAULT_ERROR_MESSAGE;
         }
 
-        return static::DEFAULT_ERROR_MESSAGE;
+        if (function_exists('__t')) {
+            return (string) __t(static::HTTP_ERROR_LIST[$code]);
+        }
+
+        return static::HTTP_ERROR_LIST[$code];
     }
 
     /**
      * Display Error
      *
-     * @param int        $code           HTTP Responce Code
-     * @param string     $message        Error Message
-     * @param string     $file           PHP File That Contain Error
-     * @param int        $line           Line In PHP File That Contain Error
-     * @param array|null $debugBacktrace Backtrace Of Calls That Contain Error
-     * @param string     $outputFormat   Display Error Format
+     * @param int         $code           HTTP Responce Code
+     * @param string      $message        Error Message
+     * @param string      $file           PHP File That Contain Error
+     * @param int         $line           Line In PHP File That Contain Error
+     * @param array|null  $debugBacktrace Backtrace Of Calls That Contain Error
+     * @param string|null $outputFormat   Display Error Format
      *
      * @return bool Is Successfully Displayed Error
      */

@@ -48,18 +48,18 @@ class LanguagePlugin
     /**
      * Translate String By Dictionary
      *
-     * @param string|null $strings Input String Value
+     * @param string|null $inputString Input String Value
      *
      * @return string|null Translated String Value
      */
-    public function translate(?string $string = null): ?string
+    public function translate(?string $inputString = null): ?string
     {
-        if (empty($string)) {
+        if (empty($inputString)) {
             return null;
         }
 
         if ($this->_language == $this->_getDefaultLanguage()) {
-            return $string;
+            return $inputString;
         }
 
         if (!$this->_isDictionaryExists()) {
@@ -83,7 +83,7 @@ class LanguagePlugin
 
         textdomain($this->_language);
 
-        return gettext($string);
+        return gettext($inputString);
     }
 
     /**

@@ -6,8 +6,7 @@ interface IPushProvider
         string $title,
         string $image,
         string $url
-    ) : IPushResponse;
+    ): IPushResponse;
 
-    public function getHTMLSnippet() : string;
+    public function getHTMLSnippet(): string;
 }
-?>

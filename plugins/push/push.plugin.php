@@ -1,9 +1,9 @@
 <?php
 class PushPlugin
 {
-    private $_provider = NULL;
+    private $_provider = null;
 
-    public function setProvider(string $providerIdent = '') : void
+    public function setProvider(string $providerIdent = ''): void
     {
         $credentialsProviderClass = $providerIdent.'Credentials';
         $credentialsProviderFile  = __DIR__.'/providers/'.$providerIdent.'/'
@@ -54,9 +54,9 @@ class PushPlugin
         $this->_provider = new $providerClass();
     }
 
-    public function getHTMLSnippet() : string
+    public function getHTMLSnippet(): string
     {
-        if ($this->_provider === NULL) {
+        if ($this->_provider === null) {
             throw new Exception('Push Provider Is Not Set');
         }
 
@@ -68,13 +68,12 @@ class PushPlugin
         string $title   = '',
         string $image   = '',
         string $url     = '#'
-    ) : IPushResponse
+    ): IPushResponse
     {
-        if ($this->_provider === NULL) {
+        if ($this->_provider === null) {
             throw new Exception('Push Provider Is Not Set');
         }
 
         return $this->_provider->sendMessage($message, $title, $image, $url);
     }
 }
-?>
