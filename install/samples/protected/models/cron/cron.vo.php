@@ -5,7 +5,7 @@ class CronValuesObject extends ValuesObject
     const STATUS_FAILED  = 'fail';
     const STATUS_SUCCESS = 'success';
 
-    public function getID(): int
+    public function getId(): int
     {
         return (int) $this->get('id');
     }
@@ -33,7 +33,7 @@ class CronValuesObject extends ValuesObject
     public function getErrorMessage(): ?string
     {
         $lastExecStatus = (bool) $this->getLastExecStatus();
-        $isActive = (bool) $this->getIsActive();
+        $isActive       = (bool) $this->getIsActive();
 
         if (!$lastExecStatus && $isActive) {
             return (string) $this->get('error_message');

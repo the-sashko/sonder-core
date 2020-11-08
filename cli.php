@@ -2,7 +2,7 @@
 /**
  * Application Class For Deamon Workers
  */
-class CLI extends App
+class Cli extends App
 {
     public function __construct()
     {
@@ -87,9 +87,9 @@ class CLI extends App
             $cliOptions['params'] = null;
         }
 
-        $controller = $cliOptions['controller'];
-        $action     = $cliOptions['action'];
-        $cliParams  = $cliOptions['params'];
+        $controller = (string) $cliOptions['controller'];
+        $action     = (string) $cliOptions['action'];
+        $cliParams  = (string) $cliOptions['params'];
 
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
         $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);

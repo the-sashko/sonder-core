@@ -9,7 +9,7 @@ class ExampleValuesObject extends ValuesObject
      *
      * @return int Example ID
      */
-    public function getID(): int
+    public function getId(): int
     {
         return (int) $this->get('id');
     }
@@ -27,12 +27,10 @@ class ExampleValuesObject extends ValuesObject
     /**
      * Set Foo Param Value
      *
-     * @param string $value Foo Param Value
-     *
-     * @return bool Is Foo Param Value Set
+     * @param string|null $value Foo Param Value
      */
-    public function setFoo(?string $value = null): bool
+    public function setFoo(?string $value = null): void
     {
-        return $this->set('foo', $value);
+        $this->set('foo', $value);
     }
 }

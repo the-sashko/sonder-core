@@ -7,7 +7,7 @@ trait Router
     /**
      * Perform Redirect Rules
      *
-     * @param string $url HTTP Request URL
+     * @param string|null $url HTTP Request URL
      */
     public function routeRedirect(?string $url = null): void
     {
@@ -24,7 +24,7 @@ trait Router
     /**
      * Perform Rewrite Rules
      *
-     * @param string $url HTTP Request URL
+     * @param string|null $url HTTP Request URL
      *
      * @return string Rewrited HTTP Request URL
      */

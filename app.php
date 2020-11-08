@@ -4,7 +4,9 @@
  */
 class App
 {
-    use Router;
+    if (!trait_exists('Router')) {
+        use Router;
+    }
 
     public function __construct()
     {

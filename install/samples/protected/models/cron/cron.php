@@ -1,16 +1,16 @@
 <?php
-class Cron extends ModelCore implements IModelCRUD
+class Cron extends ModelCore
 {
     use CronForm;
 
-    public function getAll(): array
+    public function getAll(): ?array
     {
         $crons = $this->object->getAllCrons();
 
         return $this->getVOArray($crons);
     }
 
-    public function getJobs(): array
+    public function getJobs(): ?array
     {
         $jobs = $this->object->getJobs();
 
@@ -28,9 +28,9 @@ class Cron extends ModelCore implements IModelCRUD
     }
 
     protected function _create(
-        ?string $action  = null,
-        ?int   $interval = null,
-        bool   $isActive = false
+        ?string $action   = null,
+        ?int    $interval = null,
+        bool    $isActive = false
     ): bool
     {
         $values = [
@@ -42,13 +42,13 @@ class Cron extends ModelCore implements IModelCRUD
         return $this->object->createCron($values);
     }
 
-    public function updateByVO(?CronVO $cronVO = null): bool
+    public function updateByVO(?CronValuesObject $cronVO = null): bool
     {
         if (empty($cronVO)) {
             return false;
         }
 
-        return $values = [
+        $values = [
             'action'           => $cronVO->getAction(),
             'interval'         => $cronVO->getInterval(),
             'time_next_exec'   => $cronVO->getTimeNextExec(),
@@ -57,6 +57,6 @@ class Cron extends ModelCore implements IModelCRUD
             'error_message'    => $cronVO->getErrorMessage()
         ];
 
-        return $this->object->updateCronByID($values, $cronVO->getID());
+        return $this->object->updateCronById($values, $cronVO->getId());
     }
 }

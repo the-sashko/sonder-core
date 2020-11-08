@@ -72,7 +72,7 @@ switch (APP_MODE) {
         require_once __DIR__.'/env/cli.php';
         require_once __DIR__.'/app.php';
         require_once __DIR__.'/cli.php';
-        (new CLI)->run();
+        (new Cli)->run();
         break;
 
     case 'default':

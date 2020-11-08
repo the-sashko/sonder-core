@@ -7,7 +7,7 @@ class Example extends ModelCore
     /**
      * Get All Example Data
      *
-     * @return array List Of Example Data
+     * @return array|null List Of Example Data
      */
     public function getAll(): ?array
     {

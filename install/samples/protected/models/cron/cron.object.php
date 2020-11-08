@@ -11,10 +11,10 @@ class CronObject extends ModelObjectCore
             return false;
         }
 
-        return $this->addRows(static::CRON_TABLE, $values);
+        return $this->addRow(static::CRON_TABLE, $values);
     }
 
-    public function updateCronByID(
+    public function updateCronById(
         ?array $values = null,
         ?int   $id     = null
     ): bool
@@ -27,10 +27,10 @@ class CronObject extends ModelObjectCore
             return false;
         }
 
-        return $this->updateRowByID(static::CRON_TABLE, $values, $id);
+        return $this->updateRowById(static::CRON_TABLE, $values, $id);
     }
 
-    public function getAllCrons(): array
+    public function getAllCrons(): ?array
     {
         $sql = '
             SELECT *
@@ -42,7 +42,7 @@ class CronObject extends ModelObjectCore
         return $this->getRows($sql);
     }
 
-    public function getJobs(): array
+    public function getJobs(): ?array
     {
         $sql = '
             SELECT *
