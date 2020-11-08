@@ -12,7 +12,7 @@ class MathPlugin
      *
      * @return string Output String Repesentation Of Number In Selected Base
      */
-    public function dec2base64(int $decimal = 0, int $base = 64) : string
+    public function dec2base64(int $decimal = 0, int $base = 64): string
     {
         $digitalAlphabet = array(
             '0', '1', '2', '3', '4', '5', '6', '7',
@@ -28,7 +28,7 @@ class MathPlugin
         $result = '';
 
         if ($decimal < 1) {
-            return 0;
+            return '0';
         }
 
         if ($base < 2) {
@@ -48,4 +48,3 @@ class MathPlugin
         return $result;
     }
 }
-?>

@@ -1,40 +1,56 @@
 <?php
-use PHPMailer\PHPMailer\Exception;
-
 class MailPlugin
 {
     private $_provider = null;
 
-    public function setProvider(string $providerIdent = '') : void
+    public function setProvider(?string $providerIdent = null): void
     {
-        $credentialsProviderClass = $providerIdent.'Credentials';
-        $credentialsProviderFile  = __DIR__.'/providers/'.$providerIdent.'/'
-                                    .$credentialsProviderClass.'.php';
+        if (empty($providerIdent)) {
+            throw new \Exception('Provider Is Not Set');
+        }
 
-        $responseProviderClass = $providerIdent.'Response';
-        $responseProviderFile  = __DIR__.'/providers/'.$providerIdent.'/'
-                                 .$responseProviderClass.'.php';
+        $credentialsProviderClass = sprintf('%sCredentials', $providerIdent);
 
-        $providerClass = $providerIdent.'Provider';
-        $providerFile  = __DIR__.'/providers/'.$providerIdent.'/'
-                         .$providerClass.'.php';
+        $credentialsProviderFile = __DIR__.'/providers/%s/%s.php';
+
+        $credentialsProviderFile = sprintf(
+            $credentialsProviderFile,
+            $providerIdent,
+            $credentialsProviderClass
+        );
+
+        $responseProviderClass = sprintf('%sResponse', $providerIdent);
+
+        $responseProviderFile = __DIR__.'/providers/%s/%s.php';
+
+        $responseProviderFile = sprintf(
+            $responseProviderFile,
+            $providerIdent,
+            $responseProviderClass
+        );
+
+        $providerClass = sprintf('%sProvider', $providerIdent);
+
+        $providerFile = __DIR__.'/providers/%s/%s.php';
+
+        $providerFile = sprintf($providerFile, $providerIdent, $providerClass);
 
         if (
             !file_exists($credentialsProviderFile) ||
             !is_file($credentialsProviderFile)
         ) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
 
         if (
             !file_exists($responseProviderFile) ||
             !is_file($responseProviderFile)
         ) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
 
         if (!file_exists($providerFile) || !is_file($providerFile)) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
         
         include_once $credentialsProviderFile;
@@ -42,55 +58,56 @@ class MailPlugin
         include_once $providerFile;
 
         if (!class_exists($credentialsProviderClass)) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
 
         if (!class_exists($responseProviderClass)) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
 
         if (!class_exists($providerClass)) {
-            throw new Exception('Invalid Mail Provider');
+            throw new \Exception('Invalid Mail Provider');
         }
 
         $this->_provider = new $providerClass($providerIdent);
     }
 
     public function send(
-        ?string $email = null,
-        ?string $message = null,
-        ?string $subject = null,
+        ?string $email      = null,
+        ?string $message    = null,
+        ?string $subject    = null,
         ?string $replyEmail = null,
         ?string $senderName = null
-    ) : IMailResponse {
+    ): IMailResponse
+    {
         if ($this->_provider === null) {
-            throw new Exception('Mail Provider Is Not Set');
+            throw new \Exception('Mail Provider Is Not Set');
         }
 
         if (empty($email)) {
-            throw new Exception('Email Is Not Set');
+            throw new \Exception('Email Is Not Set');
         }
 
         $email      = mb_convert_case($email, MB_CASE_LOWER);
-        $replyEmail = mb_convert_case($replyEmail, MB_CASE_LOWER);
+        $replyEmail = mb_convert_case((string) $replyEmail, MB_CASE_LOWER);
 
         $email      = preg_replace('/\s+/su', '', $email);
         $replyEmail = preg_replace('/\s+/su', '', $replyEmail);
-        $subject    = preg_replace('/\s+/su', ' ', $subject);
+        $subject    = preg_replace('/\s+/su', ' ', (string) $subject);
         $subject    = preg_replace('/(^\s)|(\s$)/su', '', $subject);
-        $senderName = preg_replace('/\s+/su', ' ', $senderName);
+        $senderName = preg_replace('/\s+/su', ' ', (string) $senderName);
         $senderName = preg_replace('/(^\s)|(\s$)/su', '', $senderName);
 
         if (!$this->_isValidEmailFormat($email)) {
-            throw new Exception('Email Has Bad Format');
+            throw new \Exception('Email Has Bad Format');
         }
 
         if (!empty($replyEmail) && !$this->_isValidEmailFormat($replyEmail)) {
-            throw new Exception('Email For Replies Has Bad Format');
+            throw new \Exception('Email For Replies Has Bad Format');
         }
 
         if (empty($message)) {
-            throw new Exception('Message Is Not Set');
+            throw new \Exception('Message Is Not Set');
         }
 
         try {
@@ -101,7 +118,7 @@ class MailPlugin
                 $replyEmail,
                 $senderName
             );
-        } catch (Exception $exp) {
+        } catch (\Exception $exp) {
             $errorMessage = $exp->getMessage();
 
             $this->_handleSendingError(
@@ -113,7 +130,7 @@ class MailPlugin
                 $errorMessage
             );
 
-            throw new Exception($errorMessage);
+            throw new \Exception($errorMessage);
         }
 
         if (!$response->getStatus()) {
@@ -131,13 +148,14 @@ class MailPlugin
     }
 
     private function _handleSendingError(
-        ?string $email = null,
-        ?string $message = null,
-        ?string $subject = null,
-        ?string $senderName = null,
-        ?string $replyEmail = null,
+        ?string $email        = null,
+        ?string $message      = null,
+        ?string $subject      = null,
+        ?string $senderName   = null,
+        ?string $replyEmail   = null,
         ?string $errorMessage = null
-    ) : void {
+    ): void
+    {
         $failedMailData = [
             'email'       => $email,
             'subject'     => $subject,
@@ -148,18 +166,28 @@ class MailPlugin
             'time'        => date('Y:m:d H:i:s')
         ];
 
-        $failedMailLogEntry = json_encode($failedMailData)."\n";
-        $failedMailLogEntry = '['.date('Y-m-d H:i:s').'] '.$failedMailLogEntry;
+        $failedMailLogEntry = json_encode($failedMailData);
 
-        $failedMailLogDirPath = __DIR__.'/../../../res/logs/mail/';
-        $failedMailLogFilePath = $failedMailLogDirPath.
-                                 'mail-'.date('Y-m-d').'.log';
+        $failedMailLogEntry = sprintf(
+            '%s %s%s',
+            date('[Y-m-d H:i:s]'),
+            json_encode($failedMailData),
+            "\n"
+        );
+
+        $failedMailLogDirPath = __DIR__.'/../../../res/logs/mail';
+
+        $failedMailLogFilePath = sprintf(
+            '%s/mail-%s.log',
+            $failedMailLogDirPath,
+            date('Y-m-d')
+        );
+
         if (
             !file_exists($failedMailLogDirPath) ||
             !is_dir($failedMailLogDirPath)
         ) {
-            mkdir($failedMailLogDirPath);
-            chmod($failedMailLogDirPath, 0775);
+            mkdir($failedMailLogDirPath, 0775, true);
         }
 
         if (
@@ -177,8 +205,13 @@ class MailPlugin
 
         $oldYear = strval(intval(date('Y'))-1);
 
-        $oldFailedMailLogFilePath = $failedMailLogDirPath.'/mail-'.$oldYear.'-'.
-                                    date('m-d').'.log';
+        $oldFailedMailLogFilePath = sprintf(
+            '%s/mail-%s-%s.log',
+            $failedMailLogDirPath,
+            $oldYear,
+            date('m-d')
+        );
+
         if (
             file_exists($oldFailedMailLogFilePath) ||
             is_file($oldFailedMailLogFilePath)
@@ -187,9 +220,8 @@ class MailPlugin
         }
     }
 
-    private function _isValidEmailFormat(string $email = '') : bool
+    private function _isValidEmailFormat(?string $email = null): bool
     {
-        return preg_match('/^(.*?)@(.*?)\.(.*?)$/su', $email);
+        return preg_match('/^(.*?)@(.*?)\.(.*?)$/su', (string) $email);
     }
 }
-?>

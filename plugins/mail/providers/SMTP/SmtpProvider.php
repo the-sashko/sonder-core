@@ -2,7 +2,7 @@
 use PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class SMTPProvider extends AbstractMailProvider
+class SmtpProvider extends AbstractMailProvider
 {
     const DEFAULT_SUBJECT = 'Subject not set';
 
@@ -16,10 +16,11 @@ class SMTPProvider extends AbstractMailProvider
     public function send(
         string  $email,
         string  $message,
-        ?string $subject = null,
+        ?string $subject    = null,
         ?string $replyEmail = null,
         ?string $senderName = null
-    ) : IMailResponse {
+    ): IMailResponse
+    {
         if (empty($subject)) {
             $subject = static::DEFAULT_SUBJECT;
         }
@@ -53,7 +54,8 @@ class SMTPProvider extends AbstractMailProvider
         $mail = new PHPMailer\PHPMailer(true);
         $mail->IsSMTP();
         $mail->IsHTML(true);
-        $mail->SMTPAuth = true;
+
+        $mail->SMTPAuth   = true;
         $mail->SMTPSecure = 'ssl';
 
         $mail->Host     = $this->credentials->getServerAddress();
@@ -79,9 +81,8 @@ class SMTPProvider extends AbstractMailProvider
         return $this->response;
     }
 
-    private function _isValidEmailFormat(string $email = '') : bool
+    private function _isValidEmailFormat(?string $email = null): bool
     {
-        return preg_match('/^(.*?)@(.*?)\.(.*?)$/su', $email);
+        return preg_match('/^(.*?)@(.*?)\.(.*?)$/su', (string) $email);
     }
 }
-?>

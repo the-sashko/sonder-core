@@ -1,8 +1,7 @@
 <?php
 interface IMailResponse
 {
-    public function getStatus() : bool;
+    public function getStatus(): bool;
 
-    public function getErrorMessage() : ?string;
+    public function getErrorMessage(): ?string;
 }
-?>

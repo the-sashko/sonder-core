@@ -20,7 +20,7 @@ return [
         '../plugins/language/vendor',
         '../plugins/qr/vendor',
         '../plugins/redis/vendor',
-        '../plugins/mail/providers/SMTP/vendor',
+        '../plugins/mail/providers/smtp/vendor',
         '../plugins/share/twitter/vendor'
     ],
 ];

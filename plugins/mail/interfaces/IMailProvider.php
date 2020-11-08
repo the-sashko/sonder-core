@@ -7,6 +7,5 @@ interface IMailProvider
         ?string $subject,
         ?string $replyEmail,
         ?string $senderName
-    ) : IMailResponse;
+    ): IMailResponse;
 }
-?>

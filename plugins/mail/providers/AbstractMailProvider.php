@@ -1,11 +1,11 @@
 <?php
 abstract class AbstractMailProvider implements IMailProvider
 {
-    public $credentials = NULL;
+    public $credentials = null;
 
-    public $response    = NULL;
+    public $response = null;
 
-    public function __construct(?string $providerIdent = NULL)
+    public function __construct(?string $providerIdent = null)
     {
         if (!empty($providerIdent)) {
             $this->_setCredentialsClass($providerIdent);
@@ -14,27 +14,24 @@ abstract class AbstractMailProvider implements IMailProvider
     }
 
     private function _setCredentialsClass(
-        ?string $credentialsIdent = NULL
-    ) : void
+        ?string $credentialsIdent = null
+    ): void
     {
         if (empty($credentialsIdent)) {
-            throw new Exception('Invalid Mail Credentials Ident');
+            throw new \Exception('Invalid Mail Credentials Ident');
         }
 
-        $credentialsClass = $credentialsIdent.'Credentials';
-
+        $credentialsClass  = sprintf('%sCredentials', $credentialsIdent);
         $this->credentials = new $credentialsClass();
     }
 
-    private function _setResponseClass(?string $responseIdent = NULL) : void
+    private function _setResponseClass(?string $responseIdent = null): void
     {
         if (empty($responseIdent)) {
-            throw new Exception('Invalid Mail Response Ident');
+            throw new \Exception('Invalid Mail Response Ident');
         }
 
-        $responseClass = $responseIdent.'Response';
-
+        $responseClass  = sprintf('%sResponse', $responseIdent);
         $this->response = new $responseClass();
     }
 }
-?>
