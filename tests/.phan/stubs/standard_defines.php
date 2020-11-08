@@ -7,8 +7,7 @@ class QRcode
         string $errorCorrectionLevel,
         int    $cellSize,
         int    $cellIndent
-    ): ?string
-    {
+    ): ?string {
         // Mock QR Class From Vendor
     }
 }
@@ -22,7 +21,7 @@ class App
 
     public function run(): void
     {
-        // Mock run method        
+        // Mock run method
     }
 
     public function errorHandler(
@@ -30,8 +29,7 @@ class App
         string $errorMessage,
         string $errorFile,
         int    $errorLine
-    ): void
-    {
+    ): void {
         // Mock errorHandler method
     }
 
@@ -42,9 +40,8 @@ class App
 
     protected function isValidControllerAction(
         ?ControllerCore $controller = null,
-        ?string         $action     = null
-    ): bool
-    {
+        ?string         $action = null
+    ): bool {
         // Mock isValidControllerAction method
     }
 
