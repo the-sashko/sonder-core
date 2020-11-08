@@ -143,7 +143,7 @@ class PagePlugin
         $markupPlugin = new MarkupPlugin();
 
         $staticPageData = (string) file_get_contents($staticPagePath);
-        $staticPageData = explode("\n===\n", $staticPageData);
+        $staticPageData = explode("\n\n===\n\n", $staticPageData);
 
         if (
             empty($staticPageData) ||
