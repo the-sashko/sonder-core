@@ -53,7 +53,7 @@ switch (APP_MODE) {
 
     case 'test':
         define('OUTPUT_FORMAT', 'text');
-        require_once __DIR__.'/env/test.php';
+        require_once __DIR__.'/env/cli.php';
         require_once __DIR__.'/app.php';
         require_once __DIR__.'/test.php';
         (new Test)->run();
