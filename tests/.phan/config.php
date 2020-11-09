@@ -8,6 +8,7 @@ return [
     ],
 
     'exclude_file_list' => [
+        '../install/samples/protected/routers/default.php',
         '../plugins/qr/vendor/bindings/tcpdf/qrcode.php',
         '../plugins/qr/vendor/lib/full/qrencode.php',
         '../plugins/qr/vendor/lib/merged/phpqrcode.php'
