@@ -1,6 +1,8 @@
 <?php
 class PushPlugin
 {
+    const PROVIDERS_DIR_PATH = __DIR__.'/providers';
+
     private $_provider = null;
 
     public function setProvider(?string $providerIdent = null): void
@@ -9,69 +11,13 @@ class PushPlugin
             throw new \Exception('Push Provider Is Not Set');
         }
 
-        $credentialsProviderClass = sprintf('%sCredentials', $providerIdent);
+        $this->_includeProviderCredentials($providerIdent);
+        $this->_includeProviderResponce($providerIdent);
 
-        $credentialsProviderFile = __DIR__.'/providers/%s/%s.php';
-
-        $credentialsProviderFile = sprintf(
-            $credentialsProviderFile,
-            $providerIdent,
-            $credentialsProviderClass
-        );
-
-        $responseProviderClass = sprintf('%sResponse', $providerIdent);
-
-        $responseProviderFile = __DIR__.'/providers/%s/%s.php';
-
-        $responseProviderFile = sprintf(
-            $responseProviderFile,
-            $providerIdent,
-            $responseProviderClass
-        );
-
-        $providerClass = sprintf('%sProvider', $providerIdent);
-
-        $providerFile = __DIR__.'/providers/%s/%s.php';
-        $providerFile = sprintf($providerFile, $providerIdent, $providerClass);
-
-        if (
-            !file_exists($credentialsProviderFile) ||
-            !is_file($credentialsProviderFile)
-        ) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        if (
-            !file_exists($responseProviderFile) ||
-            !is_file($responseProviderFile)
-        ) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        if (!file_exists($providerFile) || !is_file($providerFile)) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        include_once $credentialsProviderFile;
-        include_once $responseProviderFile;
-        include_once $providerFile;
-
-        if (!class_exists($credentialsProviderClass)) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        if (!class_exists($responseProviderClass)) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        if (!class_exists($providerClass)) {
-            throw new \Exception('Invalid Push Provider');
-        }
-
-        $this->_provider = new $providerClass();
+        $this->_provider = $this->_getProviderInstance($providerIdent);
     }
 
-    public function getHTMLSnippet(): string
+    public function getHtmlSnippet(): string
     {
         if (empty($this->_provider)) {
             throw new \Exception('Push Provider Is Not Set');
@@ -92,5 +38,79 @@ class PushPlugin
         }
 
         return $this->_provider->sendMessage($message, $title, $image, $url);
+    }
+
+    private function _includeProviderCredentials(string $providerIdent): void
+    {
+        $providerCredentialsClass = sprintf('%sCredentials', $providerIdent);
+
+        $providerCredentialsFilePath = sprintf(
+            '%s/%s/%s.php',
+            static::PROVIDERS_DIR_PATH,
+            $providerIdent,
+            $providerCredentialsClass
+        );
+
+        if (
+            !file_exists($providerCredentialsFilePath) ||
+            !is_file($providerCredentialsFilePath)
+        ) {
+            throw new \Exception('Invalid Push Provider');
+        }
+
+        include_once $providerCredentialsFilePath;
+
+        if (!class_exists($providerCredentialsClass)) {
+            throw new \Exception('Invalid Push Provider');
+        }
+    }
+
+    private function _includeProviderResponce(string $providerIdent): void
+    {
+        $providerResponseClass = sprintf('%sResponse', $providerIdent);
+
+        $providerResponseFilePath = sprintf(
+            '%s/%s/%s.php',
+            static::PROVIDERS_DIR_PATH,
+            $providerIdent,
+            $providerResponseClass
+        );
+
+        if (
+            !file_exists($providerResponseFilePath) ||
+            !is_file($providerResponseFilePath)
+        ) {
+            throw new \Exception('Invalid Push Provider');
+        }
+
+        include_once $providerResponseFilePath;
+
+        if (!class_exists($providerResponseClass)) {
+            throw new \Exception('Invalid Push Provider');
+        }
+    }
+
+    private function _getProviderInstance(string $providerIdent): IPushProvider
+    {
+        $providerClass = sprintf('%sProvider', $providerIdent);
+
+        $providerFilePath = sprintf(
+            '/providers/%s/%s.php',
+            static::PROVIDERS_DIR_PATH,
+            $providerIdent,
+            $providerClass
+        );
+
+        if (!file_exists($providerFilePath) || !is_file($providerFilePath)) {
+            throw new \Exception('Invalid Push Provider');
+        }
+
+        include_once $providerFilePath;
+
+        if (!class_exists($providerClass)) {
+            throw new \Exception('Invalid Push Provider');
+        }
+
+        return new $providerClass();
     }
 }
