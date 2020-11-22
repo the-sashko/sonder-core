@@ -320,7 +320,7 @@ class LinkPlugin
         $image = $this->_getPageImageFromMetaTags($html);
 
         if (empty($image) || empty($image)) {
-            $image = _getPageImageFromBody($html);
+            $image = $this->_getPageImageFromBody($html);
         }
 
         return $this->_normalizeImage($image, $url);
