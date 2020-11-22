@@ -13,7 +13,7 @@ class ModelObjectCore
     public function __construct(?array $configData = null)
     {
         $this->_db = new DataBasePlugin();
-        $this->_db->initDB($configData);
+        $this->_db->connect($configData);
     }
 
     public function start(): bool

@@ -3,7 +3,7 @@ namespace Core\Plugins\Database\Interfaces;
 
 interface IDataBasePlugin
 {
-    public function initDB(?array $configData = null): void;
+    public function connect(?array $configData = null): void;
 
     public function select(
         ?string $sql   = null,

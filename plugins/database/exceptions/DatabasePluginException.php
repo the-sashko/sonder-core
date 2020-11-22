@@ -13,4 +13,8 @@ class DatabasePluginException extends DatabaseException
     const MESSAGE_PLUGIN_SQL_IS_EMPTY = 'Database SQL Is Empty';
 
     const MESSAGE_PLUGIN_SQL_ERROR = 'Database SQL Query Error';
+
+    const MESSAGE_PLUGIN_NOT_CONNECTED = 'Not Connected To Database';
+
+    const MESSAGE_PLUGIN_CAN_NOT_CONNECT = 'Can Not Connect To Database';
 }

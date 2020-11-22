@@ -13,8 +13,6 @@ class DataBasePlugin implements IDataBasePlugin
 {
     const DEFAULT_SCOPE = 'default';
 
-    private $_credentials = null;
-
     private $_cache = null;
 
     /**
@@ -27,7 +25,7 @@ class DataBasePlugin implements IDataBasePlugin
         $this->_instance = null;
     }
 
-    public function initDB(?array $configData = null): void
+    public function connect(?array $configData = null): void
     {
         if (empty($configData)) {
             throw new DatabasePluginException(
@@ -36,11 +34,48 @@ class DataBasePlugin implements IDataBasePlugin
             );
         }
 
-        $this->_credentials = new DatabaseCredentials($configData);
+        $credentials = new DatabaseCredentials($configData);
 
-        $this->_cache       = new DatabaseCache(
-            $this->_credentials->getCacheType()
-        );
+        $this->_cache = new DatabaseCache($credentials->getCacheType());
+
+        $dsn      = $credentials->getDsn();
+        $user     = $credentials->getUser();
+        $password = $credentials->getPassword();
+
+        if (empty($dsn)) {
+            throw new DatabasePluginException(
+                DatabasePluginException::MESSAGE_PLUGIN_DSN_IS_EMPTY,
+                DatabasePluginException::CODE_PLUGIN_DSN_IS_EMPTY
+            );
+        }
+
+        if (empty($user)) {
+            $user = null;
+        }
+
+        if (empty($password)) {
+            $password = null;
+        }
+
+        $options = [
+            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+        ];
+
+        try {
+            $this->_instance = new \PDO($dsn, $user, $password, $options);
+        } catch (\PDOException $exp) {
+            $errorMessage = sprintf(
+                '%s. Error: %s',
+                DatabasePluginException::MESSAGE_PLUGIN_CAN_NOT_CONNECT,
+                $exp->getMessage()
+            );
+
+            throw new DatabasePluginException(
+                $errorMessage,
+                DatabasePluginException::CODE_PLUGIN_CAN_NOT_CONNECT
+            );
+        }
     }
 
     /**
@@ -70,7 +105,10 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         if (null === $this->_instance) {
-            $this->_setInstance();
+            throw new DatabasePluginException(
+                DatabasePluginException::MESSAGE_PLUGIN_NOT_CONNECTED,
+                DatabasePluginException::CODE_PLUGIN_NOT_CONNECTED
+            );
         }
 
         $cachedRows = $this->_cache->get($sql, $scope);
@@ -129,7 +167,10 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         if (null === $this->_instance) {
-            $this->_setInstance();
+            throw new DatabasePluginException(
+                DatabasePluginException::MESSAGE_PLUGIN_NOT_CONNECTED,
+                DatabasePluginException::CODE_PLUGIN_NOT_CONNECTED
+            );
         }
 
         try {
@@ -193,33 +234,6 @@ class DataBasePlugin implements IDataBasePlugin
     }
 
     /**
-     * Connect To Data Base And Set PDO Instance
-     */
-    private function _setInstance(): void
-    {
-        $dsn      = $this->_credentials->getDsn();
-        $user     = $this->_credentials->getUser();
-        $password = $this->_credentials->getPassword();
-
-        if (empty($dsn)) {
-            throw new DatabasePluginException(
-                DatabasePluginException::MESSAGE_PLUGIN_DSN_IS_EMPTY,
-                DatabasePluginException::CODE_PLUGIN_DSN_IS_EMPTY
-            );
-        }
-
-        if (empty($user)) {
-            $user = null;
-        }
-
-        if (empty($password)) {
-            $password = null;
-        }
-
-        $this->_instance = $this->_connect($dsn, $user, $password);
-    }
-
-    /**
      * Execute Transaction SQL Query
      *
      * @param string|null $sql SQL Query
@@ -236,7 +250,10 @@ class DataBasePlugin implements IDataBasePlugin
         }
 
         if (null === $this->_instance) {
-            $this->_setInstance();
+            throw new DatabasePluginException(
+                DatabasePluginException::MESSAGE_PLUGIN_NOT_CONNECTED,
+                DatabasePluginException::CODE_PLUGIN_NOT_CONNECTED
+            );
         }
 
         try {
@@ -256,43 +273,6 @@ class DataBasePlugin implements IDataBasePlugin
             );
 
             $this->_error($errorMessage);
-        }
-    }
-
-    /**
-     * Connect To Data Base
-     *
-     * @param string|null $dsn      Data Base DSN
-     * @param string|null $user     Data Base User
-     * @param string|null $password Data Base Password
-     *
-     * @return PDO Instance Of PDO
-     */
-    private function _connect(
-        ?string $dsn      = null,
-        ?string $user     = null,
-        ?string $password = null
-    ): \PDO
-    {
-        if (empty($dsn)) {
-            throw new DatabasePluginException(
-                DatabasePluginException::MESSAGE_PLUGIN_DSN_IS_EMPTY,
-                DatabasePluginException::CODE_PLUGIN_DSN_IS_EMPTY
-            );
-        }
-
-        $options = [
-            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-        ];
-
-        try {
-            return new \PDO($dsn, $user, $password, $options);
-        } catch (\PDOException $error) {
-            $error = "
-                Could Not Connect To Database!
-                Error: \"{$error}\"";
-            $this->_error($error);
         }
     }
 
