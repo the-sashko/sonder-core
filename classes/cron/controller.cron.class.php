@@ -9,15 +9,20 @@ class CronControllerCore extends ControllerCore
      */
     public function actionRun(): void
     {
-        $token = $this->getValueFromUrl('token');
+        $token      = $this->getValueFromUrl('token');
+        $cronConfig = $this->getConfig('cron');
 
-        if ($token !== $this->getConfig('cron')['token']) {
-            throw new Exception('Invalid Token');
+        if (empty($cronConfig) || !array_key_exists('token', $cronConfig)) {
+            throw new \Exception('Cron Config Has Bad Format');
+        }
+
+        if (empty($token) || $token !== $cronConfig['token']) {
+            throw new \Exception('Invalid Token');
         }
 
         $logger = $this->getPlugin('logger');
 
-        $cron     = $this->getModel('cron');
+        $cron     = $this->_getCronModel();
         $cronJobs = $cron->getJobs();
 
         foreach ($cronJobs as $cronJob) {
@@ -50,5 +55,20 @@ class CronControllerCore extends ControllerCore
 
             $cron->updateByVO($cronJob);
         }
+    }
+
+    /**
+    * Get Cron Model Instance
+    *
+    * @return Cron Insnace Of Model
+    */
+    private function _getCronModel(): Cron
+    {
+        $cronModel = new Cron();
+
+        $cronModel->setObject('CronObject');
+        $cronModel->setValuesObjectClass('CronValuesObject');
+
+        return $cronModel;
     }
 }

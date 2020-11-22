@@ -5,15 +5,6 @@ class CronObject extends ModelObjectCore
 
     public $scope = 'cron';
 
-    public function createCron(?array $values = null): bool
-    {
-        if (empty($values)) {
-            return false;
-        }
-
-        return $this->addRow(static::CRON_TABLE, $values);
-    }
-
     public function updateCronById(
         ?array $values = null,
         ?int   $id     = null

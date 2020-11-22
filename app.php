@@ -45,6 +45,8 @@ class App
             );
         }
 
+        $controller = (string) $controller;
+
         require_once __DIR__.'/../controllers/'.$controller.'.php';
 
         try {
@@ -156,10 +158,34 @@ class App
     }
 
     /**
+     * Method For Redirect Rules
+     *
+     * @param string|null $url HTTP Request URL
+     */
+    public function routeRedirect(?string $url = null): void
+    {
+        // Override By Router Trait
+    }
+
+    /**
+     * Method For Rewrite Rules
+     *
+     * @param string|null $url HTTP Request URL
+     *
+     * @return string|null Rewrited HTTP Request URL
+     */
+    public function routeRewrite(?string $url = null): ?string
+    {
+        // Override By Router Trait
+
+        return null;
+    }
+
+    /**
      * Check Is Method Public And Exists In Controller
      *
-     * @param ControllerCore $controller ControllerCore Instance
-     * @param string         $action     Name Of Method
+     * @param ControllerCore|null $controller ControllerCore Instance
+     * @param string|null         $action     Name Of Method
      *
      * @return bool Is Method Public And Exists In Controller
      */
@@ -270,7 +296,7 @@ class App
             PHP_URL_PATH
         );
 
-        $url = $_SERVER['REQUEST_URI'];
+        $url = (string) $_SERVER['REQUEST_URI'];
 
         if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $url)) {
             $page = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$2', $url);

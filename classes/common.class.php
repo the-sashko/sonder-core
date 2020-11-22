@@ -82,6 +82,16 @@ class CommonCore
 
         require_once($modelFilePath);
 
+        if (!class_exists($modelClass)) {
+            $errorMessage = CoreException::MESSAGE_CORE_MODEL_NOT_FOUND;
+            $errorMessage = sprintf('%s. Model: %s', $errorMessage, $model);
+
+            throw new CoreException(
+                $errorMessage,
+                CoreException::CODE_CORE_MODEL_NOT_FOUND
+            );
+        }
+
         $modelInstance = new $modelClass();
 
         if (
@@ -118,12 +128,15 @@ class CommonCore
     *
     * @param string|null $pluginName Name Of Plugin
     *
-    * @return Object|null Insnace Of Plugin
+    * @return Object Insnace Of Plugin
     */
-    public function getPlugin(?string $pluginName = null): ?Object
+    public function getPlugin(?string $pluginName = null): Object
     {
         if (empty($pluginName)) {
-            return null;
+            throw new CoreException(
+                CoreException::MESSAGE_CORE_PLUGIN_IS_NOT_SET,
+                CoreException::CODE_CORE_PLUGIN_IS_NOT_SET
+            );
         }
 
         $pluginClass = sprintf('%sPlugin', $pluginName);
@@ -229,9 +242,9 @@ class CommonCore
     /**
      * Execute Hook
      *
-     * @param string|null $hookName   Name Of Hook
-     * @param string|null $hookMethod Method Of Hook
-     * @param array|null  $entityData Entity Data
+     * @param string $hookName   Name Of Hook
+     * @param string $hookMethod Method Of Hook
+     * @param array  $entityData Entity Data
      */
     public function _execHook(
         string $hookName,

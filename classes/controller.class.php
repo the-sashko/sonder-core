@@ -192,7 +192,7 @@ class ControllerCore extends CommonCore
     /**
      * Display Error Page
      *
-     * @param int|null $error HTTP Error Code
+     * @param int|null $errorCode HTTP Error Code
      */
     public function displayErrorPage(?int $errorCode = null): void
     {
@@ -261,24 +261,21 @@ class ControllerCore extends CommonCore
 
         $params = empty($params) ? [] : $params;
 
-        $dataParams = [];
+        $dataParams = [
+            'pagePath' => [],
+            'meta'     => []
+        ];
 
-        $dataParams = $this->configData['main'];
-
-        foreach ($this->commonData as $idx => $value) {
-            $dataParams[$idx] = $value;
+        foreach ($this->configData['main'] as $key => $value) {
+            $dataParams[$key] = $value;
         }
 
-        foreach ($params as $idx => $value) {
-            $dataParams[$idx] = $value;
+        foreach ($this->commonData as $key => $value) {
+            $dataParams[$key] = $value;
         }
 
-        if (!array_key_exists('pagePath', $dataParams)) {
-            $dataParams['pagePath'] = [];
-        }
-
-        if (!array_key_exists('meta', $dataParams)) {
-            $dataParams['meta'] = [];
+        foreach ($params as $key => $value) {
+            $dataParams[$key] = $value;
         }
 
         $dataParams['meta'] = $this->_getMetaParams(
@@ -329,10 +326,8 @@ class ControllerCore extends CommonCore
      */
     private function _setPostData(?array $postData = null): void
     {
-        $securityPlugin = $this->getPlugin('security');
-
         $escapeMethod = [
-            $securityPlugin,
+            $this->getPlugin('security'),
             'escapeInput'
         ];
 
@@ -344,14 +339,12 @@ class ControllerCore extends CommonCore
     /**
      * Set GET Request Data
      *
-     * @param array $getData|null GET Request Data
+     * @param array|null $getData GET Request Data
      */
     private function _setGetData(?array $getData = null): void
     {
-        $securityPlugin = $this->getPlugin('security');
-
         $escapeMethod = [
-            $securityPlugin,
+            $this->getPlugin('security'),
             'escapeInput'
         ];
 
@@ -362,8 +355,6 @@ class ControllerCore extends CommonCore
 
     /**
      * Set Current URL
-     *
-     * @param array $getData|null GET Request Data
      */
     private function _setCurrentUrl(): void
     {
@@ -394,10 +385,8 @@ class ControllerCore extends CommonCore
      */
     private function _setUrlParams(?array $urlParams = null): void
     {
-        $securityPlugin = $this->getPlugin('security');
-
         $escapeMethod = [
-            $securityPlugin,
+            $this->getPlugin('security'),
             'escapeInput'
         ];
 
@@ -428,10 +417,19 @@ class ControllerCore extends CommonCore
      */
     private function _setCurrentHost(): void
     {
+        $mainConfigData = $this->configData['main'];
+
+        if (
+            !array_key_exists('site_protocol', $mainConfigData) ||
+            !array_key_exists('site_domain', $mainConfigData)
+        ) {
+            throw new \Exception('Main Config Has Bad Format');
+        }
+
         $this->currentHost = sprintf(
             '%s://%s',
-            $this->configData['main']['site_protocol'],
-            $this->configData['main']['site_domain']
+            (string) $mainConfigData['site_protocol'],
+            (string) $mainConfigData['site_domain']
         );
     }
 
@@ -466,6 +464,19 @@ class ControllerCore extends CommonCore
         $metaData       = $this->configData['seo'];
         $mainConfigData = $this->configData['main'];
 
+        if (!array_key_exists('image', $metaData)) {
+            throw new \Exception('SEO Config Has Bad Format');
+        }
+
+        if (
+            !array_key_exists('site_name', $mainConfigData) ||
+            !array_key_exists('site_slogan', $mainConfigData) ||
+            !array_key_exists('site_locale', $mainConfigData) ||
+            !array_key_exists('launch_date', $mainConfigData)
+        ) {
+            throw new \Exception('Main Config Has Bad Format');
+        }
+
         if (array_key_exists('description', $meta)) {
             $metaData['description'] = $meta['description'];
         }
@@ -474,11 +485,16 @@ class ControllerCore extends CommonCore
             $metaData['image'] = $meta['image'];
         }
 
-        $metaData['image'] = sprintf(
-            '%s%s',
-            $this->currentHost,
-            $metaData['image']
-        );
+        if (
+            array_key_exists('image', $metaData) &&
+            !empty($metaData['image'])
+        ) {
+            $metaData['image'] = sprintf(
+                '%s%s',
+                $this->currentHost,
+                $metaData['image']
+            );
+        }
 
         $metaData['title']       = $mainConfigData['site_name'];
         $metaData['site_name']   = $mainConfigData['site_name'];
@@ -520,7 +536,7 @@ class ControllerCore extends CommonCore
     /**
      * Get Canonical Full URL Of Current Page
      *
-     * @param array|null $pagePath Current Page Path In Site Structure
+     * @param string|null $canonicalUrl Canonical Relative URL Of Current Page
      *
      * @return string Canonical Full URL Of Current Page
      */
@@ -530,7 +546,7 @@ class ControllerCore extends CommonCore
             $canonicalUrl = $this->currentUrl;
         }
 
-        return sprintf('%s%s', $this->currentHost, $canonicalUrl);
+        return sprintf('%s%s', $this->currentHost, (string) $canonicalUrl);
     }
 
     /**

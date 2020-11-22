@@ -39,7 +39,7 @@ class ApiControllerCore extends ControllerCore
             $errorMessage = sprintf(
                 $errorMessage,
                 CoreException::MESSAGE_CORE_MODEL_API_IS_NOT_SET,
-                get_class($model)
+                get_class($this->model)
             );
 
             throw new CoreException(
@@ -54,7 +54,7 @@ class ApiControllerCore extends ControllerCore
             $errorMessage = sprintf(
                 $errorMessage,
                 CoreException::MESSAGE_CORE_INVALID_API_ACTION_MODEL,
-                get_class($model),
+                get_class($this->model),
                 $action
             );
 
@@ -86,9 +86,9 @@ class ApiControllerCore extends ControllerCore
 
         $modelName = $securityPlugin->escapeInput($modelName);
 
-        $this->model = $this->getModel($modelName);
+        $model = $this->getModel($modelName);
 
-        if (empty($this->model)) {
+        if (empty($model)) {
             $errorMessage = '%s. Model: %s';
 
             $errorMessage = sprintf(
@@ -99,9 +99,11 @@ class ApiControllerCore extends ControllerCore
 
             throw new CoreException(
                 $errorMessage,
-                CoreException::CODE_CORE_MODEL_API_NOT_FOUND
+                CoreException::CODE_CORE_MODEL_NOT_FOUND
             );
         }
+
+        $this->model = $model;
 
         if (empty($this->model->api)) {
             $errorMessage = '%s. Model: %s';
@@ -122,8 +124,8 @@ class ApiControllerCore extends ControllerCore
     /**
      * Check Is Method Public And Exists In Controller
      *
-     * @param ModelApiCore|null $model  ControllerCore Instance
-     * @param string|null       $action Name Of Method
+     * @param ModelApiCore|null $apiModel ControllerCore Instance
+     * @param string|null       $action   Name Of Method
      *
      * @return bool Is Method Public And Exists In Controller
      */
