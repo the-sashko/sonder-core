@@ -7,18 +7,18 @@ class CronObject extends ModelObjectCore
 
     public function updateCronById(
         ?array $values = null,
-        ?int   $id     = null
+        ?int   $idCron = null
     ): bool
     {
         if (empty($values)) {
             return false;
         }
 
-        if (empty($id)) {
+        if (empty($idCron)) {
             return false;
         }
 
-        return $this->updateRowById(static::CRON_TABLE, $values, $id);
+        return $this->updateRowById(static::CRON_TABLE, $values, $idCron);
     }
 
     public function getAllCrons(): ?array

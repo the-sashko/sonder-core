@@ -115,10 +115,10 @@ class ModelCore extends CommonCore
         }
 
         foreach ($rows as $row) {
-            $vo = $this->getVO($row);
+            $valuesObject = $this->getVO($row);
 
-            if (!empty($vo)) {
-                $voArray[] = $vo;
+            if (!empty($valuesObject)) {
+                $voArray[] = $valuesObject;
             }
         }
 
