@@ -26,10 +26,6 @@ class TwitterPlugin
      */
     public function setCredentials(?array $credentials = null): void
     {
-        if (!$this->_validateCredentials($credentials)) {
-            throw new Exception('Twitter Credentials Has Bad Format');
-        }
-
         $this->_credentials = $credentials;
     }
 
@@ -167,54 +163,6 @@ class TwitterPlugin
         if (empty(trim($message))) {
             throw new Exception('Twitter API Error: Message Empty');
         }
-    }
-
-    /**
-     * Validate Twitter API Credentials
-     *
-     * @param array|null $credentials Twitter API Credentials
-     *
-     * @return bool Is Twitter API Credentials Data Has Valid Format
-     */
-    private function _validateCredentials(?array $credentials = null): bool
-    {
-        if (empty($credentials)) {
-            throw new Exception('Twitter Credentials Is Not Set');
-        }
-
-        if (!array_key_exists('consumer', $credentials)) {
-            return false;
-        }
-
-        if (!is_array($credentials['consumer'])) {
-            return false;
-        }
-
-        if (!array_key_exists('key', $credentials['consumer'])) {
-            return false;
-        }
-
-        if (!array_key_exists('secret', $credentials['consumer'])) {
-            return false;
-        }
-
-        if (!array_key_exists('access', $credentials)) {
-            return false;
-        }
-
-        if (!is_array($credentials['access'])) {
-            return false;
-        }
-
-        if (!array_key_exists('token', $credentials['access'])) {
-            return false;
-        }
-
-        if (!array_key_exists('secret', $credentials['access'])) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
