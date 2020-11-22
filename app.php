@@ -246,7 +246,7 @@ class App
 
         $url = $_SERVER['REQUEST_URI'];
 
-        if ('' === $url) {
+        if (empty($url)) {
             $url = '/';
         }
 
