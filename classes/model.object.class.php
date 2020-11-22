@@ -99,17 +99,18 @@ class ModelObjectCore
         ?array  $row  = null
     ): bool
     {
-        if (empty($table)) {
-            return false;
-        }
-
-        if (empty($row)) {
+        if (empty($table) || empty($row)) {
             return false;
         }
 
         $columns = array_keys($row);
         $columns = implode('","', $columns);
-        $values  = (string) $this->_getInsertValues($row);
+
+        foreach ($row as $key => $value) {
+            $row[$key] = $this->_getValueString($value);
+        }
+
+        $row = implode(',', $row);
 
         $sql = '
             INSERT INTO "%s" (
@@ -119,7 +120,7 @@ class ModelObjectCore
             );
         ';
 
-        $sql = sprintf($sql, $table, $columns, $values);
+        $sql = sprintf($sql, $table, $columns, $row);
 
         return $this->_db->query($sql, $this->scope);
     }
@@ -130,23 +131,16 @@ class ModelObjectCore
         ?string $condition = null
     ): bool
     {
-        if (empty($table)) {
+        if (empty($table) || empty($row) || empty($condition)) {
             return false;
         }
 
-        if (empty($row)) {
-            return false;
+        foreach ($row as $key => $value) {
+            $value = $this->_getValueString($value);
+            $row[$key] = sprintf('"%s" = %s', (string) $key, (string) $value);
         }
 
-        if (empty($condition)) {
-            return false;
-        }
-
-        $values = $this->_getUpdateValues($row);
-
-        if (empty($values)) {
-            return false;
-        }
+        $row = implode(',', $row);
 
         $sql = '
             UPDATE "%s"
@@ -154,25 +148,17 @@ class ModelObjectCore
             WHERE %s;
         ';
 
-        $sql = sprintf($sql, $table, $values, $condition);
+        $sql = sprintf($sql, $table, $row, $condition);
 
         return $this->_db->query($sql, $this->scope);
     }
 
-    protected function updateRowByID(
+    protected function updateRowById(
         ?string $table = null,
         ?array  $row   = null,
         ?int    $idRow = null
     ): bool
     {
-        if (empty($table)) {
-            return false;
-        }
-
-        if (empty($row)) {
-            return false;
-        }
-
         if (empty($idRow)) {
             return false;
         }
@@ -187,11 +173,7 @@ class ModelObjectCore
         ?string $condition = null
     ): bool
     {
-        if (empty($table)) {
-            return false;
-        }
-
-        if (empty($condition)) {
+        if (empty($table) || empty($condition)) {
             return false;
         }
 
@@ -206,15 +188,11 @@ class ModelObjectCore
         return $this->_db->query($sql, $this->scope);
     }
 
-    protected function deteleRowByID(
+    protected function deteleRowById(
         ?string $table = null,
         ?int    $idRow = null
     ): bool
     {
-        if (empty($table)) {
-            return false;
-        }
-
         if (empty($idRow)) {
             return false;
         }
@@ -222,33 +200,6 @@ class ModelObjectCore
         $condition = sprintf('id = %d', $idRow);
 
         return $this->deleteRows($table, $condition);
-    }
-
-    private function _getInsertValues(?array $row = null): ?string
-    {
-        if (empty($row)) {
-            return null;
-        }
-
-        foreach ($row as $key => $value) {
-            $row[$key] = $this->_getValueString($value);
-        }
-
-        return implode(',', $row);
-    }
-
-    private function _getUpdateValues(?array $row = null): ?string
-    {
-        if (empty($row)) {
-            return null;
-        }
-
-        foreach ($row as $key => $value) {
-            $value = $this->_getValueString($value);
-            $row[$key] = sprintf('"%s" = %s', (string) $key, (string) $value);
-        }
-
-        return implode(',', $row);
     }
 
     private function _getValueString($value = null): ?string
