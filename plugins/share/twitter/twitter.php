@@ -57,65 +57,96 @@ class TwitterPlugin
      */
     private function _setCodebirdInstance(): void
     {
-        $consumerCredentials = null;
-        $accessCredentials   = null;
+        $consumerKey    = $this->_getConsumerKey();
+        $consumerSecret = $this->_getConsumerSecret();
+        $accessToken    = $this->_getAccessToken();
+        $accessSecret   = $this->_getAccessSecret();
 
-        $consumerKey    = null;
-        $consumerSecret = null;
-        $accessToken    = null;
-        $accessSecret   = null;
-
-        if (
-            !empty($this->_credentials) &&
-            array_key_exists('consumer', $this->_credentials)
-        ) {
-            $consumerCredentials = $this->_credentials['consumer'];
-        }
-
-        if (
-            !empty($this->_credentials) &&
-            array_key_exists('access', $this->_credentials)
-        ) {
-            $accessCredentials = $this->_credentials['access'];
-        }
-
-        if (
-            !empty($consumerCredentials) &&
-            array_key_exists('key', $consumerCredentials)
-        ) {
-            $consumerKey = $consumerCredentials['key'];
-        }
-
-        if (
-            !empty($consumerCredentials) &&
-            array_key_exists('secret', $consumerCredentials)
-        ) {
-            $consumerSecret = $consumerCredentials['secret'];
-        }
-
-        if (
-            !empty($accessCredentials) &&
-            array_key_exists('token', $accessCredentials)
-        ) {
-            $accessToken = $accessCredentials['token'];
-        }
-
-        if (
-            !empty($accessCredentials) &&
-            array_key_exists('secret', $accessCredentials)
-        ) {
-            $accessSecret = $accessCredentials['secret'];
-        }
-
-        if (!empty($consumerKey) && !empty($consumerSecret)) {
-            \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
-        }
+        \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
 
         $this->_codebird = \Codebird\Codebird::getInstance();
 
-        if (!empty($accessToken) && !empty($accessSecret)) {
-            $this->_codebird->setToken($accessToken, $accessSecret);
+        $this->_codebird->setToken($accessToken, $accessSecret);
+    }
+
+    /**
+     * Check Credentials Format
+     *
+     * @return string Consumer Key
+     */
+    private function _getConsumerKey(): string
+    {
+        if (
+            empty($this->_credentials) ||
+            !array_key_exists('consumer', $this->_credentials) ||
+            !is_array($this->_credentials['consumer']) ||
+            !array_key_exists('key', $this->_credentials['consumer']) ||
+            empty($this->_credentials['consumer']['key'])
+        ) {
+            throw new \Exception('Twitter Config Has Bad Format');
         }
+
+        return (string) $this->_credentials['consumer']['key'];
+    }
+
+    /**
+     * Check Credentials Format
+     *
+     * @return string Consumer Secret
+     */
+    private function _getConsumerSecret(): string
+    {
+        if (
+            empty($this->_credentials) ||
+            !array_key_exists('consumer', $this->_credentials) ||
+            !is_array($this->_credentials['consumer']) ||
+            !array_key_exists('secret', $this->_credentials['consumer']) ||
+            empty($this->_credentials['consumer']['secret'])
+        ) {
+            throw new \Exception('Twitter Config Has Bad Format');
+        }
+
+        return (string) $this->_credentials['consumer']['secret'];
+    }
+
+    /**
+     * Check Credentials Format
+     *
+     * @return string Access Token
+     */
+    private function _getAccessToken(): string
+    {
+        if (
+            empty($this->_credentials) ||
+            !array_key_exists('access', $this->_credentials) ||
+            !is_array($this->_credentials['access']) ||
+            !array_key_exists('token', $this->_credentials['access']) ||
+            empty($this->_credentials['access']['token'])
+        ) {
+            throw new \Exception('Twitter Config Has Bad Format');
+        }
+
+        return (string) $this->_credentials['access']['token'];
+    }
+
+    /**
+     * Check Credentials Format
+     *
+     * @return string Access Secret
+     */
+    private function _getAccessSecret(): string
+    {
+        if (
+            empty($this->_credentials) ||
+            !array_key_exists('access', $this->_credentials) ||
+            !is_array($this->_credentials['access']) ||
+            !array_key_exists('secret', $this->_credentials['access']) ||
+            empty($this->_credentials['access']['secret'])
+        ) {
+            throw new \Exception('Twitter Config Has Bad Format');
+        }
+
+        return (string) $this->_credentials['access']['secret'];
     }
 
     /**
