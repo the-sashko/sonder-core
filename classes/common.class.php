@@ -10,6 +10,16 @@ class CommonCore
     const HOOKS_DIR_PATH = __DIR__.'/../../hooks/';
 
     /**
+     * @var string Path To Models Directory
+     * */
+    const MODELS_DIR_PATH = __DIR__.'/../../models';
+
+    /**
+     * @var string Path To Exceptions Directory
+     * */
+    const EXCEPTIONS_DIR_PATH = __DIR__.'/../../exceptions';
+
+    /**
      * @var object|null Session Plugin Instance
      * */
     public $session = null;
@@ -29,62 +39,129 @@ class CommonCore
     }
 
     /**
-    * Get Model Instance By Name
+    * Get Model By Name
     *
-    * @param string|null $model Name Of Model
+    * @param string|null $modelName Name Of Model
     *
     * @return ModelCore|null Insnace Of Model
     */
-    public function getModel(?string $model = null): ?ModelCore
+    public function getModel(?string $modelName = null): ?ModelCore
     {
-        if (empty($model)) {
+        if (empty($modelName)) {
             return null;
         }
 
-        $modelsDir  = __DIR__.'/../../models';
-        $modelsDir  = sprintf('%s/%s', $modelsDir, $model);
-        $modelClass = mb_convert_case($model, MB_CASE_TITLE);
+        $this->_includeModelException($modelName);
+        $this->_includeModelForm($modelName);
 
-        $exceptionsDir  = __DIR__.'/../../exceptions';
-        $exceptionClass = mb_convert_case($model, MB_CASE_TITLE);
+        $model = $this->_getModelInstance($modelName);
+
+        $this->_setModelObject($modelName, $model);
+        $this->_setModelApi($modelName, $model);
+        $this->_setModelValuesObject($modelName, $model);
+
+        return $model;
+    }
+
+    /**
+    * Get Model Directory Path By Model Name
+    *
+    * @param string $modelName Name Of Model
+    *
+    * @return string Model Directory Path
+    */
+    private function _getModelDirPath(string $modelName): string
+    {
+        return sprintf('%s/%s', static::MODELS_DIR_PATH, $modelName);
+    }
+
+    /**
+    * Get Model Class Name By Model Name
+    *
+    * @param string $modelName Name Of Model
+    *
+    * @return string Model Class Name
+    */
+    private function _getModelClassName(string $modelName): string
+    {
+        return mb_convert_case($modelName, MB_CASE_TITLE);
+    }
+
+    /**
+    * Include Model Exception By Model Name
+    *
+    * @param string $modelName Name Of Model
+    */
+    private function _includeModelException(string $modelName): void
+    {
+        $exceptionClass = mb_convert_case($modelName, MB_CASE_TITLE);
         $exceptionClass = sprintf('%sException', $exceptionClass);
-
-        $modelFilePath = sprintf('%s/%s.php', $modelsDir, $model);
-        $modelFormFilePath = sprintf('%s/%s.form.php', $modelsDir, $model);
-        $modelObjectFilePath = sprintf('%s/%s.object.php', $modelsDir, $model);
-        $modelApiFilePath = sprintf('%s/%s.api.php', $modelsDir, $model);
-
-        $modelValuesObjectFilePath = sprintf(
-            '%s/%s.vo.php',
-            $modelsDir,
-            $model
-        );
 
         $exceptionFilePath = sprintf(
             '%s/%s.php',
-            $exceptionsDir,
+            static::EXCEPTIONS_DIR_PATH,
             $exceptionClass
         );
 
+        if (file_exists($exceptionFilePath) && is_file($exceptionFilePath)) {
+            require_once($exceptionFilePath);
+        }
+    }
+
+    /**
+    * Include Model Form By Model Name
+    *
+    * @param string $modelName Name Of Model
+    */
+    private function _includeModelForm(string $modelName): void
+    {
+        $modelDirPath = $this->_getModelDirPath($modelName);
+
+        $modelFormFilePath = sprintf(
+            '%s/%s.form.php',
+            $modelDirPath,
+            $modelName
+        );
+
+        if (file_exists($modelFormFilePath) && is_file($modelFormFilePath)) {
+            require_once($modelFormFilePath);
+        }
+    }
+
+    /**
+    * Get Model Instance By Name
+    *
+    * @param string $modelName Name Of Model
+    *
+    * @return ModelCore Insnace Of Model
+    */
+    private function _getModelInstance(string $modelName): ModelCore
+    {
+        $modelDirPath  = $this->_getModelDirPath($modelName);
+        $modelFilePath = sprintf('%s/%s.php', $modelDirPath, $modelName);
+        $modelClass    = $this->_getModelClassName($modelName);
+
         if (!file_exists($modelFilePath) ||!is_file($modelFilePath)) {
-            $errorMessage = CoreException::MESSAGE_CORE_MODEL_NOT_FOUND;
-            $errorMessage = sprintf('%s. Model: %s', $errorMessage, $model);
+            $errorMessage = sprintf(
+                '%s. Model: %s',
+                CoreException::MESSAGE_CORE_MODEL_NOT_FOUND,
+                $modelName
+            );
 
             throw new CoreException(
                 $errorMessage,
                 CoreException::CODE_CORE_MODEL_NOT_FOUND
             );
-        }
-
-        if (file_exists($modelFormFilePath) && is_file($modelFormFilePath)) {
-            require_once($modelFormFilePath);
         }
 
         require_once($modelFilePath);
 
         if (!class_exists($modelClass)) {
-            $errorMessage = CoreException::MESSAGE_CORE_MODEL_NOT_FOUND;
-            $errorMessage = sprintf('%s. Model: %s', $errorMessage, $model);
+            $errorMessage = sprintf(
+                '%s. Model: %s',
+                CoreException::MESSAGE_CORE_MODEL_NOT_FOUND,
+                $modelName
+            );
 
             throw new CoreException(
                 $errorMessage,
@@ -92,35 +169,92 @@ class CommonCore
             );
         }
 
-        $modelInstance = new $modelClass();
+        return new $modelClass();
+    }
+
+    /**
+    * Set Model Object
+    *
+    * @param string    $modelName Name Of Model
+    * @param ModelCore $model Model Instance
+    */
+    private function _setModelObject(
+        string    $modelName,
+        ModelCore &$model
+    ): void
+    {
+        $modelDirPath = $this->_getModelDirPath($modelName);
+        $modelClass   = $this->_getModelClassName($modelName);
+
+        $modelObjectFilePath = sprintf(
+            '%s/%s.object.php',
+            $modelDirPath,
+            $modelName
+        );
 
         if (
             file_exists($modelObjectFilePath) &&
             is_file($modelObjectFilePath)
         ) {
             require_once($modelObjectFilePath);
-            $modelInstance->setObject(sprintf('%sObject', $modelClass));
+            $model->setObject(sprintf('%sObject', $modelClass));
         }
+    }
+
+    /**
+    * Set Model API
+    *
+    * @param string    $modelName Name Of Model
+    * @param ModelCore $model Model Instance
+    */
+    private function _setModelApi(string $modelName, ModelCore &$model): void
+    {
+        $modelDirPath = $this->_getModelDirPath($modelName);
+        $modelClass   = $this->_getModelClassName($modelName);
+
+        $modelApiFilePath = sprintf(
+            '%s/%s.api.php',
+            $modelDirPath,
+            $modelName
+        );
 
         if (file_exists($modelApiFilePath) && is_file($modelApiFilePath)) {
             require_once($modelApiFilePath);
-            $modelInstance->setApi(sprintf('%sApi', $modelClass));
+
+            $model->setApi(sprintf('%sApi', $modelClass));
         }
+    }
+
+    /**
+    * Set Model Values Object
+    *
+    * @param string    $modelName Name Of Model
+    * @param ModelCore $model Model Instance
+    */
+    private function _setModelValuesObject(
+        string    $modelName,
+        ModelCore &$model
+    ): void
+    {
+        $modelDirPath = $this->_getModelDirPath($modelName);
+        $modelClass   = $this->_getModelClassName($modelName);
+
+        $modelValuesObjectFilePath = sprintf(
+            '%s/%s.vo.php',
+            $modelDirPath,
+            $modelName
+        );
 
         if (
             file_exists($modelValuesObjectFilePath) &&
             is_file($modelValuesObjectFilePath)
         ) {
             require_once($modelValuesObjectFilePath);
+
             $modelValuesObjectClass = sprintf('%sValuesObject', $modelClass);
-            $modelInstance->setValuesObjectClass($modelValuesObjectClass);
-        }
 
-        if (file_exists($exceptionFilePath) && is_file($exceptionFilePath)) {
-            require_once($exceptionFilePath);
+            $model->setValuesObjectClass($modelValuesObjectClass);
         }
-
-        return $modelInstance;
     }
 
     /**
