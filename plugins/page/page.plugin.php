@@ -40,15 +40,13 @@ class PagePlugin
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templateName   Site Template Name
      * @param string|null $templatePage   Site Template Page Name
-     * @param string|null $notFoundURI    Not Found Page URI
      *
      * @return StaticPageValuesObject Values Object Of Static Page
      */
     public function getVO(
         ?string $staticPageName = null,
         ?string $templateName = null,
-        ?string $templatePage = null,
-        ?string $notFoundURI = null
+        ?string $templatePage = null
     ): StaticPageValuesObject {
         $staticPagePath = $this->_getStaticPagePath($staticPageName);
 
