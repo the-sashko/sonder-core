@@ -1,8 +1,8 @@
 <?php
 /**
- * Trait For Routing HTTP Requests
+ * Class For Routing HTTP Requests
  */
-trait Router
+class Router
 {
     /**
      * Perform Redirect Rules

@@ -31,7 +31,3 @@ $_POST    = [];
 $_GET     = [];
 $_REQUEST = [];
 
-trait Router
-{
-    // Mock Router
-}

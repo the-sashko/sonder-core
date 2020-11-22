@@ -4,8 +4,6 @@
  */
 class API extends App
 {
-    use Router;
-
     public function __construct()
     {
         parent::__construct();

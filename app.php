@@ -4,7 +4,10 @@
  */
 class App
 {
-    use Router;
+    /**
+     * @var Router|null Router Instance
+     */
+    private $_router = null;
 
     public function __construct()
     {
@@ -12,6 +15,10 @@ class App
 
         set_exception_handler([$this, 'exceptionHandler']);
         set_error_handler([$this, 'errorHandler']);
+
+        if (class_exists('Router')) {
+            $this->_router = new Router();
+        }
 
         $this->_redirect();
         $this->_replaceUrl();
@@ -164,7 +171,9 @@ class App
      */
     public function routeRedirect(?string $url = null): void
     {
-        // Override By Router Trait
+        if (!empty($this->_router)) {
+            $this->_router->routeRedirect($url);
+        }
     }
 
     /**
@@ -176,9 +185,11 @@ class App
      */
     public function routeRewrite(?string $url = null): ?string
     {
-        // Override By Router Trait
+        if (!empty($this->_router)) {
+            $this->_router->routeRewrite($url);
+        }
 
-        return null;
+        return $url;
     }
 
     /**
