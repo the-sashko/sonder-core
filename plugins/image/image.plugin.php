@@ -203,25 +203,13 @@ class ImagePlugin implements IImagePlugin
     }
 
     private function _changeImageRatio(
-        \Imagick   $imageObject    = null,
+        \Imagick   $imageObject,
         ?ImageSize $size           = null,
         ?int       $originalWidth  = null,
         ?int       $originalHeight = null
     ): \Imagick
     {
-        if (empty($imageObject)) {
-            throw new ImagePluginException(
-                ImagePluginException::MESSAGE_PLUGIN_IMAGE_OBJECT_IS_EMPTY,
-                ImagePluginException::CODE_PLUGIN_IMAGE_OBJECT_IS_EMPTY
-            );
-        }
-
-        if (empty($size)) {
-            throw new ImagePluginException(
-                ImagePluginException::MESSAGE_PLUGIN_SIZE_OBJECT_IS_EMPTY,
-                ImagePluginException::CODE_PLUGIN_SIZE_OBJECT_IS_EMPTY
-            );
-        }
+        $this->_checkImageSize($size);
 
         if (empty($originalWidth)) {
             throw new ImagePluginException(
@@ -237,14 +225,7 @@ class ImagePlugin implements IImagePlugin
             );
         }
 
-        if (empty($size->getWidth()) && empty($size->getHeight())) {
-            throw new ImagePluginException(
-                ImagePluginException::MESSAGE_PLUGIN_VALUES_HAS_BAD_FORMAT,
-                ImagePluginException::CODE_PLUGIN_VALUES_HAS_BAD_FORMAT
-            );
-        }
-
-        $newWidth  = $originalWidth;
+        $newWidth = $originalWidth;
 
         $newHeight = (int) (
             ($size->getHeight() / $size->getWidth()) * $newWidth
@@ -275,6 +256,23 @@ class ImagePlugin implements IImagePlugin
         $imageObject->cropImage($newWidth, $newHeight, $positionX, $positionY);
 
         return $imageObject;
+    }
+
+    private function _checkImageSize(?ImageSize $size = null): void
+    {
+        if (empty($size)) {
+            throw new ImagePluginException(
+                ImagePluginException::MESSAGE_PLUGIN_SIZE_OBJECT_IS_EMPTY,
+                ImagePluginException::CODE_PLUGIN_SIZE_OBJECT_IS_EMPTY
+            );
+        }
+
+        if (empty($size->getWidth()) && empty($size->getHeight())) {
+            throw new ImagePluginException(
+                ImagePluginException::MESSAGE_PLUGIN_VALUES_HAS_BAD_FORMAT,
+                ImagePluginException::CODE_PLUGIN_VALUES_HAS_BAD_FORMAT
+            );
+        }
     }
 
     private function _saveImage(
