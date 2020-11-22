@@ -126,7 +126,7 @@ class PaginatorPlugin
             return '';
         }
 
-        foreach ($this->pages as $idx => $page) {
+        foreach ($this->pages as $page) {
             $paginatorHTML = $paginatorHTML.$page;
         }
 

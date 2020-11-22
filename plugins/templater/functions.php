@@ -135,7 +135,7 @@ function saveTemplateDataToCache(
         unlink($cacheFilePath);
     }
 
-    file_put_contents($cacheFilePath, json_encode($cacheFilePath));
+    file_put_contents($cacheFilePath, json_encode($cacheData));
     chmod($cacheFilePath, 0775);
 }
 
