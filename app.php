@@ -21,7 +21,7 @@ class App
         }
 
         $this->_redirect();
-        $this->_replaceUrl();
+        $this->_rewriteUrl();
     }
 
     /**
@@ -165,34 +165,6 @@ class App
     }
 
     /**
-     * Method For Redirect Rules
-     *
-     * @param string|null $url HTTP Request URL
-     */
-    public function routeRedirect(?string $url = null): void
-    {
-        if (!empty($this->_router)) {
-            $this->_router->routeRedirect($url);
-        }
-    }
-
-    /**
-     * Method For Rewrite Rules
-     *
-     * @param string|null $url HTTP Request URL
-     *
-     * @return string|null Rewrited HTTP Request URL
-     */
-    public function routeRewrite(?string $url = null): ?string
-    {
-        if (!empty($this->_router)) {
-            $this->_router->routeRewrite($url);
-        }
-
-        return $url;
-    }
-
-    /**
      * Check Is Method Public And Exists In Controller
      *
      * @param ControllerCore|null $controller ControllerCore Instance
@@ -239,9 +211,9 @@ class App
     }
 
     /**
-     * Clean URL From Params
+     * Perform Redirects By Rules
      */
-    private function _cleanUrl(): void
+    private function _redirect(): void
     {
         $_SERVER['REQUEST_URI'] = parse_url(
             $_SERVER['REQUEST_URI'],
@@ -258,22 +230,17 @@ class App
             header("Location: {$url}", true, 301);
             exit(0);
         }
-    }
 
-    /**
-     * Perform Redirects By Rules
-     */
-    private function _redirect(): void
-    {
-        $this->_cleanUrl();
 
-        $this->routeRedirect($_SERVER['REQUEST_URI']);
+        if (!empty($this->_router)) {
+            $this->_router->routeRedirect($_SERVER['REQUEST_URI']);
+        }
     }
 
     /**
      * Rewrite URL By Rules
      */
-    private function _replaceUrl(): void
+    private function _rewriteUrl(): void
     {
         $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 
@@ -283,7 +250,9 @@ class App
             $url = '/';
         }
 
-        $url = $this->routeRewrite($url);
+        if (!empty($this->_router)) {
+            $url = $this->_router->routeRewrite($url);
+        }
 
         $_SERVER['REQUEST_URI'] = $url;
     }
