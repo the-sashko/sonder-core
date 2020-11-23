@@ -35,76 +35,10 @@ class DatabaseCredentials implements IDataBaseCredentials
             );
         }
 
-        if (
-            !array_key_exists('type', $configData) ||
-            empty($configData['type'])
-        ) {
-            $exceptionClass = new DatabaseCredentialsException();
-
-            throw new DatabaseCredentialsException(
-                $exceptionClass::MESSAGE_CREDENTIALS_DB_TYPE_IS_NOT_SET,
-                $exceptionClass::CODE_CREDENTIALS_DB_TYPE_IS_NOT_SET
-            );
-        }
-
-        if (
-            !array_key_exists('db', $configData) ||
-            empty($configData['db'])
-        ) {
-            $exceptionClass = new DatabaseCredentialsException();
-
-            throw new DatabaseCredentialsException(
-                $exceptionClass::MESSAGE_CREDENTIALS_DB_NAME_IS_NOT_SET,
-                $exceptionClass::CODE_CREDENTIALS_DB_NAME_IS_NOT_SET
-            );
-        }
-
-        if (
-            !array_key_exists('host', $configData) ||
-            empty($configData['host'])
-        ) {
-            $configData['host'] = static::DEFAULT_HOST;
-        }
-
-        if (
-            !array_key_exists('port', $configData) ||
-            empty($configData['port'])
-        ) {
-            $configData['host'] = static::DEFAULT_PORT;
-        }
-
-        if (
-            array_key_exists('user', $configData) &&
-            !empty($configData['user'])
-        ) {
-            $this->_user = (string) $configData['user'];
-        }
-
-        if (
-            array_key_exists('password', $configData) &&
-            !empty($configData['password'])
-        ) {
-            $this->_password = (string) $configData['password'];
-        }
-
-        if (
-            !array_key_exists('cache_type', $configData) ||
-            empty($configData['cache_type'])
-        ) {
-            $configData['cache_type'] = static::DEFAULT_CACHE_TYPE;
-        }
-
-        $this->_cacheType = (string) $configData['cache_type'];
-
-        $dsn = '%s:host=%s;port=%d;dbname=%s';
-
-        $this->_dsn = sprintf(
-            $dsn,
-            (string) $configData['type'],
-            (string) $configData['host'],
-            (int) $configData['port'],
-            (string) $configData['db']
-        );
+        $this->_setDsnFromConfig($configData);
+        $this->_setUserFromConfig($configData);
+        $this->_setPasswordFromConfig($configData);
+        $this->_setCacheTypeFromConfig($configData);
     }
 
     public function getDsn(): string
@@ -132,5 +66,109 @@ class DatabaseCredentials implements IDataBaseCredentials
     public function getCacheType(): ?string
     {
         return $this->_cacheType;
+    }
+
+    private function _getTypeFromConfig(array $configData): string
+    {
+        if (
+            !array_key_exists('type', $configData) ||
+            empty($configData['type'])
+        ) {
+            $exceptionClass = new DatabaseCredentialsException();
+
+            throw new DatabaseCredentialsException(
+                $exceptionClass::MESSAGE_CREDENTIALS_DB_TYPE_IS_NOT_SET,
+                $exceptionClass::CODE_CREDENTIALS_DB_TYPE_IS_NOT_SET
+            );
+        }
+
+        return (string) $configData['type'];
+    }
+
+    private function _getDataBaseNameFromConfig(array $configData): string
+    {
+        if (
+            !array_key_exists('db', $configData) ||
+            empty($configData['db'])
+        ) {
+            $exceptionClass = new DatabaseCredentialsException();
+
+            throw new DatabaseCredentialsException(
+                $exceptionClass::MESSAGE_CREDENTIALS_DB_NAME_IS_NOT_SET,
+                $exceptionClass::CODE_CREDENTIALS_DB_NAME_IS_NOT_SET
+            );
+        }
+
+        return (string) $configData['db'];
+    }
+
+    private function _getHostFromConfig(array $configData): string
+    {
+        if (
+            !array_key_exists('host', $configData) ||
+            empty($configData['host'])
+        ) {
+            return static::DEFAULT_HOST;
+        }
+
+        return (string) $configData['host'];
+    }
+
+    private function _getPortFromConfig(array $configData): int
+    {
+        if (
+            !array_key_exists('port', $configData) ||
+            empty($configData['port'])
+        ) {
+            return static::DEFAULT_PORT;
+        }
+
+        return (int) $configData['port'];
+    }
+
+    private function _setUserFromConfig(array $configData): void
+    {
+        if (
+            array_key_exists('user', $configData) &&
+            !empty($configData['user'])
+        ) {
+            $this->_user = (string) $configData['user'];
+        }
+    }
+
+    private function _setPasswordFromConfig(array $configData): void
+    {
+        if (
+            array_key_exists('password', $configData) &&
+            !empty($configData['password'])
+        ) {
+            $this->_password = (string) $configData['password'];
+        }
+    }
+
+    private function _setCacheTypeFromConfig(array $configData): void
+    {
+        if (
+            !array_key_exists('cache_type', $configData) ||
+            empty($configData['cache_type'])
+        ) {
+            $cacheType = static::DEFAULT_CACHE_TYPE;
+        }
+
+        $cacheType = (string) $configData['cache_type'];
+
+        $this->_cacheType = $cacheType;
+    }
+
+    private function _setDsnFromConfig(array $configData): void
+    {
+        $type         = $this->_getTypeFromConfig($configData);
+        $databaseName = $this->_getDataBaseNameFromConfig($configData);
+        $host         = $this->_getHostFromConfig($configData);
+        $port         = $this->_getPortFromConfig($configData);
+
+        $dsn = '%s:host=%s;port=%d;dbname=%s';
+
+        $this->_dsn = sprintf($dsn, $type, $host, $port, $databaseName);
     }
 }
