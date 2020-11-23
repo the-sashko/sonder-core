@@ -5,6 +5,11 @@
 class CommonCore
 {
     /**
+     * @var string Default Language Of Application
+     */
+    const DEFAULT_LANGUAGE = 'en';
+
+    /**
      * @var string Path To Hooks Directory
      * */
     const HOOKS_DIR_PATH = __DIR__.'/../../hooks/';
@@ -33,6 +38,11 @@ class CommonCore
      * @var string|null Current Host
      */
     public $currentHost = null;
+
+    /**
+     * @var string|null Current Language Of User
+     */
+    public $language = null;
 
     public function __construct()
     {
@@ -208,6 +218,25 @@ class CommonCore
         }
 
         return true;
+    }
+
+    /**
+     * Set Laguage Value To Session
+     */
+    public function setLanguage(?string $language = null): void
+    {
+        $defaultLanguage = static::DEFAULT_LANGUAGE;
+
+        if (defined('DEFAULT_LANGUAGE')) {
+            $defaultLanguage = DEFAULT_LANGUAGE;
+        }
+
+        if (empty($language)) {
+            $language = $defaultLanguage;
+        }
+
+        $this->session->set('language', $language);
+        $this->language = $language;
     }
 
     /**

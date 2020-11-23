@@ -93,7 +93,7 @@ class ErrorPlugin
     /**
      * Handle HTTP Error
      *
-     * @param int $code HTTP Responce Code
+     * @param int $code HTTP Response Code
      *
      * @return bool Is Successfully Handled HTTP Error
      */
@@ -115,7 +115,7 @@ class ErrorPlugin
     /**
      * Get HTTP Error Message
      *
-     * @param int $code HTTP Responce Code
+     * @param int $code HTTP Response Code
      *
      * @return string HTTP Error Message
      */
@@ -135,7 +135,7 @@ class ErrorPlugin
     /**
      * Display Error
      *
-     * @param int         $code           HTTP Responce Code
+     * @param int         $code           HTTP Response Code
      * @param string      $message        Error Message
      * @param string      $file           PHP File That Contain Error
      * @param int         $line           Line In PHP File That Contain Error
@@ -185,7 +185,7 @@ class ErrorPlugin
     /**
      * Display Error In HTML Format
      *
-     * @param int        $code           HTTP Responce Code
+     * @param int        $code           HTTP Response Code
      * @param string     $message        Error Message
      * @param string     $file           PHP File That Contain Error
      * @param int        $line           Line In PHP File That Contain Error
@@ -217,7 +217,7 @@ class ErrorPlugin
     /**
      * Display Error In JSON Format
      *
-     * @param int        $code           HTTP Responce Code
+     * @param int        $code           HTTP Response Code
      * @param string     $message        Error Message
      * @param string     $file           PHP File That Contain Error
      * @param int        $line           Line In PHP File That Contain Error
@@ -265,7 +265,7 @@ class ErrorPlugin
     /**
      * Display Error In Text Format
      *
-     * @param int        $code           HTTP Responce Code
+     * @param int        $code           HTTP Response Code
      * @param string     $message        Error Message
      * @param string     $file           PHP File That Contain Error
      * @param int        $line           Line In PHP File That Contain Error

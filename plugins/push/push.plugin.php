@@ -12,7 +12,7 @@ class PushPlugin
         }
 
         $this->_includeProviderCredentials($providerIdent);
-        $this->_includeProviderResponce($providerIdent);
+        $this->_includeProviderResponse($providerIdent);
 
         $this->_provider = $this->_getProviderInstance($providerIdent);
     }
@@ -65,7 +65,7 @@ class PushPlugin
         }
     }
 
-    private function _includeProviderResponce(string $providerIdent): void
+    private function _includeProviderResponse(string $providerIdent): void
     {
         $providerResponseClass = sprintf('%sResponse', $providerIdent);
 
