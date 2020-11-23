@@ -1,6 +1,16 @@
 <?php
 class Cron extends ModelCore
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $databaseConfig = $this->getConfig('database');
+
+        $this->object            = new CronObject($databaseConfig);
+        $this->valuesObjectClass = 'CronValuesObject';
+    }
+
     public function getAll(): ?array
     {
         $crons = $this->object->getAllCrons();

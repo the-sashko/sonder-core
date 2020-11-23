@@ -22,7 +22,7 @@ class CronControllerCore extends ControllerCore
 
         $logger = $this->getPlugin('logger');
 
-        $cron     = $this->_getCronModel();
+        $cron     = new Cron();
         $cronJobs = $cron->getJobs();
 
         foreach ($cronJobs as $cronJob) {
@@ -55,20 +55,5 @@ class CronControllerCore extends ControllerCore
 
             $cron->updateByVO($cronJob);
         }
-    }
-
-    /**
-    * Get Cron Model Instance
-    *
-    * @return Cron Insnace Of Model
-    */
-    private function _getCronModel(): Cron
-    {
-        $cronModel = new Cron();
-
-        $cronModel->setObject('CronObject');
-        $cronModel->setValuesObjectClass('CronValuesObject');
-
-        return $cronModel;
     }
 }

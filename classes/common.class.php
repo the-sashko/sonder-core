@@ -15,11 +15,6 @@ class CommonCore
     const MODELS_DIR_PATH = __DIR__.'/../../models';
 
     /**
-     * @var string Path To Exceptions Directory
-     * */
-    const EXCEPTIONS_DIR_PATH = __DIR__.'/../../exceptions';
-
-    /**
      * @var object|null Session Plugin Instance
      * */
     public $session = null;
@@ -51,95 +46,9 @@ class CommonCore
             return null;
         }
 
-        $this->_includeModelException($modelName);
-        $this->_includeModelForm($modelName);
-
-        $model = $this->_getModelInstance($modelName);
-
-        $this->_setModelObject($modelName, $model);
-        $this->_setModelApi($modelName, $model);
-        $this->_setModelValuesObject($modelName, $model);
-
-        return $model;
-    }
-
-    /**
-    * Get Model Directory Path By Model Name
-    *
-    * @param string $modelName Name Of Model
-    *
-    * @return string Model Directory Path
-    */
-    private function _getModelDirPath(string $modelName): string
-    {
-        return sprintf('%s/%s', static::MODELS_DIR_PATH, $modelName);
-    }
-
-    /**
-    * Get Model Class Name By Model Name
-    *
-    * @param string $modelName Name Of Model
-    *
-    * @return string Model Class Name
-    */
-    private function _getModelClassName(string $modelName): string
-    {
-        return mb_convert_case($modelName, MB_CASE_TITLE);
-    }
-
-    /**
-    * Include Model Exception By Model Name
-    *
-    * @param string $modelName Name Of Model
-    */
-    private function _includeModelException(string $modelName): void
-    {
-        $exceptionClass = mb_convert_case($modelName, MB_CASE_TITLE);
-        $exceptionClass = sprintf('%sException', $exceptionClass);
-
-        $exceptionFilePath = sprintf(
-            '%s/%s.php',
-            static::EXCEPTIONS_DIR_PATH,
-            $exceptionClass
-        );
-
-        if (file_exists($exceptionFilePath) && is_file($exceptionFilePath)) {
-            require_once($exceptionFilePath);
-        }
-    }
-
-    /**
-    * Include Model Form By Model Name
-    *
-    * @param string $modelName Name Of Model
-    */
-    private function _includeModelForm(string $modelName): void
-    {
-        $modelDirPath = $this->_getModelDirPath($modelName);
-
-        $modelFormFilePath = sprintf(
-            '%s/%s.form.php',
-            $modelDirPath,
-            $modelName
-        );
-
-        if (file_exists($modelFormFilePath) && is_file($modelFormFilePath)) {
-            require_once($modelFormFilePath);
-        }
-    }
-
-    /**
-    * Get Model Instance By Name
-    *
-    * @param string $modelName Name Of Model
-    *
-    * @return ModelCore Insnace Of Model
-    */
-    private function _getModelInstance(string $modelName): ModelCore
-    {
-        $modelDirPath  = $this->_getModelDirPath($modelName);
+        $modelDirPath  = sprintf('%s/%s', static::MODELS_DIR_PATH, $modelName);
         $modelFilePath = sprintf('%s/%s.php', $modelDirPath, $modelName);
-        $modelClass    = $this->_getModelClassName($modelName);
+        $modelClass    = mb_convert_case($modelName, MB_CASE_TITLE);
 
         if (!file_exists($modelFilePath) ||!is_file($modelFilePath)) {
             $errorMessage = sprintf(
@@ -173,97 +82,12 @@ class CommonCore
     }
 
     /**
-    * Set Model Object
-    *
-    * @param string    $modelName Name Of Model
-    * @param ModelCore $model Model Instance
-    */
-    private function _setModelObject(
-        string    $modelName,
-        ModelCore &$model
-    ): void
-    {
-        $modelDirPath = $this->_getModelDirPath($modelName);
-        $modelClass   = $this->_getModelClassName($modelName);
-
-        $modelObjectFilePath = sprintf(
-            '%s/%s.object.php',
-            $modelDirPath,
-            $modelName
-        );
-
-        if (
-            file_exists($modelObjectFilePath) &&
-            is_file($modelObjectFilePath)
-        ) {
-            require_once($modelObjectFilePath);
-            $model->setObject(sprintf('%sObject', $modelClass));
-        }
-    }
-
-    /**
-    * Set Model API
-    *
-    * @param string    $modelName Name Of Model
-    * @param ModelCore $model Model Instance
-    */
-    private function _setModelApi(string $modelName, ModelCore &$model): void
-    {
-        $modelDirPath = $this->_getModelDirPath($modelName);
-        $modelClass   = $this->_getModelClassName($modelName);
-
-        $modelApiFilePath = sprintf(
-            '%s/%s.api.php',
-            $modelDirPath,
-            $modelName
-        );
-
-        if (file_exists($modelApiFilePath) && is_file($modelApiFilePath)) {
-            require_once($modelApiFilePath);
-
-            $model->setApi(sprintf('%sApi', $modelClass));
-        }
-    }
-
-    /**
-    * Set Model Values Object
-    *
-    * @param string    $modelName Name Of Model
-    * @param ModelCore $model Model Instance
-    */
-    private function _setModelValuesObject(
-        string    $modelName,
-        ModelCore &$model
-    ): void
-    {
-        $modelDirPath = $this->_getModelDirPath($modelName);
-        $modelClass   = $this->_getModelClassName($modelName);
-
-        $modelValuesObjectFilePath = sprintf(
-            '%s/%s.vo.php',
-            $modelDirPath,
-            $modelName
-        );
-
-        if (
-            file_exists($modelValuesObjectFilePath) &&
-            is_file($modelValuesObjectFilePath)
-        ) {
-            require_once($modelValuesObjectFilePath);
-
-            $modelValuesObjectClass = sprintf('%sValuesObject', $modelClass);
-
-            $model->setValuesObjectClass($modelValuesObjectClass);
-        }
-    }
-
-    /**
-    * Get Plugin Instance By Name
-    *
-    * @param string|null $pluginName Name Of Plugin
-    *
-    * @return Object Insnace Of Plugin
-    */
+     * Get Plugin Instance By Name
+     *
+     * @param string|null $pluginName Name Of Plugin
+     *
+     * @return Object Insnace Of Plugin
+     */
     public function getPlugin(?string $pluginName = null): Object
     {
         if (empty($pluginName)) {
@@ -294,12 +118,12 @@ class CommonCore
     }
 
     /**
-    * Get Config Data By Config File Name
-    *
-    * @param string|null $configName Name Of Config File
-    *
-    * @return array|null Data From Config File
-    */
+     * Get Config Data By Config File Name
+     *
+     * @param string|null $configName Name Of Config File
+     *
+     * @return array|null Data From Config File
+     */
     public function getConfig(?string $configName = null): ?array
     {
         if (empty($configName)) {
