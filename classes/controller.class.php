@@ -445,12 +445,12 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set HTML Canonical Url Meta Tag Value
+     * Set HTML Image Meta Tag Value
      *
      * @param array $metaData Output HTML Meta Tag Values
      * @param array $meta     Input HTML Meta Tag Values
      */
-    private function _setMetaCanonicalUrl(array &$metaData, array $meta): void
+    private function _setMetaParamsImage(array &$metaData, array $meta): void
     {
         if (array_key_exists('image', $meta)) {
             $metaData['image'] = $meta['image'];
@@ -469,12 +469,12 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set HTML Image Meta Tag Value
+     * Set HTML Canonical Url Meta Tag Value
      *
      * @param array $metaData Output HTML Meta Tag Values
      * @param array $meta     Input HTML Meta Tag Values
      */
-    private function _setMetaParamsImage(array &$metaData, array $meta): void
+    private function _setMetaCanonicalUrl(array &$metaData, array $meta): void
     {
         $canonicalUrl = $this->currentUrl;
 
@@ -488,7 +488,7 @@ class ControllerCore extends CommonCore
         $metaData['canonical_url'] = sprintf(
             '%s%s',
             $this->currentHost,
-            (string) $meta['canonical_url']
+            (string) $canonicalUrl
         );
     }
 
