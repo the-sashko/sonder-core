@@ -5,7 +5,7 @@ class Cron extends ModelCore
     {
         parent::__construct();
 
-        $databaseConfig = $this->getConfig('database');
+        $databaseConfig = $this->configData['database'];
 
         $this->object            = new CronObject($databaseConfig);
         $this->valuesObjectClass = 'CronValuesObject';

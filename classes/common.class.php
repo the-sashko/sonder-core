@@ -24,6 +24,16 @@ class CommonCore
      */
     public $configData = [];
 
+    /**
+     * @var string|null Current URL
+     */
+    public $currentUrl = null;
+
+    /**
+     * @var string|null Current Host
+     */
+    public $currentHost = null;
+
     public function __construct()
     {
         $this->_requireAppException();
@@ -31,6 +41,9 @@ class CommonCore
         $this->_setConfigs();
 
         $this->session = $this->getPlugin('session');
+
+        $this->_setCurrentUrl();
+        $this->_setCurrentHost();
     }
 
     /**
@@ -198,6 +211,101 @@ class CommonCore
     }
 
     /**
+     * Create Log
+     *
+     * @param string $message Message
+     */
+    public function log(string $message): void
+    {
+        $logName = explode('\\', static::class);
+        $logName = (string) end($logName);
+
+        $this->getPlugin('logger')->log($message, $logName, APP_MODE);
+    }
+
+    /**
+     * Create Error Log
+     *
+     * @param string $message Error Message
+     */
+    public function logError(string $message): void
+    {
+        $logName = explode('\\', static::class);
+        $logName = (string) end($logName);
+
+        $this->getPlugin('logger')->logError($message, $logName);
+    }
+
+    /**
+     * Redirect To URL
+     *
+     * @param string|null $url         URL Value
+     * @param bool        $isPermanent Is Redirect Permanently
+     */
+    public function redirect(
+        ?string $url         = null,
+        bool    $isPermanent = false
+    ): void
+    {
+        $url  = empty($url) ? '/' : $url;
+        $code = $isPermanent ? 301 : 302;
+
+        header(sprintf('Location: %s', $url), true, $code);
+
+        exit(0);
+    }
+
+    /**
+     * Require AppException Class If It Exists And Not Included
+     */
+    private function _requireAppException(): void
+    {
+        if (
+            !defined('AppException') &&
+            file_exists(__DIR__.'/../../exceptions/AppException.php') &&
+            is_file(__DIR__.'/../../exceptions/AppException.php')
+        ) {
+            require_once __DIR__.'/../../exceptions/AppException.php';
+        }
+    }
+
+    /**
+     * Set Current URL
+     */
+    private function _setCurrentUrl(): void
+    {
+        $this->currentUrl = '/';
+
+        if (
+            array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
+            !empty($_SERVER['REAL_REQUEST_URI'])
+        ) {
+            $this->currentUrl = $_SERVER['REAL_REQUEST_URI'];
+        }
+    }
+
+    /**
+     * Set Current Host
+     */
+    private function _setCurrentHost(): void
+    {
+        $mainConfigData = $this->configData['main'];
+
+        if (
+            !array_key_exists('site_protocol', $mainConfigData) ||
+            !array_key_exists('site_domain', $mainConfigData)
+        ) {
+            throw new \Exception('Main Config Has Bad Format');
+        }
+
+        $this->currentHost = sprintf(
+            '%s://%s',
+            (string) $mainConfigData['site_protocol'],
+            (string) $mainConfigData['site_domain']
+        );
+    }
+
+    /**
      * Execute Hook
      *
      * @param string $hookName   Name Of Hook
@@ -288,48 +396,9 @@ class CommonCore
      */
     private function _setConfigs(): void
     {
-        $this->configData['main']  = $this->getConfig('main');
-        $this->configData['hooks'] = $this->getConfig('hooks');
-        $this->configData['seo']   = $this->getConfig('seo');
-    }
-
-    /**
-     * Create Log
-     *
-     * @param string $message Message
-     */
-    public function log(string $message): void
-    {
-        $logName = explode('\\', static::class);
-        $logName = (string) end($logName);
-
-        $this->getPlugin('logger')->log($message, $logName, APP_MODE);
-    }
-
-    /**
-     * Create Error Log
-     *
-     * @param string $message Error Message
-     */
-    public function logError(string $message): void
-    {
-        $logName = explode('\\', static::class);
-        $logName = (string) end($logName);
-
-        $this->getPlugin('logger')->logError($message, $logName);
-    }
-
-    /**
-     * Require AppException Class If It Exists And Not Included
-     */
-    private function _requireAppException(): void
-    {
-        if (
-            !defined('AppException') &&
-            file_exists(__DIR__.'/../../exceptions/AppException.php') &&
-            is_file(__DIR__.'/../../exceptions/AppException.php')
-        ) {
-            require_once __DIR__.'/../../exceptions/AppException.php';
-        }
+        $this->configData['main']     = $this->getConfig('main');
+        $this->configData['database'] = $this->getConfig('database');
+        $this->configData['hooks']    = $this->getConfig('hooks');
+        $this->configData['seo']      = $this->getConfig('seo');
     }
 }

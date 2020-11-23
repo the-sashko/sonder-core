@@ -25,16 +25,6 @@ class ControllerCore extends CommonCore
     const DEFAULT_ERROR_PAGE_TEMPLATE = 'error';
 
     /**
-     * @var string|null Current URL
-     */
-    public $currentUrl = null;
-
-    /**
-     * @var string|null Current Host
-     */
-    public $currentHost = null;
-
-    /**
      * @var array|null POST Request Data
      */
     public $post = null;
@@ -82,29 +72,9 @@ class ControllerCore extends CommonCore
         $this->_setUrlParams($urlParams);
         $this->_setPostData($_POST);
         $this->_setGetData($_GET);
-        $this->_setPage($page);
         $this->_setLanguage($language);
-        $this->_setCurrentUrl();
-        $this->_setCurrentHost();
-    }
 
-    /**
-     * Redirect To URL
-     *
-     * @param string|null $url         URL Value
-     * @param bool        $isPermanent Is Redirect Permanently
-     */
-    public function redirect(
-        ?string $url         = null,
-        bool    $isPermanent = false
-    ): void
-    {
-        $url  = empty($url) ? '/' : $url;
-        $code = $isPermanent ? 301 : 302;
-
-        header(sprintf('Location: %s', $url), true, $code);
-
-        exit(0);
+        $this->page = $page < 1 ? 1 : $page;
     }
 
     /**
@@ -354,31 +324,6 @@ class ControllerCore extends CommonCore
     }
 
     /**
-     * Set Current URL
-     */
-    private function _setCurrentUrl(): void
-    {
-        $this->currentUrl = '/';
-
-        if (
-            array_key_exists('REAL_REQUEST_URI', $_SERVER) &&
-            !empty($_SERVER['REAL_REQUEST_URI'])
-        ) {
-            $this->currentUrl = $_SERVER['REAL_REQUEST_URI'];
-        }
-    }
-
-    /**
-     * Set Current Page In Pagination
-     *
-     * @param int $page Current Page Number
-     */
-    private function _setPage(int $page = 1): void
-    {
-        $this->page = $page < 1 ? 1 : $page;
-    }
-
-    /**
      * Set List Of Params From URL
      *
      * @param array|null $urlParams List Of Params From URL
@@ -400,49 +345,18 @@ class ControllerCore extends CommonCore
      */
     private function _setLanguage(?string $language = null): void
     {
-        if (!empty($language)) {
-            $language = $this->_getDefaultLanguage();
+        $defaultLanguage = static::DEFAULT_LANGUAGE;
+
+        if (defined('DEFAULT_LANGUAGE')) {
+            $defaultLanguage = DEFAULT_LANGUAGE;
         }
 
-        if (!empty($language)) {
-            $language = $this->_getDefaultLanguage();
+        if (empty($language)) {
+            $language = $defaultLanguage;
         }
 
         $this->session->set('language', $language);
         $this->language = $language;
-    }
-
-    /**
-     * Set Current Host
-     */
-    private function _setCurrentHost(): void
-    {
-        $mainConfigData = $this->configData['main'];
-
-        if (
-            !array_key_exists('site_protocol', $mainConfigData) ||
-            !array_key_exists('site_domain', $mainConfigData)
-        ) {
-            throw new \Exception('Main Config Has Bad Format');
-        }
-
-        $this->currentHost = sprintf(
-            '%s://%s',
-            (string) $mainConfigData['site_protocol'],
-            (string) $mainConfigData['site_domain']
-        );
-    }
-
-    /**
-     * Get Default Language
-     */
-    private function _getDefaultLanguage(): string
-    {
-        if (defined('DEFAULT_LANGUAGE')) {
-            return DEFAULT_LANGUAGE;
-        }
-
-        return static::DEFAULT_LANGUAGE;
     }
 
     /**
@@ -481,6 +395,63 @@ class ControllerCore extends CommonCore
             $metaData['description'] = $meta['description'];
         }
 
+        $metaData['title']       = $mainConfigData['site_name'];
+        $metaData['site_name']   = $mainConfigData['site_name'];
+        $metaData['site_slogan'] = $mainConfigData['site_slogan'];
+        $metaData['locale']      = $mainConfigData['site_locale'];
+
+        if (!empty($pagePath)) {
+            $metaData['title'] = sprintf(
+                '%s%s%s',
+                $this->_getTitleByPagePath($pagePath),
+                static::PAGE_TITLE_SEPARATOR,
+                $metaData['title']
+            );
+        }
+
+        $this->_setMetaParamsImage($metaData, $meta);
+        $this->_setMetaCanonicalUrl($metaData, $meta);
+        $this->_setMetaParamsCopyright($metaData, $mainConfigData);
+
+        return $metaData;
+    }
+
+    /**
+     * Set HTML Copyright Value
+     *
+     * @param array $metaData       Output HTML Meta Datas
+     * @param array $mainConfigData Main Config Values
+     */
+    private function _setMetaParamsCopyright(
+        array &$metaData,
+        array $mainConfigData
+    ): void
+    {
+        $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
+        $siteName   = null;
+
+        if (!array_key_exists('site_name', $metaData)) {
+            $siteName = $metaData['site_name'];
+        }
+
+        $metaData['copyright'] = sprintf('&copy; %s', (string) $siteName);
+        $copyrightDate         = date('Y');
+
+        if (date('Y') !== $launchYear) {
+            $copyrightDate = sprintf('%s-%s', $launchYear, date('Y'));
+        }
+
+        $metaData['copyright'] = $copyrightDate;
+    }
+
+    /**
+     * Set HTML Canonical Url Meta Tag Value
+     *
+     * @param array $metaData Output HTML Meta Tag Values
+     * @param array $meta     Input HTML Meta Tag Values
+     */
+    private function _setMetaCanonicalUrl(array &$metaData, array $meta): void
+    {
         if (array_key_exists('image', $meta)) {
             $metaData['image'] = $meta['image'];
         }
@@ -495,58 +466,30 @@ class ControllerCore extends CommonCore
                 $metaData['image']
             );
         }
-
-        $metaData['title']       = $mainConfigData['site_name'];
-        $metaData['site_name']   = $mainConfigData['site_name'];
-        $metaData['site_slogan'] = $mainConfigData['site_slogan'];
-        $metaData['locale']      = $mainConfigData['site_locale'];
-
-        $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
-
-        $metaData['copyright'] = sprintf('&copy; %s', $metaData['site_name']);
-
-        $copyrightDate = date('Y');
-
-        if (date('Y') !== $launchYear) {
-            $copyrightDate = sprintf('%s-%s', $launchYear, date('Y'));
-        }
-
-        $metaData['copyright'] = $copyrightDate;
-
-        if (!empty($pagePath)) {
-            $metaData['title'] = sprintf(
-                '%s%s%s',
-                $this->_getTitleByPagePath($pagePath),
-                static::PAGE_TITLE_SEPARATOR,
-                $metaData['title']
-            );
-        }
-
-        if (!array_key_exists('canonical_url', $meta)) {
-            $meta['canonical_url'] = null;
-        }
-
-        $metaData['canonical_url'] = $this->_getCanonicalFullUrl(
-            $meta['canonical_url']
-        );
-
-        return $metaData;
     }
 
     /**
-     * Get Canonical Full URL Of Current Page
+     * Set HTML Image Meta Tag Value
      *
-     * @param string|null $canonicalUrl Canonical Relative URL Of Current Page
-     *
-     * @return string Canonical Full URL Of Current Page
+     * @param array $metaData Output HTML Meta Tag Values
+     * @param array $meta     Input HTML Meta Tag Values
      */
-    private function _getCanonicalFullUrl(?string $canonicalUrl = null): string
+    private function _setMetaParamsImage(array &$metaData, array $meta): void
     {
-        if (!empty($canonicalUrl)) {
-            $canonicalUrl = $this->currentUrl;
+        $canonicalUrl = $this->currentUrl;
+
+        if (
+            !array_key_exists('canonical_url', $meta) &&
+            !empty($meta['canonical_url'])
+        ) {
+            $canonicalUrl = $meta['canonical_url'];
         }
 
-        return sprintf('%s%s', $this->currentHost, (string) $canonicalUrl);
+        $metaData['canonical_url'] = sprintf(
+            '%s%s',
+            $this->currentHost,
+            (string) $meta['canonical_url']
+        );
     }
 
     /**

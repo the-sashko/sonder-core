@@ -129,7 +129,7 @@ class ModelCore extends CommonCore
         if (file_exists($objectFilePath) && is_file($objectFilePath)) {
             require_once($objectFilePath);
 
-            $databaseConfig = $this->getConfig('database');
+            $databaseConfig = $this->configData['database'];
 
             $this->object = new $objectClass($databaseConfig);
         }
