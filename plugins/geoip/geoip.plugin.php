@@ -13,14 +13,14 @@ class GeoIpPlugin
      */
     public function getIp(): string
     {
-        $ip = static::DEFAULT_IP;
+        $ipAddress = static::DEFAULT_IP;
 
-        $this->_setIpFromDefaultHttpHeaders($ip);
-        $this->_setIpFromForwardedHttpHeaders($ip);
-        $this->_setIpFromClientHttpHeaders($ip);
-        $this->_setIpFromCloudflareHttpHeaders($ip);
+        $this->_setIpFromDefaultHttpHeaders($ipAddress);
+        $this->_setIpFromForwardedHttpHeaders($ipAddress);
+        $this->_setIpFromClientHttpHeaders($ipAddress);
+        $this->_setIpFromCloudflareHttpHeaders($ipAddress);
 
-        return $ip;
+        return $ipAddress;
     }
 
     /**
@@ -58,81 +58,83 @@ class GeoIpPlugin
     /**
      * Set User IP Address From HTTP Cloudflare  Headers
      *
-     * @param string $ip IP Address
+     * @param string $ipAddress IP Address
      */
-    private function _setIpFromCloudflareHttpHeaders(string &$ip): void
+    private function _setIpFromCloudflareHttpHeaders(string &$ipAddress): void
     {
         if (
             array_key_exists('HTTP_CF_CONNECTING_IP', $_SERVER) &&
             !empty($_SERVER['HTTP_CF_CONNECTING_IP'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_CF_CONNECTING_IP']);
+            $ipAddress = $this->_escapeInput(
+                $_SERVER['HTTP_CF_CONNECTING_IP']
+            );
         }
     }
 
     /**
      * Set User IP Address From HTTP Forwarded Headers
      *
-     * @param string $ip IP Address
+     * @param string $ipAddress IP Address
      */
-    private function _setIpFromForwardedHttpHeaders(string &$ip): void
+    private function _setIpFromForwardedHttpHeaders(string &$ipAddress): void
     {
         if (
             array_key_exists('HTTP_FORWARDED', $_SERVER) &&
             !empty($_SERVER['HTTP_FORWARDED'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_FORWARDED']);
+            $ipAddress = $this->_escapeInput($_SERVER['HTTP_FORWARDED']);
         }
 
         if (
             array_key_exists('HTTP_FORWARDED_FOR', $_SERVER) &&
             !empty($_SERVER['HTTP_FORWARDED_FOR'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_FORWARDED_FOR']);
+            $ipAddress = $this->_escapeInput($_SERVER['HTTP_FORWARDED_FOR']);
         }
 
         if (
             array_key_exists('HTTP_X_FORWARDED', $_SERVER) &&
             !empty($_SERVER['HTTP_X_FORWARDED'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_X_FORWARDED']);
+            $ipAddress = $this->_escapeInput($_SERVER['HTTP_X_FORWARDED']);
         }
 
         if (
             array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) &&
             !empty($_SERVER['HTTP_X_FORWARDED_FOR'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ipAddress = $this->_escapeInput($_SERVER['HTTP_X_FORWARDED_FOR']);
         }
     }
 
     /**
      * Set User IP Address From HTTP Forwarded Headers
      *
-     * @param string $ip IP Address
+     * @param string $ipAddress IP Address
      */
-    private function _setIpFromDefaultHttpHeaders(string &$ip): void
+    private function _setIpFromDefaultHttpHeaders(string &$ipAddress): void
     {
         if (
             array_key_exists('REMOTE_ADDR', $_SERVER) &&
             !empty($_SERVER['REMOTE_ADDR'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['REMOTE_ADDR']);
+            $ipAddress = $this->_escapeInput($_SERVER['REMOTE_ADDR']);
         }
     }
 
     /**
      * Set User IP Address From HTTP Client Headers
      *
-     * @param string $ip IP Address
+     * @param string $ipAddress IP Address
      */
-    private function _setIpFromClientHttpHeaders(string &$ip): void
+    private function _setIpFromClientHttpHeaders(string &$ipAddress): void
     {
         if (
             array_key_exists('HTTP_CLIENT_IP', $_SERVER) &&
             !empty($_SERVER['HTTP_CLIENT_IP'])
         ) {
-            $ip = $this->_escapeInput($_SERVER['HTTP_CLIENT_IP']);
+            $ipAddress = $this->_escapeInput($_SERVER['HTTP_CLIENT_IP']);
         }
     }
 }
