@@ -27,6 +27,10 @@ cd core || exit 1
 
 git submodule update --init --recursive
 
+cd "$scriptDir" || exit 1
+
+./test.sh
+
 cd "$currDir" || exit 1
 
 exit 1

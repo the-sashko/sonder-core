@@ -16,6 +16,7 @@ return [
 
     'exclude_analysis_directory_list' => [
         '../tests',
+        '../install/protected/tests/',
         '../plugins/captcha/tests/',
         '../plugins/captcha/res/examples/',
         '../plugins/language/vendor',
