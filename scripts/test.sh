@@ -10,7 +10,8 @@ cd "$scriptDir/../tests" || exit 1
 php tools/phan.phar
 phpunit
 
-cd ../plugins/captcha/tests
+cd ../plugins/captcha/tests || exit 1
+
 phpunit
 php ../../../tests/tools/phan.phar
 
