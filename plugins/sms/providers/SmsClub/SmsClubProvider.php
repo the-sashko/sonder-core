@@ -16,7 +16,16 @@ class SmsClubProvider implements ISmsProvider
         ?string $message = null
     ): ?ISmsResponse
     {
-        $phone = $this->_preparePhone($phone);
+
+        $phone = trim(preg_replace('/([^0-9]+)/su', '', (string) $phone));
+
+        if (empty($phone)) {
+            throw new \Exception('SMS Plugin Phone Is Not Set');
+        }
+
+        if (empty($message)) {
+            throw new \Exception('SMS Plugin Message Is Not Set');
+        }
 
         $this->_sendRemoteRequest($phone, $message);
 
@@ -34,10 +43,7 @@ class SmsClubProvider implements ISmsProvider
         return new SmsClubResponse();
     }
 
-    private function _sendRemoteRequest(
-        ?string $phone   = null,
-        ?string $message = null
-    ): bool
+    private function _sendRemoteRequest(string $phone, string $message): bool
     {
         $curl        = curl_init();
         $curlHeaders = $this->_getCurlHeaders($phone, $message);
@@ -67,9 +73,12 @@ class SmsClubProvider implements ISmsProvider
 
     private function _parseXmlResponse(?string $xmlResponse = null): bool
     {
-        $xmlResponse = $this->_getXmlResponse($xmlResponse);
+        $xmlResponse = simplexml_load_string((string) $xmlResponse);
 
-        if ($xmlResponse == null) {
+        if (
+            !($xmlResponse instanceof SimpleXMLElement) ||
+            !property_exists($xmlResponse, 'status')
+        ) {
             $this->_setResponseError('Error Parsing XML Response');
 
             return false;
@@ -91,12 +100,19 @@ class SmsClubProvider implements ISmsProvider
         return true;
     }
 
-    private function _getCurlHeaders(
-        ?string $phone   = null,
-        ?string $message = null
-    ): array
+    private function _getCurlHeaders(string $phone, string $message): array
     {
-        $xmlRequest = $this->_getXmlRequest($phone, $message);
+        $xmlRequest = file_get_contents(__DIR__.'/xml/request.xml');
+
+        $login     = (string) $this->_credentials->getLogin();
+        $token     = (string) $this->_credentials->getToken();
+        $alphaName = (string) $this->_credentials->getAlphaName();
+
+        $xmlRequest = str_replace('{{login}}', $login, $xmlRequest);
+        $xmlRequest = str_replace('{{token}}', $token, $xmlRequest);
+        $xmlRequest = str_replace('{{alphaName}}', $alphaName, $xmlRequest);
+        $xmlRequest = str_replace('{{phone}}', $phone, $xmlRequest);
+        $xmlRequest = str_replace('{{message}}', $message, $xmlRequest);
 
         return [
             CURLOPT_URL            => $this->_credentials->getUrl(),
@@ -110,59 +126,6 @@ class SmsClubProvider implements ISmsProvider
                 'content-type: application/xml'
             ]
         ];
-    }
-
-    private function _preparePhone(?string $phone = null): string
-    {
-        $phone = preg_replace('/([^0-9]+)/su', '', (string) $phone);
-        $phone = trim($phone);
-
-        return $phone;
-    }
-
-    private function _getXmlRequest(
-        ?string $phone   = null,
-        ?string $message = null
-    ): string
-    {
-        if (empty($phone)) {
-            throw new \Exception('SMS Plugin Phone Is Not Set');
-        }
-
-        if (empty($message)) {
-            throw new \Exception('SMS Plugin Message Is Not Set');
-        }
-
-        $xmlRequest = file_get_contents(__DIR__.'/xml/request.xml');
-
-        $login     = (string) $this->_credentials->getLogin();
-        $token     = (string) $this->_credentials->getToken();
-        $alphaName = (string) $this->_credentials->getAlphaName();
-
-        $xmlRequest = str_replace('{{login}}', $login, $xmlRequest);
-        $xmlRequest = str_replace('{{token}}', $token, $xmlRequest);
-        $xmlRequest = str_replace('{{alphaName}}', $alphaName, $xmlRequest);
-        $xmlRequest = str_replace('{{phone}}', $phone, $xmlRequest);
-        $xmlRequest = str_replace('{{message}}', $message, $xmlRequest);
-
-        return $xmlRequest;
-    }
-
-    private function _getXmlResponse(
-        ?string $xmlResponse = null
-    ): ?\SimpleXMLElement
-    {
-        $xmlResponse = simplexml_load_string((string) $xmlResponse);
-
-        if (!$xmlResponse instanceof SimpleXMLElement) {
-            return null;
-        }
-
-        if (!property_exists($xmlResponse, 'status')) {
-            return null;
-        }
-
-        return $xmlResponse;
     }
 
     private function _getXmlResponseErrorMessage(
