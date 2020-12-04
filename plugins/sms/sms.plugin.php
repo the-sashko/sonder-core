@@ -152,7 +152,7 @@ class SmsPlugin
     public function _getResponseProviderFilePath(
         string $providerIdent,
         string $responseProviderClass
-    ): void
+    ): string
     {
         $responseProviderFilePath = sprintf(
             '%s/%s/%s.php',
