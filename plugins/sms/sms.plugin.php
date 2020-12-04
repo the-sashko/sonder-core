@@ -13,24 +13,9 @@ class SmsPlugin
             throw new \Exception('SMS Plugin Provider Is Not Set');
         }
 
-        $credentialsProviderClass = sprintf('%sCredentials', $providerIdent);
+        $this->_includeCredentialsProvider($providerIdent);
+        $this->_includeResponseProvider($providerIdent);
 
-        $credentialsProviderFile = sprintf(
-            '%s/%s/%s.php',
-            static::PROVIDERS_DIR_PATH,
-            $providerIdent,
-            $credentialsProviderClass
-        );
-
-        $responseProviderClass = sprintf('%sResponse', $providerIdent);
-
-        $responseProviderFile = sprintf(
-            '%s/%s/%s.php',
-            static::PROVIDERS_DIR_PATH,
-            $providerIdent,
-            $responseProviderClass
-        );
-        
         $providerClass = sprintf('%sProvider', $providerIdent);
 
         $providerFile = sprintf(
@@ -40,35 +25,11 @@ class SmsPlugin
             $providerClass
         );
 
-        if (
-            !file_exists($credentialsProviderFile) ||
-            !is_file($credentialsProviderFile)
-        ) {
-            throw new \Exception('Invalid SMS Plugin Provider');
-        }
-
-        if (
-            !file_exists($responseProviderFile) ||
-            !is_file($responseProviderFile)
-        ) {
-            throw new \Exception('Invalid SMS Plugin Provider');
-        }
-
         if (!file_exists($providerFile) || !is_file($providerFile)) {
             throw new \Exception('Invalid SMS Plugin Provider');
         }
 
-        include_once $credentialsProviderFile;
-        include_once $responseProviderFile;
         include_once $providerFile;
-
-        if (!class_exists($credentialsProviderClass)) {
-            throw new \Exception('Invalid SMS Plugin Provider');
-        }
-
-        if (!class_exists($responseProviderClass)) {
-            throw new \Exception('Invalid SMS Plugin Provider');
-        }
 
         if (!class_exists($providerClass)) {
             throw new \Exception('Invalid SMS Plugin Provider');
@@ -118,5 +79,95 @@ class SmsPlugin
         }
 
         return preg_match('/^\+([0-9]+)$/su', $phone);
+    }
+
+    public function _includeCredentialsProvider(string $providerIdent): void
+    {
+        $credentialsProviderClass = $this->_getCredentialsProviderClass(
+            $providerIdent
+        );
+
+        $credentialsProviderFilePath = $this->_getCredentialsProviderFilePath(
+            $providerIdent,
+            $credentialsProviderClass
+        );
+
+        include_once $credentialsProviderFilePath;
+
+        if (!class_exists($credentialsProviderClass)) {
+            throw new \Exception('Invalid SMS Plugin Provider');
+        }
+    }
+
+    public function _getCredentialsProviderClass(string $providerIdent): string
+    {
+        return sprintf('%sCredentials', $providerIdent);
+    }
+
+    public function _getCredentialsProviderFilePath(
+        string $providerIdent,
+        string $providerClass
+    ): string
+    {
+        $credentialsProviderFilePath = sprintf(
+            '%s/%s/%s.php',
+            static::PROVIDERS_DIR_PATH,
+            $providerIdent,
+            $providerClass
+        );
+
+        if (
+            !file_exists($credentialsProviderFilePath) ||
+            !is_file($credentialsProviderFilePath)
+        ) {
+            throw new \Exception('Invalid SMS Plugin Provider');
+        }
+
+        return $credentialsProviderFilePath;
+    }
+
+    public function _includeResponseProvider(string $providerIdent): void
+    {
+        $responseProviderClass = $this->_getResponseProviderClass(
+            $providerIdent
+        );
+
+        $responseProviderFilePath = $this->_getResponseProviderFilePath(
+            $providerIdent,
+            $responseProviderClass
+        );
+
+        include_once $responseProviderFilePath;
+
+        if (!class_exists($responseProviderClass)) {
+            throw new \Exception('Invalid SMS Plugin Provider');
+        }
+    }
+
+    public function _getResponseProviderClass(string $providerIdent): string
+    {
+        return sprintf('%sResponse', $providerIdent);
+    }
+
+    public function _getResponseProviderFilePath(
+        string $providerIdent,
+        string $responseProviderClass
+    ): void
+    {
+        $responseProviderFilePath = sprintf(
+            '%s/%s/%s.php',
+            static::PROVIDERS_DIR_PATH,
+            $providerIdent,
+            $responseProviderClass
+        );
+
+        if (
+            !file_exists($responseProviderFilePath) ||
+            !is_file($responseProviderFilePath)
+        ) {
+            throw new \Exception('Invalid SMS Plugin Provider');
+        }
+
+        return $responseProviderFilePath;
     }
 }
