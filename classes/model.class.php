@@ -15,9 +15,9 @@ class ModelCore extends CommonCore
     const EXCEPTIONS_DIR_PATH = __DIR__.'/../../exceptions';
 
     /**
-     * @var object Model Object Class Instance
+     * @var object Model Store Class Instance
      */
-    public $object = null;
+    public $store = null;
 
     /**
      * @var object Model API Class Instance
@@ -41,7 +41,7 @@ class ModelCore extends CommonCore
         $this->_includeException();
         $this->_includeForm();
 
-        $this->_setObject();
+        $this->_setStore();
         $this->_setValuesObject();
         $this->_setApi();
     }
@@ -118,20 +118,20 @@ class ModelCore extends CommonCore
     }
 
     /**
-     * Set Model Object Class Instance
+     * Set Model Store Class Instance
      */
-    private function _setObject(): void
+    private function _setStore(): void
     {
         $modelName     = mb_convert_case(__CLASS__, MB_CASE_LOWER);
-        $objectFilePath = sprintf('%s/%s.object.php', __DIR__, $modelName);
-        $objectClass    = sprintf('%sObject', __CLASS__);
+        $storeFilePath = sprintf('%s/%s.store.php', __DIR__, $modelName);
+        $storeClass   = sprintf('%sStore', __CLASS__);
 
-        if (file_exists($objectFilePath) && is_file($objectFilePath)) {
-            require_once($objectFilePath);
+        if (file_exists($storeFilePath) && is_file($storeFilePath)) {
+            require_once($storeFilePath);
 
             $databaseConfig = $this->configData['database'];
 
-            $this->object = new $objectClass($databaseConfig);
+            $this->store = new $storeClass($databaseConfig);
         }
     }
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * Basic Class For Model Object Classes
+ * Basic Class For Model Store Classes
  */
-class ModelObjectCore
+class ModelStoreCore
 {
     private $_db = null;
 

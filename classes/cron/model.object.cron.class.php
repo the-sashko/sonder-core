@@ -1,5 +1,5 @@
 <?php
-class CronObject extends ModelObjectCore
+class CronStore extends ModelStoreCore
 {
     const CRON_TABLE = 'cron_jobs';
 

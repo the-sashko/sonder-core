@@ -7,20 +7,20 @@ class Cron extends ModelCore
 
         $databaseConfig = $this->configData['database'];
 
-        $this->object            = new CronObject($databaseConfig);
+        $this->store             = new CronStore($databaseConfig);
         $this->valuesObjectClass = 'CronValuesObject';
     }
 
     public function getAll(): ?array
     {
-        $crons = $this->object->getAllCrons();
+        $crons = $this->store->getAllCrons();
 
         return $this->getVOArray($crons);
     }
 
     public function getJobs(): ?array
     {
-        $jobs = $this->object->getJobs();
+        $jobs = $this->store->getJobs();
 
         return $this->getVOArray($jobs);
     }
@@ -40,6 +40,6 @@ class Cron extends ModelCore
             'error_message'    => $cronVO->getErrorMessage()
         ];
 
-        return $this->object->updateCronById($values, $cronVO->getId());
+        return $this->store->updateCronById($values, $cronVO->getId());
     }
 }

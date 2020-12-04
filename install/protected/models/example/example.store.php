@@ -1,8 +1,8 @@
 <?php
 /**
- * ModelObject Class For Example Model
+ * ModelStore Class For Example Model
  */
-class ExampleObject extends ModelObjectCore
+class ExampleStore extends ModelStoreCore
 {
     /**
      * @var string Data Base Queries Cache Scope

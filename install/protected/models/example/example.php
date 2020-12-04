@@ -11,7 +11,7 @@ class Example extends ModelCore
      */
     public function getAll(): ?array
     {
-        $data = $this->object->getAllExamples();
+        $data = $this->store->getAllExamples();
 
         return $this->getVOArray($data);
     }
