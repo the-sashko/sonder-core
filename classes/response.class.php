@@ -16,6 +16,8 @@ class Response extends CommonCore
 
     public function __construct(?string $templaterScope = null)
     {
+        parent::__construct();
+
         if (!empty($templaterScope)) {
             $this->_templaterScope = $templaterScope;
         }
