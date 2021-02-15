@@ -133,7 +133,7 @@ class TemplaterPlugin
             $this->_scope
         );
 
-        if (!file_exists($templateFilePath) || is_file($templateFilePath)) {
+        if (!file_exists($templateFilePath) || !is_file($templateFilePath)) {
             $errorMessage = sprintf(
                 'Template "%s" Is Not Found',
                 $this->_scope
@@ -141,6 +141,8 @@ class TemplaterPlugin
 
             throw new Exception($errorMessage);
         }
+
+        $template = $this->_template;
 
         include_once($templateFilePath);
     }

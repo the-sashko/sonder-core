@@ -49,8 +49,10 @@ function renderPart(
         ob_start();
     }
 
-    foreach ($values as $templateDataItemIdx => $templateDataItem) {
-        $GLOBALS['template_params'][$templateDataItemIdx] = $templateDataItem;
+    if (!empty($values)) {
+        foreach ($values as $templateDataKey => $templateDataValue) {
+            $GLOBALS['template_params'][$templateDataKey] = $templateDataValue;
+        }
     }
 
     foreach ($GLOBALS['template_params'] as $param => $value) {
