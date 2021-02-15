@@ -15,7 +15,7 @@ cp -r core/install/protected/hooks hooks
 cp -r core/install/protected/res res
 cp -r core/install/protected/routers routers
 cp -r core/install/protected/tests tests
-cp -r core/install/protected/init.php init.php
+cp -r core/install/protected/app.init.php app.init.php
 cp -r core/install/protected/api.init.php api.init.php
 cp -r core/install/protected/cli.init.php cli.init.php
 
