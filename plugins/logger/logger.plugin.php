@@ -25,6 +25,11 @@ class LoggerPlugin
     const ERROR_LOG_TYPE = 'error';
 
     /**
+     * Pattern Of Log File Path
+     */
+    const LOG_FILE_PATTERN_PATH = '%s/../../../res/logs/%s';
+
+    /**
      * Write Message To Log File
      *
      * @param string|null $message Log Message
@@ -217,7 +222,7 @@ class LoggerPlugin
             $logType = static::DEFAULT_LOG_TYPE;
         }
 
-        return sprintf('%s/../../../res/log/%s', __DIR__, $logType);
+        return sprintf(static::LOG_FILE_PATTERN_PATH, __DIR__, $logType);
     }
 
     /**
