@@ -7,7 +7,7 @@ class PagePlugin
     /**
      * @var string Default Teplate Name
      */
-    const DEFAULT_TEMPLATE_NAME = 'site';
+    const DEFAULT_TEMPLATE_NAME = 'default';
 
     /**
      * @var string Default Teplate Page Location

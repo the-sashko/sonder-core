@@ -22,7 +22,7 @@ class ControllerCore extends CommonCore
     /**
      * @var string HTML Termplates Scope
      */
-    public $templaterScope = 'site';
+    public $templaterScope = 'default';
 
     /**
      * @var int Current Page In Pagination

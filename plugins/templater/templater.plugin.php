@@ -12,7 +12,7 @@ class TemplaterPlugin
     /**
      * @var string Default Scope
      */
-    const DEFAULT_SCOPE = 'site';
+    const DEFAULT_SCOPE = 'default';
 
     /**
      * @var string Templates Directory Path

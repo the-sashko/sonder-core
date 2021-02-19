@@ -12,7 +12,7 @@ class Response extends CommonCore
     /**
      * @var string HTML Termplates Scope
      */
-    private $_templaterScope = 'site';
+    private $_templaterScope = 'default';
 
     public function __construct(?string $templaterScope = null)
     {
