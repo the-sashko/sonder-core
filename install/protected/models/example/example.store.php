@@ -5,7 +5,7 @@
 class ExampleStore extends ModelStoreCore
 {
     /**
-     * @var string Data Base Queries Cache Scope
+     * @var string Database Queries Cache Scope
      */
     public $scope = 'example';
 }
