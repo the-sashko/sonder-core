@@ -58,6 +58,8 @@ class ControllerCore extends CommonCore
         $this->page = $page < 1 ? 1 : $page;
 
         $this->_response = new Response($this->templaterScope);
+
+        $this->execHooks('onAfterControllerInit', $this->commonData);
     }
 
     /**

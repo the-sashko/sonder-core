@@ -2,7 +2,7 @@
 /**
  * Class For Working With Form Data
  */
-class FormObject extends ValuesObject
+abstract class FormObject extends ValuesObject
 {
     /**
     * @var string Default Error Message
@@ -29,14 +29,40 @@ class FormObject extends ValuesObject
      */
     public $message = null;
 
+    public function __construct(?array $data = null)
+    {
+        parent::__construct($data);
+
+        $this->checkInputData();
+    }
+
     /**
-    * Get Processing Form Status
-    *
-    * @return bool Processing Form Status Value
-    */
+     * Check Input Data
+     */
+    abstract public function checkInputData(): void;
+
+    /**
+     * Get Processing Form Status
+     *
+     * @return bool Processing Form Status Value
+     */
     public function isStatusSuccess(): bool
     {
         return $this->status;
+    }
+
+    /**
+     * Is Has Form Errors
+     *
+     * @return bool Is Form Object Has Errors
+     */
+    public function hasErrors(): bool
+    {
+        if ($this->isStatusSuccess()) {
+            return false;
+        }
+
+        return !empty($this->errors);
     }
 
     /**
@@ -49,14 +75,12 @@ class FormObject extends ValuesObject
         if ($this->isStatusSuccess()) {
             return null;
         }
-        
-        $errors = $this->errors;
 
-        if (empty($errors)) {
-            $errors[] = static::DEFAULT_ERROR_MESSAGE;
+        if ($this->hasErrors()) {
+            return $this->errors;
         }
 
-        return $errors;
+        return [$errors];
     }
 
     /**

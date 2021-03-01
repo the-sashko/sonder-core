@@ -96,7 +96,7 @@ class ModelCore extends CommonCore
         $exceptionFilePath = sprintf(
             '%s/%sException.php',
             static::EXCEPTIONS_DIR_PATH,
-            __CLASS__
+            get_called_class()
         );
 
         if (file_exists($exceptionFilePath) && is_file($exceptionFilePath)) {
@@ -109,8 +109,13 @@ class ModelCore extends CommonCore
      */
     private function _includeForm(): void
     {
-        $modelName    = mb_convert_case(__CLASS__, MB_CASE_LOWER);
-        $formFilePath = sprintf('%s/%s.form.php', __DIR__, $modelName);
+        $modelName = mb_convert_case(get_called_class(), MB_CASE_LOWER);
+
+        $formFilePath = sprintf('%s/../../models/%s/%s.form.php',
+            __DIR__,
+            $modelName,
+            $modelName
+        );
 
         if (file_exists($formFilePath) && is_file($formFilePath)) {
             require_once($formFilePath);
@@ -122,9 +127,16 @@ class ModelCore extends CommonCore
      */
     private function _setStore(): void
     {
-        $modelName     = mb_convert_case(__CLASS__, MB_CASE_LOWER);
-        $storeFilePath = sprintf('%s/%s.store.php', __DIR__, $modelName);
-        $storeClass   = sprintf('%sStore', __CLASS__);
+        $modelName = mb_convert_case(get_called_class(), MB_CASE_LOWER);
+
+        $storeFilePath = sprintf(
+            '%s/../../models/%s/%s.store.php',
+            __DIR__,
+            $modelName,
+            $modelName
+        );
+
+        $storeClass = sprintf('%sStore', get_called_class());
 
         if (file_exists($storeFilePath) && is_file($storeFilePath)) {
             require_once($storeFilePath);
@@ -140,9 +152,16 @@ class ModelCore extends CommonCore
      */
     private function _setValuesObject(): void
     {
-        $modelName            = mb_convert_case(__CLASS__, MB_CASE_LOWER);
-        $valuesObjectFilePath = sprintf('%s/%s.vo.php', __DIR__, $modelName);
-        $valuesObjectClass    = sprintf('%sValuesObject', __CLASS__);
+        $modelName = mb_convert_case(get_called_class(), MB_CASE_LOWER);
+
+        $valuesObjectFilePath = sprintf(
+            '%s/../../models/%s/%s.vo.php',
+            __DIR__,
+            $modelName,
+            $modelName
+        );
+
+        $valuesObjectClass = sprintf('%sValuesObject', get_called_class());
 
         if (
             file_exists($valuesObjectFilePath) &&
@@ -159,9 +178,16 @@ class ModelCore extends CommonCore
      */
     private function _setApi(): void
     {
-        $modelName   = mb_convert_case(__CLASS__, MB_CASE_LOWER);
-        $apiFilePath = sprintf('%s/%s.api.php', __DIR__, $modelName);
-        $apiClass    = sprintf('%sApi', __CLASS__);
+        $modelName = mb_convert_case(get_called_class(), MB_CASE_LOWER);
+
+        $apiFilePath = sprintf(
+            '%s/../../models/%s/%s.api.php',
+            __DIR__,
+            $modelName,
+            $modelName
+        );
+
+        $apiClass = sprintf('%sApi', get_called_class());
 
         if (file_exists($apiFilePath) && is_file($apiFilePath)) {
             require_once($apiFilePath);
