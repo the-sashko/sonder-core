@@ -73,7 +73,7 @@ class MarkupPlugin
      *
      * @return string Output HTML Text Value
      */
-    public function markup2HTML(string $text = '') : string
+    public function markup2html(string $text = '') : string
     {
         $text = preg_replace(
             '/\[s\](.*?)\[\/s\]/su',
@@ -108,6 +108,7 @@ class MarkupPlugin
             $text
         );
         $text = preg_replace('/\n+/su', '</p><p>', $text);
+        $text = sprintf('<p>%s</p>', $text);
 
         return $text;
     }
