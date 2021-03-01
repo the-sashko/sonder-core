@@ -95,6 +95,26 @@ class SessionPlugin implements ISessionPlugin
     }
 
     /**
+     * Remove Data From Session Values
+     *
+     * @param string|null $valueName Name Of Value
+     */
+    public function remove(?string $valueName = null): bool
+    {
+        if (empty($valueName)) {
+            return false;
+        }
+
+        if (!$this->has($valueName)) {
+            return false;
+        }
+
+        unset($_SESSION[$valueName]);
+
+        return $this->_data->remove($valueName);
+    }
+
+    /**
      * Check Is Session Value Exists
      *
      * @param string|null $valueName Name Of Value

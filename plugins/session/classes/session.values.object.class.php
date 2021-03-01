@@ -138,6 +138,26 @@ class SessionValuesObject implements ISessionValuesObject
     }
 
     /**
+     * Remove Data From Model Instance
+     *
+     * @param string|null $valueName Value Name
+     */
+    public function remove(?string $valueName = null): bool
+    {
+        if (empty($valueName)) {
+            return false;
+        }
+
+        if (!$this->has($valueName)) {
+            return false;
+        }
+
+        unset($this->_data[$valueName]);
+
+        return true;
+    }
+
+    /**
      * Check Is Value Exists
      *
      * @param string|null $valueName Value Name

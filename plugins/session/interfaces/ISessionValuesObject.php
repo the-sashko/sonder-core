@@ -14,6 +14,8 @@ interface ISessionValuesObject
                 $valueData = null
     ): void;
 
+    public function remove(?string $valueName = null): bool;
+
     public function has(?string $valueName = null): bool;
 
     public function hasFlash(?string $valueName = null): bool;
