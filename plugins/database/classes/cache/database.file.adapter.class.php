@@ -4,7 +4,7 @@ namespace Core\Plugins\Database\Classes;
 use Core\Plugins\Database\Interfaces\IDataBaseCacheAdapter;
 
 /**
- * Data Base Cahe Provider For Files
+ * Data Base Cache Provider For Files
  */
 class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
 {
