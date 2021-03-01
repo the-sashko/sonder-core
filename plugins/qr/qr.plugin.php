@@ -22,7 +22,7 @@ class QrPlugin
 
     public function create(
         ?string $text                 = null,
-        ?string $filePath             = null,
+        ?string $dirPath              = null,
         ?string $fileName             = null,
         ?int    $cellSize             = null,
         ?int    $cellIndent           = null,
@@ -33,16 +33,16 @@ class QrPlugin
             throw new \Exception('Text Value Is Empty');
         }
 
-        $filePath   = $this->_getFilePath($filePath);
+        $dirPath    = $this->_getDirPath($dirPath);
         $fileName   = $this->_getFileName($fileName);
         $cellSize   = $this->_getCellSize($cellSize);
         $cellIndent = $this->_getCellIndent($cellIndent);
 
-        if (empty($filePath)) {
+        if (empty($dirPath)) {
             return null;
         }
 
-        $filePath = sprintf('%s/%s', $filePath, $fileName);
+        $filePath = sprintf('%s/%s', $dirPath, $fileName);
 
         $errorCorrectionLevel = $this->_getErrorCorrectionLevel(
             $errorCorrectionLevel
@@ -60,23 +60,24 @@ class QrPlugin
             return null;
         }
 
+        chmod($filePath, 0775);
+
         return $filePath;
     }
 
-    private function _getFilePath(?string $filePath = null): ?string
+    private function _getDirPath(?string $dirPath = null): ?string
     {
-        if (empty($filePath)) {
-            return null;
+        if (empty($dirPath)) {
+            throw new \Exception('Invalid Directory Path Value');
         }
 
-        $filePath = sprintf('%s/%s', static::PUBLIC_DIR_PATH, $filePath);
-        $filePath = realpath($filePath);
+        $dirPath = sprintf('%s/%s', static::PUBLIC_DIR_PATH, $dirPath);
 
-        if (empty($filePath)) {
-            throw new \Exception('Invalid File Path Value');
+        if (!file_exists($dirPath) || !is_dir($dirPath)) {
+            mkdir($dirPath, 0775, true);
         }
 
-        return $filePath;
+        return $dirPath;
     }
 
     private function _getFileName(?string $fileName = null): string
