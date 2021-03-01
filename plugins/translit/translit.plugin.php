@@ -5,6 +5,11 @@
 class TranslitPlugin
 {
     /**
+     * @var string Max Length Of Slug
+     */
+    const SLUG_MAX_LENGTH = 60;
+
+    /**
      * @var array List Of Cyrillic Characters
      */
     const CYRILLIC_ALPHABET = [
@@ -69,6 +74,9 @@ class TranslitPlugin
         $slug = preg_replace('/([^a-z0-9-]+)/su', '-', $latinString);
         $slug = preg_replace('/([\-]+)/su', '-', $slug);
         $slug = preg_replace('/(^-)|(-$)/su', '', $slug);
+
+        $slug = substr($slug, 0, static::SLUG_MAX_LENGTH);
+        $slug = preg_replace('/(-$)/su', '', $slug);
 
         return $slug;
     }
