@@ -20,40 +20,108 @@ class CronControllerCore extends ControllerCore
             throw new \Exception('Invalid Token');
         }
 
+        $jobs = (new Cron)->getJobs();
+
+        foreach ($jobs as $job) {
+            $this->_runJob($job);
+        }
+    }
+
+    /**
+     * Method That Running Cron Job
+     *
+     * @param CronValuesObject $job Cron Values Object
+     */
+    private function _runJob(CronValuesObject $job): void
+    {
         $logger = $this->getPlugin('logger');
 
-        $cron     = new Cron();
-        $cronJobs = $cron->getJobs();
+        $jobName = $job->getAction();
 
-        foreach ($cronJobs as $cronJob) {
-            $method = $cronJob->getAction();
+        $method = mb_convert_case($jobName, MB_CASE_TITLE);
+        $method = sprintf('job%s', $method);
 
-            $cronJob->setTimeNextExec();
+        $job->setTimeNextExec();
 
-            try {
-                $logMessage = sprintf('Job %s Start', $method);
-                $logger->log($logMessage, 'cron');
+        try {
+            $logMessage = sprintf('Job %s Start', $jobName);
+            $logger->log($logMessage, 'cron');
 
-                $this->$method();
+            set_error_handler([$this, 'errorHandler']);
 
-                $cronJob->setLastExecStatus(true);
-                $cronJob->setErrorMessage(null);
+            $this->$method();
 
-                $logMessage = sprintf('Job %s Done', $method);
-                $logger->log($logMessage, 'cron');
-            } catch (Exception $exp) {
-                $logMessage = $exp->getMessage();
+            restore_error_handler();
 
-                $cronJob->setErrorMessage($logMessage);
-                $cronJob->setLastExecStatus(false);
+            $job->setLastExecStatus(true);
+            $job->setErrorMessage(null);
 
-                $logger->logError($logMessage, false);
+            $logMessage = sprintf('Job %s Done', $jobName);
+            $logger->log($logMessage, 'cron');
+        } catch (\Throwable $exp) {
+            $logMessage = $exp->getMessage();
 
-                $logMessage = sprintf('Job %s Fail', $logMessage);
-                $logger->log($logMessage, 'cron');
+            $job->setErrorMessage($logMessage);
+            $job->setLastExecStatus(false);
+
+            $logger->logError($logMessage, 'cron');
+
+            $logMessage = sprintf(
+                'Job %s Failed. Error: %s',
+                $jobName,
+                $logMessage
+            );
+
+            $logger->log($logMessage, 'cron');
+        }
+
+        (new Cron)->updateByVO($job);
+    }
+
+    /**
+     * Errors Handler
+     *
+     * @param int    $errorCode    HTTP Response Code
+     * @param string $errorMessage Error Message
+     * @param string $errorFile    File With Error
+     * @param int    $errorLine    Line In File With Error
+     */
+    public function errorHandler(
+        int    $errorCode,
+        string $errorMessage,
+        string $errorFile,
+        int    $errorLine
+    ): void
+    {
+        $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach ($debugBacktrace as $key => $debugBacktraceStep) {
+            $debugBacktrace[$key] = '…';
+
+            if (array_key_exists('file', $debugBacktraceStep)) {
+                $debugBacktrace[$key] = $debugBacktraceStep['file'];
             }
 
-            $cron->updateByVO($cronJob);
+            if (array_key_exists('line', $debugBacktraceStep)) {
+                $debugBacktrace[$key] = sprintf(
+                    '%s (%d)',
+                    $debugBacktrace[$key],
+                    $debugBacktraceStep['line']
+                );
+            }
         }
+
+        $logMessage = sprintf(
+            'Error #%d: %s. File: %s (%d). Trace: %s',
+            $errorCode,
+            $errorMessage,
+            $errorFile,
+            $errorLine,
+            implode(' -> ', array_reverse($debugBacktrace))
+        );
+
+        (new LoggerPlugin)->logError($logMessage);
+
+        throw new \Exception($errorMessage, $errorCode);
     }
 }

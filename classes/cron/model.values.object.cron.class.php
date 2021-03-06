@@ -25,9 +25,9 @@ class CronValuesObject extends ValuesObject
         return (int) $this->get('time_next_exec');
     }
 
-    public function getLastExecStatus(): int
+    public function getLastExecStatus(): bool
     {
-        return (int) $this->get('last_exec_status');
+        return (bool) $this->get('last_exec_status');
     }
 
     public function getErrorMessage(): ?string
@@ -44,8 +44,8 @@ class CronValuesObject extends ValuesObject
 
     public function getStatus(): string
     {
-        $lastExecStatus = (bool) $this->getLastExecStatus();
-        $isActive       = (bool) $this->getIsActive();
+        $lastExecStatus = $this->getLastExecStatus();
+        $isActive       = $this->getIsActive();
 
         if (!$isActive) {
             return static::STATUS_WAITING;
@@ -58,9 +58,9 @@ class CronValuesObject extends ValuesObject
         return static::STATUS_SUCCESS;
     }
 
-    public function getIsActive(): int
+    public function getIsActive(): bool
     {
-        return (int) $this->get('is_active');
+        return (bool) $this->get('is_active');
     }
 
     public function setAction(?string $action = null): void
@@ -80,12 +80,12 @@ class CronValuesObject extends ValuesObject
         $this->set('time_next_exec', $timeNextExec);
     }
 
-    public function setLastExecStatus(int $status = 0): void
+    public function setLastExecStatus(bool $status = false): void
     {
         $this->set('last_exec_status', $status);
     }
 
-    public function setIsActive(int $isActive = 0): void
+    public function setIsActive(bool $isActive = false): void
     {
         $this->set('is_active', $isActive);
     }

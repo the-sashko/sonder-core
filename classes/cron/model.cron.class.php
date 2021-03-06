@@ -31,15 +31,15 @@ class Cron extends ModelCore
             return false;
         }
 
-        $values = [
+        $row = [
             'action'           => $cronVO->getAction(),
             'interval'         => $cronVO->getInterval(),
             'time_next_exec'   => $cronVO->getTimeNextExec(),
-            'last_exec_status' => $cronVO->getLastExecStatus(),
-            'is_active'        => $cronVO->getIsActive(),
-            'error_message'    => $cronVO->getErrorMessage()
+            'last_exec_status' => $cronVO->getLastExecStatus() ? 't' : 'f',
+            'is_active'        => $cronVO->getIsActive() ? 't' : 'f',
+            'error_message'    => (string) $cronVO->getErrorMessage()
         ];
 
-        return $this->store->updateCronById($values, $cronVO->getId());
+        return $this->store->updateCronById($row, $cronVO->getId());
     }
 }
