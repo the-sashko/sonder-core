@@ -11,7 +11,7 @@ require_once __DIR__.'/classes/model.class.php';
 require_once __DIR__.'/classes/model.auth.interface.php';
 require_once __DIR__.'/classes/response.class.php';
 require_once __DIR__.'/classes/controller.class.php';
-require_once __DIR__.'/classes/cron/controller.cron.class.php';
 require_once __DIR__.'/classes/cron/model.store.cron.class.php';
 require_once __DIR__.'/classes/cron/model.values.object.cron.class.php';
 require_once __DIR__.'/classes/cron/model.cron.class.php';
+require_once __DIR__.'/classes/cron/controller.cron.class.php';
