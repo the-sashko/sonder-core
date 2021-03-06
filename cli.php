@@ -18,7 +18,7 @@ class Cli extends App
             $controller,
             $action,
             $cliParams
-        ) = $this->_parseCLIOptions();
+        ) = $this->_parseCliOptions();
 
         if (!$this->isControllerExist($controller)) {
             $errorMessage = '%s. Controller: %s';
@@ -65,7 +65,7 @@ class Cli extends App
         exit(0);
     }
 
-    private function _parseCLIOptions(): array
+    private function _parseCliOptions(): array
     {
         $cliOptions = getopt('', ['controller:', 'action:', 'params:']);
 
