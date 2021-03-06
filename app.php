@@ -76,7 +76,7 @@ class App
             }
 
             $controller->$action();
-        } catch (Exception $exp) {
+        } catch (\Throwable $exp) {
             $this->exceptionHandler($exp);
         }
 
