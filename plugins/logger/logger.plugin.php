@@ -53,7 +53,7 @@ class LoggerPlugin
         }
 
         if (empty($logType)) {
-            $logType = static::DEFAULT_LOG_TYPE;
+            $logType = $logName;
         }
 
         $logName = $this->_normalizeString($logName);
