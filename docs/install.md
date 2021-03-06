@@ -13,8 +13,9 @@ git submodule add git@github.com:the-sashko/php-common-toolkit.git protected/cor
 
 ## Edit Configs
 
-Edit Config Files In `<YOU_PROJECT>/protected/config`
+Edit config files in `<YOU_PROJECT>/protected/config`
 
 ## Deploy Database Dump
 
-Deploy Database Dump `<YOU_PROJECT>/protected/core/instal/dump/<YOU_DATABASE_TYPE>.sql`
+Deploy database dump `<YOU_PROJECT>/protected/core/instal/dump/<YOU_DATABASE_TYPE>.sql`
+
