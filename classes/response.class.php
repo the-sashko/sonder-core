@@ -223,18 +223,21 @@ class Response extends CommonCore
         $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
         $siteName   = null;
 
-        if (!array_key_exists('site_name', $metaParams)) {
+        if (array_key_exists('site_name', $metaParams)) {
             $siteName = $metaParams['site_name'];
         }
 
-        $metaParams['copyright'] = sprintf('&copy; %s', (string) $siteName);
         $copyrightDate           = date('Y');
 
         if (date('Y') !== $launchYear) {
             $copyrightDate = sprintf('%s-%s', $launchYear, date('Y'));
         }
 
-        $metaParams['copyright'] = $copyrightDate;
+        $metaParams['copyright'] = sprintf(
+            '&copy; %s %s',
+            (string) $siteName,
+            (string) $copyrightDate
+        );
     }
 
     /**
