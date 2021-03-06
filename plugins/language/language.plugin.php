@@ -108,16 +108,14 @@ class LanguagePlugin
             $localePath = sprintf('%s/%s', static::LOCALE_DIR, $locale);
 
             if (!file_exists($localePath) || !is_dir($localePath)) {
-                mkdir($localePath);
-                chmod($localePath, 0775);
+                mkdir($localePath, 0775, true);
             }
 
 
             $localePath = sprintf('%s/LC_MESSAGES', $localePath);
 
             if (!file_exists($localePath) || !is_dir($localePath)) {
-                mkdir($localePath);
-                chmod($localePath, 0775);
+                mkdir($localePath, 0775, true);
             }
 
             $poFilePath = sprintf('%s/%s.po', $localePath, $language);
