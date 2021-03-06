@@ -76,11 +76,10 @@ class LanguagePlugin
 
         $locale = $this->_getLocale();
 
-        putenv(sprintf('LC_ALL=%s', $locale));
-        setlocale(LC_ALL, $locale);
+        putenv(sprintf('LC_ALL=%s.UTF-8', $locale));
+        setlocale(LC_ALL, sprintf('%s.UTF-8', $locale));
 
         bindtextdomain($this->_language, static::LOCALE_DIR);
-
         textdomain($this->_language);
 
         return gettext($inputString);
@@ -124,7 +123,8 @@ class LanguagePlugin
             $this->_generateDictionaryFile(
                 $sourceFilePath,
                 $poFilePath,
-                $moFilePath
+                $moFilePath,
+                $locale
             );
         }
     }
@@ -253,13 +253,15 @@ class LanguagePlugin
     private function _generateDictionaryFile(
         ?string $sourceFilePath = null,
         ?string $poFilePath     = null,
-        ?string $moFilePath     = null
+        ?string $moFilePath     = null,
+        ?string $locale         = null
     ): bool
     {
         if (
             empty($sourceFilePath) ||
             empty($poFilePath) ||
-            empty($moFilePath)
+            empty($moFilePath) ||
+            empty($locale)
         ) {
             return false;
         }
@@ -278,16 +280,45 @@ class LanguagePlugin
         $jsonContent    = file_get_contents($sourceFilePath);
         $dictionaryRows = (array) json_decode($jsonContent);
 
-        foreach ($dictionaryRows as $key => $value) {
-            $row = sprintf('msgid "%s"', $key);
-            $row = sprintf('%s%smsgstr "%s"', $row, "\n", $value);
+        $firstRow = [
+            'msgid ""',
+            'msgstr ""',
+            '"Project-Id-Version: 1.0\n"',
+            '"Report-Msgid-Bugs-To: \n"', 
+            sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"Language: %s\n"', $locale),
+            '"MIME-Version: 1.0\n"',
+            '"Content-Type: text/plain; charset=UTF-8\n"'
+        ];
 
-            $dictionaryRows[$key] = $row;
+        $firstRow = implode("\n", $firstRow);
+
+        foreach ($dictionaryRows as $key => $value) {
+            $row = [
+                '#. translation',
+                sprintf('msgid "%s"', $key),
+                sprintf('msgstr "%s"', $value)
+            ];
+
+            $dictionaryRows[$key] = implode("\n", $row);
         }
 
-        file_put_contents($poFilePath, implode("\n", $dictionaryRows));
+        $dictionaryRows = implode("\n\n", $dictionaryRows);
+
+        $dictionaryRows = sprintf(
+            '%s%s%s',
+            $firstRow,
+            "\n\n",
+            $dictionaryRows
+        );
+
+        file_put_contents($poFilePath, $dictionaryRows);
 
         $this->_vendor->convertPo2Mo($poFilePath, $moFilePath);
+
+        clearstatcache();
+        opcache_reset();
 
         return true;
     }

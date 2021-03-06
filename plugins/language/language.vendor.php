@@ -1,11 +1,6 @@
 <?php
 class LanguageVendor
 {
-    public function __construct()
-    {
-        require_once __DIR__.'/vendor/php-mo.php';
-    }
-
     public function convertPo2Mo(
         ?string $poFilePath = null,
         ?string $moFilePath = null
@@ -34,7 +29,8 @@ class LanguageVendor
             unlink($moFilePath);
         }
 
-        phpmo_convert($poFilePath, $moFilePath);
+        $execString = sprintf('msgfmt %s -o %s', $poFilePath, $moFilePath);
+        exec($execString);
 
         chmod($moFilePath, 0775);
     }
