@@ -7,7 +7,7 @@ class CronControllerCore extends ControllerCore
     /**
      * Method That Running All Cron Jobs
      */
-    public function actionRun(): void
+    public function actionRun(): bool
     {
         $token      = $this->getValueFromUrl('token');
         $cronConfig = $this->getConfig('cron');
@@ -22,9 +22,15 @@ class CronControllerCore extends ControllerCore
 
         $jobs = (new Cron)->getJobs();
 
+        if (empty($jobs)) {
+            return false;
+        }
+
         foreach ($jobs as $job) {
             $this->_runJob($job);
         }
+
+        return true;
     }
 
     /**
