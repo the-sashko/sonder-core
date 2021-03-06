@@ -36,10 +36,12 @@ class HookCore extends CommonCore
     public function getEntityParam(?string $key = null)
     {
         if (empty($key) || empty($this->_entityData)) {
-            return false;
+            return null;
         }
 
-        return array_key_exists($key, $this->_entityData);
+        if (!array_key_exists($key, $this->_entityData)) {
+            return null;
+        }
 
         return $this->_entityData[$key];
     }

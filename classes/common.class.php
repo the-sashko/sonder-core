@@ -350,12 +350,11 @@ class CommonCore
         $hookClass = mb_convert_case($hookName, MB_CASE_TITLE);
         $hookClass = sprintf('%sHook', $hookClass);
 
-        $hookFile = '%s/%s/%s.php';
+        $hookFile = '%s/%s.php';
 
         $hookFile = sprintf(
             $hookFile,
             static::HOOKS_DIR_PATH,
-            $hookName,
             $hookName
         );
 

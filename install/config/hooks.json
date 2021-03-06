@@ -1,8 +1,8 @@
 {
-    "onBeforeRender": {
-        "0": {
+    "onBeforeRender": [
+        {
             "hook":   "example",
             "method": "getExampleData"
         }
-    }
+    ]
 }
