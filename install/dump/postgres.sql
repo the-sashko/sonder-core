@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS "cron_jobs";
-DROP TABLE IF EXISTS "example";
 
 DROP SEQUENCE IF EXISTS cron_jobs_id_seq;
 DROP SEQUENCE IF EXISTS example_id_seq;
@@ -19,12 +18,6 @@ CREATE TABLE "cron_jobs" (
     CONSTRAINT "cron_jobs_action_interval" UNIQUE ("action", "interval")
 );
 
-CREATE TABLE "example" (
-    "id" integer DEFAULT nextval('example_id_seq') NOT NULL,
-    "foo" character varying(8) NOT NULL,
-    CONSTRAINT "example_id" PRIMARY KEY ("id")
-);
-
 CREATE INDEX "cron_action" ON "cron_jobs" USING btree ("action");
 
 CREATE INDEX "cron_action_time_next_exec"
@@ -41,7 +34,3 @@ CREATE INDEX "cron_last_next_status"
 
 CREATE INDEX "cron_time_next_exec"
     ON "cron_jobs" USING btree ("time_next_exec");
-
-CREATE INDEX "example_foo" ON "example" USING btree ("foo");
-
-INSERT INTO "example" ("foo") VALUES ('bar');
