@@ -7,9 +7,6 @@
 [submodule "plugins/qr/vendor"]
 	path = plugins/qr/vendor
 	url = https://github.com/the-sashko/for_php_qr_core.git
-[submodule "plugins/language/vendor"]
-	path = plugins/language/vendor
-	url = https://github.com/the-sashko/php.mo.git
 [submodule "plugins/captcha"]
 	path = plugins/captcha
 	url = git@github.com:the-sashko/fapcha.git
