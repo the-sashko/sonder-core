@@ -80,7 +80,7 @@ abstract class FormObject extends ValuesObject
             return $this->errors;
         }
 
-        return [$errors];
+        return null;
     }
 
     /**
