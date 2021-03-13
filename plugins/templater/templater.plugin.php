@@ -142,8 +142,6 @@ class TemplaterPlugin
             throw new Exception($errorMessage);
         }
 
-        $template = $this->_template;
-
         include_once($templateFilePath);
     }
 }
