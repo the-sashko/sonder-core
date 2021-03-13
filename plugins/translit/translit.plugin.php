@@ -68,6 +68,10 @@ class TranslitPlugin
             return null;
         }
 
+        $cyrillicString = preg_replace('/\&([a-z]+);/su', '', $cyrillicString);
+        $cyrillicString = htmlspecialchars_decode($cyrillicString);
+        $cyrillicString = preg_replace('/\&([a-z]+);/su', '', $cyrillicString);
+
         $latinString = (string) $this->cyr2lat($cyrillicString);
         $latinString = mb_convert_case($latinString, MB_CASE_LOWER);
 
