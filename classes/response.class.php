@@ -10,6 +10,11 @@ class Response extends CommonCore
     const PAGE_TITLE_SEPARATOR = ' / ';
 
     /**
+     * @var int Max Length Of SEO Description
+     */
+    const SEO_DESCRIPTION_MAX_LENGTH = 300;
+
+    /**
      * @var string HTML Termplates Scope
      */
     private $_templaterScope = 'default';
@@ -74,11 +79,37 @@ class Response extends CommonCore
             '#' => $staticPageVO->getTitle()
         ];
 
+        $seoDescription = $staticPageVO->getContent();
+        $seoDescription = strip_tags($seoDescription);
+
+        $seoDescription = preg_replace('/\s+/su', ' ', $seoDescription);
+        $seoDescription = preg_replace('/(^\s)|(\s$)/su', '', $seoDescription);
+
+        if (strlen($seoDescription) > static::SEO_DESCRIPTION_MAX_LENGTH - 1) {
+            $seoDescription = substr(
+                $seoDescription,
+                0,
+                static::SEO_DESCRIPTION_MAX_LENGTH - 1
+            );
+
+            $seoDescription = preg_replace(
+                '/^(.*?)\s([^\s]+)$/su',
+                '$1',
+                $seoDescription
+            );
+
+            $seoDescription = sprintf('%s…', $seoDescription);
+        }
+
         $this->render(
             $templatePage,
             [
                 'staticPage' => $staticPageVO,
-                'pagePath'   => $pagePath
+                'pagePath'   => $pagePath,
+                'seoTitle'   => $staticPageVO->getTitle(),
+                'meta'       => [
+                    'description' => $seoDescription
+                ]
             ]
         );
     }
