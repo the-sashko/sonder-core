@@ -1,61 +1,20 @@
 # Changelog
 
-## v0.1.1-alpha (04/25/2019)
+## v1.1 (03/13/2021)
 
 ### New Features
+- Add `onAfterControllerInit` hook
 
-#### Helpers
-
--   Helpers For Creating API
--   Helpers For Routing HTTP Requests
--   Helpers For Using MVC Patern
--   Helpers For Using ValueObject Patern In Models
-
-#### Wrappers
-
--   Wrapper For Working With PostgreSQL (By PDO)
--   Wrapper For Working With Redis (By Predis)
--   Wrapper For Working With Twitter API (By CodeBird)
--   Wrapper For Working With Images (By Imagick)
-
-#### Features
-
-##### Common Features
-
--   Converting Numbers Fron Base 10 To Others Bases (From 2 To 64)
--   Handling Errors And Exceptions
--   Logging
--   Sharing Links Via Twitter (By CodeBird) And Telegram (By Curl)
--   Simple Plain PHP Templater
--   Translation By Dictionary
--   Transliteration Cyrillic To Latin
--   Uploading Files In Secure Way
--   Validaton Input Values By Type
-
-##### Working With Input Data
-
--   Getting Input Data From HTTP Requsts And Server Environment In Secure Way
--   Getting User IP And Hash Of User IP
-
-##### Working With HTML
-
--   Generating HTML Breadcrumbs
--   Generating HTML From External Web Page Link
--   Generating HTML From Markdown-Like Markup
--   Generating HTML From Youtube Video Link
--   Generating HTML Pagination
-
-##### Unstable And Experimental Features
-
--   Caching Data Base Requests By Redis, Files Or Memcache (Unstable Feature)
--   Caching Templater Data By Redis, Files Or Memcache (Unstable Feature)
--   Creating Short Links Via Shortener API (Unstable Feature)
--   Helpers For Generation Sitemaps (Unstable Feature)
--   Resizing And Converting Images (Unstable Feature)
--   Sending E-mails (Unstable Feature)
-
----
-
-## v0.1-alpha (04/10/2019)
-
-*No changelog for this release.*
+### Bug Fixes
+- Fix all bugs in core classes
+- Fix CLI script
+- Fix install script and install resources
+- Fix Database plugin
+- Fix Language plugin
+- Fix Logger plugin
+- Fix Markup plugin
+- Fix Page plugin
+- Fix QR plugin
+- Fix Session plugin
+- Fix Templater plugin
+- Fix Translit plugin
