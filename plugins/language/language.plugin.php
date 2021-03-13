@@ -284,7 +284,7 @@ class LanguagePlugin
             'msgid ""',
             'msgstr ""',
             '"Project-Id-Version: 1.0\n"',
-            '"Report-Msgid-Bugs-To: \n"', 
+            '"Report-Msgid-Bugs-To: \n"',
             sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
             sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
             sprintf('"Language: %s\n"', $locale),
