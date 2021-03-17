@@ -75,6 +75,9 @@ class Response extends CommonCore
             $notFoundUrl
         );
 
+        $staticPageVO->setTitle(__t($staticPageVO->getTitle()));
+        $staticPageVO->setContent(__t($staticPageVO->getContent()));
+
         $pagePath = [
             '#' => $staticPageVO->getTitle()
         ];
