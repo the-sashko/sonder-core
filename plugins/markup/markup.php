@@ -13,9 +13,10 @@
  *
  * === Internal Shortcodes (Used By Other Plugins) ===
  *
- * [Reply:<Post ID>]      - Link to other post
- * [YouTube:<Video ID>]   - YouTube player
- * [Link:<URL>:"<Title>"] - Link
+ * [Reply:<Post ID>]               - Link To Other Post
+ * [YouTube:<Video ID>]            - YouTube Player
+ * [Link:<URL>:"<Title>"]          - Link
+ * [Link:<URL>:"<Title>":Internal] - Internal Link (Without rel="nofollow")
  *
  * === Alternative Syntax ===
  *
@@ -31,27 +32,46 @@ class MarkupPlugin
     /**
      * Replace Alternative Syntax By Shortcodes
      *
-     * @param string $text Input Text Value
+     * @param string|null $text Input Text Value
      *
-     * @return string Output Text Value
+     * @return string|null Output Text Value
      */
-    public function normalizeSyntax(string $text = '') : string
+    public function normalizeSyntax(?string $text = null): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = str_replace('&gt;', '>', $text);
         $text = preg_replace('/~~(.*?)~~/su', '[s]$1[/s]', $text);
         $text = preg_replace('/DEL(.*?)DEL/su', '[s]$1[/s]', $text);
         $text = preg_replace('/\*\*(.*?)\*\*/su', '[b]$1[/b]', $text);
         $text = preg_replace('/\*(.*?)\*/su', '[i]$1[/i]', $text);
+
         $text = preg_replace(
             '/\%\%(.*?)\%\%/su',
             '[spoiler]$1[/spoiler]',
             $text
         );
+
         $text = preg_replace(
             '/\%\%(.*?)\%\%/su',
             '[spoiler]$1[/spoiler]',
             $text
         );
+
+        $text = preg_replace(
+            '/\[([^\]]+)\]\(([^\)]+)\)/su',
+            '[Link:$2:"$1"]',
+            $text
+        );
+
+        $text = preg_replace(
+            '/\[Link\:\/([^\:]+)\:\"([^\"]+)\"\]/su',
+            '[Link:/$1:"$2":Internal]',
+            $text
+        );
+
         $text = preg_replace('/\>\>([0-9]+)/su', "[Reply:$1]", $text);
         $text = preg_replace('/\>(.*?)\n/su', "\n[q]$1[/q]\n", $text);
         $text = preg_replace('/\>(.*?)$/su', "\n[q]$1[/q]", $text);
@@ -69,46 +89,59 @@ class MarkupPlugin
     /**
      * Convert Shortcodes Into HTML Tags
      *
-     * @param string $text Input Plain Text Value
+     * @param string|null $text Input Plain Text Value
      *
-     * @return string Output HTML Text Value
+     * @return string|null Output HTML Text Value
      */
-    public function markup2html(string $text = '') : string
+    public function markup2html(?string $text = null): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = preg_replace(
             '/\[s\](.*?)\[\/s\]/su',
             '<strike>$1</strike>',
             $text
         );
+
         $text = preg_replace(
             '/\[b\](.*?)\[\/b\]/su',
             '<strong>$1</strong>',
             $text
         );
+
         $text = preg_replace('/\[i\](.*?)\[\/i\]/su', '<i>$1</i>', $text);
+
         $text = preg_replace(
             '/\[spoiler\](.*?)\[\/spoiler\]/su',
             '<span class="spoiler">$1</span>',
             $text
         );
+
         $text = preg_replace(
             '/\[u\](.*?)\[\/u\]/su',
             '<span class="utag">$1</span>',
             $text
         );
+
         $text = preg_replace('/([\s]+)\[q\]/su', '[q]', $text);
         $text = preg_replace('/\[q\]([\s]+)/su', '[q]', $text);
         $text = preg_replace('/([\s]+)\[\/q\]/su', '[/q]', $text);
         $text = preg_replace('/\[\/q\]([\s]+)/su', '[/q]', $text);
         $text = preg_replace('/\[q\]/su', '[q]<p>', $text);
         $text = preg_replace('/\[\/q\]/su', '</p>[/q]', $text);
+
         $text = preg_replace(
             '/\[q\](.*?)\[\/q\]/su',
             '<blockquote>$1</blockquote>',
             $text
         );
+
         $text = preg_replace('/\n+/su', '</p><p>', $text);
         $text = sprintf('<p>%s</p>', $text);
+
+        $text = $this->parseLinkShortCode($text);
 
         return $text;
     }
@@ -116,12 +149,16 @@ class MarkupPlugin
     /**
      * Remove extra spaces
      *
-     * @param string $text Input Text Value
+     * @param string|null $text Input Text Value
      *
-     * @return string Output Text Value
+     * @return string|null Output Text Value
      */
-    public function normalizeText(string $text = '') : string
+    public function normalizeText(?string $text = null): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = preg_replace('/\n+/su', "<br>", $text);
         $text = preg_replace('/\s+/su', ' ', $text);
         $text = preg_replace('/\<br\>\s/su', '<br>', $text);
@@ -137,16 +174,20 @@ class MarkupPlugin
     /**
      * Convert Reply Shortcode Into HTML Tag
      *
-     * @param string $text      Input Text Value
-     * @param int    $sectionID ID Of Site Section
+     * @param string|null $text      Input Text Value
+     * @param int         $sectionID ID Of Site Section
      *
-     * @return string Output Text Value
+     * @return string|null Output Text Value
      */
     public function parseReplyShortCode(
-        string $text      = '',
-        int    $sectionID = 0
-    ) : string
+        ?string $text      = null,
+        int     $sectionID = 0
+    ): ?string
     {
+        if (empty($text)) {
+            return null;
+        }
+
         $text = preg_replace(
             '/\[Reply\:([0-9]+)\]/su',
             '<a
@@ -157,6 +198,36 @@ class MarkupPlugin
                 >>$1
             </a>',
             $text);
+
+        return $text;
+    }
+
+    /**
+     * Convert Link Shortcode Into HTML Tag
+     *
+     * @param string|null $text Input Text Value
+     *
+     * @return string|null Output Text Value
+     */
+    public function parseLinkShortCode(
+        ?string $text = null
+    ): ?string
+    {
+        if (empty($text)) {
+            return null;
+        }
+
+        $text = preg_replace(
+            '/\[Link\:([^\:]+)\:\"([^\"]+)\"\:Internal\]/su',
+            '<a href="$1">$2</a>',
+            $text
+        );
+
+        $text = preg_replace(
+            '/\[Link\:([^\"]+)\:\"([^\"]+)\"\]/su',
+            '<a href="$1" rel="nofollow">$2</a>',
+            $text
+        );
 
         return $text;
     }
