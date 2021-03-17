@@ -27,4 +27,14 @@ class StaticPageValuesObject
 
         return $this->_data->get('content');
     }
+
+    public function setTitle(?string $title = null): void
+    {
+        $this->_data->set('title', $title);
+    }
+
+    public function setContent(?string $content = null): void
+    {
+        $this->_data->set('content', $content);
+    }
 }
