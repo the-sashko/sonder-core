@@ -66,8 +66,7 @@ class TelegramPlugin
         $message = (string) $message;
 
         $message = strip_tags($message);
-        $message = htmlspecialchars($message);
-        $message = addslashes($message);
+        $message = htmlspecialchars_decode($message);
 
         $message = preg_replace('/\n+/su', '<br>', $message);
         $message = preg_replace('/\s+/su', ' ', $message);
@@ -76,6 +75,8 @@ class TelegramPlugin
         $message = preg_replace('/\n+/su', "\n", $message);
         $message = preg_replace('/(^\s)|(\s$)/su', '', $message);
         $message = urlencode($message);
+
+        $message = str_replace('&quot;', '---', $message);
 
         return $message;
     }
@@ -89,7 +90,13 @@ class TelegramPlugin
     private function _sendToChat(string $message, string $chatCode): void
     {
         $url = $this->_getApiUrl();
-        $url = sprintf('%s?chat_id=%s&text=', $url, $chatCode, $message);
+
+        $url = sprintf(
+            '%s?parse_mode=Markdown&chat_id=%s&text=%s',
+            $url,
+            $chatCode,
+            $message
+        );
 
         $this->_sendToRemoteApi($url);
     }
