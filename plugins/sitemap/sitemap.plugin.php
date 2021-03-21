@@ -35,16 +35,16 @@ class SitemapPlugin
     const SITEMAP_INDEX_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>'.
                                    "\n".'<sitemapindex xmlns="'.
                                    'http://www.sitemaps.org/schemas/sitemap/'.
-                                   '0.9">%s</sitemapindex>';
+                                   '0.9">%s'."\n".'</sitemapindex>';
 
     /**
      * @var string Template Of Entry In Sitemap Index File
      */
-    const SITEMAP_ITEM_TEMPLATE = '%s
-                                   <sitemap>
-                                       <loc>%s/xml/%s.xml</loc>
-                                       <lastmod>%s</lastmod>
-                                   </sitemap>';
+    const SITEMAP_ITEM_TEMPLATE = '%s'."\n".
+                                  '    <sitemap>'."\n".
+                                  '        <loc>%s/xml/%s.xml</loc>'."\n".
+                                  '        <lastmod>%s</lastmod>'."\n".
+                                  '    </sitemap>';
 
     /**
      * @var string Template Of Sitemap File
@@ -52,17 +52,17 @@ class SitemapPlugin
     const SITEMAP_URLS_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>'.
                                   "\n".'<urlset xmlns="'.
                                   'http://www.sitemaps.org/schemas/sitemap/'.
-                                  '0.9">%s</urlset>';
+                                  '0.9">%s'."\n".'</urlset>';
 
     /**
      * @var string Template Of Entry In Sitemap File
      */
-    const SITEMAP_URL_TEMPLATE = '%s
-                                  <url>
-                                      <loc>%s</loc>
-                                      <changefreq>%s</changefreq>
-                                      <priority>%s</priority>
-                                  </url>';
+    const SITEMAP_URL_TEMPLATE = '%s'."\n".
+                                 '    <url>'."\n".
+                                 '        <loc>%s</loc>'."\n".
+                                 '        <changefreq>%s</changefreq>'."\n".
+                                 '        <priority>%s</priority>'."\n".
+                                 '    </url>';
 
     public function __construct()
     {
