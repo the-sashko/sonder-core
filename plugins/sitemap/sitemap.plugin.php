@@ -166,7 +166,7 @@ class SitemapPlugin
         $sitemapXml = '';
 
         foreach ((array) $sitemaps as $sitemap) {
-            $date = date('Y-m-dTH:i:s+00:00');
+            $date = sprintf('%sT%s', date('Y-m-d'), date('H:i:s+00:00'));
 
             $sitemapXml = sprintf(
                 static::SITEMAP_ITEM_TEMPLATE,
