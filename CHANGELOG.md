@@ -131,3 +131,9 @@
 - Fix Page plugin
 - Fix Sitemap plugin
 - Fix Telegram plugin
+
+## v1.1.2 (03/21/2021)
+
+### Bug Fixes
+
+- Fix Sitemap plugin
