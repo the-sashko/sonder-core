@@ -245,16 +245,87 @@ class LanguagePlugin
         return $defaultLocale;
     }
 
-    /**
-     * Generate Dictionary File By JSON Source
-     *
-     * @return bool Is Dictionary File Successfully Generated
-     */
     private function _generateDictionaryFile(
         ?string $sourceFilePath = null,
-        ?string $poFilePath = null,
-        ?string $moFilePath = null,
-        ?string $locale = null
+        ?string $poFilePath     = null,
+        ?string $moFilePath     = null,
+        ?string $locale         = null
+    ): bool
+    {
+        if ($this->_prepareDictionaryFile(
+            $sourceFilePath,
+            $poFilePath,
+            $moFilePath,
+            $locale
+        )) {
+            return false;
+        }
+
+        $jsonContent    = file_get_contents($sourceFilePath);
+        $dictionaryRows = (array) json_decode($jsonContent);
+
+        $headerRow = $this->_getDictionaryHeaderRow($locale);
+
+        foreach ($dictionaryRows as $key => $value) {
+            $row = [
+                '#. translation',
+                sprintf('msgid "%s"', $key),
+                sprintf('msgstr "%s"', $value)
+            ];
+
+            $dictionaryRows[$key] = implode("\n", $row);
+        }
+
+        $dictionaryRows = implode("\n\n", $dictionaryRows);
+
+        $dictionaryRows = sprintf(
+            '%s%s%s',
+            $headerRow,
+            "\n\n",
+            $dictionaryRows
+        );
+
+        file_put_contents($poFilePath, $dictionaryRows);
+
+        $this->_vendor->convertPo2Mo($poFilePath, $moFilePath);
+
+        clearstatcache();
+        opcache_reset();
+
+        return true;
+    }
+
+    private function _getDictionaryHeaderRow(?string $locale = null): ?string
+    {
+        if (empty($locale)) {
+            return null;
+        }
+
+        $headerRow = [
+            'msgid ""',
+            'msgstr ""',
+            '"Project-Id-Version: 1.0\n"',
+            '"Report-Msgid-Bugs-To: \n"',
+            sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"Language: %s\n"', $locale),
+            '"MIME-Version: 1.0\n"',
+            '"Content-Type: text/plain; charset=UTF-8\n"'
+        ];
+
+        return implode("\n", $headerRow);
+    }
+
+    /**
+     * Prepare Dictionary File
+     *
+     * @return bool Is Dictionary File Successfully Prepared
+     */
+    private function _prepareDictionaryFile(
+        ?string $sourceFilePath = null,
+        ?string $poFilePath     = null,
+        ?string $moFilePath     = null,
+        ?string $locale         = null
     ): bool {
         if (
             empty($sourceFilePath) ||
@@ -275,49 +346,6 @@ class LanguagePlugin
 
         touch($poFilePath);
         chmod($poFilePath, 0775);
-
-        $jsonContent    = file_get_contents($sourceFilePath);
-        $dictionaryRows = (array) json_decode($jsonContent);
-
-        $firstRow = [
-            'msgid ""',
-            'msgstr ""',
-            '"Project-Id-Version: 1.0\n"',
-            '"Report-Msgid-Bugs-To: \n"',
-            sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"Language: %s\n"', $locale),
-            '"MIME-Version: 1.0\n"',
-            '"Content-Type: text/plain; charset=UTF-8\n"'
-        ];
-
-        $firstRow = implode("\n", $firstRow);
-
-        foreach ($dictionaryRows as $key => $value) {
-            $row = [
-                '#. translation',
-                sprintf('msgid "%s"', $key),
-                sprintf('msgstr "%s"', $value)
-            ];
-
-            $dictionaryRows[$key] = implode("\n", $row);
-        }
-
-        $dictionaryRows = implode("\n\n", $dictionaryRows);
-
-        $dictionaryRows = sprintf(
-            '%s%s%s',
-            $firstRow,
-            "\n\n",
-            $dictionaryRows
-        );
-
-        file_put_contents($poFilePath, $dictionaryRows);
-
-        $this->_vendor->convertPo2Mo($poFilePath, $moFilePath);
-
-        clearstatcache();
-        opcache_reset();
 
         return true;
     }
