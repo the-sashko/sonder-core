@@ -91,39 +91,32 @@ class UploadPlugin implements IUploadPlugin
      */
     private function _uploadFile(IUploadFile $file): string
     {
-        if (empty($this->_settings)) {
+        $this->_checkFile($file);
+
+        $uploadedFilePath = $this->_getUploadedFilePath($file);
+
+        if (!move_uploaded_file($file->getFilePath(), $uploadedFilePath)) {
             throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_SETTINGS_ARE_NOT_SET,
-                UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
+                UploadPluginException::MESSAGE_PLUGIN_FILE_SAVE_ERROR,
+                UploadPluginException::CODE_PLUGIN_FILE_SAVE_ERROR
             );
         }
 
-        if (
-            UPLOAD_ERR_OK !== $file->getError() ||
-            $file->getSize() < 1
-        ) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_UPLOAD_ERROR,
-                UploadPluginException::CODE_PLUGIN_FILE_UPLOAD_ERROR
-            );
-        }
+        chmod($uploadedFilePath, 0775);
 
-        if ($file->getSize() > $this->_settings->getMaxSize()) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_TOO_LARGE,
-                UploadPluginException::CODE_PLUGIN_FILE_TOO_LARGE
-            );
-        }
+        return realpath($uploadedFilePath);
+    }
 
-        if (
-            empty($file->getExtension()) ||
-            !in_array($file->getExtension(), $this->_settings->getExtensions())
-        ) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_HAS_BAD_EXTENSION,
-                UploadPluginException::CODE_PLUGIN_FILE_HAS_BAD_EXTENSION
-            );
-        }
+    /**
+     * Get File Path Of Uploaded File
+     *
+     * @param IUploadFile $file Input File Object
+     *
+     * @return string Uploaded File Path
+     */
+    private function _getUploadedFilePath(IUploadFile $file): string
+    {
+        $this->_checkSettings();
 
         $uploadsDirPath = $this->_settings->getUploadsDirPath();
 
@@ -155,16 +148,57 @@ class UploadPlugin implements IUploadPlugin
             );
         }
 
-        if (!move_uploaded_file($file->getFilePath(), $uploadedFilePath)) {
+        return $uploadedFilePath;
+    }
+
+    /**
+     * Check Settings Of Upload Plugin
+     */
+    private function _checkSettings(): void
+    {
+        if (empty($this->_settings)) {
             throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_SAVE_ERROR,
-                UploadPluginException::CODE_PLUGIN_FILE_SAVE_ERROR
+                UploadPluginException::MESSAGE_PLUGIN_SETTINGS_ARE_NOT_SET,
+                UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
+            );
+        }
+    }
+
+    /**
+     * Check Input File
+     *
+     * @param IUploadFile $file Input File Object
+     */
+    private function _checkFile(IUploadFile $file): void
+    {
+        $this->_checkSettings();
+
+        if (
+            UPLOAD_ERR_OK !== $file->getError() ||
+            $file->getSize() < 1
+        ) {
+            throw new UploadPluginException(
+                UploadPluginException::MESSAGE_PLUGIN_FILE_UPLOAD_ERROR,
+                UploadPluginException::CODE_PLUGIN_FILE_UPLOAD_ERROR
             );
         }
 
-        chmod($uploadedFilePath, 0775);
+        if ($file->getSize() > $this->_settings->getMaxSize()) {
+            throw new UploadPluginException(
+                UploadPluginException::MESSAGE_PLUGIN_FILE_TOO_LARGE,
+                UploadPluginException::CODE_PLUGIN_FILE_TOO_LARGE
+            );
+        }
 
-        return realpath($uploadedFilePath);
+        if (
+            empty($file->getExtension()) ||
+            !in_array($file->getExtension(), $this->_settings->getExtensions())
+        ) {
+            throw new UploadPluginException(
+                UploadPluginException::MESSAGE_PLUGIN_FILE_HAS_BAD_EXTENSION,
+                UploadPluginException::CODE_PLUGIN_FILE_HAS_BAD_EXTENSION
+            );
+        }
     }
 
     private function _setFileObjects(): bool
