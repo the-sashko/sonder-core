@@ -57,18 +57,6 @@ class MailPlugin
         include_once $responseProviderFile;
         include_once $providerFile;
 
-        if (!class_exists($credentialsProviderClass)) {
-            throw new \Exception('Invalid Mail Provider');
-        }
-
-        if (!class_exists($responseProviderClass)) {
-            throw new \Exception('Invalid Mail Provider');
-        }
-
-        if (!class_exists($providerClass)) {
-            throw new \Exception('Invalid Mail Provider');
-        }
-
         $this->_provider = new $providerClass($providerIdent);
     }
 
