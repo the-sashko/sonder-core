@@ -41,9 +41,6 @@ class LanguagePlugin
 
     public function __construct()
     {
-        $this->_setLanguage();
-        $this->_vendor = new LanguageVendor();
-    }
 
     /**
      * Translate String By Dictionary
@@ -58,7 +55,7 @@ class LanguagePlugin
             return null;
         }
 
-        if ($this->_language == $this->_getDefaultLanguage()) {
+        if ($this->_language == DEFAULT_LANGUAGE) {
             return $inputString;
         }
 
@@ -188,7 +185,7 @@ class LanguagePlugin
     {
         $session = new SessionPlugin();
 
-        $language = $this->_getDefaultLanguage();
+        $language = DEFAULT_LANGUAGE;
 
         if ($session->has('language')) {
             $language = $session->get('language');
@@ -203,19 +200,6 @@ class LanguagePlugin
 
         $this->_language = $language;
     }
-
-    /**
-     * Get Default Language
-     */
-    private function _getDefaultLanguage(): string
-    {
-        if (defined('DEFAULT_LANGUAGE')) {
-            return DEFAULT_LANGUAGE;
-        }
-
-        return static::DEFAULT_LANGUAGE;
-    }
-
 
     private function _getDefaultLocale(): string
     {
@@ -264,7 +248,19 @@ class LanguagePlugin
         $jsonContent    = file_get_contents($sourceFilePath);
         $dictionaryRows = (array) json_decode($jsonContent);
 
-        $headerRow = $this->_getDictionaryHeaderRow($locale);
+        $headerRow = [
+            'msgid ""',
+            'msgstr ""',
+            '"Project-Id-Version: 1.0\n"',
+            '"Report-Msgid-Bugs-To: \n"',
+            sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
+            sprintf('"Language: %s\n"', $locale),
+            '"MIME-Version: 1.0\n"',
+            '"Content-Type: text/plain; charset=UTF-8\n"'
+        ];
+
+        $headerRow = implode("\n", $headerRow);
 
         foreach ($dictionaryRows as $key => $value) {
             $row = [
@@ -293,27 +289,6 @@ class LanguagePlugin
         opcache_reset();
 
         return true;
-    }
-
-    private function _getDictionaryHeaderRow(?string $locale = null): ?string
-    {
-        if (empty($locale)) {
-            return null;
-        }
-
-        $headerRow = [
-            'msgid ""',
-            'msgstr ""',
-            '"Project-Id-Version: 1.0\n"',
-            '"Report-Msgid-Bugs-To: \n"',
-            sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"Language: %s\n"', $locale),
-            '"MIME-Version: 1.0\n"',
-            '"Content-Type: text/plain; charset=UTF-8\n"'
-        ];
-
-        return implode("\n", $headerRow);
     }
 
     /**
