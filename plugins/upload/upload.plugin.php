@@ -116,7 +116,12 @@ class UploadPlugin implements IUploadPlugin
      */
     private function _getUploadedFilePath(IUploadFile $file): string
     {
-        $this->_checkSettings();
+        if (empty($this->_settings)) {
+            throw new UploadPluginException(
+                UploadPluginException::MESSAGE_PLUGIN_SETTINGS_ARE_NOT_SET,
+                UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
+            );
+        }
 
         $uploadsDirPath = $this->_settings->getUploadsDirPath();
 
@@ -152,9 +157,11 @@ class UploadPlugin implements IUploadPlugin
     }
 
     /**
-     * Check Settings Of Upload Plugin
+     * Check Input File
+     *
+     * @param IUploadFile $file Input File Object
      */
-    private function _checkSettings(): void
+    private function _checkFile(IUploadFile $file): void
     {
         if (empty($this->_settings)) {
             throw new UploadPluginException(
@@ -162,16 +169,6 @@ class UploadPlugin implements IUploadPlugin
                 UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
             );
         }
-    }
-
-    /**
-     * Check Input File
-     *
-     * @param IUploadFile $file Input File Object
-     */
-    private function _checkFile(IUploadFile $file): void
-    {
-        $this->_checkSettings();
 
         if (
             UPLOAD_ERR_OK !== $file->getError() ||
@@ -205,8 +202,7 @@ class UploadPlugin implements IUploadPlugin
     {
         $this->_files = [];
 
-        $this->_mapSingleFiles();
-        $this->_mapMultipleFiles();
+        $this->_mapFiles();
 
         if (empty($this->_files)) {
             return false;
@@ -266,8 +262,10 @@ class UploadPlugin implements IUploadPlugin
 
     /**
      * Map Files That Uploaded In Single Mode From $_FILES To $this->files
+     * Map File Sets That Uploaded In Multiple Mode From $_FILES
+     * To $this->files
      */
-    private function _mapSingleFiles(): void
+    private function _mapFiles(): void
     {
         foreach ($_FILES as $fileName => $file) {
             if (
@@ -278,14 +276,7 @@ class UploadPlugin implements IUploadPlugin
                 unset($_FILES[$fileName]);
             }
         }
-    }
 
-    /**
-     * Map File Sets That Uploaded In Multiple Mode From $_FILES
-     * To $this->files
-     */
-    private function _mapMultipleFiles(): void
-    {
         foreach ($_FILES as $groupName => $multipleFile) {
             $this->_files[$groupName] = $this->_mapMultipleFileSet(
                 $multipleFile
