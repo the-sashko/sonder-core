@@ -39,8 +39,8 @@ class LanguagePlugin
      */
     private $_vendor = null;
 
-    public function __construct()
-    {
+public function __construct()
+{
 
     /**
      * Translate String By Dictionary
@@ -231,11 +231,10 @@ class LanguagePlugin
 
     private function _generateDictionaryFile(
         ?string $sourceFilePath = null,
-        ?string $poFilePath     = null,
-        ?string $moFilePath     = null,
-        ?string $locale         = null
-    ): bool
-    {
+        ?string $poFilePath = null,
+        ?string $moFilePath = null,
+        ?string $locale = null
+    ): bool {
         if ($this->_prepareDictionaryFile(
             $sourceFilePath,
             $poFilePath,
@@ -298,9 +297,9 @@ class LanguagePlugin
      */
     private function _prepareDictionaryFile(
         ?string $sourceFilePath = null,
-        ?string $poFilePath     = null,
-        ?string $moFilePath     = null,
-        ?string $locale         = null
+        ?string $poFilePath = null,
+        ?string $moFilePath = null,
+        ?string $locale = null
     ): bool {
         if (
             empty($sourceFilePath) ||
