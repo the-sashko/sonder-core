@@ -41,6 +41,13 @@ class LanguagePlugin
 
     public function __construct()
     {
+        if (defined('DEFAULT_LANGUAGE')) {
+            define('DEFAULT_LANGUAGE', static::DEFAULT_LANGUAGE);
+        }
+
+        $this->_setLanguage();
+        $this->_vendor = new LanguageVendor();
+    }
 
     /**
      * Translate String By Dictionary
