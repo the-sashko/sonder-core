@@ -1,10 +1,10 @@
 /**
  * @file Example JS Application
  */
-let example = {
+const example = {
 
     "init": function () {
-        console.log("Hello World!");
+        alert("Hello World!");
     }
 
 };
