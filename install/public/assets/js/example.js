@@ -6,12 +6,16 @@
  * @description Example Application Object.
  */
 const example = {
+
     /**
-     * @returns {bool}
-     * @description Inital Method.
+     * Inital Method
+     * @example example.init();
+     * @returns {boolean} Returns True If Successfully Init Application
      */
     init () {
+
         return true;
+
     }
 
 };
