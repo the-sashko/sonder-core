@@ -21,7 +21,7 @@ class LinkPlugin
      */
     private $_parser = null;
 
-    public __construct()
+    public function __construct()
     {
         $this->_parser = new Parser();
     }
