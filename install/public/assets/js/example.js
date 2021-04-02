@@ -3,14 +3,16 @@
  */
 
 /**
- * @description Example Application Object.
+ * Example Application Object.
+ * @type object
  */
 const example = {
 
     /**
-     * Inital Method
+     * Inital Method.
+     * @public
      * @example example.init();
-     * @returns {boolean} Returns True If Successfully Init Application
+     * @returns {boolean} Returns True If Successfully Init Application.
      */
     init () {
 
