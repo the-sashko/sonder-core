@@ -30,7 +30,7 @@ class DatabaseCache implements IDataBaseCache
 
         switch ($adapter) {
             case static::ADAPTER_MOCK:
-                $this->_adapter = new DatabaseMockCacheAdapter();
+                $this->_adapter = null;
                 break;
 
             case static::ADAPTER_FILE:
@@ -70,6 +70,10 @@ class DatabaseCache implements IDataBaseCache
             );
         }
 
+        if (empty($this->_adapter)) {
+            return true;
+        }
+
         if (empty($data)) {
             return false;
         }
@@ -102,6 +106,10 @@ class DatabaseCache implements IDataBaseCache
             );
         }
 
+        if (empty($this->_adapter)) {
+            return null;
+        }
+
         if (empty($ttl)) {
             $ttl = static::DEFAULT_TTL;
         }
@@ -128,6 +136,10 @@ class DatabaseCache implements IDataBaseCache
      */
     public function clean(?string $scope = null): bool
     {
+        if (empty($this->_adapter)) {
+            return true;
+        }
+
         if (empty($scope)) {
             $scope = static::DEFAULT_SCOPE;
         }
