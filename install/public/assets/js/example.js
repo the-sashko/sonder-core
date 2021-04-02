@@ -1,5 +1,8 @@
+/**
+ * @file Example JS Application 
+ */
 let example = {
-    init: function() {
+    'init': function() {
         console.log('Hello World!');
     }
 };
