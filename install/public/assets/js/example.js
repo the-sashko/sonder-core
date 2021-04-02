@@ -3,9 +3,9 @@
  */
 const example = {
 
-    "init": function () {
+    init() {
 
-        //Init Method
+        // Init Method
     }
 
 };
