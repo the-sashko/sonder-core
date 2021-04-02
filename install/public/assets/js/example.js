@@ -4,12 +4,14 @@
 
 /**
  * Example Application Object.
- * @type object
+ *
+ * @type {object}
  */
 const example = {
 
     /**
      * Inital Method.
+     *
      * @public
      * @example example.init();
      * @returns {boolean} Returns True If Successfully Init Application.
