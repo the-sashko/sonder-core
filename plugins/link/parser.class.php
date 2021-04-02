@@ -194,11 +194,11 @@ class Parser
      */
     public function getPageContent(?string $url = null): string
     {
-        $html = $this->_getPageHTMLFromCurl($url);
+        $html = $this->_getPageHtmlFromCurl($url);
 
         $html = (string) mb_convert_encoding($html, 'UTF-8');
         $html = htmlspecialchars_decode($html);
-        $html = $this->_removePageHTMLTags($html);
+        $html = $this->_removePageHtmlTags($html);
 
         return $html;
     }
@@ -223,7 +223,7 @@ class Parser
         }
 
         if (empty(trim((string) $title))) {
-            $title = $this->_getPageTitleFromURL($url);
+            $title = $this->_getPageTitleFromUrl($url);
         }
 
         return $this->_normalizeTitle($title);
@@ -280,7 +280,7 @@ class Parser
      *
      * @return string Web Page HTML
      */
-    private function _getPageHTMLFromCurl(?string $url = null): string
+    private function _getPageHtmlFromCurl(?string $url = null): string
     {
         $curl = curl_init();
 
@@ -306,7 +306,7 @@ class Parser
      *
      * @return string $html Web Page HTML Without Extra Tags
      */
-    private function _removePageHTMLTags(?string $html = null): string
+    private function _removePageHtmlTags(?string $html = null): string
     {
         $html = preg_replace('/\<script(.*?)\>(.*?)\<\/script\>/su',
             '',
@@ -407,7 +407,7 @@ class Parser
      *
      * @return string Web Page Title
      */
-    private function _getPageTitleFromURL(?string $url = null): string
+    private function _getPageTitleFromUrl(?string $url = null): string
     {
         $title = $this->_getDomain($url);
 

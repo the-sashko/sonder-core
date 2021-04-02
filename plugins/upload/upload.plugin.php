@@ -1,9 +1,8 @@
 <?php
 use Core\Plugins\Upload\Interfaces\IUploadPlugin;
-use Core\Plugins\Upload\Interfaces\IUploadFile;
 
-use Core\Plugins\Upload\Classes\UploadSettings;
 use Core\Plugins\Upload\Classes\UploadFile;
+use Core\Plugins\Upload\Classes\UploadSaver;
 
 use Core\Plugins\Upload\Exceptions\UploadException;
 use Core\Plugins\Upload\Exceptions\UploadPluginException;
@@ -37,15 +36,11 @@ class UploadPlugin implements IUploadPlugin
         ?string $uploadsDir = null
     ): void
     {
-        $this->_settings = new UploadSettings(
-            $extensions,
-            $maxSize,
-            $uploadsDir
-        );
-
         try {
             foreach ($this->_files as $groupKey => $groupFiles) {
-                $this->_files[$groupKey] = $this->_uploadByGroup($groupFiles);
+                $this->_files[$groupKey] = (new UploadSaver)->saveByGroup(
+                    $groupFiles
+                );
             }
         } catch (UploadException $ext) {
             $this->_error = $ext->getMessage();
@@ -64,138 +59,6 @@ class UploadPlugin implements IUploadPlugin
     public function getError(): ?string
     {
         return $this->_error;
-    }
-
-    /**
-     * Upload File Groups
-     *
-     * @param array  $groupFiles Group Of Files
-     *
-     * @return array List Of Uploaded Files
-     */
-    private function _uploadByGroup(array $groupFiles = []): array
-    {
-        foreach ($groupFiles as $groupFilesKey => $file) {
-            $groupFiles[$groupFilesKey] = $this->_uploadFile($file);
-        }
-
-        return $groupFiles;
-    }
-
-    /**
-     * Upload Single File
-     *
-     * @param IUploadFile $file Input File Object
-     *
-     * @return string Uploaded File Path
-     */
-    private function _uploadFile(IUploadFile $file): string
-    {
-        $this->_checkFile($file);
-
-        $uploadedFilePath = $this->_getUploadedFilePath($file);
-
-        if (!move_uploaded_file($file->getFilePath(), $uploadedFilePath)) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_SAVE_ERROR,
-                UploadPluginException::CODE_PLUGIN_FILE_SAVE_ERROR
-            );
-        }
-
-        chmod($uploadedFilePath, 0775);
-
-        return realpath($uploadedFilePath);
-    }
-
-    /**
-     * Get File Path Of Uploaded File
-     *
-     * @param IUploadFile $file Input File Object
-     *
-     * @return string Uploaded File Path
-     */
-    private function _getUploadedFilePath(IUploadFile $file): string
-    {
-        if (empty($this->_settings)) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_SETTINGS_ARE_NOT_SET,
-                UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
-            );
-        }
-
-        $uploadsDirPath = $this->_settings->getUploadsDirPath();
-
-        if (
-            !file_exists($uploadsDirPath) ||
-            !is_dir($uploadsDirPath)
-        ) {
-            mkdir($uploadsDirPath, 0775, true);
-        }
-
-        $uploadedFilePath = sprintf(
-            '%s/%s.%s',
-            $uploadsDirPath,
-            $file->getName(),
-            (string) $file->getExtension()
-        );
-
-        $fileUniqNumber = 0;
-
-        while (file_exists($uploadedFilePath) && is_file($uploadedFilePath)) {
-            $fileUniqNumber++;
-
-            $uploadedFilePath = sprintf(
-                '%s/%s-%d.%s',
-                $uploadsDirPath,
-                $file->getName(),
-                $fileUniqNumber,
-                (string) $file->getExtension()
-            );
-        }
-
-        return $uploadedFilePath;
-    }
-
-    /**
-     * Check Input File
-     *
-     * @param IUploadFile $file Input File Object
-     */
-    private function _checkFile(IUploadFile $file): void
-    {
-        if (empty($this->_settings)) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_SETTINGS_ARE_NOT_SET,
-                UploadPluginException::CODE_PLUGIN_SETTINGS_ARE_NOT_SET
-            );
-        }
-
-        if (
-            UPLOAD_ERR_OK !== $file->getError() ||
-            $file->getSize() < 1
-        ) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_UPLOAD_ERROR,
-                UploadPluginException::CODE_PLUGIN_FILE_UPLOAD_ERROR
-            );
-        }
-
-        if ($file->getSize() > $this->_settings->getMaxSize()) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_TOO_LARGE,
-                UploadPluginException::CODE_PLUGIN_FILE_TOO_LARGE
-            );
-        }
-
-        if (
-            empty($file->getExtension()) ||
-            !in_array($file->getExtension(), $this->_settings->getExtensions())
-        ) {
-            throw new UploadPluginException(
-                UploadPluginException::MESSAGE_PLUGIN_FILE_HAS_BAD_EXTENSION,
-                UploadPluginException::CODE_PLUGIN_FILE_HAS_BAD_EXTENSION
-            );
-        }
     }
 
     private function _setFileObjects(): bool

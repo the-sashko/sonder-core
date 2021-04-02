@@ -18,7 +18,7 @@ class DatabaseCache implements IDataBaseCache
     const ADAPTER_MOCK = 'mock';
 
     /**
-     * @var object Instance OF Data Base Cache Adapter
+     * @var object|null Instance OF Data Base Cache Adapter
      */
     private $_adapter = null;
 

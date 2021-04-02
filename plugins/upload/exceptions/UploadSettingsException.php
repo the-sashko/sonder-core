@@ -1,5 +1,4 @@
 <?php
-
 namespace Core\Plugins\Upload\Exceptions;
 
 class UploadSettingsException extends UploadException
