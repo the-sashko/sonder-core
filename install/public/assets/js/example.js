@@ -1,6 +1,7 @@
 /**
  * @file Example JS Application
  */
+ 
 const example = {
 
     init() {
