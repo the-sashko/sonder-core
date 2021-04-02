@@ -412,7 +412,7 @@ class Parser
         $title = $this->_getDomain($url);
 
         if (preg_match('/^www\.(.*?)$/', $title)) {
-            return preg_replace('/^www\.(.*?)$/', '', $title);
+            $title = preg_replace('/^www\.(.*?)$/', '', $title);
         }
 
         return $title;
@@ -612,11 +612,13 @@ class Parser
      */
     private function _getPageImageFromBody(?string $html = null): ?string
     {
+        $image = null;
+
         if ($this->_isTagExists('IMG_IMAGE_REGEX_ALT', $html)) {
-            return $this->_parseHtmlTag('IMG_IMAGE_REGEX_ALT', 4, $html);
+            $image = $this->_parseHtmlTag('IMG_IMAGE_REGEX_ALT', 4, $html);
         }
 
-        return null;
+        return $image;
     }
 
     /**
@@ -685,11 +687,7 @@ class Parser
         ?string $html   = null
     ): bool
     {
-        if (empty($regexp)) {
-            return false;
-        }
-
-        if (empty($html)) {
+        if (empty($regexp) || empty($html)) {
             return false;
         }
 
@@ -719,11 +717,7 @@ class Parser
 
         // $regexp = static::$regexp;
 
-        if (empty($partNumber)) {
-            return null;
-        }
-
-        if (empty($html)) {
+        if (empty($partNumber) || empty($html)) {
             return null;
         }
 
@@ -741,11 +735,13 @@ class Parser
      */
     private function _getProtocol(?string $url = null): string
     {
+        $protocol = 'http';
+
         if (preg_match('/^https\:\/\/(.*?)$/su', (string) $url)) {
-            return 'https';
+            $protocol = 'https';
         }
 
-        return 'http';
+        return $protocol;
     }
 
     /**
@@ -787,17 +783,10 @@ class Parser
      */
     private function _isImageValid(?string $image = null): bool
     {
-        if (empty($image)) {
-            return false;
-        }
-
-        if (preg_match(
-            '/^(.*?)\.((jpg)|(jpeg)|(bmp)|(gif)|(png))$/su',
-            $image
-        )) {
-            return true;
-        }
-
-        return false;
+        return !empty($image) &&
+               preg_match(
+                    '/^(.*?)\.((jpg)|(jpeg)|(bmp)|(gif)|(png))$/su',
+                    $image
+               );
     }
 }
