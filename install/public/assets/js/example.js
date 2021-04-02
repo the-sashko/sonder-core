@@ -5,6 +5,7 @@
 /**
  * Example Application Object.
  *
+ * @example example.init();
  * @type {object}
  */
 const example = {

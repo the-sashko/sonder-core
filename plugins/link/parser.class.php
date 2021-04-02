@@ -260,11 +260,7 @@ class Parser
         ?string $url  = null
     ): ?string
     {
-        if (empty($html)) {
-            return null;
-        }
-
-        if (empty($url)) {
+        if (empty($html) || empty($url)) {
             return null;
         }
 
