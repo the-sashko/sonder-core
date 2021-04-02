@@ -1,7 +1,7 @@
-var Example = {
+let example = {
     init: function() {
         console.log('Hello World!');
     }
 };
 
-Example.init();
+example.init();
