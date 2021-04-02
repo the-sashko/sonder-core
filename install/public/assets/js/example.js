@@ -1,5 +1,5 @@
 /**
- * @file Example JS Application 
+ * @file Example JS Application
  */
 let example = {
     'init': function() {
