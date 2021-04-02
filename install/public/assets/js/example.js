@@ -1,9 +1,14 @@
 /**
- * @file Example JS Application
+ * @file Example JS Application.
  */
- 
-const example = {
 
+/**
+ * @description Example Application Object.
+ */
+const example = {
+    /**
+     * @description Inital Method.
+     */
     init() {
 
         // Init Method
