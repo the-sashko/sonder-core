@@ -252,7 +252,7 @@ class LanguagePlugin
             return false;
         }
 
-        $jsonContent    = file_get_contents($sourceFilePath);
+        $jsonContent    = file_get_contents((string) $sourceFilePath);
         $dictionaryRows = (array) json_decode($jsonContent);
 
         $headerRow = [
@@ -262,7 +262,7 @@ class LanguagePlugin
             '"Report-Msgid-Bugs-To: \n"',
             sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
             sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"Language: %s\n"', $locale),
+            sprintf('"Language: %s\n"', (string) $locale),
             '"MIME-Version: 1.0\n"',
             '"Content-Type: text/plain; charset=UTF-8\n"'
         ];
@@ -288,7 +288,7 @@ class LanguagePlugin
             $dictionaryRows
         );
 
-        file_put_contents($poFilePath, $dictionaryRows);
+        file_put_contents((string) $poFilePath, $dictionaryRows);
 
         $this->_vendor->convertPo2Mo($poFilePath, $moFilePath);
 

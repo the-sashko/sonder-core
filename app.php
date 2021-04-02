@@ -126,7 +126,7 @@ class App
     /**
      * Exceptions Handler
      *
-     * @param Exception|null $exception Exception Instance
+     * @param Throwable|null $exception Exception Instance
      */
     public function exceptionHandler(?Throwable $exception = null): void
     {
