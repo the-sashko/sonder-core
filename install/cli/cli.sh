@@ -5,13 +5,13 @@ scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 cd "$scriptDir" || exit
 
-help='Usage:
+help="Usage:
     cli.sh [options]
 Options:
     -c    Controller Name
     -a    Action Name
     -p    Optional Params
-    -h    Help Message'
+    -h    Help Message"
 
 while getopts ":c:a:p:h" optName
 do
@@ -30,19 +30,19 @@ do
            exit;
            break;;
 
-        *) echo 'Invalid option. Try `cli.sh -h` for more information';
+        *) echo "Invalid option. Try \`cli.sh -h\` for more information";
            exit;
            break;;
     esac
 done
 
 if [ -z ${controller+x} ]; then
-    echo 'Controller Name Is Not Set. Try `cli.sh -h` for more information';
+    echo "Controller Name Is Not Set. Try \`cli.sh -h\` for more information";
     exit;
 fi
 
 if [ -z ${action+x} ]; then
-    echo 'Action Name Is Not Set. Try `cli.sh -h` for more information';
+    echo "Action Name Is Not Set. Try \`cli.sh -h\` for more information";
     exit;
 fi
 
