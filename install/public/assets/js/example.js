@@ -4,7 +4,8 @@
 const example = {
 
     "init": function () {
-        alert("Hello World!");
+
+        //Init Method
     }
 
 };
