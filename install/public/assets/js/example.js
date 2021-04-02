@@ -7,11 +7,11 @@
  */
 const example = {
     /**
+     * @returns {bool}
      * @description Inital Method.
      */
-    init() {
-
-        // Init Method
+    init () {
+        return true;
     }
 
 };
