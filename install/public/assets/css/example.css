@@ -12,7 +12,7 @@ a:focus, a:hover {
 }
 
 body, html {
-  background: #fefefe;
+  background: #FEFEFE;
   color: #333;
   font-family: Arial, sans-serif;
   font-size: 16px;
@@ -75,7 +75,7 @@ h6 {
 }
 
 img {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #E0E0E0;
   border-radius: 0.25em;
 }
 
