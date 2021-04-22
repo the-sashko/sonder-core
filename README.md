@@ -1,6 +1,6 @@
 # PHP Common Toolkit
 
-Some useful PHP tools
+Lightweight PHP framework
 
 ## Documentation
 
