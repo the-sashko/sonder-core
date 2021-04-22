@@ -46,7 +46,32 @@ class SmsClubProvider implements ISmsProvider
     private function _sendRemoteRequest(string $phone, string $message): bool
     {
         $curl        = curl_init();
-        $curlHeaders = $this->_getCurlHeaders($phone, $message);
+
+
+        $xmlRequest = file_get_contents(__DIR__.'/xml/request.xml');
+
+        $login     = (string) $this->_credentials->getLogin();
+        $token     = (string) $this->_credentials->getToken();
+        $alphaName = (string) $this->_credentials->getAlphaName();
+
+        $xmlRequest = str_replace('{{login}}', $login, $xmlRequest);
+        $xmlRequest = str_replace('{{token}}', $token, $xmlRequest);
+        $xmlRequest = str_replace('{{alphaName}}', $alphaName, $xmlRequest);
+        $xmlRequest = str_replace('{{phone}}', $phone, $xmlRequest);
+        $xmlRequest = str_replace('{{message}}', $message, $xmlRequest);
+
+        $curlHeaders = [
+            CURLOPT_URL            => $this->_credentials->getUrl(),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => 'POST',
+            CURLOPT_POSTFIELDS     => $xmlRequest,
+            CURLOPT_HTTPHEADER     => [
+                'content-type: application/xml'
+            ]
+        ];
 
         curl_setopt_array($curl, $curlHeaders);
 
@@ -84,7 +109,11 @@ class SmsClubProvider implements ISmsProvider
             return false;
         }
 
-        $status = $this->_getXmlResponseStatus($xmlResponse);
+        $status = (string) $xmlResponse->status;
+        $status = mb_convert_case($status, MB_CASE_LOWER);
+        $status = trim($status);
+        
+        $status = $status === 'ok';
 
         if (!$status) {
             $errorMessage = $this->_getXmlResponseErrorMessage($xmlResponse);
@@ -98,34 +127,6 @@ class SmsClubProvider implements ISmsProvider
         $this->_setResponseSuccess($messageCode);
 
         return true;
-    }
-
-    private function _getCurlHeaders(string $phone, string $message): array
-    {
-        $xmlRequest = file_get_contents(__DIR__.'/xml/request.xml');
-
-        $login     = (string) $this->_credentials->getLogin();
-        $token     = (string) $this->_credentials->getToken();
-        $alphaName = (string) $this->_credentials->getAlphaName();
-
-        $xmlRequest = str_replace('{{login}}', $login, $xmlRequest);
-        $xmlRequest = str_replace('{{token}}', $token, $xmlRequest);
-        $xmlRequest = str_replace('{{alphaName}}', $alphaName, $xmlRequest);
-        $xmlRequest = str_replace('{{phone}}', $phone, $xmlRequest);
-        $xmlRequest = str_replace('{{message}}', $message, $xmlRequest);
-
-        return [
-            CURLOPT_URL            => $this->_credentials->getUrl(),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_MAXREDIRS      => 10,
-            CURLOPT_TIMEOUT        => 30,
-            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $xmlRequest,
-            CURLOPT_HTTPHEADER     => [
-                'content-type: application/xml'
-            ]
-        ];
     }
 
     private function _getXmlResponseErrorMessage(
@@ -159,17 +160,6 @@ class SmsClubProvider implements ISmsProvider
         $this->_response->setStatus(true);
         $this->_response->setRemoteMessageCode($messageCode);
         $this->_response->setErrorMessage(null);
-    }
-
-    private function _getXmlResponseStatus(
-        ?\SimpleXMLElement $xmlResponse = null
-    ): bool
-    {
-        $status = (string) $xmlResponse->status;
-        $status = mb_convert_case($status, MB_CASE_LOWER);
-        $status = trim($status);
-        
-        return $status === 'ok';
     }
 
     private function _getXmlResponseMessageCode(
