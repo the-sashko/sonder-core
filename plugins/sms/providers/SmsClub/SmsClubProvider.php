@@ -40,7 +40,7 @@ class SmsClubProvider implements ISmsProvider
 
         throw new \Exception('Not Implemented Yet');
 
-        return new SmsClubResponse();
+        return $smsResponse;
     }
 
     private function _sendRemoteRequest(string $phone, string $message): bool
