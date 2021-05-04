@@ -1,6 +1,6 @@
 #!/bin/bash
 
-currDir=$(pwd)
+currentDir=$(pwd)
 scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null && pwd)"
 
 cd "$scriptDir/../.." || exit 1
@@ -31,7 +31,7 @@ cd "$scriptDir" || exit 1
 
 ./test.sh
 
-cd "$currDir" || exit 1
+cd "$currentDir" || exit 1
 
 exit 1
 
