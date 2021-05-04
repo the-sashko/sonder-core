@@ -9,14 +9,15 @@
     ?>
 </head>
 <body>
-<div class="header-wrapper"></div>
-<div class="wrapper">
-    <div class="header">
-        <div class="site-title-wrapper">
-            <h1 class="site-title"><?=$meta['site_name'];?></h1>
-            <div class="site-subtitle"><?=$meta['site_slogan'];?></div>
-        </div>
+<div class="header">
+    <h1 class="site-title"><?=$meta['site_name'];?></h1>
+    <div class="site-subtitle"><?=$meta['site_slogan'];?></div>
+    <div class="main-menu">
+        <a href="/">Main</a>
+        <a href="/page/example/">Example</a>
+        <a href="/error/404/">Error 404</a>
     </div>
-    <div class="clear"></div>
-    <div class="content">
-        <?=$breadcrumbs;?>
+</div>
+<div class="clear"></div>
+<div class="content">
+    <?=$breadcrumbs;?>

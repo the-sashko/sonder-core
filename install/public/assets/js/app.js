@@ -5,16 +5,16 @@
 /**
  * Example Application Object.
  *
- * @example example.init();
+ * @example App.init();
  * @type {object}
  */
-const example = {
+const App = {
 
     /**
      * Inital Method.
      *
      * @public
-     * @example example.init();
+     * @example App.init();
      * @returns {boolean} Returns True If Successfully Init Application.
      */
     init () {
@@ -25,4 +25,4 @@ const example = {
 
 };
 
-example.init();
+App.init();
