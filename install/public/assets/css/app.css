@@ -154,7 +154,6 @@ input[type="submit"] {
   font-weight: bold;
   color: #448;
   cursor: pointer;
-  display: inline-block;
 }
 
 textarea {
