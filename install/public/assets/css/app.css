@@ -35,6 +35,7 @@ h1 {
   text-align: left;
   text-transform: uppercase;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 h2 {
@@ -44,6 +45,7 @@ h2 {
   text-align: left;
   text-transform: uppercase;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 h3 {
@@ -52,6 +54,7 @@ h3 {
   line-height: 1.625em;
   text-align: left;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 h4 {
@@ -60,6 +63,7 @@ h4 {
   line-height: 1.5em;
   text-align: left;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 h5 {
@@ -68,6 +72,7 @@ h5 {
   line-height: 1.325em;
   text-align: left;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 h6 {
@@ -76,6 +81,7 @@ h6 {
   line-height: 1.25em;
   text-align: left;
   width: 100%;
+  margin: 0 0.5em;
 }
 
 img {
