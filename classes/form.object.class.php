@@ -10,11 +10,6 @@ abstract class FormObject extends ValuesObject
     const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
 
     /**
-     * @var array List Of Form Data Values
-     */
-    public $data = [];
-
-    /**
      * @var bool Status Of Processing Form
      */
     public $status = false;

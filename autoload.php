@@ -2,6 +2,7 @@
 require_once __DIR__.'/plugins/autoload.php';
 require_once __DIR__.'/classes/values.object.class.php';
 require_once __DIR__.'/classes/form.object.class.php';
+require_once __DIR__.'/classes/annotation.object.class.php';
 require_once __DIR__.'/classes/common.class.php';
 require_once __DIR__.'/classes/hook.class.php';
 require_once __DIR__.'/classes/model.store.class.php';

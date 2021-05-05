@@ -285,6 +285,101 @@ class CommonCore
     }
 
     /**
+     * Get Method Annotation Value By Name
+     *
+     * @param string|null $methodName     Name Of Method
+     * @param string|null $annotationName Name Of Annotation
+     *
+     * @return string|null Annotation Value
+     */
+    public function getAnnotation(
+        ?string $methodName     = null,
+        ?string $annotationName = null
+    ): ?string
+    {
+        if (empty($annotationName)) {
+            return null;
+        }
+
+        $annotaions = $this->getAnnotations($methodName);
+
+        foreach ($annotaions as $annotation) {
+            if ($annotation->getName() == $annotationName) {
+                return $annotation->getValue();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get Method Annotations
+     *
+     * @param string|null $methodName Name Of Method
+     *
+     * @return Generator Annotations
+     */
+    public function getAnnotations(?string $methodName = null): Generator
+    {
+        $comments = $this->_getMethodComments($methodName);
+
+        foreach ($comments as $comment) {
+            if (!preg_match('/^@(.*?)\s(.*?)$/su', $comment)) {
+                continue;
+            }
+
+            list($name, $value) = preg_split('/\s+/su', $comment, 2);
+
+            $name = preg_replace('/^@(.*?)$/', '$1', $name);
+
+            if (empty($name)) {
+                continue;
+            }
+
+            $value = !empty($value) ? $value : null;
+
+            $data = [
+                'name'  => $name,
+                'value' => $value
+            ];
+
+            yield new AnnotationObject($data);
+        }
+    }
+
+    /**
+     * Get Method Doc Comments
+     *
+     * @param string|null $methodName Name Of Method
+     *
+     * @return Generator|null Comments
+     */
+    public function _getMethodComments(?string $methodName = null): ?Generator
+    {
+        if (empty($methodName) || !method_exists($this, $methodName)) {
+            return null;
+        }
+
+        $reflection = new ReflectionMethod($this, $methodName);
+
+        $comments = $reflection->getDocComment();
+        $comments = explode("\n", $comments);
+
+        foreach ($comments as $key => $comment) {
+            $comment = preg_replace('/\s+/su', ' ', $comment);
+            $comment = preg_replace('/(^(\s|)[\*]+)/su', '', $comment);
+            $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
+            $comment = preg_replace('/(^\/\*\*)|(^([\*]+|)\/)/su', '', $comment);
+            $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
+            $comment = preg_replace('/(^[\*]+)|([\*]+$)/su', '', $comment);
+
+            if (!empty($comment)) {
+                yield $comment;
+            }
+        }
+    }
+
+    /**
      * Require AppException Class If It Exists And Not Included
      */
     private function _requireAppException(): void
