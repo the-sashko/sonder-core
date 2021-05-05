@@ -32,7 +32,7 @@ h1 {
   font-size: 2em;
   font-weight: bold;
   line-height: 2em;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   width: 100%;
 }
@@ -41,7 +41,7 @@ h2 {
   font-size: 1.75em;
   font-weight: bold;
   line-height: 1.75em;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   width: 100%;
 }
@@ -50,7 +50,7 @@ h3 {
   font-size: 1.625em;
   font-weight: bold;
   line-height: 1.625em;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -58,7 +58,7 @@ h4 {
   font-size: 1.5em;
   font-weight: normal;
   line-height: 1.5em;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -66,7 +66,7 @@ h5 {
   font-weight: normal;
   font-size: 1.325em;
   line-height: 1.325em;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -74,7 +74,7 @@ h6 {
   font-size: 1.25em;
   font-weight: normal;
   line-height: 1.25em;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
