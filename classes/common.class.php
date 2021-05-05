@@ -301,7 +301,7 @@ class CommonCore
             return null;
         }
 
-        $annotaions = $this->getAnnotations($methodName);
+        $annotaions = $this->_getAnnotations($methodName);
 
         foreach ($annotaions as $annotation) {
             if ($annotation->getName() == $annotationName) {
@@ -319,7 +319,7 @@ class CommonCore
      *
      * @return Generator Annotations
      */
-    public function getAnnotations(?string $methodName = null): Generator
+    private function _getAnnotations(?string $methodName = null): Generator
     {
         $comments = $this->_getMethodComments($methodName);
 
@@ -354,7 +354,7 @@ class CommonCore
      *
      * @return Generator|null Comments
      */
-    public function _getMethodComments(?string $methodName = null): ?Generator
+    private function _getMethodComments(?string $methodName = null): ?Generator
     {
         if (empty($methodName) || !method_exists($this, $methodName)) {
             return null;
@@ -366,17 +366,35 @@ class CommonCore
         $comments = explode("\n", $comments);
 
         foreach ($comments as $key => $comment) {
-            $comment = preg_replace('/\s+/su', ' ', $comment);
-            $comment = preg_replace('/(^(\s|)[\*]+)/su', '', $comment);
-            $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
-            $comment = preg_replace('/(^\/\*\*)|(^([\*]+|)\/)/su', '', $comment);
-            $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
-            $comment = preg_replace('/(^[\*]+)|([\*]+$)/su', '', $comment);
+            $comment = $this->_formatMethodComment($comment);
 
             if (!empty($comment)) {
                 yield $comment;
             }
         }
+    }
+
+    /**
+     * Format Comment Of Method
+     *
+     * @param string|null $comment Comment Of Method
+     *
+     * @return string|null Formatted Comment Of Method
+     */
+    private function _formatMethodComment(?string $comment = null): ?string
+    {
+        if (empty($comment)) {
+            return null;
+        }
+
+        $comment = preg_replace('/\s+/su', ' ', $comment);
+        $comment = preg_replace('/(^(\s|)[\*]+)/su', '', $comment);
+        $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
+        $comment = preg_replace('/(^\/\*\*)|(^([\*]+|)\/)/su', '', $comment);
+        $comment = preg_replace('/(^\s)|(\s$)/su', '', $comment);
+        $comment = preg_replace('/(^[\*]+)|([\*]+$)/su', '', $comment);
+
+        return !empty($comment) ? $comment : null;
     }
 
     /**
@@ -436,7 +454,7 @@ class CommonCore
      * @param string $hookMethod Method Of Hook
      * @param array  $entityData Entity Data
      */
-    public function _execHook(
+    private function _execHook(
         string $hookName,
         string $hookMethod,
         array  &$entityData
