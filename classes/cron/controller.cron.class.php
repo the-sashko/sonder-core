@@ -7,7 +7,7 @@ class CronControllerCore extends ControllerCore
     /**
      * Method That Running All Cron Jobs
      */
-    public function actionRun(): bool
+    public function displayRun(): bool
     {
         $token      = $this->getValueFromUrl('token');
         $cronConfig = $this->getConfig('cron');

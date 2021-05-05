@@ -18,7 +18,7 @@ class API extends App
     {
         list($model, $action) = $this->_parseUrl();
 
-        require_once __DIR__.'/classes/api/ontroller.api.class.php';
+        require_once __DIR__.'/classes/api/controller.api.class.php';
 
         try {
             $controller = new ApiControllerCore($model);

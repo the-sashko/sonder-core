@@ -92,7 +92,7 @@ class Cli extends App
         $cliParams  = (string) $cliOptions['params'];
 
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        $action     = 'display'.mb_convert_case($action, MB_CASE_TITLE);
         parse_str($cliParams, $cliParams);
 
         return [

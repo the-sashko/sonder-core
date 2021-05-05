@@ -124,7 +124,7 @@ class ControllerCore extends CommonCore
     /**
      * Default Error Action
      */
-    public function actionError(): void
+    public function displayError(): void
     {
         $errorCode    = (int) $this->getValueFromUrl('code');
         $errorMessage = $this->_handleHttpError($errorCode);

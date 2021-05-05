@@ -315,7 +315,7 @@ class App
 
         $language   = (string) $language;
         $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action     = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        $action     = 'display'.mb_convert_case($action, MB_CASE_TITLE);
         $urlParams  = (array) $urlParams;
         $page       = (int) $page;
 

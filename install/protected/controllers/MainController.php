@@ -12,7 +12,7 @@ class MainController extends ControllerCore
     /**
      * Default Site Action
      */
-    public function actionIndex(): void
+    public function displayIndex(): void
     {
         $this->render('main');
     }
@@ -20,7 +20,7 @@ class MainController extends ControllerCore
     /**
      * Site Action For Static Pages
      */
-    public function actionPage(): void
+    public function displayPage(): void
     {
         $this->displayStaticPage();
     }
@@ -28,8 +28,9 @@ class MainController extends ControllerCore
     /**
      * Site Action For Error Pages
      */
-    public function actionError(): void
+    public function displayError(): void
     {
         $this->displayErrorPage();
     }
 }
+
