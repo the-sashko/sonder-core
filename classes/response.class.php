@@ -54,12 +54,10 @@ class Response extends CommonCore
      *
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templatePage   Site Template Page Name
-     * @param string|null $notFoundUrl    Not Found Page URL
      */
     public function displayStaticPage(
         ?string $staticPageName = null,
-        ?string $templatePage   = null,
-        ?string $notFoundUrl    = null
+        ?string $templatePage   = null
     ): void
     {
         $pagePlugin = $this->getPlugin('page');
@@ -71,8 +69,7 @@ class Response extends CommonCore
         $staticPageVO = $pagePlugin->getVO(
             $staticPageName,
             $this->_templaterScope,
-            $templatePage,
-            $notFoundUrl
+            $templatePage
         );
 
         $staticPageVO->setTitle(__t($staticPageVO->getTitle()));

@@ -15,9 +15,9 @@ class PagePlugin
     const DEFAULT_TEMPLATE_PAGE = 'page';
 
     /**
-     * @var string Default Not Found URI
+     * @var string Default Not Found URL
      */
-    const DEFAULT_NOT_FOUND_URI = '/error/404/';
+    const DEFAULT_NOT_FOUND_URL = '/error/404/';
 
     /**
      * @var string Directory With Template Files
@@ -45,15 +45,16 @@ class PagePlugin
      */
     public function getVO(
         ?string $staticPageName = null,
-        ?string $templateName = null,
-        ?string $templatePage = null
-    ): StaticPageValuesObject {
+        ?string $templateName  = null,
+        ?string $templatePage  = null
+    ): StaticPageValuesObject
+    {
         $staticPagePath = $this->_getStaticPagePath($staticPageName);
 
         if (!$this->_isTemplatePageExists($templateName, $templatePage)) {
             throw new PageException(
-                'Teplate For Static Page Is Not Exists',
-                PageException::TEMPLATE_FOR_STATIC_PAGE_IS_NOT_EXIST
+                PageException::MESSAGE_PLUGIN_TEMPLATE_IS_NOT_EXIST,
+                PageException::CODE_PLUGIN_TEMPLATE_IS_NOT_EXIST
             );
         }
 
@@ -66,23 +67,26 @@ class PagePlugin
      * Get Path To Static Page File
      *
      * @param string|null $staticPageName Static Page File Name
-     * @param string|null $notFoundURI    Not Found Page URI
      *
      * @return string Path To Static Page File
      */
-    private function _getStaticPagePath(
-        ?string $staticPageName = null,
-        ?string $notFoundURI = null
-    ): string {
+    private function _getStaticPagePath(?string $staticPageName = null): string
+    {
         if (empty($staticPageName)) {
             throw new PageException(
-                'Static Page Name Is Not Set',
-                PageException::STATIC_PAGE_NAME_IS_NOT_SET
+                PageException::MESSAGE_PLUGIN_STATIC_PAGE_NAME_IS_NOT_SET,
+                PageException::CODE_PLUGIN_STATIC_PAGE_NAME_IS_NOT_SET
             );
         }
 
-        if (empty($notFoundURI)) {
-            $notFoundURI = static::DEFAULT_NOT_FOUND_URI;
+        $notFoundUrl = static::DEFAULT_NOT_FOUND_URL;
+
+        if (
+            defined('APP_NOT_FOUND_URL') &&
+            !empty(APP_NOT_FOUND_URL) &&
+            $_SERVER['REQUEST_URI'] != APP_NOT_FOUND_URL
+        ) {
+            $notFoundUrl = APP_NOT_FOUND_URL;
         }
 
         $staticPagePath = sprintf(
@@ -92,7 +96,7 @@ class PagePlugin
         );
 
         if (!file_exists($staticPagePath) || !is_file($staticPagePath)) {
-            header(sprintf('Location: %s', $notFoundURI));
+            header(sprintf('Location: %s', $notFoundUrl));
             exit(0);
         }
 
@@ -110,7 +114,8 @@ class PagePlugin
     public function _isTemplatePageExists(
         ?string $templateName = null,
         ?string $templatePage = null
-    ): bool {
+    ): bool
+    {
         if (empty($templateName)) {
             $templateName = static::DEFAULT_TEMPLATE_NAME;
         }
@@ -148,8 +153,8 @@ class PagePlugin
             count($staticPageData) != static::STATIC_PAGE_DATA_SECTIONS
         ) {
             throw new PageException(
-                'Static Page File Has Bad Format',
-                PageException::STATIC_PAGE_FILE_HAS_BAD_FORMAT
+                PageException::MESSAGE_PLUGIN_STATIC_PAGE_FILE_HAS_BAD_FORMAT,
+                PageException::CODE_PLUGIN_STATIC_PAGE_FILE_HAS_BAD_FORMAT
             );
         }
 
