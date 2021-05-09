@@ -20,6 +20,11 @@ class ErrorPlugin
     const HTTP_BAD_REQUEST = 400;
 
     /**
+     * HTTP Not Found Error Code
+     */
+    const HTTP_NOT_FOUND = 404;
+
+    /**
      * HTTP Network Authentication Required Error Code
      */
     const HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;
