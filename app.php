@@ -88,8 +88,7 @@ class App
         string $errorMessage,
         string $errorFile,
         int    $errorLine
-    ): void
-    {
+    ): void {
         $debugBacktrace = $this->_getDebugBacktrace();
 
         $logMessage = sprintf(
@@ -166,9 +165,8 @@ class App
      */
     protected function isValidControllerMethod(
         ?ControllerCore $controller = null,
-        ?string         $method     = null
-    ): bool
-    {
+        ?string         $method = null
+    ): bool {
         if (empty($controller) || empty($method)) {
             return false;
         }
@@ -231,7 +229,7 @@ class App
     }
 
     /**
-     * URL Not Found Handler 
+     * URL Not Found Handler
      */
     private function _notFoundHandler(): void
     {

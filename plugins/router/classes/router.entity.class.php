@@ -24,13 +24,12 @@ class RouterEntity implements IRouterEntity
     private $_page = 1;
 
     public function __construct(
-        ?string $area       = null,
-        ?string $route      = null,
-        ?string $params     = null,
+        ?string $area = null,
+        ?string $route = null,
+        ?string $params = null,
         ?string $controller = null,
-        ?string $method     = null
-    )
-    {
+        ?string $method = null
+    ) {
         $this->_area       = $area;
         $this->_route      = $route;
         $this->_controller = $controller;
@@ -44,7 +43,7 @@ class RouterEntity implements IRouterEntity
                 $_SERVER['REQUEST_URI']
             );
 
-            parse_str($this->_params, $this->_params);   
+            parse_str($this->_params, $this->_params);
         }
     }
 
