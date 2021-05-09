@@ -1,10 +1,8 @@
 DROP TABLE IF EXISTS "cron_jobs";
 
 DROP SEQUENCE IF EXISTS cron_jobs_id_seq;
-DROP SEQUENCE IF EXISTS example_id_seq;
 
 CREATE SEQUENCE cron_jobs_id_seq;
-CREATE SEQUENCE example_id_seq;
 
 CREATE TABLE "cron_jobs" (
     "id" integer DEFAULT nextval('cron_jobs_id_seq') NOT NULL,
@@ -34,3 +32,35 @@ CREATE INDEX "cron_last_next_status"
 
 CREATE INDEX "cron_time_next_exec"
     ON "cron_jobs" USING btree ("time_next_exec");
+
+INSERT INTO "cron_jobs" (
+    "action",
+    "interval",
+    "time_next_exec",
+    "last_exec_status",
+    "is_active",
+    "error_message"
+) VALUES (
+    'router',
+    '7200',
+    '-1',
+    '1',
+    '1',
+    NULL
+);
+
+INSERT INTO "cron_jobs" (
+    "action",
+    "interval",
+    "time_next_exec",
+    "last_exec_status",
+    "is_active",
+    "error_message"
+) VALUES (
+    'translations',
+    '36000',
+    '-1',
+    '1',
+    '1',
+    NULL
+);
