@@ -11,7 +11,7 @@ class MainController extends ControllerCore
 
     /**
      * Default Site Action
-     * 
+     *
      * @area  default
      * @route /
      */
@@ -30,7 +30,7 @@ class MainController extends ControllerCore
 
     /**
      * Site Action For Error Pages
-     * 
+     *
      * @area       default
      * @route      /error/([0-9]+)/
      * @url_params code=$1
