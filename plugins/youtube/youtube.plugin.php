@@ -51,7 +51,7 @@ class YoutubePlugin
     /**
      * @var string Path To Image Directory
      */
-    const IMAGE_DIR_PATH = __DIR__.'/../../../res/youtube/img';
+    const IMAGE_DIR_PATH = __DIR__.'/../../../res/cache/youtube/img';
 
     /**
      * @var string Path To Default Image File
