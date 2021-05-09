@@ -147,5 +147,8 @@ class RouterEntity implements IRouterEntity
         if (defined('APP_AREA')) {
             $defaultArea = APP_MODE;
         }
+
+        return $defaultArea;
     }
 }
+
