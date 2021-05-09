@@ -20,4 +20,12 @@ class CronController extends CronControllerCore
         $routerPlugin = $this->getPlugin('router');
         $routerPlugin->cleanCache();
     }
+
+    /**
+     * Generate Translations
+     */
+    public function jobTranslations(): void{
+        $this->getPlugin('language')->generateDictionaries();
+    }
 }
+

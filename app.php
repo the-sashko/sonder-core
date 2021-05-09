@@ -231,7 +231,7 @@ class App
     }
 
     /**
-     * URL Not Found Handler 
+     * URL Not Found Handler
      */
     private function _notFoundHandler(): void
     {

@@ -44,7 +44,7 @@ class RouterEntity implements IRouterEntity
                 $_SERVER['REQUEST_URI']
             );
 
-            parse_str($this->_params, $this->_params);   
+            parse_str($this->_params, $this->_params);
         }
     }
 
