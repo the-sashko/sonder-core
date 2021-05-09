@@ -5,35 +5,12 @@ if (!defined('APP_MODE')) {
     define('APP_MODE', 'default');
 }
 
-$routerPath = null;
-
-if (defined('APP_ROUTER')) {
-    $routerPath = __DIR__.'/../routers/'.APP_ROUTER.'.php';
+if (!defined('APP_AREA')) {
+    define('APP_AREA', 'default');
 }
 
-if (
-    !empty($routerPath) &&
-    (
-        !file_exists($routerPath) ||
-        !is_file($routerPath)
-    )
-) {
-    $errorMessage = '%s. Router: %s';
-
-    $errorMessage = sprintf(
-        $errorMessage,
-        CoreException::MESSAGE_CORE_ROUTER_FILE_NOT_FOUND,
-        APP_ROUTER
-    );
-
-    throw new CoreException(
-        $errorMessage,
-        CoreException::CODE_CORE_ROUTER_FILE_NOT_FOUND
-    );
-}
-
-if (!empty($routerPath)) {
-    require_once $routerPath;
+if (!defined('APP_MULTI_LANGUAGE')) {
+    define('APP_MULTI_LANGUAGE', false);
 }
 
 switch (APP_MODE) {

@@ -4,11 +4,6 @@
  */
 class App
 {
-    /**
-     * @var Router|null Router Instance
-     */
-    private $_router = null;
-
     public function __construct()
     {
         require_once __DIR__.'/autoload.php';
@@ -16,12 +11,7 @@ class App
         set_exception_handler([$this, 'exceptionHandler']);
         set_error_handler([$this, 'errorHandler']);
 
-        if (class_exists('Router')) {
-            $this->_router = new Router();
-        }
-
-        $this->_redirect();
-        $this->_rewriteUrl();
+        $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -29,13 +19,17 @@ class App
      */
     public function run(): void
     {
-        list(
-            $controller,
-            $action,
-            $urlParams,
-            $page,
-            $language
-        ) = $this->_parseUrl();
+        $urlRoute = $this->_parseUrl();
+
+        if (empty($urlRoute)) {
+            $this->_notFoundHandler();
+        }
+
+        $controller = $urlRoute->getController();
+        $method     = $urlRoute->getMethod();
+        $params     = $urlRoute->getParams();
+        $page       = $urlRoute->getPage();
+        $language   = $urlRoute->getLanguage();
 
         if (!$this->isControllerExist($controller)) {
             $errorMessage = '%s. Controller: %s';
@@ -52,21 +46,19 @@ class App
             );
         }
 
-        $controller = (string) $controller;
-
         require_once __DIR__.'/../controllers/'.$controller.'.php';
 
         try {
-            $controller = new $controller($urlParams, $page, $language);
+            $controller = new $controller($params, $page, $language);
 
-            if (!$this->isValidControllerAction($controller, $action)) {
+            if (!$this->isValidControllerMethod($controller, $method)) {
                 $errorMessage = '%s. Controller: %s. Action: %s';
 
                 $errorMessage = sprintf(
                     $errorMessage,
                     CoreException::MESSAGE_CORE_INVALID_ACTION_CONTROLLER,
                     get_class($controller),
-                    $action
+                    $method
                 );
 
                 throw new CoreException(
@@ -75,7 +67,7 @@ class App
                 );
             }
 
-            $controller->$action();
+            $controller->$method();
         } catch (\Throwable $exp) {
             $this->exceptionHandler($exp);
         }
@@ -168,24 +160,24 @@ class App
      * Check Is Method Public And Exists In Controller
      *
      * @param ControllerCore|null $controller ControllerCore Instance
-     * @param string|null         $action     Name Of Method
+     * @param string|null         $method     Name Of Method
      *
      * @return bool Is Method Public And Exists In Controller
      */
-    protected function isValidControllerAction(
+    protected function isValidControllerMethod(
         ?ControllerCore $controller = null,
-        ?string         $action     = null
+        ?string         $method     = null
     ): bool
     {
-        if (empty($controller) || empty($action)) {
+        if (empty($controller) || empty($method)) {
             return false;
         }
 
-        if (!method_exists($controller, $action)) {
+        if (!method_exists($controller, $method)) {
             return false;
         }
 
-        $reflection = new ReflectionMethod($controller, $action);
+        $reflection = new ReflectionMethod($controller, $method);
 
         if (!$reflection->isPublic()) {
             return false;
@@ -211,63 +203,10 @@ class App
     }
 
     /**
-     * Perform Redirects By Rules
-     */
-    private function _redirect(): void
-    {
-        $_SERVER['REQUEST_URI'] = parse_url(
-            $_SERVER['REQUEST_URI'],
-            PHP_URL_PATH
-        );
-
-        $url = $_SERVER['REQUEST_URI'];
-        $url = explode('&', $url);
-        $url = array_shift($url);
-        $url = explode('=', $url);
-        $url = array_shift($url);
-
-        if ($_SERVER['REQUEST_URI'] != $url) {
-            header("Location: {$url}", true, 301);
-            exit(0);
-        }
-
-
-        if (!empty($this->_router)) {
-            $this->_router->routeRedirect($_SERVER['REQUEST_URI']);
-        }
-    }
-
-    /**
-     * Rewrite URL By Rules
-     */
-    private function _rewriteUrl(): void
-    {
-        $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
-
-        $url = $_SERVER['REQUEST_URI'];
-
-        if (empty($url)) {
-            $url = '/';
-        }
-
-        if (!empty($this->_router)) {
-            $url = $this->_router->routeRewrite($url);
-        }
-
-        $_SERVER['REQUEST_URI'] = $url;
-    }
-
-    /**
      * Parse Controller, Method Of Cotroller And Params From URL
      */
-    private function _parseUrl(): ?array
+    private function _parseUrl(): ?Core\Plugins\Router\Classes\RouterEntity
     {
-        $language   = null;
-        $controller = null;
-        $action     = null;
-        $urlParams  = null;
-        $page       = null;
-
         $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
         parse_str($urlParams, $urlParams);
 
@@ -278,54 +217,45 @@ class App
 
         $url = (string) $_SERVER['REQUEST_URI'];
 
-        if (preg_match('/^\/(.*?)\/page-([0-9]+)\/$/su', $url)) {
-            $page = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$2', $url);
-            $url  = preg_replace('/^\/(.*?)\/page-(.*?)\/$/su', '$1', $url);
+        $routerPlugin = new RouterPlugin();
+
+        $urlRoute = $routerPlugin->getRoute($url);
+
+        if (empty($urlRoute)) {
+            return null;
         }
 
-        $url = preg_replace('/((^\/)|(\/$))/su', '', $url);
+        $urlRoute->setParams($urlParams);
 
-        $urlData = explode('/', $url);
+        return $urlRoute;
+    }
 
-        if (!empty($urlData)) {
-            $language = array_shift($urlData);
+    /**
+     * URL Not Found Handler 
+     */
+    private function _notFoundHandler(): void
+    {
+        if (
+            defined('APP_NOT_FOUND_URL') &&
+            !empty(APP_NOT_FOUND_URL) &&
+            $_SERVER['REQUEST_URI'] != APP_NOT_FOUND_URL
+        ) {
+            header(sprintf('Location: %s', APP_NOT_FOUND_URL));
+            exit(0);
         }
 
-        if (!empty($urlData)) {
-            $controller = array_shift($urlData);
-        }
+        header('HTTP/1.1 404 Not Found');
 
-        if (!empty($urlData)) {
-            $action = array_shift($urlData);
-        }
+        $errorPLugin = new ErrorPlugin();
 
-        if (null === $controller) {
-            throw new CoreException(
-                CoreException::MESSAGE_CORE_CONTROLLER_IS_NOT_SET,
-                CoreException::CODE_CORE_CONTROLLER_IS_NOT_SET
-            );
-        }
+        $errorCode    = ErrorPlugin::HTTP_NOT_FOUND;
+        $errorMessage = $errorPLugin->getHttpErrorMessage($errorCode);
 
-        if (null === $action) {
-            throw new CoreException(
-                CoreException::MESSAGE_CORE_ACTION_CONTROLLER_IS_NOT_SET,
-                CoreException::CODE_CORE_ACTION_CONTROLLER_IS_NOT_SET
-            );
-        }
+        $errorPLugin->handleHttpError($errorCode);
 
-        $language   = (string) $language;
-        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action     = 'display'.mb_convert_case($action, MB_CASE_TITLE);
-        $urlParams  = (array) $urlParams;
-        $page       = (int) $page;
+        echo sprintf('Error %d: %s', $errorCode, $errorMessage);
 
-        return [
-            $controller,
-            $action,
-            $urlParams,
-            $page,
-            $language
-        ];
+        exit(0);
     }
 
     /**
