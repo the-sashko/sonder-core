@@ -22,6 +22,10 @@ class MainController extends ControllerCore
 
     /**
      * Site Action For Static Pages
+     *
+     * @area       default
+     * @route      /page/([a-z]+)/
+     * @url_params code=$1
      */
     public function displayPage(): void
     {
