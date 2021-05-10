@@ -36,16 +36,6 @@ class RouterEntity implements IRouterEntity
         $this->_controller = $controller;
         $this->_method     = $method;
         $this->_params     = $params;
-
-        if (!empty($this->_params)) {
-            $this->_params = preg_replace(
-                $this->getRoutePattern(),
-                $this->_params,
-                $_SERVER['REQUEST_URI']
-            );
-
-            parse_str($this->_params, $this->_params);
-        }
     }
 
     public function getArea(): string
@@ -83,7 +73,16 @@ class RouterEntity implements IRouterEntity
             return null;
         }
 
-        return $this->_params;
+        $routePattern = $this->getRoutePattern();
+        $url          = $_SERVER['REQUEST_URI'];
+
+        if (!$this->_params != preg_match($routePattern, $url)) {
+            return null;
+        }
+
+        $this->_params = preg_replace($routePattern, $this->_params, $url);
+
+        return parse_str($this->_params, $this->_params);
     }
 
     public function getController(): string
