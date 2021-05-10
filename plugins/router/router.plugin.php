@@ -147,7 +147,7 @@ class RouterPlugin implements IRouterPlugin
         return $routeByUrl;
     }
 
-    private function _getRoutesFromAnnotations(): ?\Generator
+    private function _getRoutesFromAnnotations(): \Generator
     {
         $routes = [];
 
@@ -167,7 +167,7 @@ class RouterPlugin implements IRouterPlugin
 
     private function _getRoutesFromClassMethods(
         ?array $methods = null
-    ): ?\Generator
+    ): \Generator
     {
         $controllerClass = $methods['controller'];
         $methods         = $methods['methods'];

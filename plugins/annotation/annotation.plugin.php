@@ -89,7 +89,7 @@ class AnnotationPlugin implements IAnnotationPlugin
     private function _getMethodComments(
         string $className,
         string $methodName
-    ): ?\Generator
+    ): \Generator
     {
         if (empty($methodName) || !method_exists($className, $methodName)) {
             return null;
