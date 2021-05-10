@@ -25,7 +25,7 @@ class MainController extends ControllerCore
      *
      * @area       default
      * @route      /page/([a-z]+)/
-     * @url_params code=$1
+     * @url_params slug=$1
      */
     public function displayPage(): void
     {

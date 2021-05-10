@@ -12,6 +12,8 @@ class RouterCache implements IRouterCache
 
     public function getRoutes(): ?array
     {
+        return null;
+
         $cacheFilePath = $this-> _getRoutesCacheFilePath();
 
         if (!file_exists($cacheFilePath) || !is_file($cacheFilePath)) {
