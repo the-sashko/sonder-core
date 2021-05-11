@@ -136,16 +136,17 @@ class RouterEntity implements IRouterEntity
         $this->_language = $language;
     }
 
-    public function setParams(?array $params = null): void
+    public function setParams(?array $inputParams = null): void
     {
-        $this->_params = (string) $this->_params;
+        $params = (string) $this->_params;
 
-        parse_str($this->_params, $this->_params);
+        parse_str($params, $params);
 
-        $this->_params = array_merge((array) $this->_params, (array) $params);
-        $this->_params = http_build_query($this->_params);
-        $this->_params = urldecode($this->_params);
-        $this->_params = !empty($this->_params) ? $this->_params : null;
+        $params = array_merge((array) $params, (array) $inputParams);
+        $params = http_build_query($params);
+        $params = urldecode($params);
+
+        $this->_params = !empty($params) ? $params : null;
     }
 
     private function _getDefaultArea(): string

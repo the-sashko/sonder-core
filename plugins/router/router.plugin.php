@@ -169,10 +169,18 @@ class RouterPlugin implements IRouterPlugin
         ?array $methods = null
     ): \Generator
     {
-        $controllerClass = $methods['controller'];
-        $methods         = $methods['methods'];
+        $controllerClass = null;
+        $methods         = null;
 
-        foreach ($methods as $method) {
+        if (array_key_exists('controller', $methods)) {
+            $controllerClass = $methods['controller'];
+        }
+
+        if (array_key_exists('methods', $methods)) {
+            $methods = $methods['methods'];
+        }
+
+        foreach ((array) $methods as $method) {
             $routeArea   = $this->_getRouteArea($controllerClass, $method);
             $routePath   = $this->_getRoutePath($controllerClass, $method);
             $routeParams = $this->_getRouteParams($controllerClass, $method);
@@ -189,8 +197,6 @@ class RouterPlugin implements IRouterPlugin
                 $method
             );
         }
-
-        return null;
     }
 
     private function _getControllersDisplayMethods(): \Generator
