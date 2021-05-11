@@ -182,7 +182,7 @@ class RouterPlugin implements IRouterPlugin
             $methods = $methods['methods'];
         }
 
-        foreach ((array) $methods as $method) {
+        foreach ($methods as $method) {
             $routeArea   = $this->_getRouteArea($controllerClass, $method);
             $routePath   = $this->_getRoutePath($controllerClass, $method);
             $routeParams = $this->_getRouteParams($controllerClass, $method);
