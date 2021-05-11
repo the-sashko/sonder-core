@@ -13,7 +13,7 @@ function renderPage(?string $page = null): void
     $pageFilePath = sprintf(
         '%s/%s/pages/%s.phtml',
         $GLOBALS['template_dir'],
-        $GLOBALS['template_scope'],
+        $GLOBALS['template_area'],
         $page
     );
 
@@ -62,7 +62,7 @@ function renderPart(
     $templatePartFile = sprintf(
         '%s/%s/parts/%s.phtml',
         $GLOBALS['template_dir'],
-        $GLOBALS['template_scope'],
+        $GLOBALS['template_area'],
         $part
     );
 

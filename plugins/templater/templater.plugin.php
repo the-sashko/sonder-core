@@ -10,9 +10,9 @@ class TemplaterPlugin
     const DEFAULT_TEMPLATE = 'main';
 
     /**
-     * @var string Default Scope
+     * @var string Default Area
      */
-    const DEFAULT_SCOPE = 'default';
+    const DEFAULT_AREA = 'default';
 
     /**
      * @var string Templates Directory Path
@@ -25,9 +25,9 @@ class TemplaterPlugin
     const CACHE_DIR_PATH = __DIR__.'/../../../res/cache/tpl';
 
     /**
-     * @var string Templates Scope
+     * @var string Template Area 
      */
-    private $_scope = null;
+    private $_area = null;
 
     /**
      * @var string Template File Name
@@ -52,15 +52,15 @@ class TemplaterPlugin
             $template = static::DEFAULT_TEMPLATE;
         }
 
-        if (empty($this->_scope)) {
-            $this->_scope = static::DEFAULT_SCOPE;
+        if (empty($this->_area)) {
+            $this->_area = static::DEFAULT_AREA;
         }
 
         $this->_template = $template;
 
         $GLOBALS['template_dir']    = static::TEMPLATE_DIR;
         $GLOBALS['template_params'] = (array) $dataParams;
-        $GLOBALS['template_scope']  = $this->_scope;
+        $GLOBALS['template_area']   = $this->_area;
         $GLOBALS['template_ttl']    = $ttl;
 
         if ($ttl > 0) {
@@ -77,15 +77,15 @@ class TemplaterPlugin
     }
 
     /**
-     * Set Template Scope
+     * Set Template Area
      */
-    public function setScope(?string $scope = null): void
+    public function setArea(?string $area = null): void
     {
-        if (empty($scope)) {
-            $scope = static::DEFAULT_SCOPE;
+        if (empty($area)) {
+            $area = static::DEFAULT_AREA;
         }
 
-        $this->_scope = $scope;
+        $this->_area = $area;
     }
 
     /**
@@ -93,8 +93,8 @@ class TemplaterPlugin
      */
     public function _setCacheDir(): void
     {
-        if (empty($this->_scope)) {
-            $this->_scope = static::DEFAULT_SCOPE;
+        if (empty($this->_area)) {
+            $this->_area = static::DEFAULT_AREA;
         }
 
         $cacheSlug = sprintf(
@@ -107,7 +107,7 @@ class TemplaterPlugin
             '%s/%s/%s/%s',
             static::CACHE_DIR_PATH,
             $cacheSlug,
-            $this->_scope,
+            $this->_area,
             $this->_template
         );
 
@@ -123,20 +123,20 @@ class TemplaterPlugin
      */
     public function _includeTemplate(): void
     {
-        if (empty($this->_scope)) {
-            $this->_scope = static::DEFAULT_SCOPE;
+        if (empty($this->_area)) {
+            $this->_area = static::DEFAULT_AREA;
         }
 
         $templateFilePath = sprintf(
             '%s/%s/index.phtml',
             static::TEMPLATE_DIR,
-            $this->_scope
+            $this->_area
         );
 
         if (!file_exists($templateFilePath) || !is_file($templateFilePath)) {
             $errorMessage = sprintf(
                 'Template "%s" Is Not Found',
-                $this->_scope
+                $this->_area
             );
 
             throw new Exception($errorMessage);

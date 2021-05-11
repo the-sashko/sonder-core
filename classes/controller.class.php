@@ -25,11 +25,6 @@ class ControllerCore extends CommonCore
     public $commonData = [];
 
     /**
-     * @var string HTML Termplates Scope
-     */
-    public $templaterScope = 'default';
-
-    /**
      * @var int Current Page In Pagination
      */
     public $page = 1;
@@ -62,7 +57,7 @@ class ControllerCore extends CommonCore
 
         $this->page = $page < 1 ? 1 : $page;
 
-        $this->_response = new Response($this->templaterScope);
+        $this->_response = new Response();
 
         $this->execHooks('onAfterControllerInit', $this->commonData);
     }

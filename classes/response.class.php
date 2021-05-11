@@ -15,16 +15,25 @@ class Response extends CommonCore
     const SEO_DESCRIPTION_MAX_LENGTH = 300;
 
     /**
-     * @var string HTML Termplates Scope
+     * @var string Default Templater Area
      */
-    private $_templaterScope = 'default';
+    const DEFAULT_AREA = 'default';
 
-    public function __construct(?string $templaterScope = null)
+    /**
+     * @var string Templater Area
+     */
+    private $_area = null;
+
+    public function __construct()
     {
         parent::__construct();
 
-        if (!empty($templaterScope)) {
-            $this->_templaterScope = $templaterScope;
+        if (defined('APP_AREA')) {
+            $this->_area = APP_AREA;
+        }
+
+        if (empty($this->_area)) {
+            $this->_area = static::DEFAULT_AREA;
         }
     }
 
@@ -68,7 +77,7 @@ class Response extends CommonCore
 
         $staticPageVO = $pagePlugin->getVO(
             $staticPageName,
-            $this->_templaterScope,
+            $this->_area,
             $templatePage
         );
 
@@ -176,7 +185,7 @@ class Response extends CommonCore
 
         $templater = $this->getPlugin('templater');
 
-        $templater->setScope($this->_templaterScope);
+        $templater->setArea($this->_area);
 
         $this->execHooks('onBeforeRender', $params);
 

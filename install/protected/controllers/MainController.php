@@ -5,11 +5,6 @@
 class MainController extends ControllerCore
 {
     /**
-     * @var string Template Scope
-     */
-    public $templaterScope = 'default';
-
-    /**
      * Default Site Action
      *
      * @area  default
