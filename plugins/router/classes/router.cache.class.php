@@ -41,11 +41,10 @@ class RouterCache implements IRouterCache
             return null;
         }
 
-        $cacheData = json_decode(file_get_contents($cacheFilePath), true);
-
-        if (empty($cacheData)) {
-            return null;
-        }
+        $cacheData = (array) json_decode(
+            file_get_contents($cacheFilePath),
+            true
+        );
 
         if (
             array_key_exists('data', $cacheData) &&
