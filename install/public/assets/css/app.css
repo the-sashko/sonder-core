@@ -196,7 +196,7 @@ textarea {
 
 .site-title {
   font-size: 1em;
-  float: left;
+  float: left !important;
   color: #FEFEFE;
   line-height: 2em;
   margin: 0 1em;
@@ -210,6 +210,31 @@ textarea {
   line-height: 2em;
   margin: 0 1em;
   color: #FEFEFE;
+}
+
+.breadcrumbs {
+  margin: 0.5em 0;
+  padding: 0 1em;
+}
+
+.breadcrumbs > li {
+  margin: 0;
+  padding: 0;
+  float: left;
+  display: inline;
+}
+
+.breadcrumbs > li > a:after{
+  content: ">";
+  margin: .5em;
+  cursor: default;
+  color: #AAA;
+  font-weight: bold;
+}
+
+.breadcrumbs > li > span {
+  color: #AAA;
+  font-weight: bold;
 }
 
 .footer {

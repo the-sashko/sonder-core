@@ -10,7 +10,11 @@
 </head>
 <body>
 <div class="header">
-    <h1 class="site-title"><?=$meta['site_name'];?></h1>
+    <?php if ($currentUrl != '/'): ?>
+        <a href="/" class="site-title"><?=$meta['site_name'];?></a>
+    <?php else: ?>
+        <h1 class="site-title"><?=$meta['site_name'];?></h1>
+    <?php endif; ?>
     <div class="site-subtitle"><?=$meta['site_slogan'];?></div>
     <div class="main-menu">
         <a href="/">Main</a>
@@ -20,4 +24,7 @@
 </div>
 <div class="clear"></div>
 <div class="content">
-    <?=$breadcrumbs;?>
+    <?php if ($currentUrl != '/'): ?>
+        <?=$breadcrumbs;?>
+        <div class="clear"></div>
+    <?php endif; ?>
