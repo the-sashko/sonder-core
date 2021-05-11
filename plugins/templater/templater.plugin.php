@@ -25,7 +25,7 @@ class TemplaterPlugin
     const CACHE_DIR_PATH = __DIR__.'/../../../res/cache/tpl';
 
     /**
-     * @var string Template Area 
+     * @var string Template Area
      */
     private $_area = null;
 
@@ -43,11 +43,10 @@ class TemplaterPlugin
      * @param int         $ttl        Time To Live Template Cache
      */
     public function render(
-        ?string $template   = null,
+        ?string $template = null,
         ?array  $dataParams = null,
-        int     $ttl        = 0
-    ): void
-    {
+        int     $ttl = 0
+    ): void {
         if (empty($template)) {
             $template = static::DEFAULT_TEMPLATE;
         }
