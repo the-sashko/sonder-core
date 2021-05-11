@@ -40,7 +40,7 @@ class Cli extends App
         try {
             $controller = new $controller($cliParams);
 
-            if (!$this->isValidControllerAction($controller, $action)) {
+            if (!$this->isValidControllerMethod($controller, $action)) {
                 $errorMessage = '%s. Controller: %s. Action: %s';
 
                 $errorMessage = sprintf(
