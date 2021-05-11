@@ -231,7 +231,7 @@ class RouterPlugin implements IRouterPlugin
             );
         }
 
-        $reflection = new ReflectionClass($className);
+        $reflection = new ReflectionClass((string) $className);
 
         $methods = $reflection->getMethods();
 
