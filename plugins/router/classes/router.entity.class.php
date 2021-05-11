@@ -74,15 +74,18 @@ class RouterEntity implements IRouterEntity
         }
 
         $routePattern = $this->getRoutePattern();
+        $params       = $this->_params;
         $url          = $_SERVER['REQUEST_URI'];
 
-        if (preg_match($routePattern, $url)) {
+        if (!preg_match($routePattern, $url)) {
             return null;
         }
 
-        $this->_params = preg_replace($routePattern, $this->_params, $url);
+        $params = preg_replace($routePattern, $params, $url);
 
-        return parse_str($this->_params, $this->_params);
+        parse_str($params, $params);
+
+        return $params;
     }
 
     public function getController(): string
@@ -135,7 +138,13 @@ class RouterEntity implements IRouterEntity
 
     public function setParams(?array $params = null): void
     {
+        $this->_params = (string) $this->_params;
+
+        parse_str($this->_params, $this->_params);
+
         $this->_params = array_merge((array) $this->_params, (array) $params);
+        $this->_params = http_build_query($this->_params);
+        $this->_params = urldecode($this->_params);
         $this->_params = !empty($this->_params) ? $this->_params : null;
     }
 
@@ -150,4 +159,3 @@ class RouterEntity implements IRouterEntity
         return $defaultArea;
     }
 }
-
