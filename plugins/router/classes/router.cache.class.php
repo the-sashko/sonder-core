@@ -1,8 +1,8 @@
 <?php
+namespace Core\Plugins\Router\Classes;
+
 use Core\Plugins\Router\Interfaces\IRouterCache;
 use Core\Plugins\Router\Interfaces\IRouterEntity;
-
-use Core\Plugins\Router\Classes\RouterEntity;
 
 use Core\Plugins\Router\Exceptions\RouterCacheException;
 

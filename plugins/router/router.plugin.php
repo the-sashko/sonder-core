@@ -3,6 +3,7 @@ use Core\Plugins\Router\Interfaces\IRouterPlugin;
 use Core\Plugins\Router\Interfaces\IRouterEntity;
 
 use Core\Plugins\Router\Classes\RouterEntity;
+use Core\Plugins\Router\Classes\RouterCache;
 
 use Core\Plugins\Router\Exceptions\RouterPluginException;
 
