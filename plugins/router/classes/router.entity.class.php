@@ -76,7 +76,7 @@ class RouterEntity implements IRouterEntity
         $routePattern = $this->getRoutePattern();
         $url          = $_SERVER['REQUEST_URI'];
 
-        if (!$this->_params != preg_match($routePattern, $url)) {
+        if (preg_match($routePattern, $url)) {
             return null;
         }
 
