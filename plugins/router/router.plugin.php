@@ -169,11 +169,12 @@ class RouterPlugin implements IRouterPlugin
         ?array $methods = null
     ): \Generator
     {
+        $methods = (array) $methods;
+
         $controllerClass = null;
-        $methods         = null;
 
         if (array_key_exists('controller', $methods)) {
-            $controllerClass = $methods['controller'];
+            $controllerClass = (string) $methods['controller'];
         }
 
         if (array_key_exists('methods', $methods)) {
@@ -272,7 +273,7 @@ class RouterPlugin implements IRouterPlugin
             'area'
         );
 
-        $routeArea = mb_convert_case($routeArea, MB_CASE_LOWER);
+        $routeArea = mb_convert_case((string) $routeArea, MB_CASE_LOWER);
         $routeArea = preg_replace('/([^a-z]+)/su', '', $routeArea);
 
         return !empty($routeArea) ? $routeArea : RouterEntity::DEFAULT_AREA;
@@ -303,7 +304,7 @@ class RouterPlugin implements IRouterPlugin
             'route'
         );
 
-        $routePath = preg_replace('/\s+/su', '', $routePath);
+        $routePath = preg_replace('/\s+/su', '', (string) $routePath);
         $routePath = !empty($routePath) ? $routePath : null;
 
         return $routePath;
@@ -334,7 +335,7 @@ class RouterPlugin implements IRouterPlugin
             'url_params'
         );
 
-        $routeParams = preg_replace('/\s+/su', '', $routeParams);
+        $routeParams = preg_replace('/\s+/su', '', (string) $routeParams);
         $routeParams = !empty($routeParams) ? $routeParams : null;
 
         return $routeParams;
