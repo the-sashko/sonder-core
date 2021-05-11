@@ -221,10 +221,10 @@ textarea {
   margin: 0;
   padding: 0;
   float: left;
-  display: inline-block;
+  display: block;
 }
 
-.breadcrumbs > li > a:after {
+.breadcrumbs > li > a::after {
   content: ">";
   margin: .5em;
   cursor: default;
