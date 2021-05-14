@@ -1,0 +1,1 @@
+{"status":"error","data":{"message":"Internal Server Error!","error":{"code":1234,"message":"Test Error Message"},"file":{"file":"test_file.php","line":123},"trace":["foo","bar","test"]}}
