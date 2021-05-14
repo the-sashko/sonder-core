@@ -261,7 +261,10 @@ class ErrorPlugin
             $output['data']['trace'] = $debugBacktrace;
         }
 
-        header('Content-Type: application/json');
+        if (!defined('PHP_UNIT')) {
+            header('Content-Type: application/json');
+        }
+
         echo json_encode($output);
 
         return true;

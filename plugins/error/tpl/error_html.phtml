@@ -6,20 +6,18 @@
         File: <strong><?=$file;?></strong> (<?=$line;?>)
     </div>
     <div>
-    <strong>Trace:</strong>
-    <?php
-    if (!empty($debugBacktrace)):
-    ?>
-    <?php
-        foreach ($debugBacktrace as $debugBacktraceStep):
-    ?>
-    <div>
-        <?=$debugBacktraceStep;?>
-    </div>
-    <?php
-        endforeach;
-    endif;
-    ?>
+        <strong>Trace:</strong>
+        <?php
+            if (!empty($debugBacktrace)):
+                foreach ($debugBacktrace as $debugBacktraceStep):
+        ?>
+        <div>
+            <?=$debugBacktraceStep;?>
+        </div>
+        <?php
+                endforeach;
+            endif;
+        ?>
     </div>
 </div>
 <style type="text/css">
