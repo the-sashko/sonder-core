@@ -20,16 +20,19 @@ class ImagePlugin implements IImagePlugin
             'width'       => 64,
             'file_prefix' => 'thumb'
         ],
+
         'small' => [
             'height'      => null,
             'width'       => 128,
             'file_prefix' => 's'
         ],
+
         'middle' => [
             'height'      => null,
             'width'       => 246,
             'file_prefix' => 'm'
         ],
+
         'large' => [
             'height'      => null,
             'width'       => 200,
@@ -87,7 +90,9 @@ class ImagePlugin implements IImagePlugin
         $this->_imageFileName = $imageFileName;
         $this->_imageFormat   = $imageFormat;
 
-        $this->_saveOriginalSize();
+        if (!defined('PHP_UNIT')) {
+            $this->_saveOriginalSize();
+        }
 
         foreach ($sizes as $size) {
             $size = new ImageSize($size);
@@ -278,7 +283,7 @@ class ImagePlugin implements IImagePlugin
     private function _saveImage(
         \Imagick $imageObject = null,
         ?string  $filePrefix  = null
-    ): void
+    ): bool
     {
         if (empty($imageObject)) {
             throw new ImagePluginException(
@@ -298,7 +303,11 @@ class ImagePlugin implements IImagePlugin
 
         $imageFilePath = $this->_getImageFilePath($filePrefix);
 
-        if (file_exists($imageFilePath) && is_file($imageFilePath)) {
+        if (
+            file_exists($imageFilePath) &&
+            is_file($imageFilePath) &&
+            !defined('PHP_UNIT')
+        ) {
             $errorMessage = sprintf(
                 '%s. File: %s-%s.%s',
                 ImagePluginException::MESSAGE_PLUGIN_FILE_ALREADY_EXISTS,
@@ -314,8 +323,17 @@ class ImagePlugin implements IImagePlugin
         }
 
         $imageObject->setImageCompression(Imagick::COMPRESSION_ZIP);
+
+        if (defined('PHP_UNIT')) {
+            $GLOBALS['phpunit_image_blob'] = $imageObject->getImageBlob();
+
+            return false;
+        }
+
         $imageObject->writeImage($imageFilePath);
         chmod($imageFilePath, 0775);
+
+        return true;
     }
 
     private function _getImageFilePath(?string $filePrefix = null): string
