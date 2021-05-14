@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__.'/breadcrumbs.php';
+require_once __DIR__.'/breadcrumbs.plugin.php';
