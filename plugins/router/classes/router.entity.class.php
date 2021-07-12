@@ -77,6 +77,10 @@ class RouterEntity implements IRouterEntity
         $params       = $this->_params;
         $url          = $_SERVER['REQUEST_URI'];
 
+        if (preg_match('/^(.*?)\/page\-([0-9]+)\//su', $url)) {
+            $url = preg_replace('/^(.*?)\/page\-([0-9]+)\//su', '$1/', $url);
+        }
+
         if (!preg_match($routePattern, $url)) {
             return null;
         }

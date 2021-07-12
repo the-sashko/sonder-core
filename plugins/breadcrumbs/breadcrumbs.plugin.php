@@ -15,7 +15,7 @@ class BreadcrumbsPlugin
      *
      * @return string Output HTML Text
      */
-    public function getHTML(?array $pagePath = null): string
+    public function getHtml(?array $pagePath = null): string
     {
         $mainHtml = $this->_getMainTemplate();
 

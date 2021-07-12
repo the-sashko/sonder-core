@@ -46,7 +46,8 @@ class TemplaterPlugin
         ?string $template = null,
         ?array  $dataParams = null,
         int     $ttl = 0
-    ): void {
+    ): void
+    {
         if (empty($template)) {
             $template = static::DEFAULT_TEMPLATE;
         }

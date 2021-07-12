@@ -32,14 +32,14 @@ class BreadcrumbsPluginTest extends TestCase
     ];
 
     /**
-     * Unit Test Of getHTML Method
+     * Unit Test Of getHtml Method
      */
-    public function testGetHTML()
+    public function testGetHtml()
     {
         $breadcrumbs = (new CommonCore)->getPlugin('breadcrumbs');
 
         foreach (static::PATH_DATA_SAMPLE as $path) {
-            $html = $breadcrumbs->getHTML($path['value']);
+            $html = $breadcrumbs->getHtml($path['value']);
             $this->assertEquals($path['expected'], $html);
         }
     }

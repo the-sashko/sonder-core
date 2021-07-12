@@ -177,7 +177,7 @@ class Response extends CommonCore
         );
 
         $breadcrumbs = $this->getPlugin('breadcrumbs');
-        $breadcrumbs = $breadcrumbs->getHTML($params['pagePath']);
+        $breadcrumbs = $breadcrumbs->getHtml($params['pagePath']);
 
         $params['breadcrumbs']     = $breadcrumbs;
         $params['currentLanguage'] = $this->language;

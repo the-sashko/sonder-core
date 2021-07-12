@@ -92,27 +92,35 @@ class ControllerCore extends CommonCore
     }
 
     /**
+     * Assign Values To Common Data
+     *
+     * @param array|null $value
+     */
+    public function assign(?array $values = null): void
+    {
+        if (empty($values)) {
+            throw new Exception('Assign Values Is Empty');
+        }
+
+        $this->commonData = array_merge($values, $this->commonData);
+    }
+
+    /**
      * Return Data In HTML Format
      *
      * @param string|null $template Teplate Page Name
      * @param array|null  $params   Params Data For Templates
      * @param int         $ttl      Time To Live Of Template Cache
      */
-    public function render(
-        ?string $template   = null,
-        ?array  $params     = null,
-        int     $ttl        = 0
-    ): void
+    public function render(?string $template = null, int $ttl = 0): void
     {
         if (empty($template)) {
             throw new Exception('Template Page Name Is Empty');
         }
 
-        $params = (array) $params;
-        $params = array_merge($params, $this->configData['main']);
-        $params = array_merge($params, $this->commonData);
+        $values = array_merge($this->configData['main'], $this->commonData);
 
-        $this->_response->render($template, $params, $ttl);
+        $this->_response->render($template, $values, $ttl);
     }
 
     /**

@@ -20,12 +20,29 @@ cp -r core/install/protected/api.init.php api.init.php
 cp -r core/install/protected/cli.init.php cli.init.php
 
 mkdir res/logs
-
 chmod -R 775 res/logs
+
+mkdir res/captcha
+chmod -R 775 res/captcha
+
+mkdir res/captcha/img
+chmod -R 775 res/captcha/img
 
 cd core || exit 1
 
 git submodule update --init --recursive
+
+cd ../../public
+
+mkdir media
+chmod -R 775 media
+
+mkdir media/img
+chmod -R 775 media/img
+
+cd media
+
+ln -s ../../protected/res/captcha/img captcha
 
 cd "$scriptDir" || exit 1
 

@@ -87,7 +87,7 @@ class RouterPlugin implements IRouterPlugin
                 $url
             );
 
-            $url = preg_replace('/^\/([a-z]{2})\/(.*?)$/su', '$2', $url);
+            $url = preg_replace('/^\/([a-z]{2})\/(.*?)$/su', '/$2', $url);
         }
 
         $url = !empty($url) ? $url : '/';
@@ -104,7 +104,7 @@ class RouterPlugin implements IRouterPlugin
                 $url
             );
 
-            $url = preg_replace('/^(.*?)\/page-([0-9]+)\/$/su', '$2', $url);
+            $url = preg_replace('/^(.*?)\/page-([0-9]+)\/$/su', '$1/', $url);
         }
 
         $url = !empty($url) ? $url : '/';

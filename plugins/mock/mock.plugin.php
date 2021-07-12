@@ -9,8 +9,9 @@ class MockPlugin
      *
      * @return bool Test Value
      */
-    public function mockAction() : bool
+    public function mockAction(): bool
     {
         return true;
     }
 }
+
