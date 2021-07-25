@@ -34,11 +34,10 @@ class PaginatorPlugin
      * @return string|null HTML Of Pagination
      */
     public function getPagination(
-        ?int    $pageCount   = null,
+        ?int    $pageCount = null,
         ?int    $currentPage = null,
-        ?string $link        = null
-    ): ?string
-    {
+        ?string $link = null
+    ): ?string {
         $this->_pageCount   = !empty($pageCount) ? $pageCount : 1;
         $this->_currentPage = !empty($currentPage) ? $currentPage : 1;
 
@@ -97,9 +96,7 @@ class PaginatorPlugin
         }
 
         for (
-            $page = $this->_pageCount - 2;
-            $page <= $this->_pageCount;
-            $page++
+            $page = $this->_pageCount - 2; $page <= $this->_pageCount; $page++
         ) {
             $this->_pages[$page] = $page;
         }
