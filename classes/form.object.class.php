@@ -1,12 +1,13 @@
 <?php
+
 /**
- * Class For Working With Form Data
+ * Class For Working With Form Input Values
  */
 abstract class FormObject extends ValuesObject
 {
     /**
-    * @var string Default Error Message
-    */
+     * @var string Default Error Message
+     */
     const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
 
     /**
@@ -19,45 +20,26 @@ abstract class FormObject extends ValuesObject
      */
     public $errors = [];
 
-    /**
-     * @var string Message For User
-     */
-    public $message = null;
-
-    public function __construct(?array $data = null)
+    public function __construct(?array $values = null)
     {
-        parent::__construct($data);
+        parent::__construct($values);
 
-        $this->checkInputData();
+        $this->checkInputValues();
     }
 
     /**
-     * Check Input Data
+     * Check Input Values
      */
-    abstract public function checkInputData(): void;
+    abstract public function checkInputValues(): void;
 
     /**
      * Get Processing Form Status
      *
      * @return bool Processing Form Status Value
      */
-    public function isStatusSuccess(): bool
+    public function getStatus(): bool
     {
         return $this->status;
-    }
-
-    /**
-     * Is Has Form Errors
-     *
-     * @return bool Is Form Object Has Errors
-     */
-    public function hasErrors(): bool
-    {
-        if ($this->isStatusSuccess()) {
-            return false;
-        }
-
-        return !empty($this->errors);
     }
 
     /**
@@ -67,51 +49,33 @@ abstract class FormObject extends ValuesObject
      */
     public function getErrors(): ?array
     {
-        if ($this->isStatusSuccess()) {
-            return null;
-        }
-
-        if ($this->hasErrors()) {
+        if ($this->_hasErrors()) {
             return $this->errors;
         }
 
-        return null;
-    }
+        if ($this->getStatus()) {
+            return null;
+        }
 
-    /**
-     * Get Message For User
-     *
-     * @return string|null Message Value
-     */
-    public function getMessage(): ?string
-    {
-        return $this->message;
-    }
-
-    /**
-     * Set Processing Form Status
-     *
-     * @param bool $status Processing Form Status Value
-     */
-    public function setStatus(bool $status = false): void
-    {
-        $this->status = $status;
+        return [
+            static::DEFAULT_ERROR_MESSAGE
+        ];
     }
 
     /**
      * Set Processing Form Success Status
      */
-    public function setSuccess(): void
+    public function setStatusSuccess(): void
     {
-        $this->setStatus(true);
+        $this->_setStatus(true);
     }
 
     /**
      * Set Processing Form Fail Status
      */
-    public function setFail(): void
+    public function setStatusFail(): void
     {
-        $this->setStatus(false);
+        $this->_setStatus(false);
     }
 
     /**
@@ -121,10 +85,10 @@ abstract class FormObject extends ValuesObject
      */
     public function setErrors(?array $errors = null): void
     {
-        $this->errors = array_merge($this->errors, (array) $errors);
+        $this->errors = array_merge($this->errors, (array)$errors);
         $this->errors = array_unique($this->errors);
 
-        $this->setFail();
+        $this->setStatusFail();
     }
 
     /**
@@ -137,16 +101,30 @@ abstract class FormObject extends ValuesObject
         $this->errors[] = $error;
         $this->errors = array_unique($this->errors);
 
-        $this->setFail();
+        $this->setStatusFail();
     }
 
     /**
-     * Set Message For User
+     * Is Has Form Errors
      *
-     * @param string|null $message Message Value
+     * @return bool Is Form Object Has Errors
      */
-    public function setMessage(?string $message = null): void
+    private function _hasErrors(): bool
     {
-        $this->message = $message;
+        if ($this->getStatus()) {
+            return false;
+        }
+
+        return !empty($this->errors);
+    }
+
+    /**
+     * Set Processing Form Status
+     *
+     * @param bool $status Processing Form Status Value
+     */
+    private function _setStatus(bool $status = false): void
+    {
+        $this->status = $status;
     }
 }
