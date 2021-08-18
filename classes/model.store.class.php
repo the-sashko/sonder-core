@@ -1,37 +1,74 @@
 <?php
+
+use Core\Plugins\Database\Exceptions\DatabasePluginException;
+
 /**
  * Basic Class For Model Store Classes
  */
 class ModelStoreCore
 {
-    private $_db = null;
+    /**
+     * @var DataBasePlugin|null
+     */
+    private ?DataBasePlugin $_db = null;
 
-    public $scope = null;
+    /**
+     * @var string|null
+     */
+    public ?string $scope = null;
 
-    public $ttl = null;
+    /**
+     * @var int|null
+     */
+    public ?int $ttl = null;
 
+    /**
+     * @param array|null $configData
+     *
+     * @throws DatabasePluginException
+     */
     public function __construct(?array $configData = null)
     {
         $this->_db = new DataBasePlugin();
         $this->_db->connect($configData);
     }
 
-    public function start(): bool
+    /**
+     * @return bool
+     */
+    final public function start(): bool
     {
         return $this->_db->transactionStart();
     }
 
-    public function commit(): bool
+    /**
+     * @return bool
+     */
+    final public function commit(): bool
     {
         return $this->_db->transactionCommit();
     }
 
-    public function rollback(): bool
+    /**
+     * @return bool
+     */
+    final public function rollback(): bool
     {
         return $this->_db->transactionRollback();
     }
 
-    protected function getOne(?string $sql = null, ?int $ttl = null): ?string
+    /**
+     * @param string|null $sql
+     * @param int|null $ttl
+     *
+     * @return string|null
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function getOne(
+        ?string $sql = null,
+        ?int    $ttl = null
+    ): ?string
     {
         if (empty($sql)) {
             return null;
@@ -53,10 +90,21 @@ class ModelStoreCore
             return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    protected function getRow(?string $sql = null, ?int $ttl = null): ?array
+    /**
+     * @param string|null $sql
+     * @param int|null $ttl
+     *
+     * @return array|null
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function getRow(
+        ?string $sql = null,
+        ?int    $ttl = null
+    ): ?array
     {
         if (empty($sql)) {
             return null;
@@ -75,7 +123,18 @@ class ModelStoreCore
         return array_shift($rows);
     }
 
-    protected function getRows(?string $sql = null, ?int $ttl = null): ?array
+    /**
+     * @param string|null $sql
+     * @param int|null $ttl
+     *
+     * @return array|null
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function getRows(
+        ?string $sql = null,
+        ?int    $ttl = null
+    ): ?array
     {
         if (empty($sql)) {
             return null;
@@ -94,9 +153,17 @@ class ModelStoreCore
         return $rows;
     }
 
-    protected function addRow(
+    /**
+     * @param string|null $table
+     * @param array|null $row
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function addRow(
         ?string $table = null,
-        ?array  $row  = null
+        ?array  $row = null
     ): bool
     {
         if (empty($table) || empty($row)) {
@@ -125,9 +192,18 @@ class ModelStoreCore
         return $this->_db->query($sql, $this->scope);
     }
 
-    protected function updateRows(
-        ?string $table     = null,
-        ?array  $row       = null,
+    /**
+     * @param string|null $table
+     * @param array|null $row
+     * @param string|null $condition
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function updateRows(
+        ?string $table = null,
+        ?array  $row = null,
         ?string $condition = null
     ): bool
     {
@@ -137,7 +213,7 @@ class ModelStoreCore
 
         foreach ($row as $key => $value) {
             $value = $this->_getValueString($value);
-            $row[$key] = sprintf('"%s" = %s', (string) $key, (string) $value);
+            $row[$key] = sprintf('"%s" = %s', (string)$key, (string)$value);
         }
 
         $row = implode(',', $row);
@@ -153,9 +229,18 @@ class ModelStoreCore
         return $this->_db->query($sql, $this->scope);
     }
 
-    protected function updateRowById(
+    /**
+     * @param string|null $table
+     * @param array|null $row
+     * @param int|null $idRow
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function updateRowById(
         ?string $table = null,
-        ?array  $row   = null,
+        ?array  $row = null,
         ?int    $idRow = null
     ): bool
     {
@@ -168,8 +253,16 @@ class ModelStoreCore
         return $this->updateRows($table, $row, $condition);
     }
 
-    protected function deleteRows(
-        ?string $table     = null,
+    /**
+     * @param string|null $table
+     * @param string|null $condition
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function deleteRows(
+        ?string $table = null,
         ?string $condition = null
     ): bool
     {
@@ -188,7 +281,15 @@ class ModelStoreCore
         return $this->_db->query($sql, $this->scope);
     }
 
-    protected function deteleRowById(
+    /**
+     * @param string|null $table
+     * @param int|null $idRow
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final protected function deleteRowById(
         ?string $table = null,
         ?int    $idRow = null
     ): bool
@@ -202,8 +303,17 @@ class ModelStoreCore
         return $this->deleteRows($table, $condition);
     }
 
+    /**
+     * @param null $value
+     *
+     * @return string|null
+     */
     private function _getValueString($value = null): ?string
     {
+        if (is_null($value)) {
+            return 'NULL';
+        }
+
         if (is_array($value)) {
             $value = json_encode($value);
 
@@ -211,7 +321,7 @@ class ModelStoreCore
         }
 
         if (is_numeric($value)) {
-            return (string) $value;
+            return (string)$value;
         }
 
         if (is_bool($value)) {
@@ -228,7 +338,7 @@ class ModelStoreCore
             return sprintf('\'%s\'', $value);
         }
 
-        $value = (string) $value;
+        $value = (string)$value;
 
         return sprintf('\'%s\'', $value);
     }
