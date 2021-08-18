@@ -108,9 +108,10 @@ class ControllerCore extends CommonCore
     /**
      * Return Data In HTML Format
      *
-     * @param string|null $template Teplate Page Name
-     * @param array|null  $params   Params Data For Templates
+     * @param string|null $template Template Page Name
      * @param int         $ttl      Time To Live Of Template Cache
+     *
+     * @throws Exception
      */
     public function render(?string $template = null, int $ttl = 0): void
     {
