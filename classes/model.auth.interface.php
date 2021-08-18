@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Interface Of Authentication/Authorization Model
  */
@@ -16,13 +17,13 @@ interface IModelAuth
     /**
      * Sign In By Login And Password
      *
-     * @param string|null $login    User Login
+     * @param string|null $login User Login
      * @param string|null $password User Password
      *
      * @return bool Is User Successfully Signed In
      */
-    public function signinByLoginAndPassword(
-        ?string $login    = null,
+    public function signInByLoginAndPassword(
+        ?string $login = null,
         ?string $password = null
     ): bool;
 
@@ -34,7 +35,7 @@ interface IModelAuth
     public function isSignedIn(): bool;
 
     /**
-     * Signed Out User
+     * Sign Out User
      *
      * @return bool Is User Successfully Signed Out
      */
