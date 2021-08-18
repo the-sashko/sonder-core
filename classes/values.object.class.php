@@ -1,27 +1,28 @@
 <?php
+
 /**
- * Value Object Class For Setting And Getting Data Of Model Instance
+ * Value Object Class For Setting And Getting Values Of Model Instance
  */
 class ValuesObject
 {
     /**
-     * @var array List Of Model Instance Data
+     * @var array List Of Model Instance Values
      */
-    public $data = [];
+    public $values = [];
 
-    public function __construct(?array $data = null)
+    public function __construct(?array $values = null)
     {
-        if (!empty($data)) {
-            $this->data = $data;
+        if (!empty($values)) {
+            $this->values = $values;
         }
     }
 
     /**
-     * Get Data Of Model Instance
+     * Get Value
      *
-     * @param string|null $valueName Data Name
+     * @param string|null $valueName Value Name
      *
-     * @return mixed Data Value
+     * @return mixed Value
      */
     public function get(?string $valueName = null)
     {
@@ -37,22 +38,22 @@ class ValuesObject
             throw new Exception($errorMessage);
         }
 
-        return $this->data[$valueName];
+        return $this->values[$valueName];
     }
 
     /**
-     * Get Mustiple Params From Model Data In PHP Array Format
+     * Get Multiple Values From Model In PHP Array Format
      *
      * @param array|null $params List Of Values
      *
-     * @return array|null Array Of Data Values
+     * @return array|null Array Of Values
      */
     public function exportRow(?array $params = null): ?array
     {
-        $row = $this->data;
+        $row = $this->values;
 
         foreach ($row as $param => $value) {
-            if (!is_scalar($value)) {
+            if (!is_scalar($value) && !is_null($value)) {
                 unset($row[$param]);
             }
         }
@@ -71,10 +72,10 @@ class ValuesObject
     }
 
     /**
-     * Set Data Of Model Instance
+     * Set Value
      *
-     * @param string|null $valueName Data Name
-     * @param mixed       $value     Data Value
+     * @param string|null $valueName Value Name
+     * @param mixed $value Value
      */
     public function set(?string $valueName = null, $value = null): void
     {
@@ -82,15 +83,15 @@ class ValuesObject
             throw new Exception('Value Name Of ValuesObject Is Empty');
         }
 
-        $this->data[$valueName] = $value;
+        $this->values[$valueName] = $value;
     }
 
     /**
-     * Check Is Data Value Exists
+     * Check Is Value Exists
      *
-     * @param string|null $valueName Data Name
+     * @param string|null $valueName Value Name
      *
-     * @return bool Is Data Value Exists
+     * @return bool Is Value Exists
      */
     public function has(?string $valueName = null): bool
     {
@@ -98,6 +99,6 @@ class ValuesObject
             throw new Exception('Value Name Of ValuesObject Is Empty');
         }
 
-        return array_key_exists($valueName, $this->data);
+        return array_key_exists($valueName, $this->values);
     }
 }
