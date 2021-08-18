@@ -3,7 +3,7 @@ class CronStore extends ModelStoreCore
 {
     const CRON_TABLE = 'cron_jobs';
 
-    public $scope = 'cron';
+    public ?string $scope = 'cron';
 
     public function updateCronById(
         ?array $values = null,
@@ -25,7 +25,8 @@ class CronStore extends ModelStoreCore
     {
         $sql = '
             SELECT *
-            FROM %s;
+            FROM %s
+            ORDER BY id ASC;
         ';
 
         $sql = sprintf($sql, static::CRON_TABLE);
