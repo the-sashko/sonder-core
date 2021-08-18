@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin For Generating Pagination Links
  */
@@ -27,9 +28,9 @@ class PaginatorPlugin
     /**
      * Get HTML Of Pagination
      *
-     * @param int|null    $pageCount   Cout Of Pages
-     * @param int|null    $currentPage Current Page
-     * @param string|null $link        URL Of Base Link
+     * @param int|null $pageCount Cout Of Pages
+     * @param int|null $currentPage Current Page
+     * @param string|null $link URL Of Base Link
      *
      * @return string|null HTML Of Pagination
      */
@@ -37,15 +38,20 @@ class PaginatorPlugin
         ?int    $pageCount = null,
         ?int    $currentPage = null,
         ?string $link = null
-    ): ?string {
-        $this->_pageCount   = !empty($pageCount) ? $pageCount : 1;
+    ): ?string
+    {
+        if (empty($pageCount) || $pageCount < 2 || empty($link)) {
+            return null;
+        }
+
+        $this->_pageCount = $pageCount;
         $this->_currentPage = !empty($currentPage) ? $currentPage : 1;
 
         if ($this->_currentPage > $this->_pageCount) {
-            $this->_currentPage = $this->_pageCount;
+            return null;
         }
 
-        $link = (string) $link;
+        $link = (string)$link;
 
         if (preg_match('/^(.*)\/page\-([0-9]+)\/$/su', $link)) {
             $link = preg_replace('/^(.*)\/page\-([0-9]+)\/$/su', '$1', $link);
@@ -64,14 +70,23 @@ class PaginatorPlugin
     }
 
     /**
-     * Create Pages List
+     * @return bool
      */
-    private function _createPages(): void
+    private function _createPages(): bool
     {
+        if ($this->_pageCount == 2) {
+            $this->_pages = [
+                '1' => 1,
+                '2' => 2
+            ];
+
+            return true;
+        }
+
         $this->_pages[$this->_currentPage] = $this->_currentPage;
 
         if ($this->_pageCount > 9) {
-            $this->_pages[4]                     = null;
+            $this->_pages[4] = null;
             $this->_pages[$this->_pageCount - 4] = null;
         }
 
@@ -96,7 +111,9 @@ class PaginatorPlugin
         }
 
         for (
-            $page = $this->_pageCount - 2; $page <= $this->_pageCount; $page++
+            $page = $this->_pageCount - 2;
+            $page <= $this->_pageCount;
+            $page++
         ) {
             $this->_pages[$page] = $page;
         }
@@ -113,6 +130,8 @@ class PaginatorPlugin
                 unset($this->_pages[$page]);
             }
         }
+
+        return true;
     }
 
     /**
@@ -133,6 +152,16 @@ class PaginatorPlugin
                 $this->_pages[$key] = sprintf(
                     '<span>%d</span>',
                     $this->_currentPage
+                );
+
+                continue;
+            }
+
+            if ($page < 2) {
+                $this->_pages[$key] = sprintf(
+                    '<a href="%s/">%d</a>',
+                    $this->_link,
+                    $page
                 );
 
                 continue;
@@ -161,7 +190,7 @@ class PaginatorPlugin
         }
 
         foreach ($this->_pages as $page) {
-            $paginatorHtml = $paginatorHtml.$page;
+            $paginatorHtml = $paginatorHtml . $page;
         }
 
         return $paginatorHtml;
