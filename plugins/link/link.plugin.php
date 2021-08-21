@@ -1,4 +1,5 @@
 <?php
+
 use Core\Plugins\Link\Classes\Parser;
 
 /**
@@ -14,7 +15,7 @@ class LinkPlugin
     /**
      * @var string Path To Cache Directory
      */
-    const CACHE_DIR_PATH = __DIR__.'/../../../res/cache/link';
+    const CACHE_DIR_PATH = __DIR__ . '/../../../res/cache/link';
 
     /**
      * @var Parser|null Parser Instance
@@ -54,21 +55,31 @@ class LinkPlugin
     /**
      * Replace URL Links Shortcodes In Text By HTML Tags
      *
-     * @param string|null $text Input Plain Text Value With Shortcodes
+     * @param string|null $text
+     * @param bool $displayIcons
      *
-     * @return string|null Output Text Value With HTML Tags
+     * @return string|null
      */
-    public function parseLinkShortCodes(?string $text = null): ?string
+    public function parseLinkShortCodes(
+        ?string $text = null,
+        bool    $displayIcons = false
+    ): ?string
     {
         if (empty($text)) {
             return null;
         }
 
+        $icon = '';
+
+        if ($displayIcons) {
+            $icon = '<i class="fas fa-link"></i>&nbsp;';
+        }
+
         return preg_replace(
             static::SHORTCODE_REGEXP,
-            '<a href="$1"'.
-            'target="_blank" rel="nofollow" class="external_link">'.
-            '<i class="fas fa-link"></i>&nbsp;$2'.
+            '<a href="$1"' .
+            'target="_blank" rel="nofollow" class="external_link">' .
+            $icon . '$2' .
             '</a>',
             $text
         );
@@ -101,10 +112,10 @@ class LinkPlugin
         $html = $this->_parser->getPageContent($url);
 
         $metaData = [
-            'url'         => $url,
-            'title'       => $this->_parser->getPageTitle($html, $url),
+            'url' => $url,
+            'title' => $this->_parser->getPageTitle($html, $url),
             'description' => $this->_parser->getPageDescription($html),
-            'image'       => $this->_parser->getPageImage($html, $url)
+            'image' => $this->_parser->getPageImage($html, $url)
         ];
 
         $this->_saveWebPageMetaDataToCache($metaData, $cacheFilePath);
@@ -115,7 +126,7 @@ class LinkPlugin
     /**
      * Saving Web Page Meta Data To Cache
      *
-     * @param array  $metaData      Meta Data Of Web Page
+     * @param array $metaData Meta Data Of Web Page
      * @param string $cacheFilePath Cache File Path
      */
     private function _saveWebPageMetaDataToCache(
@@ -138,12 +149,12 @@ class LinkPlugin
     ): array
     {
         $metaDataJson = file_get_contents($fileCache);
-        $metaData     = (array) json_decode($metaDataJson, true);
+        $metaData = (array)json_decode($metaDataJson, true);
 
         $metaData['url'] = null;
 
         if (array_key_exists('url', $metaData)) {
-            $metaData['url'] = base64_decode((string) $metaData['url']);
+            $metaData['url'] = base64_decode((string)$metaData['url']);
         }
 
         if (!array_key_exists('title', $metaData)) {
@@ -171,8 +182,8 @@ class LinkPlugin
     private function _getLinkShortCode(?array $urlParts = null): ?string
     {
         $shortCode = null;
-        $url       = null;
-        $metaData  = null;
+        $url = null;
+        $metaData = null;
 
         if (!empty($urlParts)) {
             $urlParts = array_shift($urlParts);
