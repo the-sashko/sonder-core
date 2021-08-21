@@ -1,44 +1,47 @@
 <?php
+
 /**
  * Core Controller Class
  */
 class ControllerCore extends CommonCore
 {
     /**
-     * @var string Default Area
-     */
-    const DEFAULT_AREA = 'default';
-
-    /**
      * @var array|null POST Request Data
      */
-    public $post = null;
+    public ?array $post = null;
 
     /**
      * @var array|null GET Request Data
      */
-    public $get = null;
+    public ?array $get = null;
 
     /**
      * @var array Common Data For Templates, Cross-Model And Cross-Plugin Usage
      */
-    public $commonData = [];
+    public array $commonData = [];
 
     /**
      * @var int Current Page In Pagination
      */
-    public $page = 1;
+    public int $page = 1;
 
     /**
      * @var array|null List Of Params From URL
      */
-    private $_urlParams = [];
+    private ?array $_urlParams = [];
 
     /**
-     * @var Response|null Response Instance
+     * @var Response Response Instance
      */
-    private $_response = null;
+    private Response $_response;
 
+    /**
+     * @param array|null $urlParams
+     * @param int $page
+     * @param string|null $language
+     *
+     * @throws CoreException
+     */
     public function __construct(
         ?array  $urlParams = null,
         int     $page      = 1,
@@ -68,7 +71,10 @@ class ControllerCore extends CommonCore
      * @param bool       $status Is Request Successful
      * @param array|null $data   Output Data
      */
-    public function returnJson(bool $status = true, ?array $data = null): void
+    public function returnJson(
+        bool $status = true,
+        ?array $data = null
+    ): void
     {
         $this->_response->returnJson($status, $data);
     }
@@ -78,6 +84,8 @@ class ControllerCore extends CommonCore
      *
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templatePage   Site Template Page Name
+     *
+     * @throws CoreException
      */
     public function displayStaticPage(
         ?string $staticPageName = null,
@@ -94,7 +102,9 @@ class ControllerCore extends CommonCore
     /**
      * Assign Values To Common Data
      *
-     * @param array|null $value
+     * @param array|null $values List Of Values
+     *
+     * @throws Exception
      */
     public function assign(?array $values = null): void
     {
@@ -126,6 +136,9 @@ class ControllerCore extends CommonCore
 
     /**
      * Default Error Action
+     *
+     * @throws CoreException
+     * @throws Exception
      */
     public function displayError(): void
     {
@@ -138,13 +151,15 @@ class ControllerCore extends CommonCore
             $errorMessage
         );
 
-        throw new \Exception($errorMessage);
+        throw new Exception($errorMessage);
     }
 
     /**
      * Display Error Page
      *
      * @param int|null $errorCode HTTP Error Code
+     *
+     * @throws CoreException
      */
     public function displayErrorPage(?int $errorCode = null): void
     {
@@ -186,7 +201,11 @@ class ControllerCore extends CommonCore
     /**
      * Handle HTTP Error Page
      *
+     * @param int|null $errorCode
+     *
      * @return string HTTP Error Message
+     *
+     * @throws CoreException
      */
     private function _handleHttpError(?int $errorCode = null): string
     {
@@ -207,6 +226,8 @@ class ControllerCore extends CommonCore
      * Set POST Request Data
      *
      * @param array|null $postData POST Request Data
+     *
+     * @throws CoreException
      */
     private function _setPostData(?array $postData = null): void
     {
@@ -224,6 +245,8 @@ class ControllerCore extends CommonCore
      * Set GET Request Data
      *
      * @param array|null $getData GET Request Data
+     *
+     * @throws CoreException
      */
     private function _setGetData(?array $getData = null): void
     {
@@ -241,6 +264,8 @@ class ControllerCore extends CommonCore
      * Set List Of Params From URL
      *
      * @param array|null $urlParams List Of Params From URL
+     *
+     * @throws CoreException
      */
     private function _setUrlParams(?array $urlParams = null): void
     {
