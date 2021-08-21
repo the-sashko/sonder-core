@@ -30,33 +30,35 @@ class TemplaterPlugin
     private $_area = null;
 
     /**
-     * @var string Template File Name
+     * @var string Template Page File Name
      */
-    private $_template = null;
+    private $_templatePage = null;
 
     /**
      * Generate And Display HTML Page From Template File
      *
-     * @param string|null $template   Template File Name
-     * @param array|null  $dataParams Array Of Values For Using In Template
-     *                                Page
-     * @param int         $ttl        Time To Live Template Cache
+     * @param string|null $templatePage Template Page File Name
+     * @param array|null  $dataParams   Array Of Values For Using In Template
+     *                                  Page
+     * @param int         $ttl          Time To Live Template Cache
+     *
+     * @throws Exception
      */
     public function render(
-        ?string $template = null,
-        ?array  $dataParams = null,
+        ?string $templatePage = null,
+        ?array  $dataParams  = null,
         int     $ttl = 0
     ): void
     {
-        if (empty($template)) {
-            $template = static::DEFAULT_TEMPLATE;
+        if (empty($templatePage)) {
+            $templatePage = static::DEFAULT_TEMPLATE;
         }
 
         if (empty($this->_area)) {
             $this->_area = static::DEFAULT_AREA;
         }
 
-        $this->_template = $template;
+        $this->_templatePage = $templatePage;
 
         $GLOBALS['template_dir']    = static::TEMPLATE_DIR;
         $GLOBALS['template_params'] = (array) $dataParams;
@@ -108,7 +110,7 @@ class TemplaterPlugin
             static::CACHE_DIR_PATH,
             $cacheSlug,
             $this->_area,
-            $this->_template
+            $this->_templatePage
         );
 
         if (!file_exists($cacheDir) || !is_dir($cacheDir)) {
@@ -142,7 +144,7 @@ class TemplaterPlugin
             throw new Exception($errorMessage);
         }
 
-        $template = $this->_template;
+        $templatePage = $this->_templatePage;
 
         include_once($templateFilePath);
     }

@@ -3,6 +3,8 @@
  * Generate And Display HTML From Template Page
  *
  * @param string|null $page Template Page Name
+ *
+ * @throws Exception
  */
 function renderPage(?string $page = null): void
 {
@@ -30,6 +32,8 @@ function renderPage(?string $page = null): void
  * @param int|null    $ttl    Cache TTL
  *
  * @return bool Returning true After Displaying
+ *
+ * @throws Exception
  */
 function renderPart(
     ?string $part   = null,
@@ -145,6 +149,8 @@ function saveTemplateDataToCache(
  * Alias For renderPage Function
  *
  * @param string|null $page Template Page Name
+ *
+ * @throws Exception
  */
 function __page(?string $page = null): void
 {
@@ -157,6 +163,8 @@ function __page(?string $page = null): void
  * @param string|null $part    Template Part Name
  * @param array|null  $values  Array Of Values For Using In Template Part
  * @param bool        $isCache Is Use Cache
+ *
+ * @throws Exception
  */
 function __part(
     ?string $part    = null,
