@@ -20,12 +20,13 @@
  *
  * === Alternative Syntax ===
  *
- * DELTextDEL  Equal [s]Text[/s]
- * ~~Text~~    Equal [s]Text[/s]
- * *Text*      Equal [b]Text[/b]
- * **Text**    Equal [b]Text[/b]
- * >Text       Equal [q]Text[/q]
- * >><Post ID> Equal [Reply:<Post ID>]
+ * DELTextDEL               Equal [s]Text[/s]
+ * ~~Text~~                 Equal [s]Text[/s]
+ * *Text*                   Equal [b]Text[/b]
+ * **Text**                 Equal [b]Text[/b]
+ * >Text                    Equal [q]Text[/q]
+ * [url=<URL>]<Title>[/url] Equal [Link:<URL>:"<Title>"] ',
+ * >><Post ID>              Equal [Reply:<Post ID>]
 */
 class MarkupPlugin
 {
@@ -67,6 +68,18 @@ class MarkupPlugin
         );
 
         $text = preg_replace(
+            '/\[url\=([^\]]+)\]([^\]]+)\[\/url\]/su',
+            '[Link:$1:"$2"]',
+            $text
+        );
+
+        $text = preg_replace(
+            '/\[url\=([^\]]+)\]\[\/url\]/su',
+            '[Link:$1:"$2"]',
+            $text
+        );
+
+        $text = preg_replace(
             '/\[Link\:\/([^\:]+)\:\"([^\"]+)\"\]/su',
             '[Link:/$1:"$2":Internal]',
             $text
@@ -101,7 +114,7 @@ class MarkupPlugin
 
         $text = preg_replace(
             '/\[s\](.*?)\[\/s\]/su',
-            '<strike>$1</strike>',
+            '<s>$1</s>',
             $text
         );
 
