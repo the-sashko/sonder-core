@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Core Response Class
  */
@@ -20,9 +21,9 @@ class Response extends CommonCore
     const DEFAULT_AREA = 'default';
 
     /**
-     * @var string Templater Area
+     * @var string|null Templater Area
      */
-    private $_area = null;
+    private ?string $_area = null;
 
     public function __construct()
     {
@@ -43,7 +44,10 @@ class Response extends CommonCore
      * @param bool       $status Is Request Successful
      * @param array|null $data   Output Data
      */
-    public function returnJson(bool $status = true, ?array $data = null): void
+    public function returnJson(
+        bool $status = true,
+        ?array $data = null
+    ): void
     {
         $jsonData = [
             'status' => $status,
@@ -63,6 +67,8 @@ class Response extends CommonCore
      *
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templatePage   Site Template Page Name
+     *
+     * @throws CoreException
      */
     public function displayStaticPage(
         ?string $staticPageName = null,
@@ -128,6 +134,8 @@ class Response extends CommonCore
      *
      * @param string $errorMessage HTTP Error Message
      * @param int    $errorCode HTTP Error Code
+     *
+     * @throws CoreException
      */
     public function displayErrorPage(
         string $errorMessage,
@@ -151,14 +159,14 @@ class Response extends CommonCore
     /**
      * Return Data In HTML Format
      *
-     * @param string|null $template Template Page Name
-     * @param array|null  $params   Params Data For Templates
-     * @param int         $ttl      Time To Live Of Template Cache
+     * @param string|null $templatePage Template Page Name
+     * @param array|null  $params       Params Data For Templates
+     * @param int         $ttl          Time To Live Of Template Cache
      *
      * @throws CoreException
      */
     public function render(
-        ?string $template = null,
+        ?string $templatePage = null,
         ?array  $params = null,
         int     $ttl      = 0
     ): void
@@ -178,6 +186,8 @@ class Response extends CommonCore
             $params['meta']
         );
 
+        $params['assetsVersion'] = $this->_getAssetsVersion();
+
         $breadcrumbs = $this->getPlugin('breadcrumbs');
         $breadcrumbs = $breadcrumbs->getHtml($params['pagePath']);
 
@@ -191,7 +201,30 @@ class Response extends CommonCore
 
         $this->execHooks('onBeforeRender', $params);
 
-        $templater->render($template, $params, $ttl);
+        $templater->render($templatePage, $params, $ttl);
+    }
+
+    /**
+     * Get Version Of Assets Files
+     *
+     * @return string
+     */
+    private function _getAssetsVersion(): string
+    {
+        if (!defined('APP_MODE') || APP_MODE == 'dev') {
+            return sprintf('%d_develop', time());
+        }
+
+        $mainConfig = $this->configData['main'];
+
+        if (
+            array_key_exists('assets_version', $mainConfig) &&
+            !empty($mainConfig['assets_version'])
+        ) {
+            return (string) $mainConfig['assets_version'];
+        }
+
+        return '0';
     }
 
     /**
@@ -201,6 +234,8 @@ class Response extends CommonCore
      * @param array|null $meta     Input HTML Meta Tag Values
      *
      * @return array Output HTML Meta Tag Values
+     *
+     * @throws Exception
      */
     private function _getMetaParams(
         ?array $pagePath = null,
@@ -254,7 +289,7 @@ class Response extends CommonCore
     /**
      * Set HTML Copyright Value
      *
-     * @param array $metaParams     Output HTML Meta Datas
+     * @param array $metaParams     Output HTML Meta Data
      * @param array $mainConfigData Main Config Values
      */
     private function _setMetaParamsCopyright(
