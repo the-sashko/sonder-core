@@ -1,11 +1,8 @@
 <?php
 class ExampleHook extends HookCore
 {
-    public function getExampleData(): void
+    public function setExampleData(): void
     {
-        $this->setEntityParam(
-            'ExampleHookValue',
-            'Example Data'
-        );
+        $this->setEntityParam('exampleHookValue', 'Example Data');
     }
 }

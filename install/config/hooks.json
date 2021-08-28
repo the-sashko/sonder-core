@@ -2,7 +2,7 @@
     "onBeforeRender": [
         {
             "hook":   "example",
-            "method": "getExampleData"
+            "method": "setExampleData"
         }
     ]
 }
