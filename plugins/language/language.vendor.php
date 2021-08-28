@@ -1,6 +1,14 @@
 <?php
+
 class LanguageVendor
 {
+    /**
+     * @param string|null $poFilePath
+     *
+     * @param string|null $moFilePath
+     *
+     * @throws LanguageException
+     */
     public function convertPo2Mo(
         ?string $poFilePath = null,
         ?string $moFilePath = null
@@ -21,7 +29,9 @@ class LanguageVendor
         }
 
         if (empty($moFilePath)) {
-            throw new LanguageException('MO File Path Is Not Set', LanguageException::MO_FILE_IS_NOT_SET
+            throw new LanguageException(
+                'MO File Path Is Not Set',
+                LanguageException::MO_FILE_IS_NOT_SET
             );
         }
 
@@ -29,7 +39,12 @@ class LanguageVendor
             unlink($moFilePath);
         }
 
-        $execString = sprintf('msgfmt %s -o %s', $poFilePath, $moFilePath);
+        $execString = sprintf(
+            'msgfmt %s -o %s',
+            $poFilePath,
+            $moFilePath
+        );
+
         exec($execString);
 
         chmod($moFilePath, 0775);

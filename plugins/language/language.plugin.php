@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Plugin For Traslation String Values
+ * Plugin For Translation String Values
  */
 class LanguagePlugin
 {
@@ -17,28 +18,31 @@ class LanguagePlugin
     /**
      * @var string Directory With Dictionary Files
      */
-    const DICTIONARIES_DIR = __DIR__.'/../../../res/lang/src';
+    const DICTIONARIES_DIR = __DIR__ . '/../../../res/lang/src';
 
     /**
      * @var string Directory With Dictionary Files
      */
-    const LOCALE_DIR = __DIR__.'/../../../res/lang/locale';
+    const LOCALE_DIR = __DIR__ . '/../../../res/lang/locale';
 
     /**
      * @var string Directory With Dictionary Files
      */
-    const CONFIG_DIR = __DIR__.'/../../../config';
+    const CONFIG_DIR = __DIR__ . '/../../../config';
 
     /**
-     * @var string Current Language Of User
+     * @var string|null Current Language Of User
      */
-    private $_language = null;
+    private ?string $_language = null;
 
     /**
      * @var LanguageVendor|null LanguageVendor Class Instance
      */
-    private $_vendor = null;
+    private ?LanguageVendor $_vendor;
 
+    /**
+     * @throws LanguageException
+     */
     public function __construct()
     {
         if (!defined('DEFAULT_LANGUAGE')) {
@@ -54,7 +58,7 @@ class LanguagePlugin
      *
      * @param string|null $inputString Input String Value
      *
-     * @return string|null Translated String Value
+     * @throws LanguageException
      */
     public function translate(?string $inputString = null): ?string
     {
@@ -91,6 +95,8 @@ class LanguagePlugin
 
     /**
      * Generate Dictionary Files By JSON Sources
+     *
+     * @throws LanguageException
      */
     public function generateDictionaries(): void
     {
@@ -133,6 +139,11 @@ class LanguagePlugin
         }
     }
 
+    /**
+     * @param string|null $language
+     *
+     * @return string
+     */
     private function _getLocale(?string $language = null): string
     {
         $defaultLocale = $this->_getDefaultLocale();
@@ -148,7 +159,7 @@ class LanguagePlugin
         }
 
         $localeConfig = file_get_contents($localeConfigPath);
-        $localeConfig = (array) json_decode($localeConfig, true);
+        $localeConfig = (array)json_decode($localeConfig, true);
 
         if (empty($localeConfig)) {
             return $defaultLocale;
@@ -159,7 +170,7 @@ class LanguagePlugin
             !empty($localeConfig[$language]) &&
             is_scalar($localeConfig[$language])
         ) {
-            return (string) $localeConfig[$language];
+            return (string)$localeConfig[$language];
         }
 
         return $defaultLocale;
@@ -187,6 +198,8 @@ class LanguagePlugin
 
     /**
      * Set Current Language Of User
+     *
+     * @throws LanguageException
      */
     private function _setLanguage(): void
     {
@@ -208,6 +221,9 @@ class LanguagePlugin
         $this->_language = $language;
     }
 
+    /**
+     * @return string
+     */
     private function _getDefaultLocale(): string
     {
         $defaultLocale = static::DEFAULT_LOCALE;
@@ -219,7 +235,7 @@ class LanguagePlugin
         }
 
         $mainConfig = file_get_contents($mainConfigPath);
-        $mainConfig = (array) json_decode($mainConfig, true);
+        $mainConfig = (array)json_decode($mainConfig, true);
 
         if (empty($mainConfig)) {
             return $defaultLocale;
@@ -230,17 +246,27 @@ class LanguagePlugin
             !empty($mainConfig['site_locale']) &&
             is_scalar($mainConfig['site_locale'])
         ) {
-            return (string) $mainConfig['site_locale'];
+            return (string)$mainConfig['site_locale'];
         }
 
         return $defaultLocale;
     }
 
+    /**
+     * @param string|null $sourceFilePath
+     * @param string|null $poFilePath
+     * @param string|null $moFilePath
+     * @param string|null $locale
+     *
+     * @return bool
+     *
+     * @throws LanguageException
+     */
     private function _generateDictionaryFile(
         ?string $sourceFilePath = null,
-        ?string $poFilePath     = null,
-        ?string $moFilePath     = null,
-        ?string $locale         = null
+        ?string $poFilePath = null,
+        ?string $moFilePath = null,
+        ?string $locale = null
     ): bool
     {
         if ($this->_prepareDictionaryFile(
@@ -252,8 +278,8 @@ class LanguagePlugin
             return false;
         }
 
-        $jsonContent    = file_get_contents((string) $sourceFilePath);
-        $dictionaryRows = (array) json_decode($jsonContent);
+        $jsonContent = file_get_contents((string)$sourceFilePath);
+        $dictionaryRows = (array)json_decode($jsonContent);
 
         $headerRow = [
             'msgid ""',
@@ -262,7 +288,7 @@ class LanguagePlugin
             '"Report-Msgid-Bugs-To: \n"',
             sprintf('"POT-Creation-Date: %s+0000\n"', date('Y-m-d H:m')),
             sprintf('"PO-Revision-Date:%s+0000\n"', date('Y-m-d H:m')),
-            sprintf('"Language: %s\n"', (string) $locale),
+            sprintf('"Language: %s\n"', (string)$locale),
             '"MIME-Version: 1.0\n"',
             '"Content-Type: text/plain; charset=UTF-8\n"'
         ];
@@ -288,7 +314,7 @@ class LanguagePlugin
             $dictionaryRows
         );
 
-        file_put_contents((string) $poFilePath, $dictionaryRows);
+        file_put_contents((string)$poFilePath, $dictionaryRows);
 
         $this->_vendor->convertPo2Mo($poFilePath, $moFilePath);
 
@@ -305,10 +331,11 @@ class LanguagePlugin
      */
     private function _prepareDictionaryFile(
         ?string $sourceFilePath = null,
-        ?string $poFilePath     = null,
-        ?string $moFilePath     = null,
-        ?string $locale         = null
-    ): bool {
+        ?string $poFilePath = null,
+        ?string $moFilePath = null,
+        ?string $locale = null
+    ): bool
+    {
         if (
             empty($sourceFilePath) ||
             empty($poFilePath) ||
