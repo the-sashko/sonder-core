@@ -61,7 +61,7 @@ class PaginatorPlugin
             $link = preg_replace('/^(.*)\/$/su', '$1', $link);
         }
 
-        $this->_link = !empty($link) ? $link : '#';
+        $this->_link = !empty($link) ? $link : '';
 
         $this->_createPages();
         $this->_setPagesHtml();
