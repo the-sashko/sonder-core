@@ -8,7 +8,7 @@ CREATE TABLE "cron_jobs" (
     "id" integer DEFAULT nextval('cron_jobs_id_seq') NOT NULL,
     "action" character varying(128) NOT NULL,
     "interval" numeric(8,0),
-    "time_next_exec" numeric(11,0) DEFAULT '-1' NOT NULL,
+    "time_next_exec" numeric(11,0) DEFAULT 0 NOT NULL,
     "last_exec_status" boolean DEFAULT true NOT NULL,
     "is_active" boolean DEFAULT false NOT NULL,
     "error_message" character varying(255),
