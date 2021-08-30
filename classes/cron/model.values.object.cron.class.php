@@ -31,7 +31,7 @@ class CronValuesObject extends ValuesObject
 
         $intervalInMinutes = intdiv($intervalInSeconds, 60);
         $intervalInHours = intdiv($intervalInMinutes, 60);
-        $intervalInDays = intdiv($intervalInHours,24);
+        $intervalInDays = intdiv($intervalInHours, 24);
 
         $intervalInSeconds = $intervalInSeconds - 60 * $intervalInMinutes;
         $intervalInMinutes = $intervalInMinutes - 60 * $intervalInHours;
