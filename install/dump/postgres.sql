@@ -11,7 +11,7 @@ CREATE TABLE "cron_jobs" (
     "time_next_exec" numeric(11,0) DEFAULT 0 NOT NULL,
     "last_exec_status" boolean DEFAULT true NOT NULL,
     "is_active" boolean DEFAULT false NOT NULL,
-    "error_message" character varying(255),
+    "error_message" character varying(256),
     CONSTRAINT "cron_id" PRIMARY KEY ("id"),
     CONSTRAINT "cron_jobs_action_interval" UNIQUE ("action", "interval")
 );
