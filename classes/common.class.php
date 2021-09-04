@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Parent Class For All Controllers And Models
  */
@@ -12,38 +13,42 @@ class CommonCore
     /**
      * @var string Path To Hooks Directory
      * */
-    const HOOKS_DIR_PATH = __DIR__.'/../../hooks/';
+    const HOOKS_DIR_PATH = __DIR__ . '/../../hooks/';
 
     /**
      * @var string Path To Models Directory
      * */
-    const MODELS_DIR_PATH = __DIR__.'/../../models';
+    const MODELS_DIR_PATH = __DIR__ . '/../../models';
 
     /**
      * @var object|null Session Plugin Instance
      * */
-    public $session = null;
+    public ?object $session = null;
 
     /**
      * @var array Data From JSON Config Files
      */
-    public $configData = [];
+    public array $configData = [];
 
     /**
      * @var string|null Current URL
      */
-    public $currentUrl = null;
+    public ?string $currentUrl = null;
 
     /**
      * @var string|null Current Host
      */
-    public $currentHost = null;
+    public ?string $currentHost = null;
 
     /**
      * @var string|null Current Language Of User
      */
-    public $language = null;
+    public ?string $language = null;
 
+    /**
+     * @throws CoreException
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->_requireAppException();
@@ -57,23 +62,25 @@ class CommonCore
     }
 
     /**
-    * Get Model By Name
-    *
-    * @param string|null $modelName Name Of Model
-    *
-    * @return ModelCore|null Insnace Of Model
-    */
-    public function getModel(?string $modelName = null): ?ModelCore
+     * Get Model By Name
+     *
+     * @param string|null $modelName Name Of Model
+     *
+     * @return ModelCore|null Instance Of Model
+     *
+     * @throws CoreException
+     */
+    final public function getModel(?string $modelName = null): ?ModelCore
     {
         if (empty($modelName)) {
             return null;
         }
 
-        $modelDirPath  = sprintf('%s/%s', static::MODELS_DIR_PATH, $modelName);
+        $modelDirPath = sprintf('%s/%s', static::MODELS_DIR_PATH, $modelName);
         $modelFilePath = sprintf('%s/%s.php', $modelDirPath, $modelName);
-        $modelClass    = mb_convert_case($modelName, MB_CASE_TITLE);
+        $modelClass = mb_convert_case($modelName, MB_CASE_TITLE);
 
-        if (!file_exists($modelFilePath) ||!is_file($modelFilePath)) {
+        if (!file_exists($modelFilePath) || !is_file($modelFilePath)) {
             $errorMessage = sprintf(
                 '%s. Model: %s',
                 CoreException::MESSAGE_CORE_MODEL_NOT_FOUND,
@@ -109,9 +116,11 @@ class CommonCore
      *
      * @param string|null $pluginName Name Of Plugin
      *
-     * @return Object Insnace Of Plugin
+     * @return Object Instance Of Plugin
+     *
+     * @throws CoreException
      */
-    public function getPlugin(?string $pluginName = null): Object
+    final public function getPlugin(?string $pluginName = null): object
     {
         if (empty($pluginName)) {
             throw new CoreException(
@@ -146,14 +155,20 @@ class CommonCore
      * @param string|null $configName Name Of Config File
      *
      * @return array|null Data From Config File
+     *
+     * @throws CoreException
      */
-    public function getConfig(?string $configName = null): ?array
+    final public function getConfig(?string $configName = null): ?array
     {
         if (empty($configName)) {
             return null;
         }
 
-        $configPath = __DIR__."/../../config/{$configName}.json";
+        $configPath = sprintf(
+            '%s/../../config/%s.json',
+            __DIR__,
+            $configName
+        );
 
         if (!file_exists($configPath)) {
             $errorMessage = CoreException::MESSAGE_CORE_CONFIG_IS_NOT_EXISTS;
@@ -172,19 +187,21 @@ class CommonCore
 
         $configJSON = file_get_contents($configPath);
 
-        return (array) json_decode($configJSON, true);
+        return (array)json_decode($configJSON, true);
     }
 
     /**
      * Execute All Hooks In Scope
      *
-     * @param string|null $hookScope  Scope Of Hooks
-     * @param array|null  $entityData Entity Data
+     * @param string|null $hookScope Scope Of Hooks
+     * @param array|null $entityData Entity Data
      *
-     * @return bool Is Hooks Successfully Execured
+     * @return bool Is Hooks Successfully Executed
+     *
+     * @throws CoreException
      */
-    public function execHooks(
-        ?string $hookScope   = null,
+    final protected function execHooks(
+        ?string $hookScope = null,
         ?array  &$entityData = null
     ): bool
     {
@@ -211,7 +228,7 @@ class CommonCore
                 continue;
             }
 
-            $hookName   = $hookItem['hook'];
+            $hookName = $hookItem['hook'];
             $hookMethod = $hookItem['method'];
 
             $this->_execHook($hookName, $hookMethod, $entityData);
@@ -221,9 +238,9 @@ class CommonCore
     }
 
     /**
-     * Set Laguage Value To Session
+     * Set Language Value To Session
      */
-    public function setLanguage(?string $language = null): void
+    final protected function setLanguage(?string $language = null): void
     {
         $defaultLanguage = static::DEFAULT_LANGUAGE;
 
@@ -243,11 +260,13 @@ class CommonCore
      * Create Log
      *
      * @param string $message Message
+     *
+     * @throws CoreException
      */
-    public function log(string $message): void
+    final protected function log(string $message): void
     {
         $logName = explode('\\', static::class);
-        $logName = (string) end($logName);
+        $logName = (string)end($logName);
 
         $this->getPlugin('logger')->log($message, $logName, APP_MODE);
     }
@@ -256,11 +275,12 @@ class CommonCore
      * Create Error Log
      *
      * @param string $message Error Message
+     * @throws CoreException
      */
-    public function logError(string $message): void
+    final protected function logError(string $message): void
     {
         $logName = explode('\\', static::class);
-        $logName = (string) end($logName);
+        $logName = (string)end($logName);
 
         $this->getPlugin('logger')->logError($message, $logName);
     }
@@ -268,15 +288,15 @@ class CommonCore
     /**
      * Redirect To URL
      *
-     * @param string|null $url         URL Value
-     * @param bool        $isPermanent Is Redirect Permanently
+     * @param string|null $url URL Value
+     * @param bool $isPermanent Is Redirect Permanently
      */
-    public function redirect(
-        ?string $url         = null,
+    final protected function redirect(
+        ?string $url = null,
         bool    $isPermanent = false
     ): void
     {
-        $url  = empty($url) ? '/' : $url;
+        $url = empty($url) ? '/' : $url;
         $code = $isPermanent ? 301 : 302;
 
         header(sprintf('Location: %s', $url), true, $code);
@@ -291,10 +311,13 @@ class CommonCore
     {
         if (
             !defined('AppException') &&
-            file_exists(__DIR__.'/../../exceptions/AppException.php') &&
-            is_file(__DIR__.'/../../exceptions/AppException.php')
+            file_exists(__DIR__ . '/../../exceptions/AppException.php') &&
+            is_file(__DIR__ . '/../../exceptions/AppException.php')
         ) {
-            require_once __DIR__.'/../../exceptions/AppException.php';
+            require_once sprintf(
+                '%s/../../exceptions/AppException.php',
+                __DIR__
+            );
         }
     }
 
@@ -315,6 +338,8 @@ class CommonCore
 
     /**
      * Set Current Host
+     *
+     * @throws Exception
      */
     private function _setCurrentHost(): void
     {
@@ -324,22 +349,24 @@ class CommonCore
             !array_key_exists('site_protocol', $mainConfigData) ||
             !array_key_exists('site_domain', $mainConfigData)
         ) {
-            throw new \Exception('Main Config Has Bad Format');
+            throw new Exception('Main Config Has Bad Format');
         }
 
         $this->currentHost = sprintf(
             '%s://%s',
-            (string) $mainConfigData['site_protocol'],
-            (string) $mainConfigData['site_domain']
+            (string)$mainConfigData['site_protocol'],
+            (string)$mainConfigData['site_domain']
         );
     }
 
     /**
      * Execute Hook
      *
-     * @param string $hookName   Name Of Hook
+     * @param string $hookName Name Of Hook
      * @param string $hookMethod Method Of Hook
-     * @param array  $entityData Entity Data
+     * @param array $entityData Entity Data
+     *
+     * @throws CoreException
      */
     private function _execHook(
         string $hookName,
@@ -421,12 +448,14 @@ class CommonCore
 
     /**
      * Set Data From JSON Config Files
+     *
+     * @throws CoreException
      */
     private function _setConfigs(): void
     {
-        $this->configData['main']     = $this->getConfig('main');
+        $this->configData['main'] = $this->getConfig('main');
         $this->configData['database'] = $this->getConfig('database');
-        $this->configData['hooks']    = $this->getConfig('hooks');
-        $this->configData['seo']      = $this->getConfig('seo');
+        $this->configData['hooks'] = $this->getConfig('hooks');
+        $this->configData['seo'] = $this->getConfig('seo');
     }
 }

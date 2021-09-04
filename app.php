@@ -1,4 +1,9 @@
 <?php
+
+use Core\Plugins\Router\Classes\RouterEntity;
+use Core\Plugins\Router\Exceptions\RouterEntityException;
+use Core\Plugins\Router\Exceptions\RouterPluginException;
+
 /**
  * Main Application Class
  */
@@ -6,7 +11,7 @@ class App
 {
     public function __construct()
     {
-        require_once __DIR__.'/autoload.php';
+        require_once __DIR__ . '/autoload.php';
 
         set_exception_handler([$this, 'exceptionHandler']);
         set_error_handler([$this, 'errorHandler']);
@@ -16,6 +21,10 @@ class App
 
     /**
      * Main Method For Application
+     *
+     * @throws CoreException
+     * @throws RouterEntityException
+     * @throws RouterPluginException
      */
     public function run(): void
     {
@@ -26,10 +35,10 @@ class App
         }
 
         $controller = $urlRoute->getController();
-        $method     = $urlRoute->getMethod();
-        $params     = $urlRoute->getParams();
-        $page       = $urlRoute->getPage();
-        $language   = $urlRoute->getLanguage();
+        $method = $urlRoute->getMethod();
+        $params = $urlRoute->getParams();
+        $page = $urlRoute->getPage();
+        $language = $urlRoute->getLanguage();
 
         if (!$this->isControllerExist($controller)) {
             $errorMessage = '%s. Controller: %s';
@@ -46,7 +55,11 @@ class App
             );
         }
 
-        require_once __DIR__.'/../controllers/'.$controller.'.php';
+        require_once sprintf(
+            '%s/../controllers/%s.php',
+            __DIR__,
+            $controller
+        );
 
         try {
             $controller = new $controller($params, $page, $language);
@@ -68,7 +81,7 @@ class App
             }
 
             $controller->$method();
-        } catch (\Throwable $exp) {
+        } catch (Throwable $exp) {
             $this->exceptionHandler($exp);
         }
 
@@ -78,12 +91,12 @@ class App
     /**
      * Errors Handler
      *
-     * @param int    $errorCode    HTTP Response Code
+     * @param int $errorCode HTTP Response Code
      * @param string $errorMessage Error Message
-     * @param string $errorFile    File With Error
-     * @param int    $errorLine    Line In File With Error
+     * @param string $errorFile File With Error
+     * @param int $errorLine Line In File With Error
      */
-    public function errorHandler(
+    final public function errorHandler(
         int    $errorCode,
         string $errorMessage,
         string $errorFile,
@@ -120,7 +133,7 @@ class App
      *
      * @param Throwable|null $exception Exception Instance
      */
-    public function exceptionHandler(?Throwable $exception = null): void
+    final public function exceptionHandler(?Throwable $exception = null): void
     {
         if (empty($exception)) {
             exit(0);
@@ -139,8 +152,13 @@ class App
 
         $logName = get_class($exception);
         $logName = explode('\\', $logName);
-        $logName = (string) end($logName);
-        $logName = preg_replace('/^(.*?)Exception$/sui', '$1', $logName);
+        $logName = (string)end($logName);
+
+        $logName = preg_replace(
+            '/^(.*?)Exception$/sui',
+            '$1',
+            $logName
+        );
 
         (new LoggerPlugin)->logError($logMessage, $logName);
 
@@ -160,13 +178,13 @@ class App
      * Check Is Method Public And Exists In Controller
      *
      * @param ControllerCore|null $controller ControllerCore Instance
-     * @param string|null         $method     Name Of Method
+     * @param string|null $method Name Of Method
      *
      * @return bool Is Method Public And Exists In Controller
      */
-    protected function isValidControllerMethod(
+    final protected function isValidControllerMethod(
         ?ControllerCore $controller = null,
-        ?string         $method     = null
+        ?string         $method = null
     ): bool
     {
         if (empty($controller) || empty($method)) {
@@ -193,19 +211,29 @@ class App
      *
      * @return bool Is Controller Exists
      */
-    protected function isControllerExist(?string $controller = null): bool
+    final protected function isControllerExist(?string $controller = null): bool
     {
         if (empty($controller)) {
             return false;
         }
 
-        return file_exists(__DIR__.'/../controllers/'.$controller.'.php');
+        return file_exists(
+            sprintf(
+                '%s/../controllers/%s.php',
+                __DIR__,
+                $controller
+            )
+        );
     }
 
     /**
-     * Parse Controller, Method Of Cotroller And Params From URL
+     * Parse Controller, Method Of Controller And Params From URL
+     *
+     * @return RouterEntity|null
+     *
+     * @throws RouterPluginException
      */
-    private function _parseUrl(): ?Core\Plugins\Router\Classes\RouterEntity
+    private function _parseUrl(): ?RouterEntity
     {
         $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
         parse_str($urlParams, $urlParams);
@@ -215,7 +243,7 @@ class App
             PHP_URL_PATH
         );
 
-        $url = (string) $_SERVER['REQUEST_URI'];
+        $url = (string)$_SERVER['REQUEST_URI'];
 
         $routerPlugin = new RouterPlugin();
 
@@ -246,12 +274,12 @@ class App
 
         header('HTTP/1.1 404 Not Found');
 
-        $errorPLugin = new ErrorPlugin();
+        $errorPlugin = new ErrorPlugin();
 
-        $errorCode    = ErrorPlugin::HTTP_NOT_FOUND;
-        $errorMessage = $errorPLugin->getHttpErrorMessage($errorCode);
+        $errorCode = ErrorPlugin::HTTP_NOT_FOUND;
+        $errorMessage = $errorPlugin->getHttpErrorMessage($errorCode);
 
-        $errorPLugin->handleHttpError($errorCode);
+        $errorPlugin->handleHttpError($errorCode);
 
         echo sprintf('Error %d: %s', $errorCode, $errorMessage);
 

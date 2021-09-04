@@ -1,26 +1,40 @@
 <?php
+
 /**
  * Class For API Model
  */
 abstract class ModelApiCore
 {
-    public $result = null;
+    /**
+     * @var ModelApiResultObject|null
+     */
+    public ?ModelApiResultObject $result = null;
 
-    public $get = null;
+    /**
+     * @var array|null
+     */
+    public ?array $get = null;
 
-    public $post = null;
+    /**
+     * @var array|null
+     */
+    public ?array $post = null;
 
     public function __construct()
     {
         $this->result = new ModelApiResultObject();
     }
-    
-    public function loadInputData(
-        ?array $get  = null,
+
+    /**
+     * @param array|null $get
+     * @param array|null $post
+     */
+    final public function loadInputData(
+        ?array $get = null,
         ?array $post = null
     ): void
     {
-        $this->get  = $get;
+        $this->get = $get;
         $this->post = $post;
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Main API Class
  */
@@ -13,12 +14,14 @@ class API extends App
 
     /**
      * Main Method For API
+     *
+     * @throws CoreException
      */
     public function run(): void
     {
         list($model, $action) = $this->_parseUrl();
 
-        require_once __DIR__.'/classes/api/controller.api.class.php';
+        require_once __DIR__ . '/classes/api/controller.api.class.php';
 
         try {
             $controller = new ApiControllerCore($model);
@@ -53,11 +56,14 @@ class API extends App
     }
 
     /**
-     * Parse Controller, Method Of Cotroller And Params From URL
+     * Parse Controller, Method Of Controller And Params From URL
+     *
+     * @return array|null
+     * @throws CoreException
      */
     private function _parseUrl(): ?array
     {
-        $model  = null;
+        $model = null;
         $action = null;
 
         $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
@@ -100,8 +106,8 @@ class API extends App
             );
         }
 
-        $model  = mb_convert_case($model, MB_CASE_LOWER);
-        $action = 'action'.mb_convert_case($action, MB_CASE_TITLE);
+        $model = mb_convert_case($model, MB_CASE_LOWER);
+        $action = 'action' . mb_convert_case($action, MB_CASE_TITLE);
 
         return [
             $model,

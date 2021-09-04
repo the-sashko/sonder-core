@@ -24,5 +24,5 @@ return [
         '../plugins/redis/vendor',
         '../plugins/mail/providers/smtp/vendor',
         '../plugins/share/twitter/vendor'
-    ],
+    ]
 ];

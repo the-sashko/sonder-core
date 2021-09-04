@@ -8,37 +8,16 @@ class ValuesObject
     /**
      * @var array List Of Model Instance Values
      */
-    public $values = [];
+    public array $values = [];
 
+    /**
+     * @param array|null $values
+     */
     public function __construct(?array $values = null)
     {
         if (!empty($values)) {
             $this->values = $values;
         }
-    }
-
-    /**
-     * Get Value
-     *
-     * @param string|null $valueName Value Name
-     *
-     * @return mixed Value
-     */
-    public function get(?string $valueName = null)
-    {
-        if (empty($valueName)) {
-            throw new Exception('Value Name Of ValuesObject Is Empty');
-        }
-
-        if (!$this->has($valueName)) {
-            $errorMessage = sprintf(
-                'Value %s Not Found In ValuesObject',
-                $valueName
-            );
-            throw new Exception($errorMessage);
-        }
-
-        return $this->values[$valueName];
     }
 
     /**
@@ -72,12 +51,43 @@ class ValuesObject
     }
 
     /**
+     * Get Value
+     *
+     * @param string|null $valueName Value Name
+     *
+     * @return mixed Value
+     *
+     * @throws Exception
+     */
+    final protected function get(?string $valueName = null): mixed
+    {
+        if (empty($valueName)) {
+            throw new Exception('Value Name Of ValuesObject Is Empty');
+        }
+
+        if (!$this->has($valueName)) {
+            $errorMessage = sprintf(
+                'Value %s Not Found In ValuesObject',
+                $valueName
+            );
+            throw new Exception($errorMessage);
+        }
+
+        return $this->values[$valueName];
+    }
+
+    /**
      * Set Value
      *
      * @param string|null $valueName Value Name
      * @param mixed $value Value
+     *
+     * @throws Exception
      */
-    public function set(?string $valueName = null, $value = null): void
+    final protected function set(
+        ?string $valueName = null,
+        mixed   $value = null
+    ): void
     {
         if (empty($valueName)) {
             throw new Exception('Value Name Of ValuesObject Is Empty');
@@ -92,8 +102,10 @@ class ValuesObject
      * @param string|null $valueName Value Name
      *
      * @return bool Is Value Exists
+     *
+     * @throws Exception
      */
-    public function has(?string $valueName = null): bool
+    final protected function has(?string $valueName = null): bool
     {
         if (empty($valueName)) {
             throw new Exception('Value Name Of ValuesObject Is Empty');

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabasePluginTest extends TestCase
 {
-    public function testTest()
+    final public function testTest()
     {
         // To-Do
         $this->assertTrue(true);

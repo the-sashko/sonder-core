@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -76,13 +77,16 @@ class ErrorPluginTest extends TestCase
         'test'
     ];
 
-    const TEXT_ERROR_FILE_PATH = __DIR__.'/../samples/errors/error.txt';
+    const TEXT_ERROR_FILE_PATH = __DIR__ . '/../samples/errors/error.txt';
 
-    const JSON_ERROR_FILE_PATH = __DIR__.'/../samples/errors/error.json';
+    const JSON_ERROR_FILE_PATH = __DIR__ . '/../samples/errors/error.json';
 
-    const HTML_ERROR_FILE_PATH = __DIR__.'/../samples/errors/error.html';
+    const HTML_ERROR_FILE_PATH = __DIR__ . '/../samples/errors/error.html';
 
-    public function testHandleHttpError()
+    /**
+     * @throws CoreException
+     */
+    final public function testHandleHttpError()
     {
         $plugin = $this->_getPlugin();
 
@@ -97,7 +101,10 @@ class ErrorPluginTest extends TestCase
         }
     }
 
-    public function testGetHttpErrorMessage()
+    /**
+     * @throws CoreException
+     */
+    final public function testGetHttpErrorMessage()
     {
         $plugin = $this->_getPlugin();
 
@@ -116,7 +123,10 @@ class ErrorPluginTest extends TestCase
         }
     }
 
-    public function testDisplayError()
+    /**
+     * @throws CoreException
+     */
+    final public function testDisplayError()
     {
         $plugin = $this->_getPlugin();
 
@@ -181,6 +191,11 @@ class ErrorPluginTest extends TestCase
         ob_end_clean();
     }
 
+    /**
+     * @return ErrorPlugin
+     *
+     * @throws CoreException
+     */
     private function _getPlugin(): ErrorPlugin
     {
         if (empty($this->_plugin)) {

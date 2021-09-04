@@ -44,8 +44,8 @@ class ControllerCore extends CommonCore
      */
     public function __construct(
         ?array  $urlParams = null,
-        int     $page      = 1,
-        ?string $language  = null
+        int     $page = 1,
+        ?string $language = null
     )
     {
         session_start();
@@ -68,11 +68,11 @@ class ControllerCore extends CommonCore
     /**
      * Return Data In JSON Format
      *
-     * @param bool       $status Is Request Successful
-     * @param array|null $data   Output Data
+     * @param bool $status Is Request Successful
+     * @param array|null $data Output Data
      */
-    public function returnJson(
-        bool $status = true,
+    final protected function returnJson(
+        bool   $status = true,
         ?array $data = null
     ): void
     {
@@ -83,13 +83,14 @@ class ControllerCore extends CommonCore
      * Display Static Page
      *
      * @param string|null $staticPageName Static Page File Name
-     * @param string|null $templatePage   Site Template Page Name
+     * @param string|null $templatePage Site Template Page Name
      *
      * @throws CoreException
+     * @throws LanguageException
      */
-    public function displayStaticPage(
+    final protected function displayStaticPage(
         ?string $staticPageName = null,
-        ?string $templatePage   = null
+        ?string $templatePage = null
     ): void
     {
         if (empty($staticPageName)) {
@@ -106,7 +107,7 @@ class ControllerCore extends CommonCore
      *
      * @throws Exception
      */
-    public function assign(?array $values = null): void
+    final protected function assign(?array $values = null): void
     {
         if (empty($values)) {
             throw new Exception('Assign Values Is Empty');
@@ -119,11 +120,14 @@ class ControllerCore extends CommonCore
      * Return Data In HTML Format
      *
      * @param string|null $template Template Page Name
-     * @param int         $ttl      Time To Live Of Template Cache
+     * @param int $ttl Time To Live Of Template Cache
      *
      * @throws Exception
      */
-    public function render(?string $template = null, int $ttl = 0): void
+    final protected function render(
+        ?string $template = null,
+        int     $ttl = 0
+    ): void
     {
         if (empty($template)) {
             throw new Exception('Template Page Name Is Empty');
@@ -140,9 +144,9 @@ class ControllerCore extends CommonCore
      * @throws CoreException
      * @throws Exception
      */
-    public function displayError(): void
+    protected function displayError(): void
     {
-        $errorCode    = (int) $this->getValueFromUrl('code');
+        $errorCode = (int)$this->getValueFromUrl('code');
         $errorMessage = $this->_handleHttpError($errorCode);
 
         $errorMessage = sprintf(
@@ -161,10 +165,10 @@ class ControllerCore extends CommonCore
      *
      * @throws CoreException
      */
-    public function displayErrorPage(?int $errorCode = null): void
+    protected function displayErrorPage(?int $errorCode = null): void
     {
         if (empty($errorCode)) {
-            $errorCode = (int) $this->getValueFromUrl('code');
+            $errorCode = (int)$this->getValueFromUrl('code');
         }
 
         $errorMessage = $this->_handleHttpError($errorCode);
@@ -179,7 +183,7 @@ class ControllerCore extends CommonCore
      *
      * @return string|null Value
      */
-    public function getValueFromUrl(?string $valueName = null): ?string
+    final protected function getValueFromUrl(?string $valueName = null): ?string
     {
         if (empty($valueName)) {
             return null;
@@ -195,7 +199,7 @@ class ControllerCore extends CommonCore
             return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
     /**

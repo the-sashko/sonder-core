@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,30 +12,32 @@ class BreadcrumbsPluginTest extends TestCase
      */
     const PATH_DATA_SAMPLE = [
         [
-            'value'     => [],
-            'expected'  => '<ul class="breadcrumbs">'."\n".'    <li>'."\n".
-                           '    <span>Main Page</span>'."\n".'</li>'."\n".
-                           '</ul>'
+            'value' => [],
+            'expected' => '<ul class="breadcrumbs">' . "\n" . '    <li>' . "\n" .
+                '    <span>Main Page</span>' . "\n" . '</li>' . "\n" .
+                '</ul>'
         ],
         [
-            'value'     => [
+            'value' => [
                 '/foo/' => 'foo',
                 '/bar/' => 'bar',
-                '#'     => 'current'
+                '#' => 'current'
             ],
-            'expected'  => '<ul class="breadcrumbs">'."\n".'    <li>'."\n".
-                           '    <a href="/">Main Page</a>'."\n".'</li><li>'.
-                           "\n".'    <a href="/foo/">foo</a>'."\n".'</li><li>'.
-                           "\n".'    <a href="/bar/">bar</a>'."\n".'</li><li>'.
-                           "\n".'    <span>current</span>'."\n".'</li>'."\n".
-                           '</ul>'
+            'expected' => '<ul class="breadcrumbs">' . "\n" . '    <li>' . "\n" .
+                '    <a href="/">Main Page</a>' . "\n" . '</li><li>' .
+                "\n" . '    <a href="/foo/">foo</a>' . "\n" . '</li><li>' .
+                "\n" . '    <a href="/bar/">bar</a>' . "\n" . '</li><li>' .
+                "\n" . '    <span>current</span>' . "\n" . '</li>' . "\n" .
+                '</ul>'
         ]
     ];
 
     /**
      * Unit Test Of getHtml Method
+     *
+     * @throws CoreException
      */
-    public function testGetHtml()
+    final public function testGetHtml()
     {
         $breadcrumbs = (new CommonCore)->getPlugin('breadcrumbs');
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Main Class For Cron Controller
  */
@@ -6,10 +7,13 @@ class CronControllerCore extends ControllerCore
 {
     /**
      * Method That Running All Cron Jobs
+     *
+     * @throws CoreException
+     * @throws Exception
      */
     public function displayRun(): bool
     {
-        $token      = $this->getValueFromUrl('token');
+        $token = $this->getValueFromUrl('token');
         $cronConfig = $this->getConfig('cron');
 
         if (empty($cronConfig) || !array_key_exists('token', $cronConfig)) {
@@ -37,6 +41,8 @@ class CronControllerCore extends ControllerCore
      * Method That Running Cron Job
      *
      * @param CronValuesObject $job Cron Values Object
+     *
+     * @throws CoreException
      */
     private function _runJob(CronValuesObject $job): void
     {
@@ -87,10 +93,12 @@ class CronControllerCore extends ControllerCore
     /**
      * Errors Handler
      *
-     * @param int    $errorCode    HTTP Response Code
+     * @param int $errorCode HTTP Response Code
      * @param string $errorMessage Error Message
-     * @param string $errorFile    File With Error
-     * @param int    $errorLine    Line In File With Error
+     * @param string $errorFile File With Error
+     * @param int $errorLine Line In File With Error
+     *
+     * @throws Exception
      */
     public function errorHandler(
         int    $errorCode,

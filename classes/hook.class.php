@@ -1,11 +1,20 @@
 <?php
+
 /**
  * Core Hook Class
  */
 class HookCore extends CommonCore
 {
-    private $_entityData = [];
+    /**
+     * @var array
+     */
+    private array $_entityData = [];
 
+    /**
+     * @param array|null $entityData
+     *
+     * @throws CoreException
+     */
     public function __construct(?array $entityData = null)
     {
         parent::__construct();
@@ -17,14 +26,31 @@ class HookCore extends CommonCore
         $this->init();
     }
 
-    public function setEntityParam(?string $key = null, $value = null): void
+    /**
+     * Initial Method Of Hook
+     */
+    public function init(): void
+    {
+        // The method can be used by overriding in a child class
+    }
+
+    /**
+     * @param string|null $key
+     * @param null $value
+     */
+    final protected function setEntityParam(?string $key = null, $value = null): void
     {
         if (!empty($key)) {
             $this->_entityData[$key] = $value;
         }
     }
 
-    public function hasEntityParam(?string $key = null): bool
+    /**
+     * @param string|null $key
+     *
+     * @return bool
+     */
+    final protected function hasEntityParam(?string $key = null): bool
     {
         if (empty($key)) {
             return false;
@@ -33,7 +59,12 @@ class HookCore extends CommonCore
         return array_key_exists($key, $this->_entityData);
     }
 
-    public function getEntityParam(?string $key = null)
+    /**
+     * @param string|null $key
+     *
+     * @return mixed
+     */
+    final protected function getEntityParam(?string $key = null): mixed
     {
         if (empty($key) || empty($this->_entityData)) {
             return null;
@@ -46,16 +77,11 @@ class HookCore extends CommonCore
         return $this->_entityData[$key];
     }
 
-    public function getEntity(): array
+    /**
+     * @return array
+     */
+    final protected function getEntity(): array
     {
         return $this->_entityData;
-    }
-
-    /**
-    * Inital Method Of Hook
-    */
-    public function init(): void
-    {
-        // The method can be used by overriding in a child class
     }
 }

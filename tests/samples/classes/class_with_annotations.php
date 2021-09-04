@@ -1,9 +1,10 @@
 <?php
+
 namespace Core\Tests\Samples;
 
 class ClassWithAnnotations
 {
-    public function foo(): bool
+    final public function foo(): bool
     {
         return true;
     }
@@ -17,9 +18,9 @@ class ClassWithAnnotations
      * Line Without annotations
      * @three Third Annotation
      * @thisIsNotAnnotation
-*        @badformated           Bad Formated  Ann0tation
+     * @badformatted           Bad Formatted  Annotation 123
      */
-    public function bar(): bool
+    final public function bar(): bool
     {
         return true;
     }
@@ -29,7 +30,7 @@ class ClassWithAnnotations
      * @second 222
      * @third  333
      */
-    public function test(): bool
+    final public function test(): bool
     {
         return true;
     }

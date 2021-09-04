@@ -1,4 +1,6 @@
 <?php
+
+use Core\Plugins\Annotation\Exceptions\AnnotationPluginException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,47 +15,54 @@ class AnnotationPluginTest extends TestCase
 
         'bar' => [
             [
-                'name'  => 'one',
+                'name' => 'one',
                 'value' => 'First Annotation'
             ],
             [
-                'name'  => 'two',
+                'name' => 'two',
                 'value' => 'Second Annotation'
             ],
             [
-                'name'  => 'three',
+                'name' => 'three',
                 'value' => 'Third Annotation'
             ],
             [
-                'name'  => 'badformated',
-                'value' => 'Bad Formated Ann0tation'
+                'name' => 'badformatted',
+                'value' => 'Bad Formatted Annotation 123'
             ]
         ],
 
         'test' => [
             [
-                'name'  => 'first',
+                'name' => 'first',
                 'value' => '111'
             ],
             [
-                'name'  => 'second',
+                'name' => 'second',
                 'value' => '222'
             ],
             [
-                'name'  => 'third',
+                'name' => 'third',
                 'value' => '333'
             ]
         ]
     ];
 
-    private $_plugin = null;
+    /**
+     * @var AnnotationPlugin|null
+     */
+    private ?AnnotationPlugin $_plugin = null;
 
-    public function testGetAnnotation()
+    final public function testGetAnnotation()
     {
         $this->assertTrue(true);
     }
 
-    public function testGetMethodAnnotations()
+    /**
+     * @throws CoreException
+     * @throws AnnotationPluginException
+     */
+    final public function testGetMethodAnnotations()
     {
         $this->_plugin = $this->_getPlugin();
 
@@ -64,7 +73,11 @@ class AnnotationPluginTest extends TestCase
         }
     }
 
-    public function testGetMethodAnnotation()
+    /**
+     * @throws CoreException
+     * @throws AnnotationPluginException
+     */
+    final public function testGetMethodAnnotation()
     {
         $this->_plugin = $this->_getPlugin();
 
@@ -80,6 +93,14 @@ class AnnotationPluginTest extends TestCase
         }
     }
 
+    /**
+     * @param string $method
+     * @param array $sampleAnnotations
+     *
+     * @return bool
+     *
+     * @throws AnnotationPluginException
+     */
     private function _testGetMethodSingleAnnotations(
         string $method,
         array  $sampleAnnotations
@@ -98,6 +119,13 @@ class AnnotationPluginTest extends TestCase
         return true;
     }
 
+    /**
+     * @param string $method
+     *
+     * @return array|null
+     *
+     * @throws AnnotationPluginException
+     */
     private function _getMethodAnnotations(string $method): ?array
     {
         $annotations = $this->_plugin->getMethodAnnotations(
@@ -113,7 +141,7 @@ class AnnotationPluginTest extends TestCase
 
         foreach ($annotations as $key => $annotation) {
             $annotations[$key] = [
-                'name'  => $annotation->getName(),
+                'name' => $annotation->getName(),
                 'value' => $annotation->getValue()
             ];
         }
@@ -121,6 +149,11 @@ class AnnotationPluginTest extends TestCase
         return $annotations;
     }
 
+    /**
+     * @return AnnotationPlugin
+     *
+     * @throws CoreException
+     */
     private function _getPlugin(): AnnotationPlugin
     {
         if (empty($this->_plugin)) {

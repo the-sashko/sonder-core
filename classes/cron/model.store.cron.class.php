@@ -1,11 +1,25 @@
 <?php
+
+use Core\Plugins\Database\Exceptions\DatabasePluginException;
+
 class CronStore extends ModelStoreCore
 {
     const CRON_TABLE = 'cron_jobs';
 
+    /**
+     * @var string|null
+     */
     public ?string $scope = 'cron';
 
-    public function updateCronById(
+    /**
+     * @param array|null $values
+     * @param int|null $idCron
+     *
+     * @return bool
+     *
+     * @throws DatabasePluginException
+     */
+    final public function updateCronById(
         ?array $values = null,
         ?int   $idCron = null
     ): bool
@@ -21,7 +35,12 @@ class CronStore extends ModelStoreCore
         return $this->updateRowById(static::CRON_TABLE, $values, $idCron);
     }
 
-    public function getAllCrons(): ?array
+    /**
+     * @return array|null
+     *
+     * @throws DatabasePluginException
+     */
+    final public function getAllCronRows(): ?array
     {
         $sql = '
             SELECT *
@@ -34,7 +53,12 @@ class CronStore extends ModelStoreCore
         return $this->getRows($sql);
     }
 
-    public function getJobs(): ?array
+    /**
+     * @return array|null
+     *
+     * @throws DatabasePluginException
+     */
+    final public function getJobs(): ?array
     {
         $sql = '
             SELECT *

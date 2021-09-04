@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Application Class For Deamon Workers
+ * Application Class For Daemon Workers
  */
 class Cli extends App
 {
@@ -11,14 +12,16 @@ class Cli extends App
 
     /**
      * Main Method For Application Test
+     *
+     * @throws CoreException
      */
-    public function run(): void
+    final public function run(): void
     {
         list(
             $controller,
             $action,
             $cliParams
-        ) = $this->_parseCliOptions();
+            ) = $this->_parseCliOptions();
 
         if (!$this->isControllerExist($controller)) {
             $errorMessage = '%s. Controller: %s';
@@ -35,7 +38,7 @@ class Cli extends App
             );
         }
 
-        require_once __DIR__.'/../controllers/'.$controller.'.php';
+        require_once __DIR__ . '/../controllers/' . $controller . '.php';
 
         try {
             $controller = new $controller($cliParams);
@@ -65,6 +68,11 @@ class Cli extends App
         exit(0);
     }
 
+    /**
+     * @return string[]
+     *
+     * @throws CoreException
+     */
     private function _parseCliOptions(): array
     {
         $cliOptions = getopt('', ['controller:', 'action:', 'params:']);
@@ -87,12 +95,12 @@ class Cli extends App
             $cliOptions['params'] = null;
         }
 
-        $controller = (string) $cliOptions['controller'];
-        $action     = (string) $cliOptions['action'];
-        $cliParams  = (string) $cliOptions['params'];
+        $controller = (string)$cliOptions['controller'];
+        $action = (string)$cliOptions['action'];
+        $cliParams = (string)$cliOptions['params'];
 
-        $controller = mb_convert_case($controller, MB_CASE_TITLE).'Controller';
-        $action     = 'display'.mb_convert_case($action, MB_CASE_TITLE);
+        $controller = mb_convert_case($controller, MB_CASE_TITLE) . 'Controller';
+        $action = 'display' . mb_convert_case($action, MB_CASE_TITLE);
         parse_str($cliParams, $cliParams);
 
         return [

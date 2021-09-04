@@ -1,14 +1,20 @@
 <?php
+
 /**
  * Core API Controller Class
  */
 class ApiControllerCore extends ControllerCore
 {
     /**
-     * @var ModelCore Model Instance
+     * @var ModelCore|null Model Instance
      */
-    public $model = null;
+    public ?ModelCore $model = null;
 
+    /**
+     * @param string|null $modelName
+     *
+     * @throws CoreException
+     */
     public function __construct(?string $modelName = null)
     {
         parent::__construct();
@@ -19,8 +25,10 @@ class ApiControllerCore extends ControllerCore
      * Set Model Instance
      *
      * @param string|null $action Model Action Name
+     *
+     * @throws CoreException
      */
-    public function execute(?string $action = null): void
+    final public function execute(?string $action = null): void
     {
         $securityPlugin = $this->getPlugin('security');
 
@@ -78,7 +86,9 @@ class ApiControllerCore extends ControllerCore
     /**
      * Set Model Instance
      *
-     * @param string|null $modelName Model Name
+     * @param string|null $modelName
+     *
+     * @throws CoreException
      */
     private function _setModel(?string $modelName = null): void
     {
@@ -125,13 +135,13 @@ class ApiControllerCore extends ControllerCore
      * Check Is Method Public And Exists In Controller
      *
      * @param ModelApiCore|null $apiModel ControllerCore Instance
-     * @param string|null       $action   Name Of Method
+     * @param string|null $action Name Of Method
      *
      * @return bool Is Method Public And Exists In Controller
      */
     private function _isValidModelAction(
         ?ModelApiCore $apiModel = null,
-        ?string       $action   = null
+        ?string       $action = null
     ): bool
     {
         if (empty($apiModel) || empty($action)) {

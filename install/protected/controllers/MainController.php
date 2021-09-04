@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Main Controller Class
  */
@@ -9,8 +10,10 @@ class MainController extends ControllerCore
      *
      * @area  default
      * @route /
+     *
+     * @throws Exception
      */
-    public function displayIndex(): void
+    final public function displayIndex(): void
     {
         $this->render('main');
     }
@@ -21,8 +24,11 @@ class MainController extends ControllerCore
      * @area       default
      * @route      /page/([a-z]+)/
      * @url_params slug=$1
+     *
+     * @throws CoreException
+     * @throws LanguageException
      */
-    public function displayPage(): void
+    final public function displayPage(): void
     {
         $this->displayStaticPage();
     }
@@ -33,8 +39,10 @@ class MainController extends ControllerCore
      * @area       default
      * @route      /error/([0-9]+)/
      * @url_params code=$1
+     *
+     * @throws CoreException
      */
-    public function displayError(): void
+    final public function displayError(): void
     {
         $this->displayErrorPage();
     }

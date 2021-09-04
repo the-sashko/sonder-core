@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Core Model Class
  */
@@ -7,33 +8,36 @@ class ModelCore extends CommonCore
     /**
      * @var string Path To Main Config File
      */
-    const MAIN_CONFIG_PATH = __DIR__.'/../../config/main.json';
+    const MAIN_CONFIG_PATH = __DIR__ . '/../../config/main.json';
 
     /**
      * @var string Path To Exceptions Directory
      * */
-    const EXCEPTIONS_DIR_PATH = __DIR__.'/../../exceptions';
+    const EXCEPTIONS_DIR_PATH = __DIR__ . '/../../exceptions';
 
     /**
-     * @var object Model Store Class Instance
+     * @var object|null Model Store Class Instance
      */
-    public $store = null;
+    public ?object $store = null;
 
     /**
-     * @var object Model API Class Instance
+     * @var object|null Model API Class Instance
      */
-    public $api = null;
+    public ?object $api = null;
 
     /**
      * @var array Data From JSON Config Files
      */
-    public $configData = [];
+    public array $configData = [];
 
     /**
-     * @var string Model Values Object Class Name
+     * @var string|null Model Values Object Class Name
      */
-    public $valuesObjectClass = null;
+    public ?string $valuesObjectClass = null;
 
+    /**
+     * @throws CoreException
+     */
     public function __construct()
     {
         parent::__construct();
@@ -52,8 +56,10 @@ class ModelCore extends CommonCore
      * @param array|null $row List Of Values
      *
      * @return ValuesObject Values Object Instance
+     *
+     * @throws Exception
      */
-    public function getVO(?array $row = null): ValuesObject
+    protected function getVO(?array $row = null): ValuesObject
     {
         if (null === $this->valuesObjectClass) {
             throw new Exception('Value Object class not set');
@@ -68,12 +74,14 @@ class ModelCore extends CommonCore
      * @param array|null $rows List Of Values
      *
      * @return array|null List Of Model Value Object Instances
+     *
+     * @throws Exception
      */
-    public function getVOArray(?array $rows = null): ?array
+    final protected function getVOArray(?array $rows = null): ?array
     {
         $voArray = [];
 
-        if (null === $rows) {
+        if (empty($rows)) {
             return null;
         }
 

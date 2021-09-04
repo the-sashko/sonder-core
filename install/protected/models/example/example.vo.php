@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ValuesObject Class For Example Model
  */
@@ -8,28 +9,34 @@ class ExampleValuesObject extends ValuesObject
      * Get Example ID
      *
      * @return int Example ID
+     *
+     * @throws Exception
      */
-    public function getId(): int
+    final public function getId(): int
     {
-        return (int) $this->get('id');
+        return (int)$this->get('id');
     }
 
     /**
      * Get Foo Param Value
      *
      * @return string Foo Param Value
+     *
+     * @throws Exception
      */
-    public function getFoo(): string
+    final public function getFoo(): string
     {
-        return (string) $this->get('foo');
+        return (string)$this->get('foo');
     }
 
     /**
      * Set Foo Param Value
      *
-     * @param string|null $value Foo Param Value
+     * @param string|null $value
+     *
+     * @throws Exception
      */
-    public function setFoo(?string $value = null): void
+    final public function setFoo(?string $value = null): void
     {
         $this->set('foo', $value);
     }

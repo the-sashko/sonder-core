@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application Class For Unit Tests
  */
@@ -12,7 +13,7 @@ class Test extends App
     /**
      * Main Method For Application Test
      */
-    public function run() : void
+    final public function run(): void
     {
         session_start();
     }

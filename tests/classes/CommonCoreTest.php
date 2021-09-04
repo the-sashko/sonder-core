@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -6,10 +7,12 @@ use PHPUnit\Framework\TestCase;
  */
 class CommonCoreTest extends TestCase
 {
-   /**
-    * Unit Test Of InitPlugin Method
-    */
-    public function testInitPlugin()
+    /**
+     * Unit Test Of InitPlugin Method
+     *
+     * @throws CoreException
+     */
+    final public function testInitPlugin()
     {
         $commonCoreTest = new CommonCore();
 

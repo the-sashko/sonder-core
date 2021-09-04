@@ -6,22 +6,42 @@ class CronValuesObject extends ValuesObject
     const STATUS_FAILED = 'fail';
     const STATUS_SUCCESS = 'success';
 
-    public function getId(): int
+    /**
+     * @return int
+     *
+     * @throws Exception
+     */
+    final public function getId(): int
     {
         return (int)$this->get('id');
     }
 
-    public function getAction(): string
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
+    final public function getAction(): string
     {
         return (string)$this->get('action');
     }
 
-    public function getInterval(): int
+    /**
+     * @return int
+     *
+     * @throws Exception
+     */
+    final public function getInterval(): int
     {
         return (int)$this->get('interval');
     }
 
-    public function getIntervalFormatted(): ?string
+    /**
+     * @return string|null
+     *
+     * @throws Exception
+     */
+    final public function getIntervalFormatted(): ?string
     {
         $intervalInSeconds = $this->getInterval();
 
@@ -65,11 +85,11 @@ class CronValuesObject extends ValuesObject
         }
 
         $intervalFormatted = sprintf(
-            '%s %s %s',
-            (string) $intervalInDays,
-            (string) $intervalInHours,
-            (string) $intervalInMinutes,
-            (string) $intervalInSeconds
+            '%s %s %s %s',
+            (string)$intervalInDays,
+            (string)$intervalInHours,
+            (string)$intervalInMinutes,
+            (string)$intervalInSeconds
         );
 
         $intervalFormatted = preg_replace(
@@ -91,12 +111,22 @@ class CronValuesObject extends ValuesObject
         return $intervalFormatted;
     }
 
-    public function getTimeNextExec(): int
+    /**
+     * @return int
+     *
+     * @throws Exception
+     */
+    final public function getTimeNextExec(): int
     {
         return (int)$this->get('time_next_exec');
     }
 
-    public function getTimeNextExecFormatted(): ?string
+    /**
+     * @return string|null
+     *
+     * @throws Exception
+     */
+    final public function getTimeNextExecFormatted(): ?string
     {
         $getTimeNextExec = $this->getTimeNextExec();
 
@@ -107,15 +137,25 @@ class CronValuesObject extends ValuesObject
         return date('Y-m-d H:i:s', $getTimeNextExec);
     }
 
-    public function getLastExecStatus(): bool
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
+    final public function getLastExecStatus(): bool
     {
         return (bool)$this->get('last_exec_status');
     }
 
-    public function getErrorMessage(): ?string
+    /**
+     * @return string|null
+     *
+     * @throws Exception
+     */
+    final public function getErrorMessage(): ?string
     {
-        $lastExecStatus = (bool)$this->getLastExecStatus();
-        $isActive = (bool)$this->getIsActive();
+        $lastExecStatus = $this->getLastExecStatus();
+        $isActive = $this->getIsActive();
 
         if (!$lastExecStatus && $isActive) {
             return (string)$this->get('error_message');
@@ -124,7 +164,12 @@ class CronValuesObject extends ValuesObject
         return null;
     }
 
-    public function getStatus(): string
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
+    final public function getStatus(): string
     {
         $lastExecStatus = $this->getLastExecStatus();
         $isActive = $this->getIsActive();
@@ -140,39 +185,74 @@ class CronValuesObject extends ValuesObject
         return static::STATUS_SUCCESS;
     }
 
-    public function getIsActive(): bool
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
+    final public function getIsActive(): bool
     {
         return (bool)$this->get('is_active');
     }
 
-    public function setAction(?string $action = null): void
+    /**
+     * @param string|null $action
+     *
+     * @throws Exception
+     */
+    final public function setAction(?string $action = null): void
     {
         $this->set('action', $action);
     }
 
-    public function setInterval(?int $interval = null): void
+    /**
+     * @param int|null $interval
+     *
+     * @throws Exception
+     */
+    final public function setInterval(?int $interval = null): void
     {
         $this->set('interval', (int)$interval);
     }
 
-    public function setTimeNextExec(): void
+    /**
+     * @throws Exception
+     */
+    final public function setTimeNextExec(): void
     {
         $timeNextExec = time() + $this->getInterval();
 
         $this->set('time_next_exec', $timeNextExec);
     }
 
-    public function setLastExecStatus(bool $status = false): void
+    /**
+     * @param bool $status
+     *
+     * @throws Exception
+     */
+    final public function setLastExecStatus(bool $status = false): void
     {
         $this->set('last_exec_status', $status);
     }
 
-    public function setIsActive(bool $isActive = false): void
+    /**
+     * @param bool $isActive
+     *
+     * @throws Exception
+     */
+    final public function setIsActive(bool $isActive = false): void
     {
         $this->set('is_active', $isActive);
     }
 
-    public function setErrorMessage(?string $errorMessage = null): bool
+    /**
+     * @param string|null $errorMessage
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
+    final public function setErrorMessage(?string $errorMessage = null): bool
     {
         $errorMessage = (string)$errorMessage;
 

@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__.'/../protected/cli.init.php';
+require_once __DIR__ . '/../protected/cli.init.php';

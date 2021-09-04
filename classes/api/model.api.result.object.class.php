@@ -5,13 +5,22 @@ class ModelApiResultObject
 
     const EMPTY_ERROR_MESSAGE = 'Empty';
 
-    private $_values = [];
+    /**
+     * @var ?array
+     */
+    private ?array $_values = null;
 
-    private $_status = false;
+    /**
+     * @var bool
+     */
+    private bool $_status = false;
 
-    private $_errors = [];
+    /**
+     * @var array
+     */
+    private array $_errors = [];
 
-    public function getStatus(): bool
+    final public function getStatus(): bool
     {
         if (!empty($this->_errors)) {
             $this->_status = false;
@@ -20,7 +29,10 @@ class ModelApiResultObject
         return $this->_status;
     }
 
-    public function getValues(): ?array
+    /**
+     * @return array|null
+     */
+    final public function getValues(): ?array
     {
         if (empty($this->_values)) {
             $this->setError(static::EMPTY_ERROR_MESSAGE);
@@ -30,7 +42,10 @@ class ModelApiResultObject
         return $this->_values;
     }
 
-    public function getErrors(): ?array
+    /**
+     * @return array|null
+     */
+    final public function getErrors(): ?array
     {
         $errors = $this->_errors;
 
@@ -47,23 +62,21 @@ class ModelApiResultObject
         return $errors;
     }
 
-    public function setStatus(bool $status = false): void
+    final public function setSuccess(): void
     {
-        $this->_status = $status;
+        $this->_setStatus(true);
     }
 
-    public function setSuccess(): void
+    final public function setFail(): void
     {
-        $this->setStatus(true);
-    }
-
-    public function setFail(): void
-    {
-        $this->setStatus(false);
+        $this->_setStatus(false);
         $this->_values = null;
     }
 
-    public function setErrors(?array $errors = null): void
+    /**
+     * @param array|null $errors
+     */
+    final public function setErrors(?array $errors = null): void
     {
         $this->_errors = array_merge($this->_errors, (array) $errors);
         $this->_errors = array_unique($this->_errors);
@@ -71,7 +84,10 @@ class ModelApiResultObject
         $this->setFail();
     }
 
-    public function setError(?string $error = null): void
+    /**
+     * @param string|null $error
+     */
+    final public function setError(?string $error = null): void
     {
         $this->_errors[] = $error;
         $this->_errors = array_unique($this->_errors);
@@ -79,7 +95,10 @@ class ModelApiResultObject
         $this->setFail();
     }
 
-    public function setValues(?array $values = null): void
+    /**
+     * @param array|null $values
+     */
+    final public function setValues(?array $values = null): void
     {
         if (empty($values)) {
             $this->setError(static::EMPTY_ERROR_MESSAGE);
@@ -87,5 +106,13 @@ class ModelApiResultObject
         }
 
         $this->_values = $values;
+    }
+
+    /**
+     * @param bool $status
+     */
+    private function _setStatus(bool $status = false): void
+    {
+        $this->_status = $status;
     }
 }

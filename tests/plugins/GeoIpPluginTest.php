@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,17 +13,20 @@ class GeoIpPluginTest extends TestCase
 
     const CLIENT_IP_SAMPLE = '124.124.124.124';
 
-    const X_FORWARDED_FOR_IP_SAMPLE  = '125.125.125.125';
+    const X_FORWARDED_FOR_IP_SAMPLE = '125.125.125.125';
 
-    const X_FORWARDED_IP_SAMPLE  = '126.126.126.126';
+    const X_FORWARDED_IP_SAMPLE = '126.126.126.126';
 
-    const FORWARDED_FOR_IP_SAMPLE  = '127.127.127.127';
+    const FORWARDED_FOR_IP_SAMPLE = '127.127.127.127';
 
-    const FORWARDED_IP_SAMPLE  = '128.128.128.128';
+    const FORWARDED_IP_SAMPLE = '128.128.128.128';
 
     const REMOTE_ADDR_IP_SAMPLE = '129.129.129.129';
 
-    public function testGetIp()
+    /**
+     * @throws CoreException
+     */
+    final public function testGetIp()
     {
         $plugin = $this->_getPlugin();
 
@@ -62,7 +66,10 @@ class GeoIpPluginTest extends TestCase
         $this->assertEquals(static::DEFAULT_IP_SAMPLE, $plugin->getIp());
     }
 
-    public function testGetIpHash()
+    /**
+     * @throws CoreException
+     */
+    final public function testGetIpHash()
     {
         $plugin = $this->_getPlugin();
 
@@ -123,6 +130,11 @@ class GeoIpPluginTest extends TestCase
         );
     }
 
+    /**
+     * @return GeoIpPlugin
+     *
+     * @throws CoreException
+     */
     private function _getPlugin(): GeoIpPlugin
     {
         if (empty($this->_plugin)) {
@@ -135,11 +147,11 @@ class GeoIpPluginTest extends TestCase
     private function _prepareServerVariables(): void
     {
         $_SERVER['HTTP_CF_CONNECTING_IP'] = static::CLOUD_FLARE_IP_SAMPLE;
-        $_SERVER['HTTP_CLIENT_IP']        = static::CLIENT_IP_SAMPLE;
-        $_SERVER['HTTP_X_FORWARDED_FOR']  = static::X_FORWARDED_FOR_IP_SAMPLE;
-        $_SERVER['HTTP_X_FORWARDED']      = static::X_FORWARDED_IP_SAMPLE;
-        $_SERVER['HTTP_FORWARDED_FOR']    = static::FORWARDED_FOR_IP_SAMPLE;
-        $_SERVER['HTTP_FORWARDED']        = static::FORWARDED_IP_SAMPLE;
-        $_SERVER['REMOTE_ADDR']           = static::REMOTE_ADDR_IP_SAMPLE;
+        $_SERVER['HTTP_CLIENT_IP'] = static::CLIENT_IP_SAMPLE;
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = static::X_FORWARDED_FOR_IP_SAMPLE;
+        $_SERVER['HTTP_X_FORWARDED'] = static::X_FORWARDED_IP_SAMPLE;
+        $_SERVER['HTTP_FORWARDED_FOR'] = static::FORWARDED_FOR_IP_SAMPLE;
+        $_SERVER['HTTP_FORWARDED'] = static::FORWARDED_IP_SAMPLE;
+        $_SERVER['REMOTE_ADDR'] = static::REMOTE_ADDR_IP_SAMPLE;
     }
 }

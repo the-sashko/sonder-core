@@ -13,13 +13,16 @@ abstract class FormObject extends ValuesObject
     /**
      * @var bool Status Of Processing Form
      */
-    public $status = false;
+    public bool $status = false;
 
     /**
      * @var array List Of Errors
      */
-    public $errors = [];
+    public array $errors = [];
 
+    /**
+     * @param array|null $values
+     */
     public function __construct(?array $values = null)
     {
         parent::__construct($values);
@@ -30,14 +33,14 @@ abstract class FormObject extends ValuesObject
     /**
      * Check Input Values
      */
-    abstract public function checkInputValues(): void;
+    abstract protected function checkInputValues(): void;
 
     /**
      * Get Processing Form Status
      *
      * @return bool Processing Form Status Value
      */
-    public function getStatus(): bool
+    final public function getStatus(): bool
     {
         return $this->status;
     }
@@ -47,7 +50,7 @@ abstract class FormObject extends ValuesObject
      *
      * @return array|null List Of Errors
      */
-    public function getErrors(): ?array
+    final public function getErrors(): ?array
     {
         if ($this->_hasErrors()) {
             return $this->errors;
@@ -65,7 +68,7 @@ abstract class FormObject extends ValuesObject
     /**
      * Set Processing Form Success Status
      */
-    public function setStatusSuccess(): void
+    final public function setStatusSuccess(): void
     {
         $this->_setStatus(true);
     }
@@ -73,7 +76,7 @@ abstract class FormObject extends ValuesObject
     /**
      * Set Processing Form Fail Status
      */
-    public function setStatusFail(): void
+    final public function setStatusFail(): void
     {
         $this->_setStatus(false);
     }
@@ -83,7 +86,7 @@ abstract class FormObject extends ValuesObject
      *
      * @param array|null $errors List Of Errors
      */
-    public function setErrors(?array $errors = null): void
+    final public function setErrors(?array $errors = null): void
     {
         $this->errors = array_merge($this->errors, (array)$errors);
         $this->errors = array_unique($this->errors);
@@ -96,7 +99,7 @@ abstract class FormObject extends ValuesObject
      *
      * @param string|null $error Error Message
      */
-    public function setError(?string $error = null): void
+    final public function setError(?string $error = null): void
     {
         $this->errors[] = $error;
         $this->errors = array_unique($this->errors);

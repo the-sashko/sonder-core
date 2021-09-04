@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cron Controller Class
  */
@@ -6,8 +7,10 @@ class CronController extends CronControllerCore
 {
     /**
      * Clean Router Cache Cron Job
+     *
+     * @throws CoreException
      */
-    public function jobRouter(): void
+    final public function jobRouter(): void
     {
         $routerPlugin = $this->getPlugin('router');
         $routerPlugin->cleanCache();
@@ -15,9 +18,11 @@ class CronController extends CronControllerCore
 
     /**
      * Generate Translations
+     *
+     * @throws CoreException
      */
-    public function jobTranslations(): void{
+    final public function jobTranslations(): void
+    {
         $this->getPlugin('language')->generateDictionaries();
     }
 }
-

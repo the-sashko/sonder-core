@@ -1,4 +1,6 @@
 <?php
+
+use Core\Plugins\Image\Exceptions\ImagePluginException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -6,7 +8,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ImagePluginTest extends TestCase
 {
-    const FILE_PATH_SAMPLE = __DIR__.'/../samples/images/image.jpg';
+    const FILE_PATH_SAMPLE = __DIR__ . '/../samples/images/image.jpg';
 
     const DIR_PATH_SAMPLE = '/tmp';
 
@@ -17,22 +19,26 @@ class ImagePluginTest extends TestCase
     const FILE_SIZES_SAMPLE = [
         [
             'small' => [
-                'height'      => 64,
-                'width'       => 64,
+                'height' => 64,
+                'width' => 64,
                 'file_prefix' => 's'
             ]
         ],
 
         [
             'medium' => [
-                'height'      => null,
-                'width'       => 128,
+                'height' => null,
+                'width' => 128,
                 'file_prefix' => 'm'
             ]
         ]
     ];
 
-    public function testResize()
+    /**
+     * @throws ImagePluginException
+     * @throws CoreException
+     */
+    final public function testResize()
     {
         $plugin = $this->_getPlugin();
 
@@ -63,6 +69,11 @@ class ImagePluginTest extends TestCase
         }
     }
 
+    /**
+     * @return ImagePlugin
+     *
+     * @throws CoreException
+     */
     private function _getPlugin(): ImagePlugin
     {
         if (empty($this->_plugin)) {

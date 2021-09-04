@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,32 +12,34 @@ class YoutubePluginTest extends TestCase
      */
     const TEXT_DATA_SAMPLE = [
         [
-            'value'    => '',
+            'value' => '',
             'expected' => ''
         ],
         [
-            'value'    => 'Lorem ipsum dolor sit amet',
+            'value' => 'Lorem ipsum dolor sit amet',
             'expected' => 'Lorem ipsum dolor sit amet'
         ],
         [
-            'value'    => 'Lorem ipsum dolor https://www.youtube.com/watch?'.
-                          'v=UnitTest1 sit amet, consectetur '.
-                          'http://m.youtu.be/UnitTest3?t=333 adipiscing '.
-                          'elit. Nullam finibus semper diam at dapibus. '.
-                          'Donec https://www.youtube.com/'.
-                          'watch?v=UnitTest2&t=111 Proin et velit enim.',
-            'expected' => 'Lorem ipsum dolor [Youtube:UnitTest1] sit amet, '.
-                          'consectetur [Youtube:UnitTest3?t=333s] adipiscing '.
-                          'elit. Nullam finibus semper diam at dapibus. '.
-                          'Donec [Youtube:UnitTest2?t=111s] Proin et velit '.
-                          'enim.'
+            'value' => 'Lorem ipsum dolor https://www.youtube.com/watch?' .
+                'v=UnitTest1 sit amet, consectetur ' .
+                'http://m.youtu.be/UnitTest3?t=333 adipiscing ' .
+                'elit. Nullam finibus semper diam at dapibus. ' .
+                'Donec https://www.youtube.com/' .
+                'watch?v=UnitTest2&t=111 Proin et velit enim.',
+            'expected' => 'Lorem ipsum dolor [Youtube:UnitTest1] sit amet, ' .
+                'consectetur [Youtube:UnitTest3?t=333s] adipiscing ' .
+                'elit. Nullam finibus semper diam at dapibus. ' .
+                'Donec [Youtube:UnitTest2?t=111s] Proin et velit ' .
+                'enim.'
         ]
     ];
 
     /**
      * Unit Test Of parseYoutubeURL Method
+     *
+     * @throws CoreException
      */
-    public function testParseYoutubeURL()
+    final public function testParseYoutubeURL()
     {
         $youtube = (new CommonCore)->getPlugin('youtube');
 

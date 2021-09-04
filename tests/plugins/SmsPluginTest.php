@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -6,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SmsPluginTest extends TestCase
 {
-    public function testTest(): void
+    final public function testTest(): void
     {
         // To-Do
 

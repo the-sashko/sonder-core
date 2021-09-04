@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,27 +12,27 @@ class CryptPluginTest extends TestCase
      */
     const HASH_DATA_SAMPLE = [
         [
-            'value'    => 'foo',
+            'value' => 'foo',
             'expected' => [
-                'hash'      => 'ba32cfa7e6128ab77ddf59736fbd9a5153aad9c42e08a'.
-                               '2a756f6cc86493310b7488457503b121b428529c27bfb'.
-                               '9a1acd8abcf69e5ee0b38435a19210bc5d6802',
+                'hash' => 'ba32cfa7e6128ab77ddf59736fbd9a5153aad9c42e08a' .
+                    '2a756f6cc86493310b7488457503b121b428529c27bfb' .
+                    '9a1acd8abcf69e5ee0b38435a19210bc5d6802',
                 'trip_code' => '!2bgybBZ7HI'
             ]
         ],
         [
-            'value'    => 'bar',
+            'value' => 'bar',
             'expected' => [
-                'hash'     =>  '7cb550d9a29de74e252baab089075bda4a1b333e0d9d2'.
-                               '7babeb72ddc8654cdf37723440219e2f8fb65a25770b4'.
-                               '2ab22bf071b450253f982efb41820753c7f433',
+                'hash' => '7cb550d9a29de74e252baab089075bda4a1b333e0d9d2' .
+                    '7babeb72ddc8654cdf37723440219e2f8fb65a25770b4' .
+                    '2ab22bf071b450253f982efb41820753c7f433',
                 'trip_code' => '!X9qycma/WI'
             ]
         ],
         [
-            'value'    => '',
+            'value' => '',
             'expected' => [
-                'hash'     =>  '',
+                'hash' => '',
                 'trip_code' => ''
             ]
         ]
@@ -44,8 +45,10 @@ class CryptPluginTest extends TestCase
 
     /**
      * Unit Test Of getHash Method
+     *
+     * @throws CoreException
      */
-    public function testGetHash()
+    final public function testGetHash()
     {
         $crypt = (new CommonCore)->getPlugin('crypt');
 
@@ -57,8 +60,10 @@ class CryptPluginTest extends TestCase
 
     /**
      * Unit Test Of getTripCode Method
+     *
+     * @throws CoreException
      */
-    public function testGetTripCode()
+    final public function testGetTripCode()
     {
         $crypt = (new CommonCore)->getPlugin('crypt');
 

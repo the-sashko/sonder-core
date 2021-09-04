@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +10,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of run Method
      */
-    public function testRun()
+    final public function testRun()
     {
         // To-Do
     }
@@ -17,7 +18,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of errorHandler Method
      */
-    public function testErrorHandler()
+    final public function testErrorHandler()
     {
         // To-Do
     }
@@ -25,7 +26,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of redirect Method
      */
-    public function testRedirect()
+    final public function testRedirect()
     {
         // To-Do
     }
@@ -33,7 +34,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of replaceURI Method
      */
-    public function testReplaceURI()
+    final public function testReplaceUri()
     {
         // To-Do
     }
@@ -41,7 +42,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of parseURI Method
      */
-    public function testParseURI()
+    final public function testParseUri()
     {
         // To-Do
     }
@@ -49,7 +50,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of isControllerExist Method
      */
-    public function testIsControllerExist()
+    final public function testIsControllerExist()
     {
         // To-Do
     }
@@ -57,7 +58,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of isValidControllerAction Method
      */
-    public function testIsValidControllerAction()
+    final public function testIsValidControllerAction()
     {
         // To-Do
     }
@@ -65,7 +66,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of error Method
      */
-    public function testError()
+    final public function testError()
     {
         // To-Do
     }
@@ -73,7 +74,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of autoLoad Method
      */
-    public function testAutoLoad()
+    final public function testAutoLoad()
     {
         // To-Do
     }
@@ -81,7 +82,7 @@ class AppTest extends TestCase
     /**
      * Unit Test Of exception Method
      */
-    public function testException()
+    final public function testException()
     {
         // To-Do
     }

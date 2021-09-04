@@ -25,6 +25,9 @@ class Response extends CommonCore
      */
     private ?string $_area = null;
 
+    /**
+     * @throws CoreException
+     */
     public function __construct()
     {
         parent::__construct();
@@ -41,17 +44,17 @@ class Response extends CommonCore
     /**
      * Return Data In JSON Format
      *
-     * @param bool       $status Is Request Successful
-     * @param array|null $data   Output Data
+     * @param bool $status Is Request Successful
+     * @param array|null $data Output Data
      */
-    public function returnJson(
-        bool $status = true,
+    final public function returnJson(
+        bool   $status = true,
         ?array $data = null
     ): void
     {
         $jsonData = [
             'status' => $status,
-            'data'   => $data
+            'data' => $data
         ];
 
         $jsonData = json_encode($jsonData);
@@ -66,13 +69,14 @@ class Response extends CommonCore
      * Display Static Page
      *
      * @param string|null $staticPageName Static Page File Name
-     * @param string|null $templatePage   Site Template Page Name
+     * @param string|null $templatePage Site Template Page Name
      *
      * @throws CoreException
+     * @throws LanguageException
      */
-    public function displayStaticPage(
+    final public function displayStaticPage(
         ?string $staticPageName = null,
-        ?string $templatePage   = null
+        ?string $templatePage = null
     ): void
     {
         $pagePlugin = $this->getPlugin('page');
@@ -120,9 +124,9 @@ class Response extends CommonCore
             $templatePage,
             [
                 'staticPage' => $staticPageVO,
-                'pagePath'   => $pagePath,
-                'seoTitle'   => $staticPageVO->getTitle(),
-                'meta'       => [
+                'pagePath' => $pagePath,
+                'seoTitle' => $staticPageVO->getTitle(),
+                'meta' => [
                     'description' => $seoDescription
                 ]
             ]
@@ -133,11 +137,11 @@ class Response extends CommonCore
      * Display Error Page
      *
      * @param string $errorMessage HTTP Error Message
-     * @param int    $errorCode HTTP Error Code
+     * @param int $errorCode HTTP Error Code
      *
      * @throws CoreException
      */
-    public function displayErrorPage(
+    final public function displayErrorPage(
         string $errorMessage,
         int    $errorCode
     ): void
@@ -150,8 +154,8 @@ class Response extends CommonCore
             'error',
             [
                 'errorMessage' => $errorMessage,
-                'errorCode'    => $errorCode,
-                'pagePath'     => $pagePath
+                'errorCode' => $errorCode,
+                'pagePath' => $pagePath
             ]
         );
     }
@@ -160,18 +164,18 @@ class Response extends CommonCore
      * Return Data In HTML Format
      *
      * @param string|null $templatePage Template Page Name
-     * @param array|null  $params       Params Data For Templates
-     * @param int         $ttl          Time To Live Of Template Cache
+     * @param array|null $params Params Data For Templates
+     * @param int $ttl Time To Live Of Template Cache
      *
      * @throws CoreException
      */
-    public function render(
+    final public function render(
         ?string $templatePage = null,
         ?array  $params = null,
-        int     $ttl      = 0
+        int     $ttl = 0
     ): void
     {
-        $params = (array) $params;
+        $params = (array)$params;
 
         if (!array_key_exists('pagePath', $params)) {
             $params['pagePath'] = [];
@@ -191,9 +195,9 @@ class Response extends CommonCore
         $breadcrumbs = $this->getPlugin('breadcrumbs');
         $breadcrumbs = $breadcrumbs->getHtml($params['pagePath']);
 
-        $params['breadcrumbs']     = $breadcrumbs;
+        $params['breadcrumbs'] = $breadcrumbs;
         $params['currentLanguage'] = $this->language;
-        $params['currentUrl']      = $this->currentUrl;
+        $params['currentUrl'] = $this->currentUrl;
 
         $templater = $this->getPlugin('templater');
 
@@ -221,7 +225,7 @@ class Response extends CommonCore
             array_key_exists('assets_version', $mainConfig) &&
             !empty($mainConfig['assets_version'])
         ) {
-            return (string) $mainConfig['assets_version'];
+            return (string)$mainConfig['assets_version'];
         }
 
         return '0';
@@ -231,7 +235,7 @@ class Response extends CommonCore
      * Get HTML Meta Tag Values
      *
      * @param array|null $pagePath Current Page Path In Site Structure
-     * @param array|null $meta     Input HTML Meta Tag Values
+     * @param array|null $meta Input HTML Meta Tag Values
      *
      * @return array Output HTML Meta Tag Values
      *
@@ -239,13 +243,13 @@ class Response extends CommonCore
      */
     private function _getMetaParams(
         ?array $pagePath = null,
-        ?array $meta     = null
+        ?array $meta = null
     ): array
     {
-        $pagePath = (array) $pagePath;
-        $meta     = (array) $meta;
+        $pagePath = (array)$pagePath;
+        $meta = (array)$meta;
 
-        $metaParams     = $this->configData['seo'];
+        $metaParams = $this->configData['seo'];
         $mainConfigData = $this->configData['main'];
 
         if (!array_key_exists('image', $metaParams)) {
@@ -265,10 +269,10 @@ class Response extends CommonCore
             $metaParams['description'] = $meta['description'];
         }
 
-        $metaParams['title']       = $mainConfigData['site_name'];
-        $metaParams['site_name']   = $mainConfigData['site_name'];
+        $metaParams['title'] = $mainConfigData['site_name'];
+        $metaParams['site_name'] = $mainConfigData['site_name'];
         $metaParams['site_slogan'] = $mainConfigData['site_slogan'];
-        $metaParams['locale']      = $mainConfigData['site_locale'];
+        $metaParams['locale'] = $mainConfigData['site_locale'];
 
         if (!empty($pagePath)) {
             $metaParams['title'] = sprintf(
@@ -289,7 +293,7 @@ class Response extends CommonCore
     /**
      * Set HTML Copyright Value
      *
-     * @param array $metaParams     Output HTML Meta Data
+     * @param array $metaParams Output HTML Meta Data
      * @param array $mainConfigData Main Config Values
      */
     private function _setMetaParamsCopyright(
@@ -298,13 +302,13 @@ class Response extends CommonCore
     ): void
     {
         $launchYear = date('Y', strtotime($mainConfigData['launch_date']));
-        $siteName   = null;
+        $siteName = null;
 
         if (array_key_exists('site_name', $metaParams)) {
             $siteName = $metaParams['site_name'];
         }
 
-        $copyrightDate           = date('Y');
+        $copyrightDate = date('Y');
 
         if (date('Y') !== $launchYear) {
             $copyrightDate = sprintf('%s-%s', $launchYear, date('Y'));
@@ -312,8 +316,8 @@ class Response extends CommonCore
 
         $metaParams['copyright'] = sprintf(
             '&copy; %s %s',
-            (string) $siteName,
-            (string) $copyrightDate
+            (string)$siteName,
+            (string)$copyrightDate
         );
     }
 
@@ -321,7 +325,7 @@ class Response extends CommonCore
      * Set HTML Image Meta Tag Value
      *
      * @param array $metaParams Output HTML Meta Tag Values
-     * @param array $meta       Input HTML Meta Tag Values
+     * @param array $meta Input HTML Meta Tag Values
      */
     private function _setMetaParamsImage(array &$metaParams, array $meta): void
     {
@@ -345,7 +349,7 @@ class Response extends CommonCore
      * Set HTML Canonical Url Meta Tag Value
      *
      * @param array $metaParams Output HTML Meta Tag Values
-     * @param array $meta       Input HTML Meta Tag Values
+     * @param array $meta Input HTML Meta Tag Values
      */
     private function _setMetaCanonicalUrl(
         array &$metaParams,
@@ -364,7 +368,7 @@ class Response extends CommonCore
         $metaParams['canonical_url'] = sprintf(
             '%s%s',
             $this->currentHost,
-            (string) $canonicalUrl
+            (string)$canonicalUrl
         );
     }
 
