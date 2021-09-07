@@ -1,12 +1,13 @@
 <?php
+
 /**
  * Plugin For Generating HTML Breadcrumbs
  */
 class BreadcrumbsPlugin
 {
-    const MAIN_TEMPLATE_PATH         = __DIR__.'/html/main.html';
-    const ELEMENT_TEMPLATE_PATH      = __DIR__.'/html/element.html';
-    const LAST_ELEMENT_TEMPLATE_PATH = __DIR__.'/html/last_element.html';
+    const MAIN_TEMPLATE_PATH = __DIR__ . '/html/main.html';
+    const ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/element.html';
+    const LAST_ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/last_element.html';
 
     /**
      * Get HTML Of Breadcrumbs By Path Current Page In Site Structure
@@ -14,6 +15,8 @@ class BreadcrumbsPlugin
      * @param array|null $pagePath Path Current Page In Site Structure
      *
      * @return string Output HTML Text
+     *
+     * @throws LanguageException
      */
     public function getHtml(?array $pagePath = null): string
     {
@@ -53,7 +56,7 @@ class BreadcrumbsPlugin
     }
 
     /**
-     * Get Main Temlate
+     * Get Main Template
      *
      * @return string Main HTML Template
      */
@@ -63,7 +66,7 @@ class BreadcrumbsPlugin
     }
 
     /**
-     * Get Element Temlate
+     * Get Element Template
      *
      * @return string Element HTML Template
      */
@@ -73,7 +76,7 @@ class BreadcrumbsPlugin
     }
 
     /**
-     * Get Last Element Temlate
+     * Get Last Element Template
      *
      * @return string Last Element HTML Template
      */
@@ -88,6 +91,8 @@ class BreadcrumbsPlugin
      * @param string $inputString Input String
      *
      * @return string Translated String
+     *
+     * @throws LanguageException
      */
     public function _getTranslation(string $inputString): string
     {

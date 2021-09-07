@@ -4,27 +4,27 @@
 
 ### New Features
 
-- Helpers For Using MVC Patern
-- Helpers For Using ValueObject Patern In Models
+- Helpers For Using MVC Pattern
+- Helpers For Using ValueObject Pattern In Models
 - Helpers For Routing HTTP Requests
 - Helpers For Creating API
 - Wrapper For Working With PostgreSQL (By PDO)
 - Wrapper For Working With Redis (By Predis)
 - Simple Plain PHP Templater
 - Uploading Files In Secure Way
-- Validaton Input Values By Type
+- Validation Input Values By Type
 - Handling Errors And Exceptions
 - Logging
 - Sharing Links Via Twitter (By CodeBird) And Telegram (By Curl)
 - Translation By Dictionary
 - Transliteration Cyrillic To Latin
-- Converting Numbers Fron Base 10 To Others Bases (From 2 To 64)
+- Converting Numbers From Base 10 To Others Bases (From 2 To 64)
 - Getting Input Data From HTTP Requests And Server Environment In Secure Way
 - Getting User IP And Hash Of User IP
 - Generating HTML Breadcrumbs
 - Generating HTML From Markdown-Like Markup
 - Generating HTML From External Web Page Link
-- Generating HTML From Youtube Video Link
+- Generating HTML From YouTube Video Link
 - Generating HTML Pagination
 - Sending E-mails (Unstable Feature)
 - Resizing And Converting Images (Unstable Feature)
@@ -61,9 +61,9 @@
 
 ### Basic Features
 
-- MVC Patern Layout (Controller-Model&Hooks-Templates)
+- MVC Pattern Layout (Controller-Model&Hooks-Templates)
 - Plugins With Common Business Logic
-- Helpers For Using ValueObject Patern In Models
+- Helpers For Using ValueObject Pattern In Models
 - Helpers For Handling Forms Data
 - Helpers For Routing HTTP Requests
 - Helpers For Creating API
@@ -99,7 +99,7 @@
 - **Templater** – Generating HTML From Data And PHTML Files
 - **Translit** – Transliteration Cyrillic To Latin
 - **Upload** – Wrapper For Uploading Single Or Multiple File(s)
-- **Youtube** – Generating HTML From Youtube Video Link
+- **YouTube** – Generating HTML From YouTube Video Link
 
 ## v1.1 (03/13/2021)
 

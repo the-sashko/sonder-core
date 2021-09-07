@@ -52,6 +52,11 @@ class ControllerCore extends CommonCore
 
         parent::__construct();
 
+        $this->execHooks(
+            'onBeforeControllerInit',
+            $this->commonData
+        );
+
         $this->_setUrlParams($urlParams);
         $this->_setPostData($_POST);
         $this->_setGetData($_GET);
@@ -62,7 +67,10 @@ class ControllerCore extends CommonCore
 
         $this->_response = new Response();
 
-        $this->execHooks('onAfterControllerInit', $this->commonData);
+        $this->execHooks(
+            'onAfterControllerInit',
+            $this->commonData
+        );
     }
 
     /**

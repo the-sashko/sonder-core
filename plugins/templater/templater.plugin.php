@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin For Rendering Templates
  */
@@ -17,36 +18,36 @@ class TemplaterPlugin
     /**
      * @var string Templates Directory Path
      */
-    const TEMPLATE_DIR = __DIR__.'/../../../res/tpl';
+    const TEMPLATE_DIR = __DIR__ . '/../../../res/tpl';
 
     /**
      * @var string Cache Directory Path
      */
-    const CACHE_DIR_PATH = __DIR__.'/../../../res/cache/tpl';
+    const CACHE_DIR_PATH = __DIR__ . '/../../../res/cache/tpl';
 
     /**
-     * @var string Template Area
+     * @var string|null Template Area
      */
-    private $_area = null;
+    private ?string $_area = null;
 
     /**
-     * @var string Template Page File Name
+     * @var string|null Template Page File Name
      */
-    private $_templatePage = null;
+    private ?string $_templatePage = null;
 
     /**
      * Generate And Display HTML Page From Template File
      *
      * @param string|null $templatePage Template Page File Name
-     * @param array|null  $dataParams   Array Of Values For Using In Template
+     * @param array|null $dataParams Array Of Values For Using In Template
      *                                  Page
-     * @param int         $ttl          Time To Live Template Cache
+     * @param int $ttl Time To Live Template Cache
      *
      * @throws Exception
      */
     public function render(
         ?string $templatePage = null,
-        ?array  $dataParams  = null,
+        ?array  $dataParams = null,
         int     $ttl = 0
     ): void
     {
@@ -60,10 +61,10 @@ class TemplaterPlugin
 
         $this->_templatePage = $templatePage;
 
-        $GLOBALS['template_dir']    = static::TEMPLATE_DIR;
-        $GLOBALS['template_params'] = (array) $dataParams;
-        $GLOBALS['template_area']   = $this->_area;
-        $GLOBALS['template_ttl']    = $ttl;
+        $GLOBALS['template_dir'] = static::TEMPLATE_DIR;
+        $GLOBALS['template_params'] = (array)$dataParams;
+        $GLOBALS['template_area'] = $this->_area;
+        $GLOBALS['template_ttl'] = $ttl;
 
         if ($ttl > 0) {
             $this->_setCacheDir();
@@ -74,8 +75,6 @@ class TemplaterPlugin
         }
 
         $this->_includeTemplate();
-
-        exit(0);
     }
 
     /**

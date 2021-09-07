@@ -1,40 +1,52 @@
 <?php
-class StaticPageValuesObject
+
+class StaticPageValuesObject extends ValuesObject
 {
-    private $_data = [];
-
-    public function __construct(?array $staticPageData = null)
-    {
-        if (!empty($staticPageData)) {
-            $this->_data = new ValuesObject($staticPageData);
-        }
-    }
-
+    /**
+     * @return string|null
+     *
+     * @throws Exception
+     */
     public function getTitle(): ?string
     {
-        if (!$this->_data->has('title')) {
+        if (!$this->has('title')) {
             return null;
         }
 
-        return $this->_data->get('title');
+        return $this->get('title');
     }
 
+    /**
+     * @return string|null
+     *
+     * @throws Exception
+     */
     public function getContent(): ?string
     {
-        if (!$this->_data->has('content')) {
+        if (!$this->has('content')) {
             return null;
         }
 
-        return $this->_data->get('content');
+        return $this->get('content');
     }
 
+    /**
+     * @param string|null $title
+     *
+     * @throws Exception
+     */
     public function setTitle(?string $title = null): void
     {
-        $this->_data->set('title', $title);
+        $this->set('title', $title);
     }
 
+    /**
+     * @param string|null $content
+     *
+     * @throws Exception
+     */
     public function setContent(?string $content = null): void
     {
-        $this->_data->set('content', $content);
+        $this->set('content', $content);
     }
 }

@@ -206,6 +206,10 @@ class Response extends CommonCore
         $this->execHooks('onBeforeRender', $params);
 
         $templater->render($templatePage, $params, $ttl);
+
+        $this->execHooks('onAfterRender', $params);
+
+        exit(0);
     }
 
     /**
