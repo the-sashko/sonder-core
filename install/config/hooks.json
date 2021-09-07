@@ -1,8 +1,11 @@
 {
+  "onBeforeControllerInit": [],
+  "onAfterControllerInit": [],
   "onBeforeRender": [
     {
       "hook": "example",
       "method": "setExampleData"
     }
-  ]
+  ],
+  "onAfterRender": []
 }

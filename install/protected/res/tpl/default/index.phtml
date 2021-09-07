@@ -1,4 +1,12 @@
 <?php
-__part('header');
-__page($templatePage);
-__part('footer');
+/* @var string $templatePage */
+
+try {
+    __part('header');
+    __page($templatePage);
+    __part('footer');
+} catch (Exception $exp) {
+    if (APP_MODE != 'dev') {
+        throw new Exception($exp->getMessage());
+    }
+}
