@@ -16,9 +16,10 @@ class ControllerCore extends CommonCore
     public ?array $get = null;
 
     /**
-     * @var array Common Data For Templates, Cross-Model And Cross-Plugin Usage
+     * @var array|null Common Data For Templates, Cross-Model And Cross-Plugin
+     * Usage
      */
-    public array $commonData = [];
+    public ?array $commonData = null;
 
     /**
      * @var int Current Page In Pagination
@@ -57,11 +58,12 @@ class ControllerCore extends CommonCore
             $this->commonData
         );
 
+        $this->commonData = [];
+
         $this->_setUrlParams($urlParams);
         $this->_setPostData($_POST);
         $this->_setGetData($_GET);
-
-        $this->setLanguage($language);
+        $this->_setLanguage($language);
 
         $this->page = $page < 1 ? 1 : $page;
 
@@ -92,20 +94,29 @@ class ControllerCore extends CommonCore
      *
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templatePage Site Template Page Name
+     * @param int $ttl Time To Live Of Template Cache
      *
      * @throws CoreException
      * @throws LanguageException
      */
     final protected function displayStaticPage(
         ?string $staticPageName = null,
-        ?string $templatePage = null
+        ?string $templatePage = null,
+        int     $ttl = 0
     ): void
     {
         if (empty($staticPageName)) {
             $staticPageName = $this->getValueFromUrl('slug');
         }
 
-        $this->_response->displayStaticPage($staticPageName, $templatePage);
+        $values = array_merge($this->configData['main'], $this->commonData);
+
+        $this->_response->displayStaticPage(
+            $staticPageName,
+            $templatePage,
+            $values,
+            $ttl
+        );
     }
 
     /**
@@ -270,6 +281,32 @@ class ControllerCore extends CommonCore
         if (!empty($getData)) {
             $this->get = array_map($escapeMethod, $getData);
         }
+    }
+
+    /**
+     * Set Language Value To Session
+     */
+    private function _setLanguage(?string $language = null): void
+    {
+        $defaultLanguage = static::DEFAULT_LANGUAGE;
+
+        if (defined('DEFAULT_LANGUAGE')) {
+            $defaultLanguage = DEFAULT_LANGUAGE;
+        }
+
+        if (empty($language) && $this->session->has('language')) {
+            $language = $this->session->get('language');
+        }
+
+        if (empty($language)) {
+            $language = $defaultLanguage;
+        }
+
+        $this->session->set('language', $language);
+
+        $this->language = $language;
+
+        $this->commonData['currentLanguage'] = $language;
     }
 
     /**

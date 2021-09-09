@@ -70,13 +70,17 @@ class Response extends CommonCore
      *
      * @param string|null $staticPageName Static Page File Name
      * @param string|null $templatePage Site Template Page Name
+     * @param array|null $params Params Data For Templates
+     * @param int $ttl Time To Live Of Template Cache
      *
      * @throws CoreException
      * @throws LanguageException
      */
     final public function displayStaticPage(
         ?string $staticPageName = null,
-        ?string $templatePage = null
+        ?string $templatePage = null,
+        ?array  $params = null,
+        int     $ttl = 0
     ): void
     {
         $pagePlugin = $this->getPlugin('page');
@@ -120,16 +124,20 @@ class Response extends CommonCore
             $seoDescription = sprintf('%s…', $seoDescription);
         }
 
+        $params['staticPage'] = $staticPageVO;
+        $params['pagePath'] = $pagePath;
+        $params['seoTitle'] = $staticPageVO->getTitle();
+
+        if (!array_key_exists('meta', $params)) {
+            $params['meta'] = [];
+        }
+
+        $params['meta']['description'] = $seoDescription;
+
         $this->render(
             $templatePage,
-            [
-                'staticPage' => $staticPageVO,
-                'pagePath' => $pagePath,
-                'seoTitle' => $staticPageVO->getTitle(),
-                'meta' => [
-                    'description' => $seoDescription
-                ]
-            ]
+            $params,
+            $ttl
         );
     }
 
@@ -196,7 +204,6 @@ class Response extends CommonCore
         $breadcrumbs = $breadcrumbs->getHtml($params['pagePath']);
 
         $params['breadcrumbs'] = $breadcrumbs;
-        $params['currentLanguage'] = $this->language;
         $params['currentUrl'] = $this->currentUrl;
 
         $templater = $this->getPlugin('templater');

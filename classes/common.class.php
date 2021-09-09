@@ -174,7 +174,6 @@ class CommonCore
             $errorMessage = CoreException::MESSAGE_CORE_CONFIG_IS_NOT_EXISTS;
 
             $errorMessage = sprintf(
-                '%s. Config: %s',
                 $errorMessage,
                 $configName
             );
@@ -235,25 +234,6 @@ class CommonCore
         }
 
         return true;
-    }
-
-    /**
-     * Set Language Value To Session
-     */
-    final protected function setLanguage(?string $language = null): void
-    {
-        $defaultLanguage = static::DEFAULT_LANGUAGE;
-
-        if (defined('DEFAULT_LANGUAGE')) {
-            $defaultLanguage = DEFAULT_LANGUAGE;
-        }
-
-        if (empty($language)) {
-            $language = $defaultLanguage;
-        }
-
-        $this->session->set('language', $language);
-        $this->language = $language;
     }
 
     /**
@@ -399,7 +379,6 @@ class CommonCore
 
         if (!file_exists($hookFile) || !is_file($hookFile)) {
             $errorMessage = sprintf(
-                '%s. Hook: %s',
                 CoreException::MESSAGE_CORE_HOOK_IS_NOT_EXISTS,
                 $hookName
             );

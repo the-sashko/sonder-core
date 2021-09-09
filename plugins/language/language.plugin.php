@@ -120,7 +120,6 @@ class LanguagePlugin
                 mkdir($localePath, 0775, true);
             }
 
-
             $localePath = sprintf('%s/LC_MESSAGES', $localePath);
 
             if (!file_exists($localePath) || !is_dir($localePath)) {
@@ -258,8 +257,6 @@ class LanguagePlugin
      * @param string|null $moFilePath
      * @param string|null $locale
      *
-     * @return bool
-     *
      * @throws LanguageException
      */
     private function _generateDictionaryFile(
@@ -267,15 +264,18 @@ class LanguagePlugin
         ?string $poFilePath = null,
         ?string $moFilePath = null,
         ?string $locale = null
-    ): bool
+    ): void
     {
-        if ($this->_prepareDictionaryFile(
+        if (!$this->_prepareDictionaryFile(
             $sourceFilePath,
             $poFilePath,
             $moFilePath,
             $locale
         )) {
-            return false;
+            throw new LanguageException(
+                'Can Not Prepare Language Dictionary File',
+                LanguageException::CAN_NOT_PREPARE_DICTIONARY_FILE
+            );
         }
 
         $jsonContent = file_get_contents((string)$sourceFilePath);
@@ -320,8 +320,6 @@ class LanguagePlugin
 
         clearstatcache();
         opcache_reset();
-
-        return true;
     }
 
     /**

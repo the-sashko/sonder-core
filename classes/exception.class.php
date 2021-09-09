@@ -43,9 +43,9 @@ class CoreException extends \Exception
 
     const MESSAGE_CORE_PLUGIN_IS_NOT_EXISTS = 'Plugin Is Not Exists';
 
-    const MESSAGE_CORE_CONFIG_IS_NOT_EXISTS = 'Config Is Not Exists';
+    const MESSAGE_CORE_CONFIG_IS_NOT_EXISTS = 'Config "%s" Is Not Exists';
 
-    const MESSAGE_CORE_HOOK_IS_NOT_EXISTS = 'Hook Is Not Exists';
+    const MESSAGE_CORE_HOOK_IS_NOT_EXISTS = 'Hook "%s" Is Not Exists';
 
     const MESSAGE_CORE_HOOK_CLASS_IS_NOT_EXISTS = 'Hook Class Is Not Exists';
 
