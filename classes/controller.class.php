@@ -63,7 +63,8 @@ class ControllerCore extends CommonCore
         $this->_setUrlParams($urlParams);
         $this->_setPostData($_POST);
         $this->_setGetData($_GET);
-        $this->_setLanguage($language);
+
+        $this->setLanguage($language);
 
         $this->page = $page < 1 ? 1 : $page;
 
@@ -222,6 +223,32 @@ class ControllerCore extends CommonCore
     }
 
     /**
+     * Set Language Value To Session
+     */
+    final protected function setLanguage(?string $language = null): void
+    {
+        $defaultLanguage = static::DEFAULT_LANGUAGE;
+
+        if (defined('DEFAULT_LANGUAGE')) {
+            $defaultLanguage = DEFAULT_LANGUAGE;
+        }
+
+        if (empty($language) && $this->session->has('language')) {
+            $language = $this->session->get('language');
+        }
+
+        if (empty($language)) {
+            $language = $defaultLanguage;
+        }
+
+        $this->session->set('language', $language);
+
+        $this->language = $language;
+
+        $this->commonData['currentLanguage'] = $language;
+    }
+
+    /**
      * Handle HTTP Error Page
      *
      * @param int|null $errorCode
@@ -281,32 +308,6 @@ class ControllerCore extends CommonCore
         if (!empty($getData)) {
             $this->get = array_map($escapeMethod, $getData);
         }
-    }
-
-    /**
-     * Set Language Value To Session
-     */
-    private function _setLanguage(?string $language = null): void
-    {
-        $defaultLanguage = static::DEFAULT_LANGUAGE;
-
-        if (defined('DEFAULT_LANGUAGE')) {
-            $defaultLanguage = DEFAULT_LANGUAGE;
-        }
-
-        if (empty($language) && $this->session->has('language')) {
-            $language = $this->session->get('language');
-        }
-
-        if (empty($language)) {
-            $language = $defaultLanguage;
-        }
-
-        $this->session->set('language', $language);
-
-        $this->language = $language;
-
-        $this->commonData['currentLanguage'] = $language;
     }
 
     /**

@@ -6,11 +6,6 @@
 class ModelCore extends CommonCore
 {
     /**
-     * @var string Path To Main Config File
-     */
-    const MAIN_CONFIG_PATH = __DIR__ . '/../../config/main.json';
-
-    /**
      * @var string Path To Exceptions Directory
      * */
     const EXCEPTIONS_DIR_PATH = __DIR__ . '/../../exceptions';
@@ -200,7 +195,7 @@ class ModelCore extends CommonCore
         if (file_exists($apiFilePath) && is_file($apiFilePath)) {
             require_once($apiFilePath);
 
-            $this->api = new $apiClass();
+            $this->api = new $apiClass($this);
         }
     }
 }
