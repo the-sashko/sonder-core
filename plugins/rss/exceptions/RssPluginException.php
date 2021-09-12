@@ -8,11 +8,13 @@ class RssPluginException extends RssException
 
     const MESSAGE_PLUGIN_LINK_IS_EMPTY = 'RSS Channel Link Is Empty';
 
+    const MESSAGE_PLUGIN_IMAGE_IS_EMPTY = 'RSS Channel Image Is Empty';
+
     const MESSAGE_PLUGIN_DESCRIPTION_IS_EMPTY = 'RSS Channel Description Is ' .
-                                                'Empty';
+    'Empty';
 
     const MESSAGE_PLUGIN_LINKS_ARE_EMPTY = 'RSS Channel Links Of Items Are ' .
-                                          'Empty';
+    'Empty';
 
     const MESSAGE_PLUGIN_ENTITY_IS_NOT_SET = 'RSS Plugin Entity Is Not Set';
 

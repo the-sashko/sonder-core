@@ -9,14 +9,18 @@ interface IRssPlugin
     /**
      * @param string|null $channelTitle
      * @param string|null $channelLink
+     * @param string|null $channelImage
      * @param string|null $channelDescription
      * @param array|null $links
      *
+     * @throws RssEntityException
+     * @throws RssLinkException
      * @throws RssPluginException
      */
     public function load(
         ?string $channelTitle = null,
         ?string $channelLink = null,
+        ?string $channelImage = null,
         ?string $channelDescription = null,
         ?array  $links = null
     ): void;

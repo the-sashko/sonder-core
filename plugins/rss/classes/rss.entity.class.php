@@ -13,6 +13,8 @@ class RssEntity implements IRssEntity
 
     const VALUES_CHANNEL_LINK_KEY = 'channel_link';
 
+    const VALUES_CHANNEL_IMAGE_KEY = 'channel_image';
+
     const VALUES_CHANNEL_DESCRIPTION_KEY = 'channel_description';
 
     const VALUES_LINKS_KEY = 'links';
@@ -28,6 +30,11 @@ class RssEntity implements IRssEntity
      * @var string|null
      */
     private ?string $_channel_link = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $_channel_image = null;
 
     /**
      * @var string|null
@@ -69,6 +76,15 @@ class RssEntity implements IRssEntity
         }
 
         if (
+            !array_key_exists(static::VALUES_CHANNEL_IMAGE_KEY, $values)
+        ) {
+            throw new RssEntityException(
+                RssEntityException::MESSAGE_ENTITY_IMAGE_IS_EMPTY,
+                RssEntityException::CODE_ENTITY_IMAGE_IS_EMPTY
+            );
+        }
+
+        if (
             !array_key_exists(static::VALUES_CHANNEL_DESCRIPTION_KEY, $values)
         ) {
             throw new RssEntityException(
@@ -88,9 +104,9 @@ class RssEntity implements IRssEntity
 
         $this->_channel_link = $values[static::VALUES_CHANNEL_LINK_KEY];
 
-        $this->_channel_description = $values[
-            static::VALUES_CHANNEL_DESCRIPTION_KEY
-        ];
+        $this->_channel_image = $values[static::VALUES_CHANNEL_IMAGE_KEY];
+
+        $this->_channel_description = $values[static::VALUES_CHANNEL_DESCRIPTION_KEY];
 
         $this->_links = $values[static::VALUES_LINKS_KEY];
 
@@ -109,11 +125,13 @@ class RssEntity implements IRssEntity
     {
         $channelTitle = $this->_getChannelTitle();
         $channelLink = $this->_getChannelLink();
+        $channelImage = $this->_getChannelImage();
         $channelDescription = $this->_getChannelDescription();
 
         if (
             empty($channelTitle) ||
             empty($channelLink) ||
+            empty($channelImage) ||
             empty($channelDescription)
         ) {
             return null;
@@ -141,6 +159,9 @@ class RssEntity implements IRssEntity
             $channelTitle,
             $channelLink,
             $channelDescription,
+            $channelImage,
+            $channelTitle,
+            $channelLink,
             $linksXML
         );
     }
@@ -167,6 +188,18 @@ class RssEntity implements IRssEntity
         }
 
         return (string)$this->_channel_link;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function _getChannelImage(): ?string
+    {
+        if (empty($this->_channel_image)) {
+            return null;
+        }
+
+        return (string)$this->_channel_image;
     }
 
     /**

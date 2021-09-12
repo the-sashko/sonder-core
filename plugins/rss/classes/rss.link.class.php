@@ -11,6 +11,8 @@ class RssLink implements IRssLink
 
     const VALUES_LINK_KEY = 'link';
 
+    const VALUES_TIMESTAMP_KEY = 'timestamp';
+
     const VALUES_DESCRIPTION_KEY = 'description';
 
     const XML_FILE_PATH = __DIR__ . '/../xml/link.xml';
@@ -24,6 +26,11 @@ class RssLink implements IRssLink
      * @var string|null
      */
     private ?string $_link = null;
+
+    /**
+     * @var int|null
+     */
+    private ?int $_timestamp = null;
 
     /**
      * @var string|null
@@ -58,6 +65,13 @@ class RssLink implements IRssLink
             );
         }
 
+        if (!array_key_exists(static::VALUES_TIMESTAMP_KEY, $values)) {
+            throw new RssLinkException(
+                RssLinkException::MESSAGE_LINK_TIMESTAMP_IS_EMPTY,
+                RssLinkException::CODE_LINK_TIMESTAMP_IS_EMPTY
+            );
+        }
+
         if (!array_key_exists(static::VALUES_DESCRIPTION_KEY, $values)) {
             throw new RssLinkException(
                 RssLinkException::MESSAGE_LINK_DESCRIPTION_IS_EMPTY,
@@ -67,6 +81,7 @@ class RssLink implements IRssLink
 
         $this->_title = $values[static::VALUES_TITLE_KEY];
         $this->_link = $values[static::VALUES_LINK_KEY];
+        $this->_timestamp = $values[static::VALUES_TIMESTAMP_KEY];
         $this->_description = $values[static::VALUES_DESCRIPTION_KEY];
     }
 
@@ -74,16 +89,26 @@ class RssLink implements IRssLink
      * @return string|null
      *
      * @throws RssLinkException
+     * @throws \Exception
      */
     public function getXML(): ?string
     {
         $title = $this->_getTitle();
         $link = $this->_getLink();
+        $timestamp = $this->_getTimestamp();
         $description = $this->_getDescription();
 
-        if (empty($title) || empty($link) || empty($description)) {
+        if (
+            empty($title) ||
+            empty($link) ||
+            empty($timestamp) ||
+            empty($description)
+        ) {
             return null;
         }
+
+        $pubDate = new \DateTime(date("Y-m-d H:i:s", $timestamp));
+        $pubDate = $pubDate->format(\DateTime::RFC822);
 
         $xmlFilePath = static::XML_FILE_PATH;
 
@@ -96,7 +121,14 @@ class RssLink implements IRssLink
 
         $xmlContent = file_get_contents($xmlFilePath);
 
-        return sprintf($xmlContent, $title, $link, $description, $link);
+        return sprintf(
+            $xmlContent,
+            $title,
+            $link,
+            $pubDate,
+            $description,
+            $link
+        );
     }
 
     /**
@@ -104,7 +136,7 @@ class RssLink implements IRssLink
      */
     private function _getTitle(): ?string
     {
-        return empty($this->_title) ? null : (string) $this->_title;
+        return empty($this->_title) ? null : (string)$this->_title;
     }
 
     /**
@@ -112,7 +144,15 @@ class RssLink implements IRssLink
      */
     private function _getLink(): ?string
     {
-        return empty($this->_link) ? null : (string) $this->_link;
+        return empty($this->_link) ? null : (string)$this->_link;
+    }
+
+    /**
+     * @return int|null
+     */
+    private function _getTimestamp(): ?int
+    {
+        return empty($this->_timestamp) ? null : (int)$this->_timestamp;
     }
 
     /**
@@ -120,6 +160,6 @@ class RssLink implements IRssLink
      */
     private function _getDescription(): ?string
     {
-        return empty($this->_description) ? null : (string) $this->_description;
+        return empty($this->_description) ? null : (string)$this->_description;
     }
 }

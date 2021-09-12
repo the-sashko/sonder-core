@@ -10,8 +10,11 @@ class RssLinkException extends RssException
 
     const MESSAGE_LINK_LINK_IS_EMPTY = 'RSS Link Entity Link Is Empty';
 
+    const MESSAGE_LINK_TIMESTAMP_IS_EMPTY = 'RSS Link Entity Timestamp Is ' .
+    'Empty';
+
     const MESSAGE_LINK_DESCRIPTION_IS_EMPTY = 'RSS Link Entity Description ' .
-                                              'Is Empty';
+    'Is Empty';
 
     const MESSAGE_LINK_XML_NOT_FOUND = 'Not Found RSS Link Entity XML Template';
 }

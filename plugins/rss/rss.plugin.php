@@ -2,6 +2,7 @@
 
 use Core\Plugins\Rss\Classes\RssEntity;
 use Core\Plugins\Rss\Exceptions\RssEntityException;
+use Core\Plugins\Rss\Exceptions\RssLinkException;
 use Core\Plugins\Rss\Exceptions\RssPluginException;
 use Core\Plugins\Rss\Interfaces\IRssEntity;
 use Core\Plugins\Rss\Interfaces\IRssPlugin;
@@ -20,14 +21,18 @@ class RssPlugin implements IRssPlugin
     /**
      * @param string|null $channelTitle
      * @param string|null $channelLink
+     * @param string|null $channelImage
      * @param string|null $channelDescription
      * @param array|null $links
      *
+     * @throws RssEntityException
+     * @throws RssLinkException
      * @throws RssPluginException
      */
     public function load(
         ?string $channelTitle = null,
         ?string $channelLink = null,
+        ?string $channelImage = null,
         ?string $channelDescription = null,
         ?array  $links = null
     ): void
@@ -43,6 +48,13 @@ class RssPlugin implements IRssPlugin
             throw new RssPluginException(
                 RssPluginException::MESSAGE_PLUGIN_LINK_IS_EMPTY,
                 RssPluginException::CODE_PLUGIN_LINK_IS_EMPTY
+            );
+        }
+
+        if (empty($channelImage)) {
+            throw new RssPluginException(
+                RssPluginException::MESSAGE_PLUGIN_IMAGE_IS_EMPTY,
+                RssPluginException::CODE_PLUGIN_IMAGE_IS_EMPTY
             );
         }
 
@@ -63,6 +75,7 @@ class RssPlugin implements IRssPlugin
         $values = [
             'channel_title' => $channelTitle,
             'channel_link' => $channelLink,
+            'channel_image' => $channelImage,
             'channel_description' => $channelDescription,
             'links' => $links
         ];
