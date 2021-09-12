@@ -30,7 +30,7 @@ class GeoIpPlugin
      */
     public function getIpHash(): string
     {
-        return hash('sha256', $this->getIP());
+        return hash('sha256', $this->getIp());
     }
 
     /**
