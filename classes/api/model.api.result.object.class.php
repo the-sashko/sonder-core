@@ -5,6 +5,8 @@ class ModelApiResultObject
 
     const EMPTY_ERROR_MESSAGE = 'Empty';
 
+    const METHOD_IS_NOT_IMPLEMENTED = 'This API Method Is Not Implemented Yet';
+
     /**
      * @var ?array
      */
@@ -50,7 +52,7 @@ class ModelApiResultObject
         $errors = $this->_errors;
 
         if ($this->getStatus() && !empty($errors)) {
-            $this->setFail();
+            $this->setStatusFail();
         }
 
         if (!$this->getStatus() && empty($errors)) {
@@ -62,12 +64,12 @@ class ModelApiResultObject
         return $errors;
     }
 
-    final public function setSuccess(): void
+    final public function setStatusSuccess(): void
     {
         $this->_setStatus(true);
     }
 
-    final public function setFail(): void
+    final public function setStatusFail(): void
     {
         $this->_setStatus(false);
         $this->_values = null;
@@ -81,7 +83,7 @@ class ModelApiResultObject
         $this->_errors = array_merge($this->_errors, (array) $errors);
         $this->_errors = array_unique($this->_errors);
 
-        $this->setFail();
+        $this->setStatusFail();
     }
 
     /**
@@ -92,7 +94,7 @@ class ModelApiResultObject
         $this->_errors[] = $error;
         $this->_errors = array_unique($this->_errors);
 
-        $this->setFail();
+        $this->setStatusFail();
     }
 
     /**
@@ -102,7 +104,7 @@ class ModelApiResultObject
     {
         if (empty($values)) {
             $this->setError(static::EMPTY_ERROR_MESSAGE);
-            $this->setFail();
+            $this->setStatusFail();
         }
 
         $this->_values = $values;

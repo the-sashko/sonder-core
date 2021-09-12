@@ -8,20 +8,26 @@ abstract class ModelApiCore
     /**
      * @var ModelApiResultObject|null
      */
-    public ?ModelApiResultObject $result = null;
+    protected ?ModelApiResultObject $result = null;
+
+    /**
+     * @var ModelCore|null
+     */
+    protected ?ModelCore $model = null;
 
     /**
      * @var array|null
      */
-    public ?array $get = null;
+    protected ?array $get = null;
 
     /**
      * @var array|null
      */
-    public ?array $post = null;
+    protected ?array $post = null;
 
-    public function __construct()
+    public function __construct(ModelCore $model)
     {
+        $this->model = $model;
         $this->result = new ModelApiResultObject();
     }
 

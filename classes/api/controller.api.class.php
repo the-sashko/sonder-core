@@ -72,6 +72,18 @@ class ApiControllerCore extends ControllerCore
             );
         }
 
+        $postData = (string)file_get_contents('php://input');
+        $postData = json_decode($postData, true);
+
+        $escapeMethod = [
+            $this->getPlugin('security'),
+            'escapeInput'
+        ];
+
+        if (!empty($postData)) {
+            $this->post = array_map($escapeMethod, $postData);
+        }
+
         $this->model->api->loadInputData($this->get, $this->post);
 
         $result = $this->model->api->$action();
