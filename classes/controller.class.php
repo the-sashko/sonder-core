@@ -153,9 +153,7 @@ class ControllerCore extends CommonCore
             throw new Exception('Template Page Name Is Empty');
         }
 
-        $values = array_merge($this->configData['main'], $this->commonData);
-
-        $this->_response->render($template, $values, $ttl);
+        $this->_response->render($template, $this->commonData, $ttl);
     }
 
     /**

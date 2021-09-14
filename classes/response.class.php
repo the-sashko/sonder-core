@@ -185,6 +185,11 @@ class Response extends CommonCore
     {
         $params = (array)$params;
 
+        $params['siteLogo'] = $this->configData['seo']['image'];
+
+        $params['currentHost'] = $this->currentHost;
+        $params['currentUrl'] = $this->currentUrl;
+
         if (!array_key_exists('pagePath', $params)) {
             $params['pagePath'] = [];
         }
