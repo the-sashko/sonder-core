@@ -12,7 +12,7 @@ class TelegramPlugin
     /**
      * @var array|null Telegram API Credentials
      */
-    private $_credentials = null;
+    private ?array $_credentials = null;
 
     /**
      * Set Telegram API Credentials
@@ -25,26 +25,28 @@ class TelegramPlugin
     }
 
     /**
-     * Sending Message To Telegram Usera, Chats Or Channel
+     * Sending Message To Telegram User, Chats Or Channel
      *
      * @param string|null $message Message Text Value
+     *
+     * @throws Exception
      */
     public function send(?string $message = null): void
     {
         if (empty($message)) {
-            throw new \Exception('Message Is Not Set');
+            throw new Exception('Message Is Not Set');
         }
 
         $this->_checkCredentials();
 
-        $message = $this->_getFomatedMessage($message);
+        $message = $this->_getFormattedMessage($message);
 
         if (strlen($message) < 3) {
-            throw new \Exception('Message Too Short');
+            throw new Exception('Message Too Short');
         }
 
         if (!array_key_exists('chats', $this->_credentials)) {
-            throw new \Exception('Chat List Is Not Set');
+            throw new Exception('Chat List Is Not Set');
         }
 
         foreach ($this->_credentials['chats'] as $chatCode) {
@@ -61,7 +63,7 @@ class TelegramPlugin
      *
      * @return string Output Message Text Value
      */
-    private function _getFomatedMessage(?string $message = null): string
+    private function _getFormattedMessage(?string $message = null): string
     {
         $message = (string) $message;
 
@@ -74,11 +76,10 @@ class TelegramPlugin
         $message = preg_replace('/<br>/su', "\n", $message);
         $message = preg_replace('/\n+/su', "\n", $message);
         $message = preg_replace('/(^\s)|(\s$)/su', '', $message);
+        $message = preg_replace('/\n/su', "\n\n", $message);
         $message = urlencode($message);
 
-        $message = str_replace('&quot;', '---', $message);
-
-        return $message;
+        return str_replace('&quot;', '---', $message);
     }
 
     /**
@@ -86,6 +87,8 @@ class TelegramPlugin
      *
      * @param string $message  Message
      * @param string $chatCode ID Of Chat Or Channel
+     *
+     * @throws Exception
      */
     private function _sendToChat(string $message, string $chatCode): void
     {
@@ -105,6 +108,8 @@ class TelegramPlugin
      * Send Request To API URL
      *
      * @param string $url API URL
+     *
+     * @throws Exception
      */
     private function _sendToRemoteApi(string $url): void
     {
@@ -119,29 +124,31 @@ class TelegramPlugin
         curl_close($curl);
 
         if ($curlError) {
-            throw new \Exception(sprintf('Curl Error: %s', $curlError));
+            throw new Exception(sprintf('Curl Error: %s', $curlError));
         }
 
         $this->_validateApiResponse($curlResponse);
     }
 
     /**
-     * Check Is Valid Respose From Telegram API
+     * Check Is Valid Response From Telegram API
      *
-     * @param string|null $apiResponseJson Respose From API
+     * @param string|null $apiResponseJson Response From API
+     *
+     * @throws Exception
      */
     private function _validateApiResponse(
         ?string $apiResponseJson = null
     ): void
     {
         if (empty($apiResponseJson)) {
-            throw new \Exception('Invalid Telegram API Response');
+            throw new Exception('Invalid Telegram API Response');
         }
 
         $apiResponse = (array) json_decode($apiResponseJson, true);
 
         if (!array_key_exists('ok', $apiResponse)) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Telegram API Error. Response: %s',
                 $apiResponseJson
             ));
@@ -150,7 +157,7 @@ class TelegramPlugin
         $apiResponse['ok'] = (bool) $apiResponse['ok'];
 
         if (!$apiResponse['ok']) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Telegram API Error. Response: %s',
                 $apiResponseJson
             ));
@@ -199,11 +206,13 @@ class TelegramPlugin
 
     /**
      * Check Is Valid Telegram API Credentials
+     *
+     * @throws Exception
      */
     private function _checkCredentials(): void
     {
         if (empty($this->_credentials)) {
-            throw new \Exception('Credentials Are Not Set');
+            throw new Exception('Credentials Are Not Set');
         }
 
         if (
@@ -211,15 +220,15 @@ class TelegramPlugin
             !array_key_exists('chats', $this->_credentials) ||
             !is_array($this->_credentials['chats'])
         ) {
-            throw new \Exception('Credentials Has Bad Format');
+            throw new Exception('Credentials Has Bad Format');
         }
 
         if (strlen($this->_credentials['token']) < 1) {
-            throw new \Exception('Token Is Not Set');
+            throw new Exception('Token Is Not Set');
         }
 
         if (empty($this->_credentials['chats'])) {
-            throw new \Exception('Chat List Is Not Set');
+            throw new Exception('Chat List Is Not Set');
         }
     }
 }
