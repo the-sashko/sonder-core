@@ -1,4 +1,7 @@
 <?php
+
+use Codebird\Codebird;
+
 /**
  * Plugin For Sending Messages To Twitter
  */
@@ -12,12 +15,12 @@ class TwitterPlugin
     /**
      * @var object|null Instance Of Codebird
      */
-    private $_codebird = null;
+    private ?object $_codebird = null;
 
     /**
      * @var array|null Credentials
      */
-    private $_credentials = null;
+    private ?array $_credentials = null;
 
     /**
      * Set Twitter API Credentials
@@ -33,8 +36,12 @@ class TwitterPlugin
      * Sending Message To Twitter
      *
      * @param string|null $message Message Text
+     *
+     * @return bool Is Message Successfully Sent
+     *
+     * @throws Exception
      */
-    public function send(?string $message = null): void
+    public function send(?string $message = null): bool
     {
         $this->_validateMessage($message);
 
@@ -45,11 +52,13 @@ class TwitterPlugin
         $status   = sprintf('status=%s', $message);
         $response = (array) $this->_codebird->statuses_update($status);
 
-        $this->_validateResponse($response);
+        return $this->_validateResponse($response);
     }
 
     /**
      * Set Codebird Instance
+     *
+     * @throws Exception
      */
     private function _setCodebirdInstance(): void
     {
@@ -58,9 +67,9 @@ class TwitterPlugin
         $accessToken    = $this->_getAccessToken();
         $accessSecret   = $this->_getAccessSecret();
 
-        \Codebird\Codebird::setConsumerKey($consumerKey, $consumerSecret);
+        Codebird::setConsumerKey($consumerKey, $consumerSecret);
 
-        $this->_codebird = \Codebird\Codebird::getInstance();
+        $this->_codebird = Codebird::getInstance();
 
         $this->_codebird->setToken($accessToken, $accessSecret);
     }
@@ -69,6 +78,8 @@ class TwitterPlugin
      * Check Credentials Format
      *
      * @return string Consumer Key
+     *
+     * @throws Exception
      */
     private function _getConsumerKey(): string
     {
@@ -79,7 +90,7 @@ class TwitterPlugin
             !array_key_exists('key', $this->_credentials['consumer']) ||
             empty($this->_credentials['consumer']['key'])
         ) {
-            throw new \Exception('Twitter Config Has Bad Format');
+            throw new Exception('Twitter Config Has Bad Format');
         }
 
         return (string) $this->_credentials['consumer']['key'];
@@ -89,6 +100,8 @@ class TwitterPlugin
      * Check Credentials Format
      *
      * @return string Consumer Secret
+     *
+     * @throws Exception
      */
     private function _getConsumerSecret(): string
     {
@@ -99,7 +112,7 @@ class TwitterPlugin
             !array_key_exists('secret', $this->_credentials['consumer']) ||
             empty($this->_credentials['consumer']['secret'])
         ) {
-            throw new \Exception('Twitter Config Has Bad Format');
+            throw new Exception('Twitter Config Has Bad Format');
         }
 
         return (string) $this->_credentials['consumer']['secret'];
@@ -109,6 +122,8 @@ class TwitterPlugin
      * Check Credentials Format
      *
      * @return string Access Token
+     *
+     * @throws Exception
      */
     private function _getAccessToken(): string
     {
@@ -119,7 +134,7 @@ class TwitterPlugin
             !array_key_exists('token', $this->_credentials['access']) ||
             empty($this->_credentials['access']['token'])
         ) {
-            throw new \Exception('Twitter Config Has Bad Format');
+            throw new Exception('Twitter Config Has Bad Format');
         }
 
         return (string) $this->_credentials['access']['token'];
@@ -129,6 +144,8 @@ class TwitterPlugin
      * Check Credentials Format
      *
      * @return string Access Secret
+     *
+     * @throws Exception
      */
     private function _getAccessSecret(): string
     {
@@ -139,7 +156,7 @@ class TwitterPlugin
             !array_key_exists('secret', $this->_credentials['access']) ||
             empty($this->_credentials['access']['secret'])
         ) {
-            throw new \Exception('Twitter Config Has Bad Format');
+            throw new Exception('Twitter Config Has Bad Format');
         }
 
         return (string) $this->_credentials['access']['secret'];
@@ -149,6 +166,8 @@ class TwitterPlugin
      * Check Is Message Has Valid Format
      *
      * @param string|null $message Message Text
+     *
+     * @throws Exception
      */
     private function _validateMessage(?string $message = null): void
     {
@@ -166,16 +185,17 @@ class TwitterPlugin
     }
 
     /**
-     * Check Is Valid Respose From Twitter API
+     * Check Is Valid Response From Twitter API
      *
-     * @param array|null $response Respose From Twitter API
+     * @param array|null $response Response From Twitter API
      *
-     * @return bool Is Twitter API Respose Has Valid Format
+     * @return bool Is Twitter API Response Has Valid Format
+     * @throws Exception
      */
     private function _validateResponse(?array $response = null): bool
     {
         if (empty($response)) {
-            throw new \Exception('Twitter Response Has Bad Format');
+            throw new Exception('Twitter Response Has Bad Format');
         }
 
         if (!array_key_exists('errors', $response)) {
@@ -185,21 +205,21 @@ class TwitterPlugin
         $errors = (array) $response['errors'];
 
         if (empty($errors)) {
-            throw new \Exception('Unknow Twitter API Errror');
+            throw new Exception('Unknown Twitter API Error');
         }
 
         $error = (array) array_shift($errors);
 
         if (!array_key_exists('message', $error)) {
-            throw new \Exception('Unknow Twitter API Errror');
+            throw new Exception('Unknown Twitter API Error');
         }
 
         $error['message'] = (string) $error['message'];
 
         if (empty($error['message'])) {
-            throw new \Exception('Unknow Twitter API Errror');
+            throw new Exception('Unknown Twitter API Error');
         }
 
-        throw new \Exception($error['message']);
+        throw new Exception($error['message']);
     }
 }
