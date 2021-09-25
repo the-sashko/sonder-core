@@ -12,6 +12,8 @@ class RouterPlugin implements IRouterPlugin
     const CONTROLLERS_FILE_PATTERN = __DIR__.'/../../../'.
                                     'controllers/*Controller.php';
 
+    const DEFAULT_AREA = 'default';
+
     private $_annotationPlugin = null;
 
     private $_cache = null;
@@ -20,11 +22,15 @@ class RouterPlugin implements IRouterPlugin
 
     private $_page = null;
 
+    private $_area = null;
+
     public function __construct()
     {
         $this->_annotationPlugin = new AnnotationPlugin();
 
         $this->_cache = new RouterCache();
+
+        $this->_setArea();
     }
 
     public function getRoute(?string $url = null): ?IRouterEntity
@@ -140,7 +146,10 @@ class RouterPlugin implements IRouterPlugin
         }
 
         foreach ($routes as $route) {
-            if (preg_match($route->getRoutePattern(), $url)) {
+            if (
+                preg_match($route->getRoutePattern(), $url) &&
+                $route->getArea() == $this->_area
+            ) {
                 $routeByUrl = $route;
             }
         }
@@ -340,5 +349,14 @@ class RouterPlugin implements IRouterPlugin
         $routeParams = !empty($routeParams) ? $routeParams : null;
 
         return $routeParams;
+    }
+
+    private function _setArea(): void
+    {
+        $this->_area = static::DEFAULT_AREA;
+
+        if (defined('APP_AREA')) {
+            $this->_area = APP_AREA;
+        }
     }
 }
