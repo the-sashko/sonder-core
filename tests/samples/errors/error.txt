@@ -1,6 +1,0 @@
-Error #1234: Test Error Message
-File: test_file.php (123)
-Trace:
-foo
-bar
-test

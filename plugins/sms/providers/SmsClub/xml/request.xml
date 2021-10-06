@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<request_sendsms>
-	<username><![CDATA[{{login}}]]></username>
-	<password><![CDATA[{{token}}]]></password>
-	<from><![CDATA[{{alphaName}}]]></from>
-	<to><![CDATA[{{phone}}]]></to>
-	<text><![CDATA[{{message}}]]></text>
-</request_sendsms>
