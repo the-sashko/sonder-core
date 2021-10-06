@@ -137,3 +137,42 @@
 ### Bug Fixes
 
 - Fix Sitemap plugin
+
+## v1.2.0 (10/06/2021)
+
+### New Features
+
+- Add plugin for working with annotations
+- Add plugin for working with data
+- Add plugin for working with RSS
+- Add routing by annotations
+- Add BB-codes to markup plugin
+
+### Bug Fixes
+
+- Fix Captcha plugin
+- Fix Database plugin
+- Fix Error plugin
+- Fix GeoIP plugin
+- Fix Language plugin
+- Fix Link plugin
+- Fix Mock plugin
+- Fix Marrkup plugin
+- Fix Mail plugin
+- Fix Page plugin
+- Fix Paginator plugin
+- Fix Router plugin
+- Fix Telegram plugin
+- Fix Twitter plugin
+- Fix Shortener plugin
+- Fix SMS plugin
+- Fix Templater plugin
+- Fix Upload plugin
+- Fix Youtube plugin
+
+### Improvements
+
+- Rename project to Sonder Core
+- Migrate to PHP8
+- Multiple improvements in codestyle
+- 
