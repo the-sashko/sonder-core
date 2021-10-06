@@ -175,4 +175,3 @@
 - Rename project to Sonder Core
 - Migrate to PHP8
 - Multiple improvements in codestyle
-- 
