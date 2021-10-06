@@ -16,6 +16,11 @@ class Response extends CommonCore
     const SEO_DESCRIPTION_MAX_LENGTH = 300;
 
     /**
+     * @var int Max Length Of Meta Description
+     */
+    const META_DESCRIPTION_MAX_LENGTH = 200;
+
+    /**
      * @var string Default Templater Area
      */
     const DEFAULT_AREA = 'default';
@@ -122,6 +127,12 @@ class Response extends CommonCore
             );
 
             $seoDescription = sprintf('%s…', $seoDescription);
+
+            $seoDescription = preg_replace(
+                '/(([^\w]+)…)$/sui',
+                '…',
+                $seoDescription
+            );
         }
 
         $params['staticPage'] = $staticPageVO;
@@ -297,6 +308,33 @@ class Response extends CommonCore
                 static::PAGE_TITLE_SEPARATOR,
                 $metaParams['title']
             );
+        }
+
+        if (array_key_exists('description', $metaParams)) {
+            $metaDescriptionShort = $metaParams['description'];
+
+            $metaDescriptionMaxLength = static::META_DESCRIPTION_MAX_LENGTH;
+
+            if (strlen($metaDescriptionShort) > static::META_DESCRIPTION_MAX_LENGTH) {
+                $metaDescriptionShort = mb_substr(
+                    $metaDescriptionShort,
+                    0,
+                    $metaDescriptionMaxLength - 1
+                );
+
+                $metaDescriptionShort = sprintf(
+                    '%s…',
+                    $metaDescriptionShort
+                );
+
+                $metaDescriptionShort = preg_replace(
+                    '/(([^\w]+)…)$/sui',
+                    '…',
+                    $metaDescriptionShort
+                );
+            }
+
+            $metaParams['description_short'] = $metaDescriptionShort;
         }
 
         $this->_setMetaParamsImage($metaParams, $meta);
