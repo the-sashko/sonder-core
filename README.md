@@ -1,4 +1,4 @@
-# PHP Common Toolkit
+# Sonder Core
 
 Lightweight PHP framework
 
