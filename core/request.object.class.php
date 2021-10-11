@@ -3,8 +3,9 @@
 namespace Sonder\Core;
 
 use Exception;
+use Sonder\Plugins\IpPlugin;
 
-class RequestObject
+final class RequestObject
 {
     const DEFAULT_METHOD = 'get';
 
@@ -24,6 +25,11 @@ class RequestObject
      * @var array|null
      */
     private ?array $_postValues = null;
+
+    /**
+     * @var array|null
+     */
+    private ?array $_apiValues = null;
 
     /**
      * @var string|null
@@ -50,11 +56,15 @@ class RequestObject
      */
     private ?int $_time = null;
 
+    /**
+     * @var string|null
+     */
+    private ?string $_controller = null;
 
     /**
-     * @var RouterObject|null
+     * @var string|null
      */
-    private ?RouterObject $_route = null;
+    private ?string $_method = null;
 
     public function __construct()
     {
@@ -64,12 +74,10 @@ class RequestObject
         $this->setPostValues($_POST);
 
         $this->_setHost();
-        $this->setUrl();
-
+        $this->_setUrl();
+        $this->_setIp();
+        $this->_setUserAgent();
         $this->_setTime();
-
-        $this->_setRoute();
-
         $this->_removeGlobalInputValues();
     }
 
@@ -79,7 +87,7 @@ class RequestObject
     final public function getHttpMethod(): string
     {
         if (empty($this->_httpMethod)) {
-            return static::DEFAULT_METHOD;
+            return RequestObject::DEFAULT_METHOD;
         }
 
         return $this->_httpMethod;
@@ -128,6 +136,14 @@ class RequestObject
     }
 
     /**
+     * @return array|null
+     */
+    final public function getApiValues(): ?array
+    {
+        return $this->_apiValues;
+    }
+
+    /**
      * @return string
      *
      * @throws Exception
@@ -147,7 +163,7 @@ class RequestObject
     final public function getUrl(): string
     {
         if (empty($this->_url)) {
-            return static::DEFAULT_URL;
+            return RequestObject::DEFAULT_URL;
         }
 
         return $this->_url;
@@ -170,19 +186,27 @@ class RequestObject
     }
 
     /**
+     * @return string|null
+     */
+    final public function getController(): ?string
+    {
+        return $this->_controller;
+    }
+
+    /**
+     * @return string|null
+     */
+    final public function getMethod(): ?string
+    {
+        return $this->_method;
+    }
+
+    /**
      * @return int|null
      */
     final public function getTime(): ?int
     {
         return $this->_time;
-    }
-
-    /**
-     * @return RouterObject|null
-     */
-    final public function getRoute(): ?RouterObject
-    {
-        return $this->_route;
     }
 
     /**
@@ -215,36 +239,32 @@ class RequestObject
     }
 
     /**
-     * @param string|null $url
+     * @param array|null $apiValues
      */
-    final public function setUrl(?string $url = null): void
+    final public function setApiValues(?array $apiValues = null): void
     {
-        if (empty($url)) {
-            $url = $_SERVER['REQUEST_URI'];
-        }
-
-        $this->_url = $url;
+        $this->_apiValues = $apiValues;
     }
 
     /**
-     * @param string|null $ip
+     * @param string|null $controller
      */
-    final public function setIp(?string $ip = null): void
+    final public function setController(?string $controller = null): void
     {
-        $this->_ip = $ip;
+        $this->_controller = $controller;
     }
 
     /**
-     * @param string|null $userAgent
+     * @param string|null $method
      */
-    final public function setUserAgent(?string $userAgent = null): void
+    final public function setMethod(?string $method = null): void
     {
-        $this->_userAgent = $userAgent;
+        $this->_method = $method;
     }
 
     private function _setHttpMethod(): void
     {
-        $this->_httpMethod = static::DEFAULT_METHOD;
+        $this->_httpMethod = RequestObject::DEFAULT_METHOD;
 
         $method = $_SERVER['REQUEST_METHOD'];
         $method = mb_convert_case($method, MB_CASE_LOWER);
@@ -252,6 +272,11 @@ class RequestObject
         if (!empty($method)) {
             $this->_httpMethod = $method;
         }
+    }
+
+    private function _setUrl(): void
+    {
+        $this->_url = $_SERVER['REQUEST_URI'];
     }
 
     private function _setHost(): void
@@ -265,14 +290,19 @@ class RequestObject
         $this->_host = sprintf('%s://%s', $protocol, $_SERVER['HTTP_HOST']);
     }
 
+    private function _setIp(): void
+    {
+        $this->_ip = (new IpPlugin)->getIp();
+    }
+
+    private function _setUserAgent(): void
+    {
+        $this->_userAgent = $_SERVER['HTTP_USER_AGENT'];
+    }
+
     private function _setTime(): void
     {
         $this->_time = time();
-    }
-
-    private function _setRoute(): void
-    {
-        $this->_route = new RouterObject();
     }
 
     private function _removeGlobalInputValues(): void
