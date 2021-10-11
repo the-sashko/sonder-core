@@ -19,6 +19,8 @@ $autoload = function (string $directory, Closure $autoload) {
     }
 };
 
+require_once (__DIR__ . '/core/core.object.class.php');
+
 $autoload(__DIR__ . '/core/interfaces', $autoload);
 $autoload(__DIR__ . '/core', $autoload);
 
