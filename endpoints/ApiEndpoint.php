@@ -10,8 +10,6 @@ class ApiEndpoint extends CoreEndpoint implements IEndpoint
      * @var array|null
      */
     private ?array $_middlewares = [
-        'security',
-        'api',
-        'router'
+        'api'
     ];
 }

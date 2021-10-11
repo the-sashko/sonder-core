@@ -6,5 +6,5 @@ use Sonder\Core\RequestObject;
 
 interface IMiddleware
 {
-    public function getRequest(): RequestObject;
+    public function run(): void;
 }

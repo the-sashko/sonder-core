@@ -4,17 +4,18 @@ namespace Sonder\Core;
 
 use Exception;
 use ReflectionMethod;
-
 use Sonder\Core\Interfaces\IController;
 use Sonder\Core\Interfaces\IEndpoint;
 use Sonder\Core\Interfaces\IMiddleware;
 
 class CoreEndpoint implements IEndpoint
 {
+    const SECURITY_MIDDLEWARE = 'security';
+
+    const ROUTER_MIDDLEWARE = 'router';
+
     const DEFAULT_MIDDLEWARES = [
-        'security',
-        'session',
-        'router'
+        'session'
     ];
 
     /**
@@ -40,6 +41,16 @@ class CoreEndpoint implements IEndpoint
             $this->_middlewares = APP_MIDDLEWARES;
         }
 
+        $this->_middlewares = array_merge(
+            [
+                static::SECURITY_MIDDLEWARE
+            ],
+            $this->_middlewares,
+            [
+                static::ROUTER_MIDDLEWARE
+            ]
+        );
+
         $this->_request = new RequestObject();
         $this->_response = new ResponseObject();
     }
@@ -51,13 +62,12 @@ class CoreEndpoint implements IEndpoint
     {
         foreach ($this->_middlewares as $middleware) {
             $middleware = $this->_getMiddlewareInstance($middleware);
-
-            $this->_request = $middleware->getRequest();
+            $middleware->run();
         }
 
         $controller = $this->_getControllerInstance();
 
-        $method = $this->_request->getRoute()->getMethod();
+        $method = $this->_request->getMethod();
 
         if (!$this->_isValidControllerMethod($controller)) {
             throw new Exception('Invalid Controller Method');
@@ -96,7 +106,7 @@ class CoreEndpoint implements IEndpoint
      */
     private function _getControllerInstance(): IController
     {
-        $controller = $this->_request->getRoute()->getController();
+        $controller = $this->_request->getController();
 
         if (empty($controller)) {
             throw new Exception('Controller Is Not set');
@@ -117,7 +127,7 @@ class CoreEndpoint implements IEndpoint
      */
     private function _isValidControllerMethod(IController $controller): bool
     {
-        $method = $this->_request->getRoute()->getMethod();
+        $method = $this->_request->getMethod();
 
         if (empty($method)) {
             return false;

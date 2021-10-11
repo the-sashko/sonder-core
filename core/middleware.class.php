@@ -2,22 +2,15 @@
 
 namespace Sonder\Core;
 
-use Sonder\Core\Interfaces\IMiddleware;
-
-class CoreMiddleware extends CoreObject implements IMiddleware
+class CoreMiddleware extends CoreObject
 {
     /**
      * @var RequestObject
      */
-    private RequestObject $_request;
+    protected RequestObject $request;
 
-    public function __construct(RequestObject $request)
+    public function __construct(RequestObject &$request)
     {
-        $this->_request = $request;
-    }
-
-    final public function getRequest(): RequestObject
-    {
-        return $this->_request;
+        $this->request = $request;
     }
 }

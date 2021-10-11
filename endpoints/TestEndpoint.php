@@ -10,8 +10,6 @@ class TestEndpoint extends CoreEndpoint implements IEndpoint
      * @var array|null
      */
     private ?array $_middlewares = [
-        'security',
-        'session',
-        'router'
+        'session'
     ];
 }
