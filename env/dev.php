@@ -1,8 +1,13 @@
 <?php
-namespace Sonder;
-
 ini_set('error_reporting', (string)E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
-define('APP_RESPONSE_TYPE', 'html');
+if (!defined('APP_ENDPOINT')) {
+    define('APP_ENDPOINT', 'app');
+}
+
+if (!defined('APP_RESPONSE_TYPE')) {
+    define('APP_RESPONSE_TYPE', 'html');
+}
+

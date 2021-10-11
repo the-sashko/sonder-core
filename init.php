@@ -1,12 +1,65 @@
 <?php
-namespace Sonder;
-
-use Exception;
-
 try {
     define('APP_CORE_DIR_PATH', realpath(__DIR__));
-    define('APP_PROTECTED_DIR_PATH', realpath(APP_CORE_DIR_PATH . '/../'));
-    define('APP_PUBLIC_DIR_PATH', realpath(APP_PROTECTED_DIR_PATH . '/../public'));
+
+    if (!defined('APP_PROTECTED_DIR_PATH')) {
+        define(
+            'APP_PROTECTED_DIR_PATH',
+            realpath(APP_CORE_DIR_PATH . '/../')
+        );
+    }
+
+    if (!defined('APP_PUBLIC_DIR_PATH')) {
+        define(
+            'APP_PUBLIC_DIR_PATH',
+            realpath(APP_PROTECTED_DIR_PATH . '/../public')
+        );
+    }
+
+    if (!defined('APP_SOURCE_PATHS')) {
+        define(
+            'APP_SOURCE_PATHS',
+            [
+                'endpoints' => [
+                    APP_PROTECTED_DIR_PATH . '/endpoints',
+                    APP_CORE_DIR_PATH . '/endpoints'
+                ],
+
+                'middlewares' => [
+                    APP_PROTECTED_DIR_PATH . '/middlewares',
+                    APP_CORE_DIR_PATH . '/middlewares'
+                ],
+
+                'controllers' => [
+                    APP_PROTECTED_DIR_PATH . '/controllers',
+                    APP_CORE_DIR_PATH . '/controllers'
+                ],
+
+                'models' => [
+                    APP_PROTECTED_DIR_PATH . '/models',
+                    APP_CORE_DIR_PATH . '/models'
+                ],
+
+                'hooks' => [
+                    APP_PROTECTED_DIR_PATH . '/hooks',
+                    APP_CORE_DIR_PATH . '/hooks'
+                ],
+
+                'plugins' => [
+                    APP_PROTECTED_DIR_PATH . '/plugins',
+                    APP_CORE_DIR_PATH . '/plugins'
+                ],
+
+                'lang' => [
+                    APP_PROTECTED_DIR_PATH . '/lang'
+                ],
+
+                'pages' => [
+                    APP_PROTECTED_DIR_PATH . '/pages'
+                ]
+            ]
+        );
+    }
 
     if (
         empty(APP_CORE_DIR_PATH) ||
@@ -16,42 +69,13 @@ try {
         throw new Exception('Invalid Project Structure');
     }
 
-    define('APP_CLI_DIR_PATH', realpath(APP_PROTECTED_DIR_PATH . '/../cli'));
-
-    define('APP_ENV_DIR_PATH', __DIR__ . '/../env');
-    define('CORE_ENV_DIR_PATH', __DIR__ . '/env');
-
-    if (!defined('APP_ENV')) {
-        define('APP_ENV', 'app');
-    }
-
-    $appEnvFilePath = sprintf(
-        '%s/%s.php',
-        APP_ENV_DIR_PATH,
-        APP_ENV
-    );
-
-    $coreEnvFilePath = sprintf(
-        '%s/%s.php',
-        CORE_ENV_DIR_PATH,
-        APP_ENV
-    );
-
-    if (file_exists($appEnvFilePath) && is_file($appEnvFilePath)) {
-        require_once $appEnvFilePath;
-    }
-
-    if (file_exists($coreEnvFilePath) && is_file($coreEnvFilePath)) {
-        require_once $coreEnvFilePath;
-    }
-
     if (!defined('APP_MODE')) {
         define('APP_MODE', 'prod');
     }
 
     $coreEnvFilePath = sprintf(
-        '%s/%s.php',
-        CORE_ENV_DIR_PATH,
+        '%s/env/%s.php',
+        APP_CORE_DIR_PATH,
         APP_MODE
     );
 
@@ -71,9 +95,10 @@ try {
         define('APP_RESPONSE_TYPE', 'html');
     }
 
+    require_once APP_CORE_DIR_PATH . '/autoload.php';
     require_once APP_CORE_DIR_PATH . '/app.php';
 
-    (new App)->run();
+    (new SonderCore\App)->run();
 } catch (Exception $exp) {
     $errorMessage = $exp->getMessage();
 

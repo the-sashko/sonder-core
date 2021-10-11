@@ -1,6 +1,4 @@
 <?php
-namespace Sonder;
-
 ini_set('error_reporting', (string)E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
@@ -33,4 +31,10 @@ $_POST = [];
 $_GET = [];
 $_REQUEST = [];
 
-define('APP_RESPONSE_TYPE', 'text');
+if (!defined('APP_ENDPOINT')) {
+    define('APP_ENDPOINT', 'cli');
+}
+
+if (!defined('APP_RESPONSE_TYPE')) {
+    define('APP_RESPONSE_TYPE', 'text');
+}
