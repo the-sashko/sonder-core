@@ -1,4 +1,5 @@
 <?php
+
 namespace SonderCore\Core\Interfaces;
 
 use SonderCore\Core\RequestObject;

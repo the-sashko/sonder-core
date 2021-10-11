@@ -65,31 +65,15 @@ final class AutoloadCore
         $className = mb_convert_case($className, MB_CASE_LOWER);
         $classType = mb_convert_case($classType, MB_CASE_LOWER);
 
-        switch ($classType) {
-            case 'endpoints':
-                $result = $this->_loadEndpoint($className);
-                break;
-            case 'middlewares':
-                $result = $this->_loadMiddleware($className);
-                break;
-            case 'controllers':
-                $result = $this->_loadController($className);
-                break;
-            case 'models':
-                $result = $this->_loadModel($className);
-                break;
-            case 'hooks':
-                $result = $this->_loadHook($className);
-                break;
-            case 'plugins':
-                $result = $this->_loadPlugin($className);
-                break;
-            default:
-                $result = false;
-                break;
-        }
-
-        return $result;
+        return match ($classType) {
+            'endpoints' => $this->_loadEndpoint($className),
+            'middlewares' => $this->_loadMiddleware($className),
+            'controllers' => $this->_loadController($className),
+            'models' => $this->_loadModel($className),
+            'hooks' => $this->_loadHook($className),
+            'plugins' => $this->_loadPlugin($className),
+            default => false
+        };
     }
 
     /**
@@ -165,7 +149,7 @@ final class AutoloadCore
      */
     private function _loadController(?string $className = null): bool
     {
-        //To-Do
+        //TODO
 
         return true;
     }
@@ -177,7 +161,7 @@ final class AutoloadCore
      */
     private function _loadModel(?string $className = null): bool
     {
-        //To-Do
+        //TODO
 
         return true;
     }
@@ -189,7 +173,7 @@ final class AutoloadCore
      */
     private function _loadPlugin(?string $className = null): bool
     {
-        //To-Do
+        //TODO
 
         return true;
     }

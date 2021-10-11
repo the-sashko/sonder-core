@@ -2,14 +2,12 @@
 
 namespace SonderCore\Core;
 
-use SonderCore\Core\RequestObject;
-
 use SonderCore\Core\Interfaces\IMiddleware;
 
-class CoreMiddleware implements IMiddleware
+class CoreMiddleware extends CoreObject implements IMiddleware
 {
     /**
-     * @var \SonderCore\Core\RequestObject
+     * @var RequestObject
      */
     private RequestObject $_request;
 

@@ -1,2 +1,8 @@
 <?php
-//TODO
+
+namespace SonderCore\Core\Interfaces;
+
+interface IController
+{
+    //TODO
+}

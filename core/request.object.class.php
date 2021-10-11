@@ -2,6 +2,8 @@
 
 namespace SonderCore\Core;
 
+use Exception;
+
 class RequestObject
 {
     const DEFAULT_METHOD = 'get';
@@ -128,12 +130,12 @@ class RequestObject
     /**
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     final public function getHost(): string
     {
         if (empty($this->_host)) {
-            throw new \Exception('Host Is Not Set!');
+            throw new Exception('Host Is Not Set!');
         }
 
         return $this->_host;

@@ -1,6 +1,8 @@
 <?php
 namespace SonderCore\Core;
 
+use Exception;
+
 class ResponseObject
 {
     const CONTENT_TYPES = [
@@ -120,7 +122,9 @@ class ResponseObject
     }
 
     /**
-     * @param string|null $type
+     * @param string|null $contentType
+     *
+     * @throws Exception
      */
     final public function setContentType(?string $contentType = null): void
     {
@@ -128,10 +132,15 @@ class ResponseObject
             empty($contentType) ||
             !in_array($contentType, array_keys(static::CONTENT_TYPES))
         ) {
-            throw new \Exception('Unsupported Content Type');
+            throw new Exception('Unsupported Content Type');
         }
 
         $this->_contentType = $contentType;
+    }
+
+    final public function getHttpHeader(): void
+    {
+        //TODO
     }
 
     /**
@@ -152,6 +161,8 @@ class ResponseObject
 
     /**
      * @param int $httpCode
+     *
+     * @throws Exception
      */
     final public function setHttpCode(int $httpCode = 200): void
     {
@@ -159,7 +170,7 @@ class ResponseObject
             $httpCode != static::DEFAULT_HTTP_CODE &&
             !in_array($httpCode, array_keys(static::HTTP_ERRORS))
         ) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf('Unsupported HTTP Code: %d', $httpCode)
             );
         }

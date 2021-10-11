@@ -2,10 +2,12 @@
 
 namespace SonderCore\Core;
 
-use SonderCore\Core\RequestObject;
-use SonderCore\Core\ResponseObject;
+use Exception;
+use ReflectionMethod;
 
+use SonderCore\Core\Interfaces\IController;
 use SonderCore\Core\Interfaces\IEndpoint;
+use SonderCore\Core\Interfaces\IMiddleware;
 
 class CoreEndpoint implements IEndpoint
 {
@@ -20,8 +22,14 @@ class CoreEndpoint implements IEndpoint
      */
     private array $_middlewares;
 
+    /**
+     * @var RequestObject
+     */
     private RequestObJect $_request;
 
+    /**
+     * @var ResponseObject
+     */
     private ResponseObJect $_response;
 
     public function __construct()
@@ -33,38 +41,98 @@ class CoreEndpoint implements IEndpoint
         }
 
         $this->_request = new RequestObject();
-
         $this->_response = new ResponseObject();
     }
 
+    /**
+     * @throws Exception
+     */
     final public function run(): void
     {
         foreach ($this->_middlewares as $middleware) {
-            $this->_request = $this->_runMiddleware($middleware);
+            $middleware = $this->_getMiddlewareInstance($middleware);
+
+            $this->_request = $middleware->getRequest();
         }
 
-        $controller = $this->_request->getRoute()->getController();
+        $controller = $this->_getControllerInstance();
+
         $method = $this->_request->getRoute()->getMethod();
+
+        if (!$this->_isValidControllerMethod($controller)) {
+            throw new Exception('Invalid Controller Method');
+        }
 
         $this->_response = (new $controller)->$method();
 
-        //ToDo
+        $this->_response->setHttpHeader();
+
+        echo $this->_response->getContent();
+
+        exit(0);
     }
 
     /**
      * @param string|null $middleware
      *
-     * @return RequestObject
+     * @return IMiddleware
      */
-    private function _runMiddleware(?string $middleware = null): RequestObject
+    private function _getMiddlewareInstance(
+        ?string $middleware = null
+    ): IMiddleware
     {
         $middleware = sprintf(
             '\SonderCore\Middlewares\%sMiddleware',
             mb_convert_case($middleware, MB_CASE_TITLE)
         );
 
-        $middleware = new $middleware($this->_request);
+        return new $middleware($this->_request);
+    }
 
-        return $middleware->getRequest();
+    /**
+     * @return IController
+     *
+     * @throws Exception
+     */
+    private function _getControllerInstance(): IController
+    {
+        $controller = $this->_request->getRoute()->getController();
+
+        if (empty($controller)) {
+            throw new Exception('Controller Is Not set');
+        }
+
+        $controller = sprintf(
+            '\SonderCore\Controllers\%sController',
+            mb_convert_case($controller, MB_CASE_TITLE)
+        );
+
+        return new $controller($this->_request);
+    }
+
+    /**
+     * @param IController $controller
+     *
+     * @return bool
+     */
+    private function _isValidControllerMethod(IController $controller): bool
+    {
+        $method = $this->_request->getRoute()->getMethod();
+
+        if (empty($method)) {
+            return false;
+        }
+
+        if (!method_exists($controller, $method)) {
+            return false;
+        }
+
+        $reflection = new ReflectionMethod($controller, $method);
+
+        if (!$reflection->isPublic()) {
+            return false;
+        }
+
+        return true;
     }
 }

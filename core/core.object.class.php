@@ -1,2 +1,8 @@
 <?php
-//TODO
+
+namespace SonderCore\Core;
+
+class CoreObject
+{
+    //TODO
+}
