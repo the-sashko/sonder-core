@@ -1,5 +1,5 @@
 <?php
-namespace SonderCore;
+namespace Sonder;
 
 final class App
 {
@@ -27,7 +27,7 @@ final class App
     final public function run(): void
     {
         $endpointClass = sprintf(
-            '\SonderCore\Endpoints\%sEndpoint',
+            '\Sonder\Endpoints\%sEndpoint',
             mb_convert_case($this->_endpointName, MB_CASE_TITLE)
         );
 

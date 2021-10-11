@@ -1,8 +1,8 @@
 <?php
 
-namespace SonderCore\Core;
+namespace Sonder\Core;
 
-use SonderCore\Core\Interfaces\IController;
+use Sonder\Core\Interfaces\IController;
 
 class CoreController extends CoreObject implements IController
 {

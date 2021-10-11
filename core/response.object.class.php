@@ -1,5 +1,6 @@
 <?php
-namespace SonderCore\Core;
+
+namespace Sonder\Core;
 
 use Exception;
 

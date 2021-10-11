@@ -1,8 +1,8 @@
 <?php
-namespace SonderCore\Endpoints;
+namespace Sonder\Endpoints;
 
-use SonderCore\Core\CoreEndpoint;
-use SonderCore\Core\Interfaces\IEndpoint;
+use Sonder\Core\CoreEndpoint;
+use Sonder\Core\Interfaces\IEndpoint;
 
 class ApiEndpoint extends CoreEndpoint implements IEndpoint
 {

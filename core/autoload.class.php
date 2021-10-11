@@ -1,6 +1,6 @@
 <?php
 
-namespace SonderCore\Core;
+namespace Sonder\Core;
 
 final class AutoloadCore
 {

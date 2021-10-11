@@ -1,13 +1,13 @@
 <?php
 
-namespace SonderCore\Core;
+namespace Sonder\Core;
 
 use Exception;
 use ReflectionMethod;
 
-use SonderCore\Core\Interfaces\IController;
-use SonderCore\Core\Interfaces\IEndpoint;
-use SonderCore\Core\Interfaces\IMiddleware;
+use Sonder\Core\Interfaces\IController;
+use Sonder\Core\Interfaces\IEndpoint;
+use Sonder\Core\Interfaces\IMiddleware;
 
 class CoreEndpoint implements IEndpoint
 {
@@ -82,7 +82,7 @@ class CoreEndpoint implements IEndpoint
     ): IMiddleware
     {
         $middleware = sprintf(
-            '\SonderCore\Middlewares\%sMiddleware',
+            '\Sonder\Middlewares\%sMiddleware',
             mb_convert_case($middleware, MB_CASE_TITLE)
         );
 
@@ -103,7 +103,7 @@ class CoreEndpoint implements IEndpoint
         }
 
         $controller = sprintf(
-            '\SonderCore\Controllers\%sController',
+            '\Sonder\Controllers\%sController',
             mb_convert_case($controller, MB_CASE_TITLE)
         );
 

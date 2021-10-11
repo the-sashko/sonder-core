@@ -1,5 +1,5 @@
 <?php
-namespace SonderCore\Core\Interfaces;
+namespace Sonder\Core\Interfaces;
 
 interface IEndpoint
 {

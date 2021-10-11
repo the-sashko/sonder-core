@@ -1,8 +1,8 @@
 <?php
-namespace SonderCore\Middlewares;
+namespace Sonder\Middlewares;
 
-use SonderCore\Core\CoreMiddleware;
-use SonderCore\Core\Interfaces\IMiddleware;
+use Sonder\Core\CoreMiddleware;
+use Sonder\Core\Interfaces\IMiddleware;
 
 class RestMiddleware extends CoreMiddleware implements IMiddleware
 {

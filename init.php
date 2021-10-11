@@ -98,7 +98,7 @@ try {
     require_once APP_CORE_DIR_PATH . '/autoload.php';
     require_once APP_CORE_DIR_PATH . '/app.php';
 
-    (new SonderCore\App)->run();
+    (new Sonder\App)->run();
 } catch (Exception $exp) {
     $errorMessage = $exp->getMessage();
 

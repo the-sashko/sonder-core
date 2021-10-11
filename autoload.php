@@ -1,8 +1,8 @@
 <?php
-namespace SonderCore;
+namespace Sonder;
 
 use Closure;
-use SonderCore\Core\AutoloadCore;
+use Sonder\Core\AutoloadCore;
 
 $autoload = function (string $directory, Closure $autoload) {
     foreach ((array)glob($directory . '/*') as $filePath) {

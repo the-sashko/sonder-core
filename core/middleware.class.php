@@ -1,8 +1,8 @@
 <?php
 
-namespace SonderCore\Core;
+namespace Sonder\Core;
 
-use SonderCore\Core\Interfaces\IMiddleware;
+use Sonder\Core\Interfaces\IMiddleware;
 
 class CoreMiddleware extends CoreObject implements IMiddleware
 {

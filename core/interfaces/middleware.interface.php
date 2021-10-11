@@ -1,8 +1,8 @@
 <?php
 
-namespace SonderCore\Core\Interfaces;
+namespace Sonder\Core\Interfaces;
 
-use SonderCore\Core\RequestObject;
+use Sonder\Core\RequestObject;
 
 interface IMiddleware
 {
