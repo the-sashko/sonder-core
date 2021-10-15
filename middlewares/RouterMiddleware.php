@@ -12,6 +12,28 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 
     final public function run(): void
     {
+        if (
+            empty($this->request->getController()) ||
+            empty($this->request->getMethod())
+        ) {
+            $this->_setRouteByAnnotations();
+        }
+
+        if (
+            empty($this->request->getController()) ||
+            empty($this->request->getMethod())
+        ) {
+            $this->_setRouteByUrlParams();
+        }
+    }
+
+    private function _setRouteByAnnotations(): void
+    {
+        //TODO
+    }
+
+    private function _setRouteByUrlParams(): void
+    {
         $controller = $this->request->getUrlValue('controller');
         $method = $this->request->getUrlValue('method');
 

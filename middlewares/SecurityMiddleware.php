@@ -4,13 +4,16 @@ namespace Sonder\Middlewares;
 
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
-use Sonder\Plugins\SecurityPlugin;
+use Exception;
 
 final class SecurityMiddleware extends CoreMiddleware implements IMiddleware
 {
+    /**
+     * @throws Exception
+     */
     final public function run(): void
     {
-        $securityPlugin = new SecurityPlugin();
+        $securityPlugin = $this->getPlugin('security');
 
         $postValues = $this->request->getPostValues();
         $urlValues = $this->request->getUrlValues();
@@ -49,5 +52,7 @@ final class SecurityMiddleware extends CoreMiddleware implements IMiddleware
         $this->request->setPostValues($postValues);
         $this->request->setUrlValues($urlValues);
         $this->request->setApiValues($apiValues);
+
+        $this->request->setIp($this->getPlugin('ip')->getIp());
     }
 }
