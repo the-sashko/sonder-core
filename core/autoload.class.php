@@ -19,29 +19,11 @@ final class AutoloadCore
      */
     private array $_controllerPaths = [];
 
-    /**
-     * @var array
-     */
-    private array $_modelPaths = [];
-
-    /**
-     * @var array
-     */
-    private array $_hookPaths = [];
-
-    /**
-     * @var array
-     */
-    private array $_pluginPaths = [];
-
     final public function __construct()
     {
         $this->_endpointPaths = APP_SOURCE_PATHS['endpoints'];
         $this->_middlewarePaths = APP_SOURCE_PATHS['middlewares'];
         $this->_controllerPaths = APP_SOURCE_PATHS['controllers'];
-        $this->_modelPaths = APP_SOURCE_PATHS['models'];
-        $this->_hookPaths = APP_SOURCE_PATHS['hooks'];
-        $this->_pluginPaths = APP_SOURCE_PATHS['plugins'];
     }
 
     /**
@@ -69,9 +51,6 @@ final class AutoloadCore
             'endpoints' => $this->_loadEndpoint($className),
             'middlewares' => $this->_loadMiddleware($className),
             'controllers' => $this->_loadController($className),
-            'models' => $this->_loadModel($className),
-            'hooks' => $this->_loadHook($className),
-            'plugins' => $this->_loadPlugin($className),
             default => false
         };
     }
@@ -164,58 +143,6 @@ final class AutoloadCore
 
         foreach ($this->_controllerPaths as $controllerDirPath) {
             $filePath = sprintf('%s/%s', $controllerDirPath, $fileName);
-
-            if (file_exists($filePath) && is_file($filePath)) {
-                require_once $filePath;
-
-                break;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string|null $className
-     *
-     * @return bool
-     */
-    private function _loadModel(?string $className = null): bool
-    {
-        //TODO
-
-        return true;
-    }
-
-    /**
-     * @param string|null $className
-     *
-     * @return bool
-     */
-    private function _loadPlugin(?string $className = null): bool
-    {
-        if (empty($className) || empty($this->_pluginPaths)) {
-            return false;
-        }
-
-        $pluginName = preg_replace(
-            '/^(.*?)plugin$/su',
-            '$1',
-            $className
-        );
-
-        $fileName = sprintf(
-            '%sPlugin.php',
-            mb_convert_case($pluginName, MB_CASE_TITLE)
-        );
-
-        foreach ($this->_pluginPaths as $pluginDirPath) {
-            $filePath = sprintf(
-                '%s/%s/%s',
-                $pluginDirPath,
-                $pluginName,
-                $fileName
-            );
 
             if (file_exists($filePath) && is_file($filePath)) {
                 require_once $filePath;

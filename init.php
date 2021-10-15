@@ -50,6 +50,10 @@ try {
                     APP_CORE_DIR_PATH . '/plugins'
                 ],
 
+                'config' => [
+                    APP_PROTECTED_DIR_PATH . '/config'
+                ],
+
                 'lang' => [
                     APP_PROTECTED_DIR_PATH . '/lang'
                 ],
