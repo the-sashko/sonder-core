@@ -1,2 +1,8 @@
 <?php
-//TODO
+
+namespace Sonder\Core;
+
+class CoreHook extends CoreObject
+{
+    //TODO
+}

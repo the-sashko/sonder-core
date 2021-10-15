@@ -3,7 +3,6 @@
 namespace Sonder\Core;
 
 use Exception;
-use Sonder\Plugins\IpPlugin;
 
 final class RequestObject
 {
@@ -75,7 +74,6 @@ final class RequestObject
 
         $this->_setHost();
         $this->_setUrl();
-        $this->_setIp();
         $this->_setUserAgent();
         $this->_setTime();
         $this->_removeGlobalInputValues();
@@ -223,6 +221,16 @@ final class RequestObject
     }
 
     /**
+     * @param string|null $ip
+     */
+    final public function setIp(?string $ip = null): void
+    {
+        if (!empty($ip)) {
+            $this->_ip = $ip;
+        }
+    }
+
+    /**
      * @param array|null $urlValues
      */
     final public function setUrlValues(?array $urlValues = null): void
@@ -288,11 +296,6 @@ final class RequestObject
         }
 
         $this->_host = sprintf('%s://%s', $protocol, $_SERVER['HTTP_HOST']);
-    }
-
-    private function _setIp(): void
-    {
-        $this->_ip = (new IpPlugin)->getIp();
     }
 
     private function _setUserAgent(): void

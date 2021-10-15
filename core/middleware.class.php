@@ -11,6 +11,8 @@ class CoreMiddleware extends CoreObject
 
     public function __construct(RequestObject &$request)
     {
+        parent::__construct();
+
         $this->request = $request;
     }
 }

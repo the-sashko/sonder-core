@@ -59,6 +59,11 @@ class ResponseObject
     const DEFAULT_HTTP_CODE = 200;
 
     /**
+     * @var RedirectObject
+     */
+    public RedirectObject $redirect;
+
+    /**
      * @var string
      */
     private string $_contentType;
@@ -77,11 +82,6 @@ class ResponseObject
      * @var int
      */
     private int $_httpCode;
-
-    /**
-     * @var RedirectObject|null
-     */
-    public ?RedirectObject $redirect = null;
 
     public function __construct()
     {
@@ -122,6 +122,11 @@ class ResponseObject
         return $this->_httpCode;
     }
 
+    final public function getHttpHeader(): void
+    {
+        //TODO
+    }
+
     /**
      * @param string|null $contentType
      *
@@ -137,11 +142,6 @@ class ResponseObject
         }
 
         $this->_contentType = $contentType;
-    }
-
-    final public function getHttpHeader(): void
-    {
-        //TODO
     }
 
     /**

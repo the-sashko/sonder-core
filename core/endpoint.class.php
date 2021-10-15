@@ -73,7 +73,9 @@ class CoreEndpoint implements IEndpoint
             throw new Exception('Invalid Controller Method');
         }
 
-        $this->_response = (new $controller)->$method();
+        $controller = new $controller($this->_request);
+
+        $this->_response = $controller->$method();
 
         $this->_response->setHttpHeader();
 
