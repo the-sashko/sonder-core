@@ -1,8 +1,14 @@
 <?php
+
 namespace Sonder\Plugins;
 
 final class SecurityPlugin
 {
+    /**
+     * @param mixed|null $input
+     *
+     * @return mixed
+     */
     final public function escapeInput(mixed $input = null): mixed
     {
         if (is_array($input)) {
