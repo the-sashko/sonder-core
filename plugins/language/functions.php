@@ -1,5 +1,7 @@
 <?php
 
+namespace Sonder;
+
 use Sonder\Plugins\Language\Exceptions\LanguageException;
 use Sonder\Plugins\LanguagePlugin;
 
