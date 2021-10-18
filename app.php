@@ -2,6 +2,8 @@
 
 namespace Sonder;
 
+use Exception;
+use Sonder\Core\CoreObject;
 use Throwable;
 
 final class App
@@ -30,6 +32,9 @@ final class App
         set_error_handler([$this, 'errorHandler']);
     }
 
+    /**
+     * @throws Exception
+     */
     final public function run(): void
     {
         try {
@@ -41,11 +46,19 @@ final class App
             $endpoint = new $endpointClass();
 
             $endpoint->run($this->_middlewares);
-        } catch (Throwable $exp) {
-            $this->exceptionHandler($exp);
+        } catch (Throwable $exception) {
+            $this->exceptionHandler($exception);
         }
     }
 
+    /**
+     * @param int $errorCode
+     * @param string $errorMessage
+     * @param string $errorFile
+     * @param int $errorLine
+     *
+     * @throws Exception
+     */
     final public function errorHandler(
         int    $errorCode,
         string $errorMessage,
@@ -53,6 +66,9 @@ final class App
         int    $errorLine
     ): void
     {
+        $loggerPlugin = CoreObject::getPlugin('logger');
+        $errorPlugin = CoreObject::getPlugin('error');
+
         $debugBacktrace = $this->_getDebugBacktrace();
 
         $logMessage = sprintf(
@@ -64,17 +80,30 @@ final class App
             implode(' -> ', array_reverse($debugBacktrace))
         );
 
-        //TODO
+        $loggerPlugin->logError($logMessage);
 
-        //TMP
-        echo $logMessage;
-        //END TMP
+        $errorPlugin->displayError(
+            $errorCode,
+            $errorMessage,
+            $errorFile,
+            $errorLine,
+            $debugBacktrace,
+            APP_RESPONSE_FORMAT
+        );
 
         exit(0);
     }
 
+    /**
+     * @param Throwable $exception
+     *
+     * @throws Exception
+     */
     final public function exceptionHandler(Throwable $exception): void
     {
+        $loggerPlugin = CoreObject::getPlugin('logger');
+        $errorPlugin = CoreObject::getPlugin('error');
+
         $debugBacktrace = $this->_getDebugBacktrace();
 
         $logMessage = sprintf(
@@ -96,15 +125,50 @@ final class App
             $logName
         );
 
-        //TODO
+        if (empty($logName)) {
+            $logName = $loggerPlugin::DEFAULT_ERROR_LOG_NAME;
+        }
 
-        //TMP
-        echo $logMessage;
-        //END TMP
+        $logName = preg_replace(
+            '/([^A-Za-z])/su',
+            '_',
+            $logName
+        );
+
+
+        $logName = preg_replace(
+            '/([A-Z])/su',
+            '_$1',
+            $logName
+        );
+
+        $logName = preg_replace('/([_]+)/su', '_', $logName);
+
+        $logName = preg_replace(
+            '/((^_)|(_$))/su',
+            '',
+            $logName
+        );
+
+        $logName = mb_convert_case($logName, MB_CASE_LOWER);
+
+        $loggerPlugin->logError($logMessage, $logName);
+
+        $errorPlugin->displayError(
+            $exception->getCode(),
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine(),
+            $debugBacktrace,
+            APP_RESPONSE_FORMAT
+        );
 
         exit(0);
     }
 
+    /**
+     * @return array
+     */
     private function _getDebugBacktrace(): array
     {
         $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
