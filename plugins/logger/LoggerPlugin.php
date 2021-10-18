@@ -114,24 +114,11 @@ final class LoggerPlugin
     }
 
     /**
-     * @param string|null $logDirPath
-     * @param string|null $logName
-     *
-     * @return bool
+     * @param string $logDirPath
+     * @param string $logName
      */
-    private function _rotateLogFiles(
-        ?string $logDirPath = null,
-        ?string $logName = null
-    ): bool
+    private function _rotateLogFiles(string $logDirPath, string $logName): void
     {
-        if (empty($logName)) {
-            return false;
-        }
-
-        if (empty($logDirPath)) {
-            return false;
-        }
-
         $oldYear = strval(intval(date('Y')) - 1);
 
         $oldLogFilePath = sprintf(
@@ -142,13 +129,9 @@ final class LoggerPlugin
             date('m-d')
         );
 
-        if (!file_exists($oldLogFilePath) || !is_file($oldLogFilePath)) {
-            return true;
+        if (file_exists($oldLogFilePath) && is_file($oldLogFilePath)) {
+            unlink($oldLogFilePath);
         }
-
-        unlink($oldLogFilePath);
-
-        return true;
     }
 
     /**

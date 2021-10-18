@@ -5,6 +5,7 @@ namespace Sonder\Plugins;
 use Sonder\Plugins\Rss\Classes\RssEntity;
 use Sonder\Plugins\Rss\Exceptions\RssEntityException;
 use Sonder\Plugins\Rss\Exceptions\RssException;
+use Sonder\Plugins\Rss\Exceptions\RssLinkException;
 use Sonder\Plugins\Rss\Exceptions\RssPluginException;
 use Sonder\Plugins\Rss\Interfaces\IRssEntity;
 use Sonder\Plugins\Rss\Interfaces\IRssPlugin;
@@ -29,6 +30,7 @@ final class RssPlugin implements IRssPlugin
      *
      * @throws RssEntityException
      * @throws RssPluginException
+     * @throws RssLinkException
      */
     public function load(
         ?string $channelTitle = null,

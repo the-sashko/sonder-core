@@ -2,7 +2,9 @@
 
 namespace Sonder\Plugins\Image\Exceptions;
 
-class ImageException extends \Exception
+use Exception;
+
+class ImageException extends Exception
 {
     const CODE_PLUGIN_FILE_NAME_IS_NOT_SET = 1001;
     const CODE_PLUGIN_FILE_PATH_IS_NOT_SET = 1002;

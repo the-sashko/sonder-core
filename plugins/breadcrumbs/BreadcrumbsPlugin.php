@@ -3,6 +3,7 @@
 namespace Sonder\Plugins;
 
 use Sonder\Plugins\Language\Exceptions\LanguageException;
+use function Sonder\__t;
 
 final class BreadcrumbsPlugin
 {
@@ -83,9 +84,7 @@ final class BreadcrumbsPlugin
     }
 
     /**
-     *
      * @return string
-     *
      * @throws LanguageException
      */
     private function _getTranslation(): string

@@ -3,6 +3,8 @@
 namespace Sonder\Plugins;
 
 use Sonder\Plugins\Date\Interfaces\IDatePlugin;
+use Sonder\Plugins\Language\Exceptions\LanguageException;
+use function Sonder\__t;
 
 final class DatePlugin implements IDatePlugin
 {
@@ -26,7 +28,7 @@ final class DatePlugin implements IDatePlugin
      *
      * @return string|null
      *
-     * @throws Language\Exceptions\LanguageException
+     * @throws LanguageException
      */
     final public function getDateFromTimestamp(?int $timestamp = null): ?string
     {

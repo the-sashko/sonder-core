@@ -23,6 +23,7 @@ final class LanguagePlugin
 
     /**
      * @throws LanguageException
+     * @throws Session\Exceptions\SessionException
      */
     final public function __construct()
     {
@@ -174,6 +175,7 @@ final class LanguagePlugin
 
     /**
      * @throws LanguageException
+     * @throws Session\Exceptions\SessionException
      */
     private function _setLanguage(): void
     {

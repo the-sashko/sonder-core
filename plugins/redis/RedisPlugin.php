@@ -3,15 +3,17 @@
 namespace Sonder\Plugins;
 
 use Exception;
+use Predis\Autoloader;
+use Predis\Client;
 
 final class RedisPlugin
 {
     const CONFIG_FILE_PATH = __DIR__ . '/../../../config/redis.json';
 
     /**
-     * @var Predis\Client
+     * @var Client
      */
-    private Predis\Client $_client;
+    private Client $_client;
 
     /**
      * @var string|null
@@ -25,9 +27,9 @@ final class RedisPlugin
     {
         $settings = $this->_getSettings();
 
-        Predis\Autoloader::register();
+        Autoloader::register();
 
-        $this->_client = new Predis\Client($settings);
+        $this->_client = new Client($settings);
     }
 
     final public function __destruct()
@@ -92,7 +94,7 @@ final class RedisPlugin
 
         $key = $this->_getKey($key);
 
-        return (string)$this->_client->get($key);
+        return $this->_client->get($key);
     }
 
     /**
@@ -138,7 +140,7 @@ final class RedisPlugin
 
         $keyPattern = $this->_getKey($keyPattern);
 
-        $keys = (array)$this->_client->keys($keyPattern);
+        $keys = $this->_client->keys($keyPattern);
 
         if (empty($keys)) {
             return false;

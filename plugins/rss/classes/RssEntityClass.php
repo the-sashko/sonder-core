@@ -4,6 +4,7 @@ namespace Sonder\Plugins\Rss\Classes;
 
 use Sonder\Plugins\Rss\Exceptions\RssEntityException;
 use Sonder\Plugins\Rss\Exceptions\RssException;
+use Sonder\Plugins\Rss\Exceptions\RssLinkException;
 use Sonder\Plugins\Rss\Interfaces\IRssEntity;
 
 final class RssEntity implements IRssEntity
@@ -47,8 +48,8 @@ final class RssEntity implements IRssEntity
 
     /**
      * @param array|null $values
-     *
      * @throws RssEntityException
+     * @throws RssLinkException
      */
     final public function __construct(?array $values = null)
     {
@@ -120,9 +121,7 @@ final class RssEntity implements IRssEntity
 
         $this->_channel_image = $values[RssEntity::VALUES_CHANNEL_IMAGE_KEY];
 
-        $this->_channel_description = $values[
-            RssEntity::VALUES_CHANNEL_DESCRIPTION_KEY
-        ];
+        $this->_channel_description = $values[RssEntity::VALUES_CHANNEL_DESCRIPTION_KEY];
 
         $this->_links = $values[RssEntity::VALUES_LINKS_KEY];
 

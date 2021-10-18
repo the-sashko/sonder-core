@@ -2,6 +2,8 @@
 
 namespace Sonder\Plugins;
 
+use function Sonder\__t;
+
 final class ErrorPlugin
 {
     const OUTPUT_FORMAT_HTML = 'html';
@@ -9,8 +11,6 @@ final class ErrorPlugin
     const OUTPUT_FORMAT_JSON = 'json';
 
     const HTTP_BAD_REQUEST = 400;
-
-    const HTTP_NOT_FOUND = 404;
 
     const HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;
 

@@ -2,7 +2,9 @@
 
 namespace Sonder\Plugins\Annotation\Exceptions;
 
-class AnnotationException extends \Exception
+use Exception;
+
+class AnnotationException extends Exception
 {
     const CODE_PLUGIN_CLASS_IS_EMPTY = 1001;
     const CODE_PLUGIN_METHOD_NAME_IS_EMPTY = 1002;

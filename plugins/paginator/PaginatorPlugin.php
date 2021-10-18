@@ -58,26 +58,24 @@ final class PaginatorPlugin
 
         $this->_link = !empty($link) ? $link : '';
 
-        $this->_createPages();
-        $this->_setPagesHtml();
-
-        return $this->_getPaginatorHtml();
-    }
-
-    /**
-     * @return bool
-     */
-    private function _createPages(): bool
-    {
         if ($this->_pageCount == 2) {
             $this->_pages = [
                 '1' => 1,
                 '2' => 2
             ];
-
-            return true;
         }
 
+        if ($this->_pageCount > 2) {
+            $this->_createPages();
+        }
+
+        $this->_setPagesHtml();
+
+        return $this->_getPaginatorHtml();
+    }
+
+    private function _createPages(): void
+    {
         $this->_pages[$this->_currentPage] = $this->_currentPage;
 
         if ($this->_pageCount > 9) {
@@ -125,8 +123,6 @@ final class PaginatorPlugin
                 unset($this->_pages[$page]);
             }
         }
-
-        return true;
     }
 
     private function _setPagesHtml(): void
