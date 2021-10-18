@@ -193,7 +193,7 @@ final class LoggerPlugin
             $logFilePathPattern = APP_PROTECTED_DIR_PATH . '/logs/%s';
         }
 
-        return sprintf($logFilePathPattern, __DIR__, $logType);
+        return sprintf($logFilePathPattern, $logType);
     }
 
     /**
