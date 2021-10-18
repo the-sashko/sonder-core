@@ -8,6 +8,11 @@ use Sonder\Core\Interfaces\IModel;
 
 class CoreObject
 {
+    public function __construct()
+    {
+        //TODO
+    }
+
     /**
      * @param string $pluginName
      * @param mixed ...$pluginValues
@@ -16,7 +21,7 @@ class CoreObject
      *
      * @throws Exception
      */
-    final protected function getPlugin(
+    final public static function getPlugin(
         string $pluginName,
         mixed  ...$pluginValues
     ): object
@@ -167,5 +172,16 @@ class CoreObject
         }
 
         return new $hookClassName($hookValues);
+    }
+
+    /**
+     * @param string $configName
+     *
+     * @return array|null
+     */
+    final protected function getConfig(string $configName): ?array
+    {
+        //TODO
+        return null;
     }
 }

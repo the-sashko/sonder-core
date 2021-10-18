@@ -7,6 +7,6 @@ if (!defined('APP_ENDPOINT')) {
     define('APP_ENDPOINT', 'app');
 }
 
-if (!defined('APP_RESPONSE_TYPE')) {
-    define('APP_RESPONSE_TYPE', 'html');
+if (!defined('APP_RESPONSE_FORMAT')) {
+    define('APP_RESPONSE_FORMAT', 'html');
 }

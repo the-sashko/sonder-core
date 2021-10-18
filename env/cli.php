@@ -35,6 +35,6 @@ if (!defined('APP_ENDPOINT')) {
     define('APP_ENDPOINT', 'cli');
 }
 
-if (!defined('APP_RESPONSE_TYPE')) {
-    define('APP_RESPONSE_TYPE', 'text');
+if (!defined('APP_RESPONSE_FORMAT')) {
+    define('APP_RESPONSE_FORMAT', 'text');
 }

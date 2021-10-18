@@ -95,8 +95,8 @@ try {
         define('APP_MULTI_LANGUAGE', false);
     }
 
-    if (!defined('APP_RESPONSE_TYPE')) {
-        define('APP_RESPONSE_TYPE', 'html');
+    if (!defined('APP_RESPONSE_FORMAT')) {
+        define('APP_RESPONSE_FORMAT', 'html');
     }
 
     require_once APP_CORE_DIR_PATH . '/autoload.php';
