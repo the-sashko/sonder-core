@@ -8,9 +8,23 @@ use Sonder\Core\Interfaces\IModel;
 
 class CoreObject
 {
+    /**
+     * @var ConfigObject
+     */
+    protected ConfigObject $config;
+
+    /**
+     * @var object
+     */
+    protected object $session;
+
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
-        //TODO
+        $this->config = new ConfigObject();
+        $this->session = $this->getPlugin('session');
     }
 
     /**
@@ -172,16 +186,5 @@ class CoreObject
         }
 
         return new $hookClassName($hookValues);
-    }
-
-    /**
-     * @param string $configName
-     *
-     * @return array|null
-     */
-    final protected function getConfig(string $configName): ?array
-    {
-        //TODO
-        return null;
     }
 }

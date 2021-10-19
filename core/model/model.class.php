@@ -69,7 +69,7 @@ class CoreModel extends CoreObject implements IModel
         $storeClass = sprintf('%sStore', get_called_class());
 
         if (class_exists($storeClass)) {
-            $databaseConfig = $this->getConfig('database');
+            $databaseConfig = $this->config->get('database');
 
             $this->store = new $storeClass($databaseConfig);
         }
