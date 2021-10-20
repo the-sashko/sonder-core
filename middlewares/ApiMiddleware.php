@@ -1,9 +1,9 @@
 <?php
+
 namespace Sonder\Middlewares;
 
 use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\CoreObject;
 use Sonder\Core\Interfaces\IMiddleware;
 
 final class ApiMiddleware extends CoreMiddleware implements IMiddleware
@@ -16,9 +16,9 @@ final class ApiMiddleware extends CoreMiddleware implements IMiddleware
      */
     final public function run(): void
     {
-        $securityPlugin = CoreObject::getPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
 
-        $apiValues = (string) file_get_contents('php://input');
+        $apiValues = (string)file_get_contents('php://input');
         $apiValues = (array)json_decode($apiValues, true);
 
         $apiValues = array_map(

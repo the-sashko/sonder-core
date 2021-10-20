@@ -4,7 +4,6 @@ namespace Sonder\Middlewares;
 
 use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\CoreObject;
 use Sonder\Core\Interfaces\IMiddleware;
 
 final class CliMiddleware extends CoreMiddleware implements IMiddleware
@@ -93,7 +92,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
      */
     private function _getCliValues(): ?array
     {
-        $securityPlugin = CoreObject::getPlugin('security');
+        $securityPlugin = $this->getPlugin('security');
         $cliValues = null;
 
         if (

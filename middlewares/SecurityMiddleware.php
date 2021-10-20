@@ -2,9 +2,9 @@
 
 namespace Sonder\Middlewares;
 
+use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
-use Exception;
 
 final class SecurityMiddleware extends CoreMiddleware implements IMiddleware
 {

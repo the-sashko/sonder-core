@@ -3,6 +3,7 @@
 namespace Sonder\Core;
 
 use Exception;
+use Sonder\Core\Interfaces\IUser;
 
 final class RequestObject
 {
@@ -59,6 +60,11 @@ final class RequestObject
      * @var object|null
      */
     private ?object $_session = null;
+
+    /**
+     * @var IUser|null
+     */
+    private ?IUser $_user = null;
 
     /**
      * @var integer|null
@@ -202,6 +208,22 @@ final class RequestObject
     }
 
     /**
+     * @return object|null
+     */
+    final public function getSession(): ?object
+    {
+        return $this->_session;
+    }
+
+    /**
+     * @return IUser|null
+     */
+    final public function getUser(): ?IUser
+    {
+        return $this->_user;
+    }
+
+    /**
      * @return string|null
      */
     final public function getController(): ?string
@@ -286,6 +308,14 @@ final class RequestObject
     final public function setSession(): void
     {
         $this->_session = CoreObject::getPlugin('session');
+    }
+
+    /**
+     * @param IUser $user
+     */
+    final public function setUser(IUser $user): void
+    {
+        $this->_user = $user;
     }
 
     /**

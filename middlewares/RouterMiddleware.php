@@ -1,4 +1,5 @@
 <?php
+
 namespace Sonder\Middlewares;
 
 use Sonder\Core\CoreMiddleware;

@@ -2,7 +2,7 @@
 
 namespace Sonder\Core\Interfaces;
 
-interface IModelAuth
+interface IUser
 {
     //TODO
 }

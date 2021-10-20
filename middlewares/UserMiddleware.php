@@ -6,13 +6,13 @@ use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
 
-final class SessionMiddleware extends CoreMiddleware implements IMiddleware
+final class UserMiddleware extends CoreMiddleware implements IMiddleware
 {
     /**
      * @throws Exception
      */
     final public function run(): void
     {
-        $this->request->setSession();
+        $this->request->setUser($this->getModel('user'));
     }
 }
