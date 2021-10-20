@@ -4,12 +4,12 @@ namespace Sonder\Endpoints;
 use Sonder\Core\CoreEndpoint;
 use Sonder\Core\Interfaces\IEndpoint;
 
-class TestEndpoint extends CoreEndpoint implements IEndpoint
+final class TestEndpoint extends CoreEndpoint implements IEndpoint
 {
     /**
-     * @var array|null
+     * @var array
      */
-    private ?array $_middlewares = [
+    protected array $middlewares = [
         'session'
     ];
 }

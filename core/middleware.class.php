@@ -9,7 +9,7 @@ class CoreMiddleware extends CoreObject
      */
     protected RequestObject $request;
 
-    public function __construct(RequestObject &$request)
+    public function __construct(RequestObject $request)
     {
         parent::__construct();
 

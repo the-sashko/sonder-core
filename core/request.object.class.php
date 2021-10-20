@@ -31,6 +31,11 @@ final class RequestObject
     private ?array $_apiValues = null;
 
     /**
+     * @var array|null
+     */
+    private ?array $_cliValues = null;
+
+    /**
      * @var string|null
      */
     private ?string $_host = null;
@@ -49,6 +54,11 @@ final class RequestObject
      * @var string|null
      */
     private ?string $_userAgent = null;
+
+    /**
+     * @var object|null
+     */
+    private ?object $_session = null;
 
     /**
      * @var integer|null
@@ -139,6 +149,14 @@ final class RequestObject
     final public function getApiValues(): ?array
     {
         return $this->_apiValues;
+    }
+
+    /**
+     * @return array|null
+     */
+    final public function getCliValues(): ?array
+    {
+        return $this->_cliValues;
     }
 
     /**
@@ -252,6 +270,22 @@ final class RequestObject
     final public function setApiValues(?array $apiValues = null): void
     {
         $this->_apiValues = $apiValues;
+    }
+
+    /**
+     * @param array|null $cliValues
+     */
+    final public function setCliValues(?array $cliValues = null): void
+    {
+        $this->_cliValues = $cliValues;
+    }
+
+    /**
+     * @throws Exception
+     */
+    final public function setSession(): void
+    {
+        $this->_session = CoreObject::getPlugin('session');
     }
 
     /**

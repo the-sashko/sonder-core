@@ -7,17 +7,17 @@ final class AutoloadCore
     /**
      * @var array
      */
-    private array $_endpointPaths = [];
+    private array $_endpointPaths;
 
     /**
      * @var array
      */
-    private array $_middlewarePaths = [];
+    private array $_middlewarePaths;
 
     /**
      * @var array
      */
-    private array $_controllerPaths = [];
+    private array $_controllerPaths;
 
     final public function __construct()
     {

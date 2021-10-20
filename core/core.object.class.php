@@ -14,17 +14,11 @@ class CoreObject
     protected ConfigObject $config;
 
     /**
-     * @var object
-     */
-    protected object $session;
-
-    /**
      * @throws Exception
      */
     public function __construct()
     {
         $this->config = new ConfigObject();
-        $this->session = $this->getPlugin('session');
     }
 
     /**

@@ -2,106 +2,17 @@
 
 namespace Sonder\Plugins;
 
-use function Sonder\__t;
-
 final class ErrorPlugin
 {
     const OUTPUT_FORMAT_HTML = 'html';
 
     const OUTPUT_FORMAT_JSON = 'json';
 
-    const HTTP_BAD_REQUEST = 400;
-
-    const HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;
-
-    const HTTP_ERRORS = [
-        400 => 'Bad Request',
-        401 => 'Unauthorized',
-        402 => 'Payment Required',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        405 => 'Method Not Allowed',
-        406 => 'Not Acceptable',
-        407 => 'Proxy Authentication Required',
-        408 => 'Request Timeout',
-        409 => 'Conflict',
-        410 => 'Gone',
-        411 => 'Length Required',
-        412 => 'Precondition Failed',
-        413 => 'Payload Too Large',
-        414 => 'URI Too Long',
-        415 => 'Unsupported Media Type',
-        416 => 'Range Not Satisfiable',
-        417 => 'Expectation Failed',
-        418 => 'I am a teapot',
-        421 => 'Misdirected Request',
-        422 => 'Unprocessable Entity',
-        423 => 'Locked',
-        424 => 'Failed Dependency',
-        425 => 'Too Early',
-        426 => 'Upgrade Required',
-        428 => 'Precondition Required',
-        429 => 'Too Many Requests',
-        431 => 'Request Header Fields Too Large',
-        451 => 'Unavailable For Legal Reasons',
-        500 => 'Internal Server Error',
-        501 => 'Not Implemented',
-        502 => 'Bad Gateway',
-        503 => 'Service Unavailable',
-        504 => 'Gateway Timeout',
-        505 => 'HTTP Version Not Supported',
-        506 => 'Variant Also Negotiates',
-        507 => 'Insufficient Storage',
-        508 => 'Loop Detected',
-        510 => 'Not Extended',
-        511 => 'Network Authentication Required'
-    ];
-
-    const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
-
     const HTML_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_html.phtml';
 
     const TEXT_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_text.phtml';
 
-    /**
-     * @param int $code
-     *
-     * @return bool
-     */
-    final public function handleHttpError(int $code): bool
-    {
-        if ($code < ErrorPlugin::HTTP_BAD_REQUEST) {
-            return false;
-        }
-
-        if ($code > ErrorPlugin::HTTP_NETWORK_AUTHENTICATION_REQUIRED) {
-            return false;
-        }
-
-        http_response_code($code);
-
-        return true;
-    }
-
-    /**
-     * @param int $code
-     *
-     * @return string
-     *
-     * @throws Language\Exceptions\LanguageException
-     */
-    final public function getHttpErrorMessage(int $code): string
-    {
-        if (!array_key_exists($code, ErrorPlugin::HTTP_ERRORS)) {
-            return ErrorPlugin::DEFAULT_ERROR_MESSAGE;
-        }
-
-        if (function_exists('__t')) {
-            return __t(ErrorPlugin::HTTP_ERRORS[$code]);
-        }
-
-        return ErrorPlugin::HTTP_ERRORS[$code];
-    }
+    const HTTP_ERROR_CODE = 500;
 
     /**
      * @param int $code
@@ -122,6 +33,8 @@ final class ErrorPlugin
         ?string $outputFormat = null
     ): bool
     {
+        http_response_code(ErrorPlugin::HTTP_ERROR_CODE);
+
         if ($outputFormat == ErrorPlugin::OUTPUT_FORMAT_HTML) {
             return $this->_displayHtmlError(
                 $code,

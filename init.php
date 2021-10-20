@@ -1,11 +1,13 @@
 <?php
 try {
-    define('APP_CORE_DIR_PATH', realpath(__DIR__));
+    if (!defined('APP_FRAMEWORK_DIR_PATH')) {
+        define('APP_FRAMEWORK_DIR_PATH', realpath(__DIR__));
+    }
 
     if (!defined('APP_PROTECTED_DIR_PATH')) {
         define(
             'APP_PROTECTED_DIR_PATH',
-            realpath(APP_CORE_DIR_PATH . '/../')
+            realpath(APP_FRAMEWORK_DIR_PATH . '/../')
         );
     }
 
@@ -22,32 +24,32 @@ try {
             [
                 'endpoints' => [
                     APP_PROTECTED_DIR_PATH . '/endpoints',
-                    APP_CORE_DIR_PATH . '/endpoints'
+                    APP_FRAMEWORK_DIR_PATH . '/endpoints'
                 ],
 
                 'middlewares' => [
                     APP_PROTECTED_DIR_PATH . '/middlewares',
-                    APP_CORE_DIR_PATH . '/middlewares'
+                    APP_FRAMEWORK_DIR_PATH . '/middlewares'
                 ],
 
                 'controllers' => [
                     APP_PROTECTED_DIR_PATH . '/controllers',
-                    APP_CORE_DIR_PATH . '/controllers'
+                    APP_FRAMEWORK_DIR_PATH . '/controllers'
                 ],
 
                 'models' => [
                     APP_PROTECTED_DIR_PATH . '/models',
-                    APP_CORE_DIR_PATH . '/models'
+                    APP_FRAMEWORK_DIR_PATH . '/models'
                 ],
 
                 'hooks' => [
                     APP_PROTECTED_DIR_PATH . '/hooks',
-                    APP_CORE_DIR_PATH . '/hooks'
+                    APP_FRAMEWORK_DIR_PATH . '/hooks'
                 ],
 
                 'plugins' => [
                     APP_PROTECTED_DIR_PATH . '/plugins',
-                    APP_CORE_DIR_PATH . '/plugins'
+                    APP_FRAMEWORK_DIR_PATH . '/plugins'
                 ],
 
                 'config' => [
@@ -66,7 +68,7 @@ try {
     }
 
     if (
-        empty(APP_CORE_DIR_PATH) ||
+        empty(APP_FRAMEWORK_DIR_PATH) ||
         empty(APP_PROTECTED_DIR_PATH) ||
         empty(APP_PUBLIC_DIR_PATH)
     ) {
@@ -77,9 +79,16 @@ try {
         define('APP_MODE', 'prod');
     }
 
+    if (defined('APP_AREA') && APP_AREA == 'api') {
+        require_once sprintf(
+            '%s/env/api.php',
+            APP_FRAMEWORK_DIR_PATH
+        );
+    }
+
     $coreEnvFilePath = sprintf(
         '%s/env/%s.php',
-        APP_CORE_DIR_PATH,
+        APP_FRAMEWORK_DIR_PATH,
         APP_MODE
     );
 
@@ -99,8 +108,8 @@ try {
         define('APP_RESPONSE_FORMAT', 'html');
     }
 
-    require_once APP_CORE_DIR_PATH . '/autoload.php';
-    require_once APP_CORE_DIR_PATH . '/app.php';
+    require_once APP_FRAMEWORK_DIR_PATH . '/autoload.php';
+    require_once APP_FRAMEWORK_DIR_PATH . '/app.php';
 
     (new Sonder\App)->run();
 } catch (Exception $exp) {

@@ -21,6 +21,7 @@ $_SERVER = [
     'DOCUMENT_ROOT' => __DIR__ . '/../../../public',
     'DOCUMENT_URI' => '/index.php',
     'REQUEST_URI' => '/',
+    'REQUEST_METHOD' => 'get',
     'SCRIPT_NAME' => '/index.php',
     'QUERY_STRING' => '',
     'SCRIPT_FILENAME' => __DIR__ . '/../../../public/index.php',

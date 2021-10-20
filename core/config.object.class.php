@@ -56,7 +56,7 @@ final class ConfigObject
         }
 
         return sprintf(
-            '%s/cache/config/',
+            '%s/cache/config',
             APP_PROTECTED_DIR_PATH
         );
     }
@@ -182,8 +182,6 @@ final class ConfigObject
             !is_array($cacheValues['values']) ||
             $cacheValues['timestamp'] < time()
         ) {
-            unlink($this->_getCacheFilePath());
-
             return false;
         }
 

@@ -21,7 +21,7 @@ class CoreEndpoint implements IEndpoint
     /**
      * @var array
      */
-    private array $_middlewares;
+    protected array $middlewares;
 
     /**
      * @var RequestObject
@@ -35,17 +35,22 @@ class CoreEndpoint implements IEndpoint
 
     public function __construct()
     {
-        $this->_middlewares = static::DEFAULT_MIDDLEWARES;
-
         if (defined('APP_MIDDLEWARES')) {
-            $this->_middlewares = APP_MIDDLEWARES;
+            $this->middlewares = array_merge(
+                $this->middlewares,
+                APP_MIDDLEWARES
+            );
         }
 
-        $this->_middlewares = array_merge(
+        if (empty($this->middlewares)) {
+            $this->middlewares = static::DEFAULT_MIDDLEWARES;
+        }
+
+        $this->middlewares = array_merge(
             [
                 static::SECURITY_MIDDLEWARE
             ],
-            $this->_middlewares,
+            $this->middlewares,
             [
                 static::ROUTER_MIDDLEWARE
             ]
@@ -60,7 +65,7 @@ class CoreEndpoint implements IEndpoint
      */
     final public function run(): void
     {
-        foreach ($this->_middlewares as $middleware) {
+        foreach ($this->middlewares as $middleware) {
             $middleware = $this->_getMiddlewareInstance($middleware);
             $middleware->run();
         }
@@ -72,8 +77,6 @@ class CoreEndpoint implements IEndpoint
         if (!$this->_isValidControllerMethod($controller)) {
             throw new Exception('Invalid Controller Method');
         }
-
-        $controller = new $controller($this->_request);
 
         $this->_response = $controller->$method();
 
