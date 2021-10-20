@@ -41,6 +41,10 @@ class CoreObject
             mb_convert_case($pluginName, MB_CASE_TITLE)
         );
 
+        if (class_exists($pluginClassName, false)) {
+            return new $pluginClassName($pluginValues);
+        }
+
         $pluginFileName = sprintf(
             '%sPlugin.php',
             mb_convert_case($pluginName, MB_CASE_TITLE)
@@ -106,6 +110,10 @@ class CoreObject
             mb_convert_case($modelName, MB_CASE_TITLE)
         );
 
+        if (class_exists($modelClassName, false)) {
+            return new $modelClassName();
+        }
+
         $modelFileName = sprintf(
             '%sModel.php',
             mb_convert_case($modelName, MB_CASE_TITLE)
@@ -156,6 +164,10 @@ class CoreObject
         $hookName = mb_convert_case($hookName, MB_CASE_TITLE);
 
         $hookClassName = sprintf('\Sonder\Hooks\%sHook', $hookName);
+
+        if (class_exists($hookClassName, false)) {
+            return new $hookClassName($hookValues);
+        }
 
         $hookFileName = sprintf('%sHook.php', $hookName);
 

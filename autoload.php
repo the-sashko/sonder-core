@@ -19,6 +19,7 @@ $autoload = function (string $directory, Closure $autoload) {
     }
 };
 
+require_once (__DIR__ . '/core/cache.object.class.php');
 require_once (__DIR__ . '/core/config.object.class.php');
 require_once (__DIR__ . '/core/core.object.class.php');
 

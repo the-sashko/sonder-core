@@ -90,6 +90,8 @@ class ResponseObject
         $this->_contentType = static::DEFAULT_CONTENT_TYPE;
     }
 
+    //TODO: serialize/unserialize method for cache
+
     /**
      * @return string
      */

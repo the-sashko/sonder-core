@@ -2,27 +2,51 @@
 
 namespace Sonder\Middlewares;
 
+use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
 
 final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 {
+    const DEFAULT_ROUTING_TYPE = 'default';
+
     const DEFAULT_CONTROLLER = 'main';
 
     const DEFAULT_METHOD = 'index';
 
+    const ANNOTATIONS_ROUTING_TYPE = 'annotations';
+
+    /**
+     * @throws Exception
+     */
     final public function run(): void
     {
         if (
-            empty($this->request->getController()) ||
-            empty($this->request->getMethod())
+            APP_ROUTING_TYPE != RouterMiddleware::DEFAULT_ROUTING_TYPE &&
+            APP_ROUTING_TYPE != RouterMiddleware::ANNOTATIONS_ROUTING_TYPE
+        ) {
+            throw new Exception(sprintf(
+                'Routing Type %s Is Not Supporting',
+                APP_ROUTING_TYPE
+            ));
+        }
+
+        if (
+            (
+                empty($this->request->getController()) ||
+                empty($this->request->getMethod())
+            ) &&
+            APP_ROUTING_TYPE == 'annotations'
         ) {
             $this->_setRouteByAnnotations();
         }
 
         if (
-            empty($this->request->getController()) ||
-            empty($this->request->getMethod())
+            (
+                empty($this->request->getController()) ||
+                empty($this->request->getMethod())
+            ) &&
+            APP_ROUTING_TYPE == 'default'
         ) {
             $this->_setRouteByUrlParams();
         }

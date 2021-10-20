@@ -79,13 +79,6 @@ try {
         define('APP_MODE', 'prod');
     }
 
-    if (defined('APP_AREA') && APP_AREA == 'api') {
-        require_once sprintf(
-            '%s/env/api.php',
-            APP_FRAMEWORK_DIR_PATH
-        );
-    }
-
     $coreEnvFilePath = sprintf(
         '%s/env/%s.php',
         APP_FRAMEWORK_DIR_PATH,
@@ -96,8 +89,20 @@ try {
         require_once $coreEnvFilePath;
     }
 
+    if (defined('APP_API_MODE')) {
+        require_once sprintf(
+            '%s/env/%s.php',
+            APP_FRAMEWORK_DIR_PATH,
+            APP_API_MODE
+        );
+    }
+
     if (!defined('APP_AREA')) {
         define('APP_AREA', 'default');
+    }
+
+    if (!defined('APP_ROUTING_TYPE')) {
+        define('APP_ROUTING_TYPE', 'default');
     }
 
     if (!defined('APP_MULTI_LANGUAGE')) {

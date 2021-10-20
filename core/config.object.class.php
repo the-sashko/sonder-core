@@ -6,8 +6,6 @@ use Exception;
 
 final class ConfigObject
 {
-    const CACHE_DIR_PATH = __DIR__ . '/../../cache/config/';
-
     const CACHE_TTL = 60 * 30;
 
     /**
@@ -16,10 +14,17 @@ final class ConfigObject
     private array $_values;
 
     /**
+     * @var CacheObject
+     */
+    private CacheObject $_cache;
+
+    /**
      * @throws Exception
      */
     final public function __construct()
     {
+        $this->_cache = new CacheObject('config');
+
         if (!$this->_setConfigsFromCache()) {
             $this->_setConfigs();
             $this->_saveToCache();
@@ -47,29 +52,6 @@ final class ConfigObject
     }
 
     /**
-     * @return string
-     */
-    private function _getCacheDirPath(): string
-    {
-        if (!defined('APP_PROTECTED_DIR_PATH')) {
-            return ConfigObject::CACHE_DIR_PATH;
-        }
-
-        return sprintf(
-            '%s/cache/config',
-            APP_PROTECTED_DIR_PATH
-        );
-    }
-
-    /**
-     * @return string
-     */
-    private function _getCacheFilePath(): string
-    {
-        return sprintf('%s/values.json', $this->_getCacheDirPath());
-    }
-
-    /**
      * @param string|null $configsDirPath
      *
      * @throws Exception
@@ -84,9 +66,13 @@ final class ConfigObject
             }
         }
 
-        $configFilePaths = (array)glob($configsDirPath . '/*.json');
+        $configFilePathPattern = sprintf('%s/*.json', $configsDirPath);
 
-        foreach ($configFilePaths as $configFilePath) {
+        foreach ((array)glob($configFilePathPattern) as $configFilePath) {
+            if (!is_file($configFilePath)) {
+                continue;
+            }
+
             $configName = $this->_getConfigNameFormFilePath($configFilePath);
 
             $configValues = file_get_contents($configFilePath);
@@ -149,67 +135,26 @@ final class ConfigObject
      */
     private function _setConfigsFromCache(): bool
     {
-        $cacheFilePath = $this->_getCacheFilePath();
+        $values = $this->_cache->get('values');
 
-        if (!file_exists($cacheFilePath) || !is_file($cacheFilePath)) {
-            return false;
-        }
-
-        $cacheValues = (string)file_get_contents($cacheFilePath);
-        $cacheValues = (array)json_decode($cacheValues, true);
-
-        if (!$this->_validateCacheValues($cacheValues)) {
-            unlink($cacheFilePath);
+        if (empty($values)) {
+            $this->_values = $values;
 
             return false;
         }
-
-        $this->_values = $cacheValues['values'];
 
         return true;
     }
 
     /**
-     * @param array $cacheValues
-     *
-     * @return bool
+     * @throws Exception
      */
-    private function _validateCacheValues(array $cacheValues): bool
-    {
-        if (
-            !array_key_exists('timestamp', $cacheValues) ||
-            !array_key_exists('values', $cacheValues) ||
-            !is_array($cacheValues['values']) ||
-            $cacheValues['timestamp'] < time()
-        ) {
-            return false;
-        }
-
-        $this->_values = $cacheValues['values'];
-
-        return true;
-    }
-
     private function _saveToCache(): void
     {
-        $cacheDirPath = $this->_getCacheDirPath();
-        $cacheFilePath = $this->_getCacheFilePath();
-
-        if (!file_exists($cacheDirPath) || !is_dir($cacheDirPath)) {
-            mkdir($cacheDirPath, 0755, true);
-        }
-
-        if (file_exists($cacheFilePath) && is_file($cacheFilePath)) {
-            unlink($cacheFilePath);
-        }
-
-        $cacheValues = [
-            'timestamp' => time() + ConfigObject::CACHE_TTL,
-            'values' => $this->_values
-        ];
-
-        $cacheValues = json_encode($cacheValues);
-
-        file_put_contents($cacheFilePath, $cacheValues);
+        $this->_cache->set(
+            'values',
+            $this->_values,
+            ConfigObject::CACHE_TTL
+        );
     }
 }

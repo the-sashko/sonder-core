@@ -29,41 +29,42 @@ class CoreEndpoint implements IEndpoint
     private RequestObJect $_request;
 
     /**
-     * @var ResponseObject
+     * @var ResponseObject|null
      */
-    private ResponseObJect $_response;
+    private ?ResponseObJect $_response;
 
     public function __construct()
     {
-        if (defined('APP_MIDDLEWARES')) {
-            $this->middlewares = array_merge(
-                $this->middlewares,
-                APP_MIDDLEWARES
-            );
-        }
-
-        if (empty($this->middlewares)) {
-            $this->middlewares = static::DEFAULT_MIDDLEWARES;
-        }
-
-        $this->middlewares = array_merge(
-            [
-                static::SECURITY_MIDDLEWARE
-            ],
-            $this->middlewares,
-            [
-                static::ROUTER_MIDDLEWARE
-            ]
-        );
-
         $this->_request = new RequestObject();
-        $this->_response = new ResponseObject();
+        $this->_response = $this->_getResponseFromCache();
+
+        if (empty($this->_response)) {
+            $this->_init();
+        }
     }
 
     /**
      * @throws Exception
      */
     final public function run(): void
+    {
+        if (empty($this->_response)) {
+            $this->_runMiddlewares();
+        }
+
+        $this->_saveResponseToCache();
+
+        $this->_response->setHttpHeader();
+
+        echo $this->_response->getContent();
+
+        exit(0);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function _runMiddlewares(): void
     {
         foreach ($this->middlewares as $middleware) {
             $middleware = $this->_getMiddlewareInstance($middleware);
@@ -79,12 +80,6 @@ class CoreEndpoint implements IEndpoint
         }
 
         $this->_response = $controller->$method();
-
-        $this->_response->setHttpHeader();
-
-        echo $this->_response->getContent();
-
-        exit(0);
     }
 
     /**
@@ -149,5 +144,41 @@ class CoreEndpoint implements IEndpoint
         }
 
         return true;
+    }
+
+    private function _init(): void
+    {
+        if (defined('APP_MIDDLEWARES')) {
+            $this->middlewares = array_merge(
+                $this->middlewares,
+                APP_MIDDLEWARES
+            );
+        }
+
+        if (empty($this->middlewares)) {
+            $this->middlewares = static::DEFAULT_MIDDLEWARES;
+        }
+
+        $this->middlewares = array_merge(
+            [
+                static::SECURITY_MIDDLEWARE
+            ],
+            $this->middlewares,
+            [
+                static::ROUTER_MIDDLEWARE
+            ]
+        );
+    }
+
+    private function _getResponseFromCache(): ?RequestObject
+    {
+        //TODO
+
+        return null;
+    }
+
+    private function _saveResponseToCache(): void
+    {
+        //TODO
     }
 }
