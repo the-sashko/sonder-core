@@ -10,3 +10,11 @@ if (!defined('APP_ENDPOINT')) {
 if (!defined('APP_RESPONSE_FORMAT')) {
     define('APP_RESPONSE_FORMAT', 'text');
 }
+
+if (!defined('APP_CACHE')) {
+    define('APP_CACHE', false);
+}
+
+if (!defined('APP_CACHE_TTL')) {
+    define('APP_CACHE_TTL', 0);
+}
