@@ -6,7 +6,7 @@ use Sonder\Core\Interfaces\IController;
 
 class CoreController extends CoreObject implements IController
 {
-    private RequestObject $_request;
+    protected RequestObject $request;
 
     private ResponseObject $_response;
 
@@ -14,7 +14,7 @@ class CoreController extends CoreObject implements IController
     {
         parent::__construct();
 
-        $this->_request = $request;
+        $this->request = $request;
 
         $this->_response = new ResponseObject();
     }
@@ -33,9 +33,9 @@ class CoreController extends CoreObject implements IController
         //TODO
     }
 
-    final protected function render(): ResponseObject
+    final protected function render(?string $view = null): ResponseObject
     {
-        //TODO
+        $this->_response->setContent('test 1 2 3');
 
         return $this->_response;
     }

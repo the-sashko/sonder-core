@@ -10,13 +10,15 @@ use Sonder\Core\Interfaces\IMiddleware;
 
 class CoreEndpoint implements IEndpoint
 {
-    const SECURITY_MIDDLEWARE = 'security';
-
-    const ROUTER_MIDDLEWARE = 'router';
+    const CACHE_TTL = 60 * 30;
 
     const DEFAULT_MIDDLEWARES = [
         'session'
     ];
+
+    const SECURITY_MIDDLEWARE = 'security';
+
+    const ROUTER_MIDDLEWARE = 'router';
 
     /**
      * @var array
@@ -33,8 +35,12 @@ class CoreEndpoint implements IEndpoint
      */
     private ?ResponseObJect $_response;
 
+    private CacheObject $_cache;
+
     public function __construct()
     {
+        $this->_cache = new CacheObject('app');
+
         $this->_request = new RequestObject();
         $this->_response = $this->_getResponseFromCache();
 
@@ -50,11 +56,13 @@ class CoreEndpoint implements IEndpoint
     {
         if (empty($this->_response)) {
             $this->_runMiddlewares();
+            $this->_runControllerMethod();
         }
 
         $this->_saveResponseToCache();
 
-        $this->_response->setHttpHeader();
+        header($this->_response->getContentTypeHeader());
+        http_response_code($this->_response->getHttpCode());
 
         echo $this->_response->getContent();
 
@@ -70,7 +78,13 @@ class CoreEndpoint implements IEndpoint
             $middleware = $this->_getMiddlewareInstance($middleware);
             $middleware->run();
         }
+    }
 
+    /**
+     * @throws Exception
+     */
+    private function _runControllerMethod(): void
+    {
         $controller = $this->_getControllerInstance();
 
         $method = $this->_request->getMethod();
@@ -143,7 +157,21 @@ class CoreEndpoint implements IEndpoint
             return false;
         }
 
-        return true;
+        $reflectionReturnType = $reflection->getReturnType();
+
+        if (empty($reflectionReturnType)) {
+            return false;
+        }
+
+        if ($reflectionReturnType->allowsNull()) {
+            return false;
+        }
+
+        $returnType = $reflectionReturnType->getName();
+        $returnType = explode('\\', $returnType);
+        $returnType = end($returnType);
+
+        return $returnType == 'ResponseObject';
     }
 
     private function _init(): void
@@ -170,15 +198,54 @@ class CoreEndpoint implements IEndpoint
         );
     }
 
-    private function _getResponseFromCache(): ?RequestObject
+    private function _getResponseFromCache(): ?ResponseObject
     {
-        //TODO
+        if ($this->_request->getHttpMethod() != 'get') {
+            return null;
+        }
 
-        return null;
+        $cacheValues = $this->_cache->get($this->_getCacheIdent());
+
+        if (
+            empty($cacheValues) ||
+            !array_key_exists('response', $cacheValues)
+        ) {
+            return null;
+        }
+
+        return unserialize(base64_decode($cacheValues['response']));
     }
 
     private function _saveResponseToCache(): void
     {
-        //TODO
+        if ($this->_request->getHttpMethod() == 'get') {
+            $this->_cache->save(
+                $this->_getCacheIdent(),
+                [
+                    'response' => base64_encode(serialize($this->_response))
+                ],
+                static::CACHE_TTL
+            );
+        }
+    }
+
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
+    private function _getCacheIdent(): string
+    {
+        $userId = 0;
+
+        if (!empty($this->_request->getUser())) {
+            $userId = (int)$this->_request->getUser()->getId();
+        }
+
+        return sprintf(
+            '%d_%s',
+            $userId,
+            base64_encode($this->_request->getFullUrl())
+        );
     }
 }

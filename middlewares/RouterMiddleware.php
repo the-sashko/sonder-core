@@ -54,7 +54,18 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 
     private function _setRouteByAnnotations(): void
     {
+        $controller = RouterMiddleware::DEFAULT_CONTROLLER;
+        $method = RouterMiddleware::DEFAULT_METHOD;
+
         //TODO
+
+        $method = sprintf(
+            'display%s',
+            mb_convert_case($method, MB_CASE_TITLE)
+        );
+
+        $this->request->setController($controller);
+        $this->request->setMethod($method);
     }
 
     private function _setRouteByUrlParams(): void

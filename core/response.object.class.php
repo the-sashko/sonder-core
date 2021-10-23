@@ -4,7 +4,7 @@ namespace Sonder\Core;
 
 use Exception;
 
-class ResponseObject
+final class ResponseObject
 {
     const CONTENT_TYPES = [
         'html' => 'text/html',
@@ -59,9 +59,9 @@ class ResponseObject
     const DEFAULT_HTTP_CODE = 200;
 
     /**
-     * @var RedirectObject
+     * @var int
      */
-    public RedirectObject $redirect;
+    private int $_httpCode;
 
     /**
      * @var string
@@ -74,30 +74,54 @@ class ResponseObject
     private ?string $_content = null;
 
     /**
-     * @var bool
+     * @var RedirectObject
      */
-    private bool $_isCached = false;
-
-    /**
-     * @var int
-     */
-    private int $_httpCode;
+    public RedirectObject $redirect;
 
     public function __construct()
     {
+        $this->_httpCode = ResponseObject::DEFAULT_HTTP_CODE;
+        $this->_contentType = ResponseObject::DEFAULT_CONTENT_TYPE;
         $this->redirect = new RedirectObject();
-        $this->_httpCode = static::DEFAULT_HTTP_CODE;
-        $this->_contentType = static::DEFAULT_CONTENT_TYPE;
     }
 
-    //TODO: serialize/unserialize method for cache
+    /**
+     * @return array
+     */
+    final public function __serialize(): array
+    {
+        return [
+            'http_code' => $this->_httpCode,
+            'content_type' => $this->_contentType,
+            'content' => base64_encode($this->_content),
+            'redirect' => base64_encode(serialize($this->redirect))
+        ];
+    }
+
+    public function __unserialize(array $values): void
+    {
+        $this->_httpCode = (int)$values['http_code'];
+        $this->_contentType = $values['content_type'];
+        $this->_content = base64_decode($values['content']);
+        $this->redirect = unserialize(base64_decode($values['redirect']));
+    }
+
+    /**
+     * @return int
+     */
+    final public function getHttpCode(): int
+    {
+        return $this->_httpCode;
+    }
 
     /**
      * @return string
      */
-    final public function getContentType(): string
+    final public function getContentTypeHeader(): string
     {
-        return $this->_contentType;
+        $contentType = ResponseObject::CONTENT_TYPES[$this->_contentType];
+
+        return sprintf('Content-Type: %s', $contentType);
     }
 
     /**
@@ -109,24 +133,22 @@ class ResponseObject
     }
 
     /**
-     * @return bool
+     * @param int $httpCode
+     *
+     * @throws Exception
      */
-    final public function getIsCached(): bool
+    final public function setHttpCode(int $httpCode = 200): void
     {
-        return $this->_isCached;
-    }
+        if (
+            $httpCode != ResponseObject::DEFAULT_HTTP_CODE &&
+            !in_array($httpCode, array_keys(ResponseObject::HTTP_ERRORS))
+        ) {
+            throw new Exception(
+                sprintf('Unsupported HTTP Code: %d', $httpCode)
+            );
+        }
 
-    /**
-     * @return int
-     */
-    final public function getHttpCode(): int
-    {
-        return $this->_httpCode;
-    }
-
-    final public function getHttpHeader(): void
-    {
-        //TODO
+        $this->_httpCode = $httpCode;
     }
 
     /**
@@ -138,7 +160,7 @@ class ResponseObject
     {
         if (
             empty($contentType) ||
-            !in_array($contentType, array_keys(static::CONTENT_TYPES))
+            !in_array($contentType, array_keys(ResponseObject::CONTENT_TYPES))
         ) {
             throw new Exception('Unsupported Content Type');
         }
@@ -152,32 +174,5 @@ class ResponseObject
     final public function setContent(?string $content = null): void
     {
         $this->_content = $content;
-    }
-
-    /**
-     * @param bool $isCached
-     */
-    final public function setIsCached(bool $isCached = false): void
-    {
-        $this->_isCached = $isCached;
-    }
-
-    /**
-     * @param int $httpCode
-     *
-     * @throws Exception
-     */
-    final public function setHttpCode(int $httpCode = 200): void
-    {
-        if (
-            $httpCode != static::DEFAULT_HTTP_CODE &&
-            !in_array($httpCode, array_keys(static::HTTP_ERRORS))
-        ) {
-            throw new Exception(
-                sprintf('Unsupported HTTP Code: %d', $httpCode)
-            );
-        }
-
-        $this->_httpCode = $httpCode;
     }
 }

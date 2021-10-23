@@ -2,7 +2,7 @@
 
 namespace Sonder\Core;
 
-class RedirectObject
+final class RedirectObject
 {
     /**
      * @var string|null
@@ -13,6 +13,14 @@ class RedirectObject
      * @var bool
      */
     private bool $_isPermanent = false;
+
+    final public function __serialize(): array
+    {
+        return [
+            'url' => base64_encode($this->_url),
+            'is_permanent' => $this->_isPermanent
+        ];
+    }
 
     /**
      * @return string

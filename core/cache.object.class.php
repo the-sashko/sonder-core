@@ -10,13 +10,6 @@ final class CacheObject
 
     const DEFAULT_PROTECTED_DIR_PATH = __DIR__ . '/../..';
 
-    const DEFAULT_CACHE_TTL = 60 * 30;
-
-    /**
-     * @var bool
-     */
-    private bool $_enable;
-
     /**
      * @var string
      */
@@ -29,27 +22,12 @@ final class CacheObject
 
     /**
      * @param string|null $type
-     *
-     * @param bool $enable
      */
-    final public function __construct(
-        ?string $type = null,
-        bool    $enable = false
-    )
+    final public function __construct(?string $type = null)
     {
         $this->_type = empty($type) ? self::DEFAULT_TYPE : $type;
 
         $this->_setDirPath();
-
-        $this->_enable = $enable;
-
-        if (APP_MODE == 'prod') {
-            $this->_enable = true;
-        }
-
-        if (defined('APP_API_MODE') && APP_API_MODE == 'prod') {
-            $this->_enable = true;
-        }
     }
 
     /**
@@ -59,7 +37,7 @@ final class CacheObject
      */
     final public function get(string $name): ?array
     {
-        if (!$this->_enable) {
+        if (!APP_CACHE) {
             return null;
         }
 
@@ -70,7 +48,7 @@ final class CacheObject
         }
 
         $values = (string)file_get_contents($filePath);
-        $values = (array)json_decode($values);
+        $values = (array)json_decode($values, true);
 
         if (!$this->_validate($values)) {
             unlink($filePath);
@@ -90,13 +68,13 @@ final class CacheObject
      *
      * @throws Exception
      */
-    final public function set(
+    public function save(
         string $name,
         ?array $values = null,
         ?int   $ttl = null
     ): bool
     {
-        if (!$this->_enable) {
+        if (!APP_CACHE) {
             return false;
         }
 
@@ -106,7 +84,7 @@ final class CacheObject
             unlink($filePath);
         }
 
-        $ttl = empty($ttl) ? CacheObject::DEFAULT_CACHE_TTL : $ttl;
+        $ttl = empty($ttl) ? APP_CACHE_TTL : $ttl;
 
         $values = [
             'timestamp' => time() + $ttl,

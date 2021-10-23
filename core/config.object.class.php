@@ -25,9 +25,9 @@ final class ConfigObject
     {
         $this->_cache = new CacheObject('config');
 
-        if (!$this->_setConfigsFromCache()) {
-            $this->_setConfigs();
-            $this->_saveToCache();
+        if (!$this->_setValuesFromCache()) {
+            $this->_setValues();
+            $this->_saveValuesToCache();
         }
     }
 
@@ -56,13 +56,13 @@ final class ConfigObject
      *
      * @throws Exception
      */
-    private function _setConfigs(?string $configsDirPath = null): void
+    private function _setValues(?string $configsDirPath = null): void
     {
         if (empty($configsDirPath)) {
             $appConfigDirPaths = array_reverse(APP_SOURCE_PATHS['config']);
 
             foreach ($appConfigDirPaths as $appConfigDirPath) {
-                $this->_setConfigs($appConfigDirPath);
+                $this->_setValues($appConfigDirPath);
             }
         }
 
@@ -133,15 +133,15 @@ final class ConfigObject
     /**
      * @return bool
      */
-    private function _setConfigsFromCache(): bool
+    private function _setValuesFromCache(): bool
     {
         $values = $this->_cache->get('values');
 
         if (empty($values)) {
-            $this->_values = $values;
-
             return false;
         }
+
+        $this->_values = $values;
 
         return true;
     }
@@ -149,9 +149,9 @@ final class ConfigObject
     /**
      * @throws Exception
      */
-    private function _saveToCache(): void
+    private function _saveValuesToCache(): void
     {
-        $this->_cache->set(
+        $this->_cache->save(
             'values',
             $this->_values,
             ConfigObject::CACHE_TTL

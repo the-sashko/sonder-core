@@ -101,6 +101,14 @@ try {
         define('APP_AREA', 'default');
     }
 
+    if (!defined('APP_CACHE')) {
+        define('APP_CACHE', true);
+    }
+
+    if (!defined('APP_CACHE_TTL')) {
+        define('APP_CACHE_TTL', 5 * 60);
+    }
+
     if (!defined('APP_ROUTING_TYPE')) {
         define('APP_ROUTING_TYPE', 'default');
     }
