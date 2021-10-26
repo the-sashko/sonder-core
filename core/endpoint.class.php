@@ -37,6 +37,9 @@ class CoreEndpoint implements IEndpoint
 
     private CacheObject $_cache;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->_cache = new CacheObject('app');
@@ -198,9 +201,17 @@ class CoreEndpoint implements IEndpoint
         );
     }
 
+    /**
+     * @return ResponseObject|null
+     *
+     * @throws Exception
+     */
     private function _getResponseFromCache(): ?ResponseObject
     {
-        if ($this->_request->getHttpMethod() != 'get') {
+        if (
+            $this->_request->getHttpMethod() != 'get' ||
+            $this->_request->getNoCache()
+        ) {
             return null;
         }
 
@@ -216,9 +227,15 @@ class CoreEndpoint implements IEndpoint
         return unserialize(base64_decode($cacheValues['response']));
     }
 
+    /**
+     * @throws Exception
+     */
     private function _saveResponseToCache(): void
     {
-        if ($this->_request->getHttpMethod() == 'get') {
+        if (
+            $this->_request->getHttpMethod() == 'get' ||
+            !$this->_request->getNoCache()
+        ) {
             $this->_cache->save(
                 $this->_getCacheIdent(),
                 [

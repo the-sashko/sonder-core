@@ -78,7 +78,7 @@ final class ResponseObject
      */
     public RedirectObject $redirect;
 
-    public function __construct()
+    final public function __construct()
     {
         $this->_httpCode = ResponseObject::DEFAULT_HTTP_CODE;
         $this->_contentType = ResponseObject::DEFAULT_CONTENT_TYPE;
@@ -98,7 +98,10 @@ final class ResponseObject
         ];
     }
 
-    public function __unserialize(array $values): void
+    /**
+     * @param array $values
+     */
+    final public function __unserialize(array $values): void
     {
         $this->_httpCode = (int)$values['http_code'];
         $this->_contentType = $values['content_type'];

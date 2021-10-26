@@ -18,8 +18,17 @@ final class RedirectObject
     {
         return [
             'url' => base64_encode($this->_url),
-            'is_permanent' => $this->_isPermanent
+            'is_permanent' => (int)$this->_isPermanent
         ];
+    }
+
+    /**
+     * @param array $values
+     */
+    final public function __unserialize(array $values): void
+    {
+        $this->_url = base64_decode($values['url']);
+        $this->_isPermanent = (bool)$values['is_permanent'];
     }
 
     /**

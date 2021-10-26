@@ -86,7 +86,11 @@ class CoreObject
             );
         }
 
-        return new $pluginClassName($pluginValues);
+        if (empty($pluginValues)) {
+            return new $pluginClassName();
+        }
+
+        return new $pluginClassName(...$pluginValues);
     }
 
     final protected function runHooks(): void

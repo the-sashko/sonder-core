@@ -7,9 +7,11 @@ use Sonder\Core\Interfaces\IUser;
 
 final class RequestObject
 {
-    const DEFAULT_METHOD = 'get';
+    const DEFAULT_HTTP_METHOD = 'get';
 
     const DEFAULT_URL = '/';
+
+    const DEFAULT_LANGUAGE = 'en';
 
     /**
      * @var string|null
@@ -67,11 +69,6 @@ final class RequestObject
     private ?IUser $_user = null;
 
     /**
-     * @var integer|null
-     */
-    private ?int $_time = null;
-
-    /**
      * @var string|null
      */
     private ?string $_controller = null;
@@ -81,17 +78,37 @@ final class RequestObject
      */
     private ?string $_method = null;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    private bool $_noCache = false;
+
+    /**
+     * @var integer|null
+     */
+    private ?int $_time = null;
+
+    /**
+     * @var string
+     */
+    private string $_language;
+
+    final public function __construct()
     {
         $this->_setHttpMethod();
+
+        $this->_setHost();
+        $this->_setUrl();
 
         $this->setUrlValues($_GET);
         $this->setPostValues($_POST);
 
-        $this->_setHost();
-        $this->_setUrl();
+        $this->setLanguage();
+
         $this->_setUserAgent();
+
         $this->_setTime();
+
         $this->_removeGlobalInputValues();
     }
 
@@ -101,10 +118,49 @@ final class RequestObject
     final public function getHttpMethod(): string
     {
         if (empty($this->_httpMethod)) {
-            return RequestObject::DEFAULT_METHOD;
+            return RequestObject::DEFAULT_HTTP_METHOD;
         }
 
         return $this->_httpMethod;
+    }
+
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
+    final public function getHost(): string
+    {
+        if (empty($this->_host)) {
+            throw new Exception('Host Is Not Set!');
+        }
+
+        return $this->_host;
+    }
+
+    /**
+     * @return string
+     */
+    final public function getUrl(): string
+    {
+        if (empty($this->_url)) {
+            return RequestObject::DEFAULT_URL;
+        }
+
+        return $this->_url;
+    }
+
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
+    final public function getFullUrl(): string
+    {
+        $host = $this->getHost();
+        $url = $this->getUrl();
+
+        return sprintf('%s%s', $host, $url);
     }
 
     /**
@@ -158,37 +214,19 @@ final class RequestObject
     }
 
     /**
+     * @return string
+     */
+    final public function getLanguage(): string
+    {
+        return $this->_language;
+    }
+
+    /**
      * @return array|null
      */
     final public function getCliValues(): ?array
     {
         return $this->_cliValues;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws Exception
-     */
-    final public function getHost(): string
-    {
-        if (empty($this->_host)) {
-            throw new Exception('Host Is Not Set!');
-        }
-
-        return $this->_host;
-    }
-
-    /**
-     * @return string
-     */
-    final public function getUrl(): string
-    {
-        if (empty($this->_url)) {
-            return RequestObject::DEFAULT_URL;
-        }
-
-        return $this->_url;
     }
 
     /**
@@ -240,24 +278,19 @@ final class RequestObject
     }
 
     /**
+     * @return bool
+     */
+    final public function getNoCache(): bool
+    {
+        return $this->_noCache;
+    }
+
+    /**
      * @return int|null
      */
     final public function getTime(): ?int
     {
         return $this->_time;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws Exception
-     */
-    final public function getFullUrl(): string
-    {
-        $host = $this->getHost();
-        $url = $this->getUrl();
-
-        return sprintf('%s%s', $host, $url);
     }
 
     /**
@@ -284,6 +317,16 @@ final class RequestObject
     final public function setPostValues(?array $postValues = null): void
     {
         $this->_postValues = $postValues;
+    }
+
+    /**
+     * @param string|null $language
+     */
+    final public function setLanguage(?string $language = null): void
+    {
+        $language = empty($language) ? $this->_getDefaultLanguage() : $language;
+
+        $this->_language = $language;
     }
 
     /**
@@ -334,9 +377,29 @@ final class RequestObject
         $this->_method = $method;
     }
 
+    /**
+     * @param bool $noCache
+     */
+    final public function setNoCache(bool $noCache = false): void
+    {
+        $this->_noCache = $noCache;
+    }
+
+    /**
+     * @return string
+     */
+    private function _getDefaultLanguage(): string
+    {
+        if (defined('APP_DEFAULT_LANGUAGE')) {
+            return APP_DEFAULT_LANGUAGE;
+        }
+
+        return RequestObject::DEFAULT_LANGUAGE;
+    }
+
     private function _setHttpMethod(): void
     {
-        $this->_httpMethod = RequestObject::DEFAULT_METHOD;
+        $this->_httpMethod = RequestObject::DEFAULT_HTTP_METHOD;
 
         $method = $_SERVER['REQUEST_METHOD'];
         $method = mb_convert_case($method, MB_CASE_LOWER);
