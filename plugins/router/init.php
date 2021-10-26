@@ -1,7 +1,6 @@
 <?php
-$routerPluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
+$routerPluginAutoload = function (string $dir, Closure $autoload): void {
+    foreach (glob($dir . '/*') as $fileItem) {
         if ($fileItem == __FILE__) {
             continue;
         }
@@ -18,10 +17,12 @@ $routerPluginAutoload = function(string $dir, Closure $autoload): void
     }
 };
 
-require_once __DIR__.'/exceptions/RouterException.php';
+require_once __DIR__ . '/../annotation/init.php';
 
-$routerPluginAutoload(__DIR__.'/exceptions', $routerPluginAutoload);
-$routerPluginAutoload(__DIR__.'/interfaces', $routerPluginAutoload);
-$routerPluginAutoload(__DIR__.'/classes', $routerPluginAutoload);
+require_once __DIR__ . '/exceptions/RouterException.php';
 
-require_once __DIR__.'/RouterPlugin.php';
+$routerPluginAutoload(__DIR__ . '/exceptions', $routerPluginAutoload);
+$routerPluginAutoload(__DIR__ . '/interfaces', $routerPluginAutoload);
+$routerPluginAutoload(__DIR__ . '/classes', $routerPluginAutoload);
+
+require_once __DIR__ . '/RouterPlugin.php';

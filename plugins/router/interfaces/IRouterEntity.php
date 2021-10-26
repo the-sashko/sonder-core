@@ -32,12 +32,12 @@ interface IRouterEntity
     /**
      * @return string
      */
-    public function getMethod(): string;
+    public function getControllerFilePath(): string;
 
     /**
-     * @return int
+     * @return string
      */
-    public function getPage(): int;
+    public function getMethod(): string;
 
     /**
      * @return string|null
@@ -45,9 +45,9 @@ interface IRouterEntity
     public function getLanguage(): ?string;
 
     /**
-     * @param int|null $page
+     * @return bool
      */
-    public function setPage(?int $page = null): void;
+    public function getNoCache(): bool;
 
     /**
      * @param string|null $language

@@ -4,11 +4,9 @@ namespace Sonder\Plugins;
 
 use Generator;
 use ReflectionClass;
-use ReflectionException;
 use Sonder\Plugins\Annotation\Exceptions\AnnotationPluginException;
 use Sonder\Plugins\Router\Classes\RouterCache;
 use Sonder\Plugins\Router\Classes\RouterEntity;
-use Sonder\Plugins\Router\Exceptions\RouterCacheException;
 use Sonder\Plugins\Router\Exceptions\RouterException;
 use Sonder\Plugins\Router\Exceptions\RouterPluginException;
 use Sonder\Plugins\Router\Interfaces\IRouterEntity;
@@ -16,51 +14,32 @@ use Sonder\Plugins\Router\Interfaces\IRouterPlugin;
 
 final class RouterPlugin implements IRouterPlugin
 {
-    const DEFAULT_CONTROLLERS_DIR_PATH = __DIR__ . '/../../../controllers';
-
     const DEFAULT_AREA = 'default';
 
-    /**
-     * @var AnnotationPlugin
-     */
-    private AnnotationPlugin $_annotationPlugin;
+    const DEFAULT_CONTROLLERS_DIR_PATHS = [
+        __DIR__ . '/../../../controllers'
+    ];
 
-    /**
-     * @var string
-     */
-    private string $_controllersDirPath;
-
-    /**
-     * @var RouterCache
-     */
     private RouterCache $_cache;
 
-    /**
-     * @var string|null
-     */
+    private AnnotationPlugin $_annotationPlugin;
+
+    private string $_area;
+
+    private array $_controllersDirPaths;
+
     private ?string $_language = null;
 
     /**
-     * @var int|null
+     * @param array|null $controllerDirPaths
      */
-    private ?int $_page = null;
-
-    /**
-     * @var string|null
-     */
-    private ?string $_area = null;
-
-    /**
-     * @param string|null $controllerDirPath
-     */
-    final public function __construct(?string $controllerDirPath = null)
+    final public function __construct(?array $controllerDirPaths = null)
     {
         $this->_annotationPlugin = new AnnotationPlugin();
-
         $this->_cache = new RouterCache();
 
         $this->_setArea();
-        $this->_setControllersDirPath($controllerDirPath);
+        $this->_setControllersDirPaths($controllerDirPaths);
     }
 
     /**
@@ -69,11 +48,10 @@ final class RouterPlugin implements IRouterPlugin
      * @return IRouterEntity|null
      *
      * @throws AnnotationPluginException
-     * @throws ReflectionException
-     * @throws RouterCacheException
      * @throws RouterPluginException
+     * @throws Router\Exceptions\RouterCacheException
      */
-    public function getRoute(?string $url = null): ?IRouterEntity
+    final public function getRoute(?string $url = null): ?IRouterEntity
     {
         if (empty($url)) {
             throw new RouterPluginException(
@@ -82,15 +60,14 @@ final class RouterPlugin implements IRouterPlugin
             );
         }
 
-        if (empty($this->_cache)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CACHE_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CACHE_IS_NOT_SET
-            );
-        }
+        $url = explode('#', $url);
+        $url = array_shift($url);
+        $url = explode('&', $url);
+        $url = array_shift($url);
+        $url = explode('?', $url);
+        $url = array_shift($url);
 
         $url = $this->_extractLanguageFromUrl($url);
-        $url = $this->_extractPageFromUrl($url);
 
         $route = $this->_cache->getRouteByUrl($url);
 
@@ -99,7 +76,6 @@ final class RouterPlugin implements IRouterPlugin
         }
 
         if (!empty($route)) {
-            $route->setPage($this->_page);
             $route->setLanguage($this->_language);
 
             $this->_cache->saveRouteUrl($url, $route);
@@ -108,19 +84,46 @@ final class RouterPlugin implements IRouterPlugin
         return $route;
     }
 
-    /**
-     * @throws RouterPluginException
-     */
-    public function cleanCache(): void
+    final public function cleanCache(): void
     {
-        if (empty($this->_cache)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CACHE_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CACHE_IS_NOT_SET
-            );
+        $this->_cache->clean();
+    }
+
+    private function _setArea(): void
+    {
+        $this->_area = RouterPlugin::DEFAULT_AREA;
+
+        if (defined('APP_AREA')) {
+            $this->_area = APP_AREA;
+        }
+    }
+
+    /**
+     * @param array|null $controllersDirPaths
+     */
+    private function _setControllersDirPaths(
+        ?array $controllersDirPaths = null
+    ): void
+    {
+        if (empty($controllersDirPaths)) {
+            $controllersDirPaths = $this->_getDefaultControllersDirPaths();
         }
 
-        $this->_cache->clean();
+        $this->_controllersDirPaths = $controllersDirPaths;
+    }
+
+    /**
+     * @return array
+     */
+    private function _getDefaultControllersDirPaths(): array
+    {
+        if (!defined('APP_PROTECTED_DIR_PATH')) {
+            return RouterPlugin::DEFAULT_CONTROLLERS_DIR_PATHS;
+        }
+
+        return [
+            sprintf('%s/controllers', APP_PROTECTED_DIR_PATH)
+        ];
     }
 
     /**
@@ -147,31 +150,6 @@ final class RouterPlugin implements IRouterPlugin
                 $url
             );
         }
-
-        return !empty($url) ? $url : '/';
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
-    private function _extractPageFromUrl(string $url): string
-    {
-        if (preg_match('/^(.*?)\/page-([0-9]+)\/$/su', $url)) {
-            $this->_page = (int)preg_replace(
-                '/^(.*?)\/page-([0-9]+)\/$/su',
-                '$2',
-                $url
-            );
-
-            $url = preg_replace(
-                '/^(.*?)\/page-([0-9]+)\/$/su',
-                '$1/',
-                $url
-            );
-        }
-
         return !empty($url) ? $url : '/';
     }
 
@@ -181,7 +159,6 @@ final class RouterPlugin implements IRouterPlugin
      * @return IRouterEntity|null
      *
      * @throws AnnotationPluginException
-     * @throws ReflectionException
      * @throws RouterPluginException
      */
     private function _getRouteByUrl(string $url): ?IRouterEntity
@@ -195,18 +172,11 @@ final class RouterPlugin implements IRouterPlugin
             );
         }
 
-        if (empty($this->_cache)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CACHE_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CACHE_IS_NOT_SET
-            );
-        }
-
         $routes = $this->_cache->getRoutes();
 
         if (empty($routes)) {
             $routes = $this->_getRoutesFromAnnotations();
-            $routes = iterator_to_array($routes);
+            $routes = empty($routes) ? [] : iterator_to_array($routes);
 
             $this->_cache->saveRoutes($routes);
         }
@@ -224,84 +194,58 @@ final class RouterPlugin implements IRouterPlugin
     }
 
     /**
-     * @return Generator
+     * @return Generator|null
      *
      * @throws AnnotationPluginException
-     * @throws ReflectionException
-     * @throws RouterPluginException
      */
-    private function _getRoutesFromAnnotations(): Generator
+    private function _getRoutesFromAnnotations(): ?Generator
     {
-        $routes = [];
-
-        foreach ($this->_getControllersDisplayMethods() as $methods) {
-            $routes = array_merge(
-                $routes,
-                iterator_to_array($this->_getRoutesFromClassMethods($methods))
+        foreach ($this->_getControllersDisplayMethods() as $controllerMethods) {
+            $routesByAnnotations = $this->_getRoutesFromClassMethod(
+                $controllerMethods
             );
-        }
 
-        foreach ($routes as $route) {
-            yield $route;
+            if (!empty($routesByAnnotations)) {
+                yield $routesByAnnotations;
+            }
         }
 
         return null;
     }
 
     /**
-     * @param array|null $methods
-     *
-     * @return Generator
-     *
-     * @throws AnnotationPluginException
-     * @throws RouterPluginException
+     * @return array
      */
-    private function _getRoutesFromClassMethods(
-        ?array $methods = null
-    ): Generator
+    private function _getControllersDisplayMethods(): array
     {
-        $methods = (array)$methods;
+        $displayMethods = [];
 
-        $controllerClass = null;
-
-        if (array_key_exists('controller', $methods)) {
-            $controllerClass = (string)$methods['controller'];
-        }
-
-        if (array_key_exists('methods', $methods)) {
-            $methods = $methods['methods'];
-        }
-
-        foreach ($methods as $method) {
-            $routeArea = $this->_getRouteArea($controllerClass, $method);
-            $routePath = $this->_getRoutePath($controllerClass, $method);
-            $routeParams = $this->_getRouteParams($controllerClass, $method);
-
-            if (empty($routePath)) {
-                continue;
-            }
-
-            yield new RouterEntity(
-                $routeArea,
-                $routePath,
-                $routeParams,
-                $controllerClass,
-                $method
+        foreach ($this->_controllersDirPaths as $controllersDirPath) {
+            $displayMethods = array_merge(
+                $displayMethods,
+                $this->_getControllersDisplayMethodsByDirPath(
+                    $controllersDirPath
+                )
             );
         }
+
+        return $displayMethods;
     }
 
     /**
-     * @return Generator
+     * @param string $controllersDirPath
      *
-     * @throws ReflectionException
-     * @throws RouterPluginException
+     * @return array
      */
-    private function _getControllersDisplayMethods(): Generator
+    private function _getControllersDisplayMethodsByDirPath(
+        string $controllersDirPath
+    ): array
     {
+        $displayMethods = [];
+
         $controllersFilePathPattern = sprintf(
             '%s/*Controller.php',
-            $this->_controllersDirPath
+            $controllersDirPath
         );
 
         foreach (glob($controllersFilePathPattern) as $controllerFile) {
@@ -311,81 +255,120 @@ final class RouterPlugin implements IRouterPlugin
                 $controllerFile
             );
 
+            $controllerClass = sprintf(
+                'Sonder\Controllers\%s',
+                $controllerClass
+            );
+
             require_once $controllerFile;
 
-            $methods = $this->_getDisplayMethodsByClassName($controllerClass);
+            $displayMethodsByClassName = $this->_getDisplayMethodsByClassName(
+                $controllerClass,
+                $controllerFile
+            );
 
-            yield [
-                'controller' => $controllerClass,
-                'methods' => $methods
-            ];
+            if (!empty($displayMethodsByClassName)) {
+                $displayMethodsByClassName = iterator_to_array(
+                    $displayMethodsByClassName
+                );
+            }
+
+            $displayMethods = array_merge(
+                $displayMethods,
+                $displayMethodsByClassName ?? []
+            );
         }
+
+        return $displayMethods;
     }
 
     /**
-     * @param string|null $className
+     * @param string $className
+     * @param string $filePath
      *
-     * @return Generator
-     *
-     * @throws RouterPluginException
-     * @throws ReflectionException
+     * @return Generator|null
      */
     private function _getDisplayMethodsByClassName(
-        ?string $className = null
-    ): Generator
+        string $className,
+        string $filePath
+    ): ?Generator
     {
-        if (empty($className)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CONTROLLER_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CONTROLLER_IS_NOT_SET
-            );
+        if (!class_exists($className)) {
+            return null;
         }
 
         $reflection = new ReflectionClass($className);
 
-        $methods = $reflection->getMethods();
-
-        foreach ($methods as $method) {
+        foreach ($reflection->getMethods() as $method) {
             if (!$method->isPublic()) {
                 continue;
             }
 
             $method = $method->name;
 
-            if (preg_match('/^display(.*?)$/su', $method)) {
-                yield $method;
+            if (!preg_match('/^display(.*?)$/su', $method)) {
+                continue;
             }
+
+
+            yield [
+                'file_path' => $filePath,
+                'class_name' => $className,
+                'method' => $method
+            ];
         }
+
+        return null;
     }
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
+     * @param array $classesMethod
+     *
+     * @return RouterEntity|null
+     *
+     * @throws AnnotationPluginException
+     */
+    private function _getRoutesFromClassMethod(
+        array $classesMethod
+    ): ?RouterEntity
+    {
+        $controllerClass = $classesMethod['class_name'];
+        $controllerFilePath = $classesMethod['file_path'];
+        $method = $classesMethod['method'];
+
+        $area = $this->_getRouteArea($controllerClass, $method);
+        $path = $this->_getRoutePath($controllerClass, $method);
+        $params = $this->_getRouteParams($controllerClass, $method);
+        $noCache = $this->_getRouteNoCache($controllerClass, $method);
+
+        if (empty($path)) {
+            return null;
+        }
+
+        return new RouterEntity(
+            $area,
+            $path,
+            $params,
+            $controllerClass,
+            $controllerFilePath,
+            $method,
+            $noCache
+        );
+    }
+
+    /**
+     * @param string $className
+     * @param string $methodName
      *
      * @return string
      *
      * @throws AnnotationPluginException
-     * @throws RouterPluginException
      */
     private function _getRouteArea(
-        ?string $className = null,
-        ?string $methodName = null
+        string $className,
+        string $methodName
     ): string
     {
-        if (empty($className)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CONTROLLER_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CONTROLLER_IS_NOT_SET
-            );
-        }
-
-        if (empty($this->_annotationPlugin)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_ANNOTATION_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_ANNOTATION_IS_NOT_SET
-            );
-        }
-
         $routeArea = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
@@ -393,46 +376,40 @@ final class RouterPlugin implements IRouterPlugin
         );
 
         $routeArea = mb_convert_case((string)$routeArea, MB_CASE_LOWER);
-        $routeArea = preg_replace('/([^a-z]+)/su', '', $routeArea);
+
+        $routeArea = preg_replace(
+            '/([^a-z]+)/su',
+            '',
+            $routeArea
+        );
 
         return !empty($routeArea) ? $routeArea : RouterEntity::DEFAULT_AREA;
     }
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
+     * @param string $className
+     * @param string $methodName
      *
      * @return string|null
      *
      * @throws AnnotationPluginException
-     * @throws RouterPluginException
      */
     private function _getRoutePath(
-        ?string $className = null,
-        ?string $methodName = null
+        string $className,
+        string $methodName
     ): ?string
     {
-        if (empty($className)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CONTROLLER_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CONTROLLER_IS_NOT_SET
-            );
-        }
-
-        if (empty($this->_annotationPlugin)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_ANNOTATION_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_ANNOTATION_IS_NOT_SET
-            );
-        }
-
         $routePath = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
             'route'
         );
 
-        $routePath = preg_replace('/\s+/su', '', (string)$routePath);
+        $routePath = preg_replace(
+            '/\s+/su',
+            '',
+            (string)$routePath
+        );
 
         return !empty($routePath) ? $routePath : null;
     }
@@ -444,70 +421,56 @@ final class RouterPlugin implements IRouterPlugin
      * @return string|null
      *
      * @throws AnnotationPluginException
-     * @throws RouterPluginException
      */
     private function _getRouteParams(
-        ?string $className = null,
-        ?string $methodName = null
+        string $className = null,
+        string $methodName = null
     ): ?string
     {
-        if (empty($className)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_CONTROLLER_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_CONTROLLER_IS_NOT_SET
-            );
-        }
-
-        if (empty($this->_annotationPlugin)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_ANNOTATION_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_ANNOTATION_IS_NOT_SET
-            );
-        }
-
         $routeParams = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
             'url_params'
         );
 
-        $routeParams = preg_replace('/\s+/su', '', (string)$routeParams);
+        $routeParams = preg_replace(
+            '/\s+/su',
+            '',
+            (string)$routeParams
+        );
 
         return !empty($routeParams) ? $routeParams : null;
     }
 
-    private function _setArea(): void
-    {
-        $this->_area = RouterPlugin::DEFAULT_AREA;
-
-        if (defined('APP_AREA')) {
-            $this->_area = APP_AREA;
-        }
-    }
-
     /**
-     * @param string|null $controllersDirPath
+     * @param string|null $className
+     * @param string|null $methodName
+     *
+     * @return bool
+     *
+     * @throws AnnotationPluginException
      */
-    private function _setControllersDirPath(
-        ?string $controllersDirPath = null
-    ): void
+    private function _getRouteNoCache(
+        ?string $className = null,
+        ?string $methodName = null
+    ): bool
     {
-        if (empty($controllersDirPath)) {
-            $controllersDirPath = $this->_getDefaultControllersDirPath();
-        }
+        $noCache = $this->_annotationPlugin->getAnnotation(
+            $className,
+            $methodName,
+            'no_cache'
+        );
 
-        $this->_controllersDirPath = $controllersDirPath;
-    }
+        $noCache = mb_convert_case((string)$noCache, MB_CASE_LOWER);
 
-    /**
-     * @return string
-     */
-    private function _getDefaultControllersDirPath(): string
-    {
-        if (!defined('APP_PROTECTED_DIR_PATH')) {
-            return RouterPlugin::DEFAULT_CONTROLLERS_DIR_PATH;
-        }
+        $noCache = preg_replace(
+            '/([^a-z]+)/su',
+            '',
+            $noCache
+        );
 
-        return sprintf('%s/controllers', APP_PROTECTED_DIR_PATH);
+        $noCache = !empty($noCache) ? $noCache : 'false';
+
+        return $noCache == 'true';
     }
 }

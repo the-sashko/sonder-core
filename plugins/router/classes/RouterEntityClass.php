@@ -23,7 +23,7 @@ final class RouterEntity implements IRouterEntity
     /**
      * @var string
      */
-    private string $_params;
+    private string $_controllerFilePath;
 
     /**
      * @var string
@@ -38,33 +38,85 @@ final class RouterEntity implements IRouterEntity
     /**
      * @var string|null
      */
+    private ?string $_params;
+
+    /**
+     * @var string|null
+     */
     private ?string $_language = null;
 
     /**
-     * @var int|null
+     * @var bool
      */
-    private ?int $_page = null;
+    private bool $_noCache;
 
     /**
      * @param string|null $area
      * @param string|null $route
      * @param string|null $params
      * @param string|null $controller
+     * @param string|null $controllerFilePath
      * @param string|null $method
+     * @param bool $noCache
      */
     final public function __construct(
         ?string $area = null,
         ?string $route = null,
         ?string $params = null,
         ?string $controller = null,
-        ?string $method = null
+        ?string $controllerFilePath = null,
+        ?string $method = null,
+        bool    $noCache = false
     )
     {
         $this->_area = $area;
         $this->_route = $route;
+        $this->_controllerFilePath = $controllerFilePath;
         $this->_controller = $controller;
         $this->_method = $method;
         $this->_params = $params;
+        $this->_noCache = $noCache;
+    }
+
+    /**
+     * @return array
+     */
+    final public function __serialize(): array
+    {
+        return [
+            'area' => $this->_area,
+            'route' => base64_encode($this->_route),
+            'controller_file_path' => base64_encode($this->_controllerFilePath),
+            'controller' => $this->_controller,
+            'method' => $this->_method,
+            'params' => base64_encode($this->_params),
+            'language' => $this->_language,
+            'no_cache' => (int)$this->_noCache
+        ];
+    }
+
+    /**
+     * @param array $values
+     */
+    final public function __unserialize(array $values): void
+    {
+        $this->_area = $values['area'];
+
+        $this->_route = base64_decode($values['route']);
+
+        $this->_controllerFilePath = base64_decode(
+            $values['controller_file_path']
+        );
+
+        $this->_controller = $values['controller'];
+
+        $this->_method = $values['method'];
+
+        $this->_params = base64_decode($values['params']);
+
+        $this->_language = empty($values['language']) ? null : $this->_language;
+
+        $this->_noCache = (bool)$values['no_cache'];
     }
 
     /**
@@ -110,33 +162,20 @@ final class RouterEntity implements IRouterEntity
     }
 
     /**
-     * @return array|null
+     * @return string
      *
      * @throws RouterEntityException
      */
-    final public function getParams(): ?array
+    final public function getControllerFilePath(): string
     {
-        if (empty($this->_params)) {
-            return null;
+        if (empty($this->_controller)) {
+            throw new RouterEntityException(
+                RouterEntityException::MESSAGE_ENTITY_FILE_PATH_IS_NOT_SET,
+                RouterException::CODE_ENTITY_FILE_PATH_IS_NOT_SET
+            );
         }
 
-        $routePattern = $this->getRoutePattern();
-        $params = $this->_params;
-        $url = $_SERVER['REQUEST_URI'];
-
-        if (preg_match('/^(.*?)\/page-([0-9]+)\//su', $url)) {
-            $url = preg_replace('/^(.*?)\/page-([0-9]+)\//su', '$1/', $url);
-        }
-
-        if (!preg_match($routePattern, $url)) {
-            return null;
-        }
-
-        $params = preg_replace($routePattern, $params, $url);
-
-        parse_str($params, $params);
-
-        return $params;
+        return $this->_controllerFilePath;
     }
 
     /**
@@ -174,15 +213,37 @@ final class RouterEntity implements IRouterEntity
     }
 
     /**
-     * @return int
+     * @return array|null
+     *
+     * @throws RouterEntityException
      */
-    final public function getPage(): int
+    final public function getParams(): ?array
     {
-        if (empty($this->_page)) {
-            return 1;
+        if (empty($this->_params)) {
+            return null;
         }
 
-        return $this->_page;
+        $routePattern = $this->getRoutePattern();
+
+        $params = $this->_params;
+
+        $url = $_SERVER['REQUEST_URI'];
+        $url = explode('#', $url);
+        $url = array_shift($url);
+        $url = explode('&', $url);
+        $url = array_shift($url);
+        $url = explode('?', $url);
+        $url = array_shift($url);
+
+        if (!preg_match($routePattern, $url)) {
+            return null;
+        }
+
+        $params = preg_replace($routePattern, $params, $url);
+
+        parse_str($params, $params);
+
+        return $params;
     }
 
     /**
@@ -194,19 +255,11 @@ final class RouterEntity implements IRouterEntity
     }
 
     /**
-     * @param int|null $page
+     * @return bool
      */
-    final public function setPage(?int $page = null): void
+    final public function getNoCache(): bool
     {
-        $this->_page = !empty($page) ? $page : null;
-    }
-
-    /**
-     * @param string|null $language
-     */
-    final public function setLanguage(?string $language = null): void
-    {
-        $this->_language = $language;
+        return $this->_noCache;
     }
 
     /**
@@ -223,6 +276,14 @@ final class RouterEntity implements IRouterEntity
         $params = urldecode($params);
 
         $this->_params = !empty($params) ? $params : null;
+    }
+
+    /**
+     * @param string|null $language
+     */
+    final public function setLanguage(?string $language = null): void
+    {
+        $this->_language = $language;
     }
 
     /**

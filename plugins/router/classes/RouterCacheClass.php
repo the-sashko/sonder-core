@@ -16,6 +16,14 @@ final class RouterCache implements IRouterCache
      */
     final public function getRoutes(): ?array
     {
+        if (defined('APP_MODE') && APP_MODE == 'dev') {
+            return null;
+        }
+
+        if (defined('APP_API_MODE') && APP_API_MODE == 'dev') {
+            return null;
+        }
+
         $cacheFilePath = $this->_getCacheFilePath();
 
         if (!file_exists($cacheFilePath) || !is_file($cacheFilePath)) {
@@ -43,6 +51,14 @@ final class RouterCache implements IRouterCache
                 RouterCacheException::MESSAGE_CACHE_URL_IS_NOT_SET,
                 RouterException::CODE_CACHE_URL_IS_NOT_SET
             );
+        }
+
+        if (defined('APP_MODE') && APP_MODE == 'dev') {
+            return null;
+        }
+
+        if (defined('APP_API_MODE') && APP_API_MODE == 'dev') {
+            return null;
         }
 
         $cacheFilePath = $this->_getUrlCacheFilePath($url);
@@ -214,6 +230,9 @@ final class RouterCache implements IRouterCache
         }
     }
 
+    /**
+     * @return string
+     */
     private function _getCacheDirPath(): string
     {
         if (!defined('APP_PROTECTED_DIR_PATH')) {
