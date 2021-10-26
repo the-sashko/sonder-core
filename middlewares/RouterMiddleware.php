@@ -12,7 +12,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 
     const DEFAULT_CONTROLLER = 'main';
 
-    const DEFAULT_METHOD = 'index';
+    const DEFAULT_METHOD = 'displayIndex';
 
     const ANNOTATIONS_ROUTING_TYPE = 'annotations';
 
@@ -52,17 +52,63 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function _setRouteByAnnotations(): void
     {
+        $securityPlugin = $this->getPlugin('security');
+
+        $routerPlugin = $this->getPlugin(
+            'router',
+            APP_SOURCE_PATHS['controllers']
+        );
+
+        $routerPlugin->cleanCache();
+
         $controller = RouterMiddleware::DEFAULT_CONTROLLER;
         $method = RouterMiddleware::DEFAULT_METHOD;
 
-        //TODO
+        $route = $routerPlugin->getRoute($this->request->getUrl());
 
-        $method = sprintf(
-            'display%s',
-            mb_convert_case($method, MB_CASE_TITLE)
-        );
+        if (
+            !empty($route) &&
+            file_exists($route->getControllerFilePath()) &&
+            is_file($route->getControllerFilePath())
+        ) {
+            require_once $route->getControllerFilePath();
+
+            $controller = $route->getController();
+            $controller = explode('\\', $controller);
+            $controller = end($controller);
+
+            $controller = preg_replace(
+                '/^(.*?)Controller$/su',
+                '$1',
+                $controller
+            );
+
+            $method = $route->getMethod();
+
+            $urlValues = $route->getParams();
+
+            $urlValues = array_map(
+                [
+                    $securityPlugin,
+                    'escapeInput'
+                ],
+                $urlValues
+            );
+
+            $urlValues = array_merge(
+                $this->request->getUrlValues(),
+                $urlValues
+            );
+
+            $this->request->setUrlValues($urlValues);
+            $this->request->setLanguage($route->getLanguage());
+            $this->request->setNoCache($route->getNoCache());
+        }
 
         $this->request->setController($controller);
         $this->request->setMethod($method);
@@ -73,6 +119,13 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         $controller = $this->request->getUrlValue('controller');
         $method = $this->request->getUrlValue('method');
 
+        if (!empty($method)) {
+            $method = sprintf(
+                'display%s',
+                mb_convert_case($method, MB_CASE_TITLE)
+            );
+        }
+
         if (empty($controller)) {
             $controller = RouterMiddleware::DEFAULT_CONTROLLER;
         }
@@ -80,11 +133,6 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         if (empty($method)) {
             $method = RouterMiddleware::DEFAULT_METHOD;
         }
-
-        $method = sprintf(
-            'display%s',
-            mb_convert_case($method, MB_CASE_TITLE)
-        );
 
         $this->request->setController($controller);
         $this->request->setMethod($method);

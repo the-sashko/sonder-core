@@ -1,4 +1,5 @@
 <?php
+
 namespace Sonder\Endpoints;
 
 use Sonder\Core\CoreEndpoint;

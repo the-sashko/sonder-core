@@ -18,4 +18,3 @@ if (!defined('APP_CACHE')) {
 if (!defined('APP_CACHE_TTL')) {
     define('APP_CACHE_TTL', 0);
 }
-
