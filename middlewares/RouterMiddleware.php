@@ -59,10 +59,19 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
     {
         $securityPlugin = $this->getPlugin('security');
 
-        $routerPlugin = $this->getPlugin(
-            'router',
-            APP_SOURCE_PATHS['controllers']
-        );
+        $controllersPaths = [
+            APP_PROTECTED_DIR_PATH . '/controllers',
+            APP_FRAMEWORK_DIR_PATH . '/controllers'
+        ];
+
+        if (
+            array_key_exists('controllers', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['controllers'])
+        ) {
+            $controllersPaths = APP_SOURCE_PATHS['controllers'];
+        }
+
+        $routerPlugin = $this->getPlugin('router', $controllersPaths);
 
         $routerPlugin->cleanCache();
 

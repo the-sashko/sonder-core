@@ -11,19 +11,21 @@ use Exception;
  */
 function renderPage(?string $page = null): void
 {
-    foreach ($GLOBALS['template_params'] as $param => $value) {
-        $$param = $value;
+    foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+        $$valueName = $value;
     }
 
     $pageFilePath = sprintf(
-        '%s/%s/pages/%s.phtml',
-        $GLOBALS['template_dir'],
-        $GLOBALS['template_area'],
+        '%s/pages/%s.phtml',
+        $GLOBALS['template']['dir'],
         $page
     );
 
     if (!file_exists($pageFilePath) || !is_file($pageFilePath)) {
-        throw new Exception(sprintf('Template Page "%s" Missing', $page));
+        throw new Exception(sprintf(
+            'Template Page "%s" Not Found',
+            $page
+        ));
     }
 
     include_once($pageFilePath);
@@ -57,30 +59,33 @@ function renderPart(
     }
 
     if (!empty($values)) {
-        foreach ($values as $templateDataKey => $templateDataValue) {
-            $GLOBALS['template_params'][$templateDataKey] = $templateDataValue;
-        }
+        $GLOBALS['template']['values'] = array_merge(
+            $GLOBALS['template']['values'],
+            $values
+        );
     }
 
-    foreach ($GLOBALS['template_params'] as $param => $value) {
+    foreach ($GLOBALS['template']['values'] as $param => $value) {
         $$param = $value;
     }
 
     $templatePartFile = sprintf(
-        '%s/%s/parts/%s.phtml',
-        $GLOBALS['template_dir'],
-        $GLOBALS['template_area'],
+        '%s/parts/%s.phtml',
+        $GLOBALS['template']['dir'],
         $part
     );
 
     if (!file_exists($templatePartFile) || !is_file($templatePartFile)) {
-        throw new Exception(sprintf('Template Part "%s" Is Not Found', $part));
+        throw new Exception(
+            sprintf('Template Part "%s" Is Not Found', $part)
+        );
     }
 
     include($templatePartFile);
 
     if ($ttl > 0) {
         $partData = (string)ob_get_clean();
+
         saveTemplateDataToCache($part, $partData, $ttl);
 
         echo $partData;
@@ -98,7 +103,7 @@ function getTemplateDataFromCache(?string $part = null): ?string
 {
     $cacheFilePath = sprintf(
         '%s/%s.html',
-        $GLOBALS['template_cache_dir'],
+        $GLOBALS['template']['cache_dir'],
         $part
     );
 
@@ -136,7 +141,7 @@ function saveTemplateDataToCache(
 
     $cacheFilePath = sprintf(
         '%s/%s.html',
-        $GLOBALS['template_cache_dir'],
+        $GLOBALS['template']['cache_dir'],
         $partName
     );
 
@@ -150,6 +155,7 @@ function saveTemplateDataToCache(
 
 /**
  * @param string|null $page
+ *
  * @throws Exception
  */
 function __page(?string $page = null): void
@@ -161,15 +167,22 @@ function __page(?string $page = null): void
  * @param string|null $part
  * @param array|null $values
  * @param bool $isCache
+ * @param int|null $ttl
  *
  * @throws Exception
  */
 function __part(
     ?string $part = null,
     ?array  $values = null,
-    bool    $isCache = false
+    bool    $isCache = false,
+    ?int    $ttl = null
 ): void
 {
-    $ttl = $isCache ? (int)$GLOBALS['template_ttl'] : 0;
+    $ttl = empty($ttl) ? (int)$GLOBALS['template']['ttl'] : $ttl;
+
+    if (!$isCache) {
+        $ttl = 0;
+    }
+
     renderPart($part, $values, $ttl);
 }
