@@ -58,8 +58,19 @@ final class ConfigObject
      */
     private function _setValues(?string $configsDirPath = null): void
     {
+        $configPaths = [
+            APP_PROTECTED_DIR_PATH . '/config'
+        ];
+
+        if (
+            array_key_exists('config', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['config'])
+        ) {
+            $configPaths = APP_SOURCE_PATHS['config'];
+        }
+
         if (empty($configsDirPath)) {
-            $appConfigDirPaths = array_reverse(APP_SOURCE_PATHS['config']);
+            $appConfigDirPaths = array_reverse($configPaths);
 
             foreach ($appConfigDirPaths as $appConfigDirPath) {
                 $this->_setValues($appConfigDirPath);

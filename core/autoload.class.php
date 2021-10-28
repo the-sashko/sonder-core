@@ -21,9 +21,45 @@ final class AutoloadCore
 
     final public function __construct()
     {
-        $this->_endpointPaths = APP_SOURCE_PATHS['endpoints'];
-        $this->_middlewarePaths = APP_SOURCE_PATHS['middlewares'];
-        $this->_controllerPaths = APP_SOURCE_PATHS['controllers'];
+        $endpointsPaths = [
+            APP_PROTECTED_DIR_PATH . '/endpoints',
+            APP_FRAMEWORK_DIR_PATH . '/endpoints'
+        ];
+
+        if (
+            array_key_exists('endpoints', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['endpoints'])
+        ) {
+            $endpointsPaths = APP_SOURCE_PATHS['endpoints'];
+        }
+
+        $middlewaresPaths = [
+            APP_PROTECTED_DIR_PATH . '/middlewares',
+            APP_FRAMEWORK_DIR_PATH . '/middlewares'
+        ];
+
+        if (
+            array_key_exists('middlewares', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['middlewares'])
+        ) {
+            $middlewaresPaths = APP_SOURCE_PATHS['middlewares'];
+        }
+
+        $controllersPaths = [
+            APP_PROTECTED_DIR_PATH . '/controllers',
+            APP_FRAMEWORK_DIR_PATH . '/controllers'
+        ];
+
+        if (
+            array_key_exists('controllers', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['controllers'])
+        ) {
+            $controllersPaths = APP_SOURCE_PATHS['controllers'];
+        }
+
+        $this->_endpointPaths = $endpointsPaths;
+        $this->_middlewarePaths = $middlewaresPaths;
+        $this->_controllerPaths = $controllersPaths;
     }
 
     /**

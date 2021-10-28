@@ -50,7 +50,19 @@ class CoreObject
             mb_convert_case($pluginName, MB_CASE_TITLE)
         );
 
-        foreach (APP_SOURCE_PATHS['plugins'] as $pluginDirPath) {
+        $pluginsPaths = [
+            APP_PROTECTED_DIR_PATH . '/plugins',
+            APP_FRAMEWORK_DIR_PATH . '/plugins'
+        ];
+
+        if (
+            array_key_exists('plugins', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['plugins'])
+        ) {
+            $pluginsPaths = APP_SOURCE_PATHS['plugins'];
+        }
+
+        foreach ($pluginsPaths as $pluginDirPath) {
             $pluginFilePath = sprintf(
                 '%s/%s/%s',
                 $pluginDirPath,
@@ -123,7 +135,19 @@ class CoreObject
             mb_convert_case($modelName, MB_CASE_TITLE)
         );
 
-        foreach (APP_SOURCE_PATHS['models'] as $modelDirPath) {
+        $modelsPaths = [
+            APP_PROTECTED_DIR_PATH . '/models',
+            APP_FRAMEWORK_DIR_PATH . '/models'
+        ];
+
+        if (
+            array_key_exists('models', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['models'])
+        ) {
+            $modelsPaths = APP_SOURCE_PATHS['models'];
+        }
+
+        foreach ($modelsPaths as $modelDirPath) {
             $modelDirPath = sprintf('%s/%s', $modelDirPath, $modelName);
 
             $modelFilePath = sprintf(
@@ -175,7 +199,19 @@ class CoreObject
 
         $hookFileName = sprintf('%sHook.php', $hookName);
 
-        foreach (APP_SOURCE_PATHS['hooks'] as $hookDirPath) {
+        $hooksPaths = [
+            APP_PROTECTED_DIR_PATH . '/hooks',
+            APP_FRAMEWORK_DIR_PATH . '/hooks'
+        ];
+
+        if (
+            array_key_exists('hooks', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['hooks'])
+        ) {
+            $hooksPaths = APP_SOURCE_PATHS['hooks'];
+        }
+
+        foreach ($hooksPaths as $hookDirPath) {
             $hookFilePath = sprintf(
                 '%s/%s',
                 $hookDirPath,
