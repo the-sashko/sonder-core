@@ -60,6 +60,10 @@ try {
                     APP_PROTECTED_DIR_PATH . '/lang'
                 ],
 
+                'themes' => [
+                    APP_PROTECTED_DIR_PATH . '/themes'
+                ],
+
                 'pages' => [
                     APP_PROTECTED_DIR_PATH . '/pages'
                 ]
