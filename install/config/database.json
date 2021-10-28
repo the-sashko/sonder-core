@@ -1,0 +1,9 @@
+{
+  "type": "<DATABASE_TYPE>",
+  "host": "<DATABASE_HOST>",
+  "port": "<DATABASE_POST>",
+  "db": "<DATABASE_NAME>",
+  "user": "<DATABASE_USER>",
+  "password": "<DATABASE_PASSWORD>",
+  "cache_type": "<DATABASE_CACHE_PROVIDER_TYPE>"
+}

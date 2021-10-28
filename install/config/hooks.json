@@ -1,0 +1,13 @@
+{
+  "onBeforeMiddlewares": [],
+  "onAfterMiddlewares": [],
+  "onBeforeControllerInit": [],
+  "onAfterControllerInit": [],
+  "onBeforeRender": [
+    {
+      "hook": "example",
+      "method": "setExampleData"
+    }
+  ],
+  "onAfterRender": []
+}
