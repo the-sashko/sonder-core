@@ -104,7 +104,19 @@ final class App
         $loggerPlugin = CoreObject::getPlugin('logger');
         $errorPlugin = CoreObject::getPlugin('error');
 
-        $debugBacktrace = $this->_getDebugBacktrace();
+        $debugBacktrace = $exception->getTrace();
+
+        $debugBacktrace = array_map(
+            function ($traceRow) {
+                return sprintf(
+                    '%s (%d)',
+                    $traceRow['file'],
+                    $traceRow['line']
+                );
+            },
+
+            $debugBacktrace
+        );
 
         $logMessage = sprintf(
             'Error #%d: %s. File: %s (%d). Trace: %s',

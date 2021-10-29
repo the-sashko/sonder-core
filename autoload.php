@@ -1,4 +1,5 @@
 <?php
+
 namespace Sonder;
 
 use Closure;
@@ -19,12 +20,29 @@ $autoload = function (string $directory, Closure $autoload) {
     }
 };
 
-require_once (__DIR__ . '/core/cache.object.class.php');
-require_once (__DIR__ . '/core/config.object.class.php');
-require_once (__DIR__ . '/core/core.object.class.php');
+require_once(__DIR__ . '/core/cache.object.class.php');
+require_once(__DIR__ . '/core/config.object.class.php');
+require_once(__DIR__ . '/core/core.object.class.php');
 
 $autoload(__DIR__ . '/core/interfaces', $autoload);
 $autoload(__DIR__ . '/core', $autoload);
+
+$hooksPaths = [
+    APP_PROTECTED_DIR_PATH . '/hooks'
+];
+
+if (
+    array_key_exists('hooks', APP_SOURCE_PATHS) &&
+    is_array(APP_SOURCE_PATHS['hooks'])
+) {
+    $hooksPaths = APP_SOURCE_PATHS['hooks'];
+}
+
+foreach ($hooksPaths as $hooksPath) {
+    if (file_exists($hooksPath) && $hooksPath) {
+        $autoload($hooksPath, $autoload);
+    }
+}
 
 spl_autoload_register(function ($name) {
     (new AutoloadCore)->load($name);

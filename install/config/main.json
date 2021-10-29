@@ -6,6 +6,5 @@
   "locale": "<SITE_LOCATE>",
   "theme": "<FRONTEND_THEME>",
   "launch_date": "<SITE_CREATION_DATE>",
-  "admin_email": "<ADMIN_EMAIL>",
-  "assets_version": "<ASSETS_VERSION>"
+  "admin_email": "<ADMIN_EMAIL>"
 }

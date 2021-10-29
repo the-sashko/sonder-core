@@ -42,14 +42,13 @@ try {
                     APP_FRAMEWORK_DIR_PATH . '/models'
                 ],
 
-                'hooks' => [
-                    APP_PROTECTED_DIR_PATH . '/hooks',
-                    APP_FRAMEWORK_DIR_PATH . '/hooks'
-                ],
-
                 'plugins' => [
                     APP_PROTECTED_DIR_PATH . '/plugins',
                     APP_FRAMEWORK_DIR_PATH . '/plugins'
+                ],
+
+                'hooks' => [
+                    APP_PROTECTED_DIR_PATH . '/hooks'
                 ],
 
                 'config' => [

@@ -42,10 +42,43 @@ class CoreController extends CoreObject implements IController
         $this->_response = new ResponseObject();
 
         $mainConfig = $this->config->get('main');
+        $seoConfig = $this->config->get('seo');
 
         if (!empty($mainConfig) && array_key_exists('theme', $mainConfig)) {
             $this->_renderTheme = (string)$mainConfig['theme'];
         }
+
+        if (!empty($mainConfig)) {
+            $this->assign([
+                'meta' => $mainConfig
+            ]);
+        }
+
+        if (!empty($seoConfig)) {
+            $this->assign([
+                'meta' => $seoConfig
+            ]);
+        }
+
+        //TODO
+        $this->assign([
+            'currentLanguage' => 'en'
+        ]);
+
+        $values = (new CoreEvent)->run(
+            CoreEvent::TYPE_INIT_CONTROLLER,
+            [
+                'request' => $this->request,
+                'response' => $this->_response,
+                'render_values' => $this->_renderValues,
+                'render_theme' => $this->_renderTheme
+            ]
+        );
+
+        $this->request = $values['request'];
+        $this->_response = $values['response'];
+        $this->_renderValues = $values['render_values'];
+        $this->_renderTheme = $values['render_theme'];
     }
 
     /**
@@ -98,7 +131,25 @@ class CoreController extends CoreObject implements IController
 
         $templaterPlugin = $this->getPlugin('templater', $themeName);
 
+        $values = (new CoreEvent)->run(
+            CoreEvent::TYPE_BEFORE_RENDER,
+            [
+                'render_values' => $this->_renderValues
+            ]
+        );
+
+        $this->_renderValues = $values['render_values'];
+
         $content = $templaterPlugin->render($page, $this->_renderValues, $ttl);
+
+        $values = (new CoreEvent)->run(
+            CoreEvent::TYPE_AFTER_RENDER,
+            [
+                'content' => $content
+            ]
+        );
+
+        $content = $values['content'];
 
         $this->_response->setContent($content);
 

@@ -9,15 +9,15 @@ class ValuesObject
     /**
      * @var array
      */
-    public array $values = [];
+    private array $_values = [];
 
     /**
      * @param array|null $values
      */
-    public function __construct(?array $values = null)
+    final public function __construct(?array $values = null)
     {
         if (!empty($values)) {
-            $this->values = $values;
+            $this->_values = $values;
         }
     }
 
@@ -28,7 +28,7 @@ class ValuesObject
      */
     public function exportRow(?array $params = null): ?array
     {
-        $row = $this->values;
+        $row = $this->getAll();
 
         foreach ($row as $param => $value) {
             if (!is_scalar($value) && !is_null($value)) {
@@ -47,6 +47,14 @@ class ValuesObject
         }
 
         return $row;
+    }
+
+    /**
+     * @return array
+     */
+    final protected function getAll(): array
+    {
+        return $this->_values;
     }
 
     /**
@@ -70,7 +78,7 @@ class ValuesObject
             throw new Exception($errorMessage);
         }
 
-        return $this->values[$valueName];
+        return $this->_values[$valueName];
     }
 
     /**
@@ -88,7 +96,7 @@ class ValuesObject
             throw new Exception('Value Name Of ValuesObject Is Empty');
         }
 
-        $this->values[$valueName] = $value;
+        $this->_values[$valueName] = $value;
     }
 
     /**
@@ -102,6 +110,6 @@ class ValuesObject
             return false;
         }
 
-        return array_key_exists($valueName, $this->values);
+        return array_key_exists($valueName, $this->_values);
     }
 }

@@ -4,5 +4,8 @@ namespace Sonder\Core\Interfaces;
 
 interface IHook
 {
-    public function run(): void;
+    /**
+     * @return array
+     */
+    public function getValues(): array;
 }

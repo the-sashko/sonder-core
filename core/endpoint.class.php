@@ -57,8 +57,31 @@ class CoreEndpoint implements IEndpoint
      */
     final public function run(): void
     {
+        $values = (new CoreEvent)->run(
+            CoreEvent::TYPE_BEFORE_MIDDLEWARES,
+            [
+                'request' => $this->_request,
+                'response' => $this->_response
+            ]
+        );
+
+        $this->_request = $values['request'];
+        $this->_response = $values['response'];
+
         if (empty($this->_response)) {
             $this->_runMiddlewares();
+
+            $values = (new CoreEvent)->run(
+                CoreEvent::TYPE_AFTER_MIDDLEWARES,
+                [
+                    'request' => $this->_request,
+                    'response' => $this->_response
+                ]
+            );
+
+            $this->_request = $values['request'];
+            $this->_response = $values['response'];
+
             $this->_runControllerMethod();
         }
 
@@ -233,7 +256,7 @@ class CoreEndpoint implements IEndpoint
     private function _saveResponseToCache(): void
     {
         if (
-            $this->_request->getHttpMethod() == 'get' ||
+            $this->_request->getHttpMethod() == 'get' &&
             !$this->_request->getNoCache()
         ) {
             $this->_cache->save(
