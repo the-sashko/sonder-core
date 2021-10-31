@@ -11,6 +11,7 @@ final class ApiController extends CoreController implements IController
     final public function displayRun(): ResponseObject
     {
         $response = new ResponseObject();
+        $response->setContentType('json');
         $response->setContent('{"foo":"bar"}');
 
         return $response;
