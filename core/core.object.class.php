@@ -125,7 +125,7 @@ class CoreObject
         }
 
         $modelFileName = sprintf(
-            '%sModel.php',
+            '%s.php',
             mb_convert_case($modelName, MB_CASE_TITLE)
         );
 

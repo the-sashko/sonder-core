@@ -53,10 +53,19 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
+     * @param array|null $middlewares
+     *
      * @throws Exception
      */
-    final public function run(): void
+    final public function run(?array $middlewares = null): void
     {
+        if (!empty($middlewares)) {
+            $this->middlewares = array_merge(
+                $this->middlewares,
+                $middlewares
+            );
+        }
+
         $values = (new CoreEvent)->run(
             CoreEvent::TYPE_BEFORE_MIDDLEWARES,
             [
@@ -83,11 +92,14 @@ class CoreEndpoint implements IEndpoint
             $this->_response = $values['response'];
 
             $this->_runControllerMethod();
+
+            $this->_saveResponseToCache();
         }
 
-        $this->_saveResponseToCache();
+        if (!headers_sent()) {
+            header($this->_response->getContentTypeHeader());
+        }
 
-        header($this->_response->getContentTypeHeader());
         http_response_code($this->_response->getHttpCode());
 
         echo $this->_response->getContent();
