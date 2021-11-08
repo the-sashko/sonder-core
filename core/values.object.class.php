@@ -14,7 +14,7 @@ class ValuesObject
     /**
      * @param array|null $values
      */
-    final public function __construct(?array $values = null)
+    public function __construct(?array $values = null)
     {
         if (!empty($values)) {
             $this->_values = $values;

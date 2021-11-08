@@ -13,6 +13,9 @@ class CoreModel extends CoreObject implements IModel
 
     private ?string $_valuesObjectClass = null;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         parent::__construct();
@@ -64,6 +67,9 @@ class CoreModel extends CoreObject implements IModel
         return $voArray;
     }
 
+    /**
+     * @throws Exception
+     */
     private function _setStore(): void
     {
         $storeClass = sprintf('%sStore', get_called_class());
