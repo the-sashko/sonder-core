@@ -27,9 +27,7 @@ class CoreModel extends CoreObject implements IModel
 
     /**
      * @param array|null $row
-     *
      * @return ValuesObject
-     *
      * @throws Exception
      */
     final protected function getVO(?array $row = null): ValuesObject
@@ -43,9 +41,7 @@ class CoreModel extends CoreObject implements IModel
 
     /**
      * @param array|null $rows
-     *
      * @return array|null
-     *
      * @throws Exception
      */
     final protected function getVOArray(?array $rows = null): ?array

@@ -57,10 +57,15 @@ final class RedirectObject
 
     final public function redirect(): void
     {
-        $responseCode = $this->_isPermanent ? 301 : 302;
-
         if (!empty($this->_url)) {
-            header(sprintf('Location: %s', $this->_url), true, $responseCode);
+            $responseCode = $this->_isPermanent ? 301 : 302;
+
+            header(
+                sprintf('Location: %s', $this->_url),
+                true,
+                $responseCode
+            );
+
             exit(0);
         }
     }

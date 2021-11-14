@@ -64,7 +64,6 @@ final class AutoloadCore
 
     /**
      * @param string|null $className
-     *
      * @return bool
      */
     final public function load(?string $className = null): bool
@@ -93,7 +92,6 @@ final class AutoloadCore
 
     /**
      * @param string|null $className
-     *
      * @return bool
      */
     private function _loadEndpoint(?string $className = null): bool
@@ -126,7 +124,6 @@ final class AutoloadCore
 
     /**
      * @param string|null $className
-     *
      * @return bool
      */
     private function _loadMiddleware(?string $className = null): bool
@@ -159,7 +156,6 @@ final class AutoloadCore
 
     /**
      * @param string|null $className
-     *
      * @return bool
      */
     private function _loadController(?string $className = null): bool

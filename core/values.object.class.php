@@ -23,7 +23,6 @@ class ValuesObject
 
     /**
      * @param array|null $params
-     *
      * @return array|null
      */
     public function exportRow(?array $params = null): ?array
@@ -59,9 +58,7 @@ class ValuesObject
 
     /**
      * @param string|null $valueName
-     *
      * @return mixed
-     *
      * @throws Exception
      */
     final protected function get(?string $valueName = null): mixed
@@ -84,7 +81,6 @@ class ValuesObject
     /**
      * @param string|null $valueName
      * @param mixed|null $value
-     *
      * @throws Exception
      */
     final protected function set(
@@ -101,7 +97,6 @@ class ValuesObject
 
     /**
      * @param string|null $valueName
-     *
      * @return bool
      */
     final protected function has(?string $valueName = null): bool

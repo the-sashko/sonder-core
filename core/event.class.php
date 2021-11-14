@@ -2,6 +2,7 @@
 
 namespace Sonder\Core;
 
+use Exception;
 use Sonder\Core\Interfaces\IEvent;
 
 final class CoreEvent implements IEvent
@@ -12,6 +13,12 @@ final class CoreEvent implements IEvent
     const TYPE_BEFORE_RENDER = 'before_render';
     const TYPE_AFTER_RENDER = 'after_render';
 
+    /**
+     * @param string $type
+     * @param array $values
+     * @return array
+     * @throws Exception
+     */
     final public function run(string $type, array $values): array
     {
         $hookNames = (new ConfigObject)->get('hooks');
@@ -37,6 +44,10 @@ final class CoreEvent implements IEvent
         return $values;
     }
 
+    /**
+     * @param string $type
+     * @return string
+     */
     private function _getHookMethodByType(string $type): string
     {
         $hookMethod = explode('_', $type);

@@ -23,9 +23,7 @@ class CoreObject
     /**
      * @param string $pluginName
      * @param mixed ...$pluginValues
-     *
      * @return object
-     *
      * @throws Exception
      */
     final public static function getPlugin(
@@ -106,9 +104,7 @@ class CoreObject
 
     /**
      * @param string $modelName
-     *
      * @return IModel
-     *
      * @throws Exception
      */
     final protected function getModel(string $modelName): IModel

@@ -54,7 +54,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @param array|null $middlewares
-     *
      * @throws Exception
      */
     final public function run(?array $middlewares = null): void
@@ -90,11 +89,14 @@ class CoreEndpoint implements IEndpoint
 
             $this->_request = $values['request'];
             $this->_response = $values['response'];
+        }
 
+        if (empty($this->_response)) {
             $this->_runControllerMethod();
-
             $this->_saveResponseToCache();
         }
+
+        $this->_response->redirect->redirect();
 
         if (!headers_sent()) {
             header($this->_response->getContentTypeHeader());
@@ -115,6 +117,12 @@ class CoreEndpoint implements IEndpoint
         foreach ($this->middlewares as $middleware) {
             $middleware = $this->_getMiddlewareInstance($middleware);
             $middleware->run();
+
+            $response = $middleware->getResponse();
+
+            if (!empty($response)) {
+                $this->_response = $response;
+            }
         }
     }
 
@@ -136,7 +144,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @param string|null $middleware
-     *
      * @return IMiddleware
      */
     private function _getMiddlewareInstance(
@@ -153,7 +160,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return IController
-     *
      * @throws Exception
      */
     private function _getControllerInstance(): IController
@@ -174,7 +180,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @param IController $controller
-     *
      * @return bool
      */
     private function _isValidControllerMethod(IController $controller): bool
@@ -238,7 +243,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return ResponseObject|null
-     *
      * @throws Exception
      */
     private function _getResponseFromCache(): ?ResponseObject
@@ -283,7 +287,6 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     private function _getCacheIdent(): string

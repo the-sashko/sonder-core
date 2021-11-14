@@ -27,7 +27,6 @@ class ModelStore implements IModelStore
 
     /**
      * @param array|null $configData
-     *
      * @throws DatabaseCacheException
      * @throws DatabaseCredentialsException
      * @throws DatabasePluginException
@@ -40,7 +39,6 @@ class ModelStore implements IModelStore
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function start(): bool
@@ -50,7 +48,6 @@ class ModelStore implements IModelStore
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function commit(): bool
@@ -60,7 +57,6 @@ class ModelStore implements IModelStore
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function rollback(): bool
@@ -71,9 +67,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $sql
      * @param int|null $ttl
-     *
      * @return string|null
-     *
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
@@ -108,9 +102,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $sql
      * @param int|null $ttl
-     *
      * @return array|null
-     *
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
@@ -139,9 +131,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $sql
      * @param int|null $ttl
-     *
      * @return array|null
-     *
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
@@ -170,9 +160,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $table
      * @param array|null $row
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final protected function addRow(
@@ -210,9 +198,7 @@ class ModelStore implements IModelStore
      * @param string|null $table
      * @param array|null $row
      * @param string|null $condition
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final protected function updateRows(
@@ -247,9 +233,7 @@ class ModelStore implements IModelStore
      * @param string|null $table
      * @param array|null $row
      * @param int|null $idRow
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final protected function updateRowById(
@@ -270,9 +254,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $table
      * @param string|null $condition
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final protected function deleteRows(
@@ -298,9 +280,7 @@ class ModelStore implements IModelStore
     /**
      * @param string|null $table
      * @param int|null $idRow
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final protected function deleteRowById(
@@ -319,7 +299,6 @@ class ModelStore implements IModelStore
 
     /**
      * @param null $value
-     *
      * @return string|null
      */
     private function _getValueString($value = null): ?string

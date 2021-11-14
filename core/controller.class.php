@@ -7,6 +7,8 @@ use Sonder\Core\Interfaces\IController;
 
 class CoreController extends CoreObject implements IController
 {
+    const DEFAULT_LANGUAGE = 'en';
+
     const DEFAULT_RENDER_CACHE_TTL = 30 * 60;
 
     /**
@@ -20,14 +22,19 @@ class CoreController extends CoreObject implements IController
     private ResponseObject $_response;
 
     /**
+     * @var string
+     */
+    private string $_language;
+
+    /**
      * @var array
      */
     private array $_renderValues = [];
 
     /**
-     * @var string
+     * @var string|mixed|null
      */
-    private string $_renderTheme;
+    protected ?string $renderTheme = null;
 
     /**
      * @param RequestObject $request
@@ -41,11 +48,17 @@ class CoreController extends CoreObject implements IController
 
         $this->_response = new ResponseObject();
 
+        $this->_language = static::DEFAULT_LANGUAGE;
+
         $mainConfig = $this->config->get('main');
         $seoConfig = $this->config->get('seo');
 
-        if (!empty($mainConfig) && array_key_exists('theme', $mainConfig)) {
-            $this->_renderTheme = (string)$mainConfig['theme'];
+        if (
+            empty($this->renderTheme) &&
+            !empty($mainConfig) &&
+            array_key_exists('theme', $mainConfig)
+        ) {
+            $this->renderTheme = (string)$mainConfig['theme'];
         }
 
         if (!empty($mainConfig)) {
@@ -60,9 +73,8 @@ class CoreController extends CoreObject implements IController
             ]);
         }
 
-        //TODO
         $this->assign([
-            'currentLanguage' => 'en'
+            'currentLanguage' => $this->_language
         ]);
 
         $values = (new CoreEvent)->run(
@@ -71,14 +83,14 @@ class CoreController extends CoreObject implements IController
                 'request' => $this->request,
                 'response' => $this->_response,
                 'render_values' => $this->_renderValues,
-                'render_theme' => $this->_renderTheme
+                'render_theme' => $this->renderTheme
             ]
         );
 
         $this->request = $values['request'];
         $this->_response = $values['response'];
         $this->_renderValues = $values['render_values'];
-        $this->_renderTheme = $values['render_theme'];
+        $this->renderTheme = $values['render_theme'];
     }
 
     /**
@@ -94,6 +106,9 @@ class CoreController extends CoreObject implements IController
         $this->_response->redirect->setIsPermanent($isPermanent);
     }
 
+    /**
+     * @param array|null $values
+     */
     final protected function assign(?array $values = null): void
     {
         if (!empty($values)) {
@@ -106,9 +121,7 @@ class CoreController extends CoreObject implements IController
 
     /**
      * @param string|null $page
-     *
      * @return ResponseObject
-     *
      * @throws Exception
      */
     final protected function render(?string $page = null): ResponseObject
@@ -158,15 +171,14 @@ class CoreController extends CoreObject implements IController
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     private function _getRenderTheme(): string
     {
-        if (empty($this->_renderTheme)) {
+        if (empty($this->renderTheme)) {
             throw new Exception('Frontend Theme Is Not Set');
         }
 
-        return $this->_renderTheme;
+        return $this->renderTheme;
     }
 }

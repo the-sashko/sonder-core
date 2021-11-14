@@ -33,9 +33,7 @@ final class ConfigObject
 
     /**
      * @param string|null $configName
-     *
      * @return array
-     *
      * @throws Exception
      */
     final public function get(?string $configName = null): array
@@ -55,7 +53,6 @@ final class ConfigObject
 
     /**
      * @param string|null $configsDirPath
-     *
      * @throws Exception
      */
     private function _setValues(?string $configsDirPath = null): void
@@ -97,9 +94,7 @@ final class ConfigObject
 
     /**
      * @param string $configFilePath
-     *
      * @return string
-     *
      * @throws Exception
      */
     private function _getConfigNameFormFilePath(string $configFilePath): string

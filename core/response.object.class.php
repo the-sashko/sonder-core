@@ -137,7 +137,6 @@ final class ResponseObject
 
     /**
      * @param int $httpCode
-     *
      * @throws Exception
      */
     final public function setHttpCode(int $httpCode = 200): void
@@ -156,7 +155,6 @@ final class ResponseObject
 
     /**
      * @param string|null $contentType
-     *
      * @throws Exception
      */
     final public function setContentType(?string $contentType = null): void

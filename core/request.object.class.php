@@ -126,7 +126,6 @@ final class RequestObject
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     final public function getHost(): string
@@ -152,7 +151,6 @@ final class RequestObject
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     final public function getFullUrl(): string
@@ -173,7 +171,6 @@ final class RequestObject
 
     /**
      * @param string|null $valueName
-     *
      * @return string|null
      */
     final public function getUrlValue(?string $valueName = null): ?string

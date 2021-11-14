@@ -4,5 +4,4 @@ namespace Sonder\Core\Interfaces;
 
 interface IModel
 {
-    //TODO
 }

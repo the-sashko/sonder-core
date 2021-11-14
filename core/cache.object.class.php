@@ -32,7 +32,6 @@ final class CacheObject
 
     /**
      * @param string $name
-     *
      * @return array|null
      */
     final public function get(string $name): ?array
@@ -63,9 +62,7 @@ final class CacheObject
      * @param string $name
      * @param array|null $values
      * @param int|null $ttl
-     *
      * @return bool
-     *
      * @throws Exception
      */
     public function save(
@@ -161,7 +158,6 @@ final class CacheObject
 
     /**
      * @param string $fileName
-     *
      * @return string
      */
     private function _getFilePath(string $fileName): string
@@ -171,7 +167,6 @@ final class CacheObject
 
     /**
      * @param array $values
-     *
      * @return bool
      */
     private function _validate(array $values): bool

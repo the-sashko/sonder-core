@@ -6,7 +6,6 @@ interface IUser
 {
     /**
      * @param string|null $authToken
-     *
      * @return bool
      */
     public function signInByToken(?string $authToken = null): bool;
@@ -14,7 +13,6 @@ interface IUser
     /**
      * @param string|null $login
      * @param string|null $password
-     *
      * @return bool
      */
     public function signInByLoginAndPassword(

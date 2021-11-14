@@ -14,7 +14,6 @@ class CoreHook extends CoreObject implements IHook
 
     /**
      * @param array $values
-     *
      * @throws Exception
      */
     final public function __construct(array $values)
@@ -34,9 +33,7 @@ class CoreHook extends CoreObject implements IHook
 
     /**
      * @param string $valueName
-     *
      * @return mixed
-     *
      * @throws Exception
      */
     final protected function get(string $valueName): mixed
@@ -55,8 +52,6 @@ class CoreHook extends CoreObject implements IHook
     /**
      * @param string $valueName
      * @param mixed|null $value
-     *
-     * @throws Exception
      */
     final protected function set(string $valueName, mixed $value = null): void
     {
@@ -65,7 +60,6 @@ class CoreHook extends CoreObject implements IHook
 
     /**
      * @param string|null $valueName
-     *
      * @return bool
      */
     final protected function has(?string $valueName = null): bool
