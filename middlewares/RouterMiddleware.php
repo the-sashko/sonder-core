@@ -99,7 +99,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 
             $method = $route->getMethod();
 
-            $urlValues = $route->getParams();
+            $urlValues = (array)$route->getParams();
 
             $urlValues = array_map(
                 [
@@ -110,7 +110,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
             );
 
             $urlValues = array_merge(
-                $this->request->getUrlValues(),
+                (array)$this->request->getUrlValues(),
                 $urlValues
             );
 
