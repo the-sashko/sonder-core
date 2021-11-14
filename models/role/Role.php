@@ -5,19 +5,65 @@ namespace Sonder\Models;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IRole;
+use Sonder\Models\Role\RoleVO;
 
-class Role extends CoreModel implements IModel, IRole
+final class Role extends CoreModel implements IModel, IRole
 {
+    /**
+     * @var RoleVO|null
+     */
+    private ?RoleVO $_vo = null;
+
+    /**
+     * @return int|null
+     */
+    final public function getId(): ?int
+    {
+        if (empty($this->vo)) {
+            return null;
+        }
+
+        return $this->_vo->getId();
+    }
+
+    /**
+     * @return string|null
+     */
+    final public function getName(): ?string
+    {
+        if (empty($this->vo)) {
+            return null;
+        }
+
+        return $this->_vo->getName();
+    }
+
+    /**
+     * @return array|null
+     */
+    final public function getActions(): ?array
+    {
+        if (empty($this->vo)) {
+            return null;
+        }
+
+        return $this->_vo->getActions();
+    }
+
     /**
      * @param string $roleActionIdent
      *
      * @return bool
      */
-    public function can(string $roleActionIdent): bool
+    final public function can(string $roleActionIdent): bool
     {
-        //TODO
+        $actions = $this->getActions();
 
-        return false;
+        if (empty($actions)) {
+            return false;
+        }
+
+        return in_array($roleActionIdent, $actions);
     }
 
     //TODO

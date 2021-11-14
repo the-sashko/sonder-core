@@ -5,15 +5,21 @@ namespace Sonder\Models;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IUser;
+use Sonder\Models\User\UserVO;
 
-class User extends CoreModel implements IModel, IUser
+final class User extends CoreModel implements IModel, IUser
 {
     /**
      * @var IModel
      */
     private IModel $_role;
 
-    public function __construct()
+    /**
+     * @var UserVO|null
+     */
+    private ?UserVO $_vo = null;
+
+    final public function __construct()
     {
         parent::__construct();
 
@@ -25,7 +31,7 @@ class User extends CoreModel implements IModel, IUser
      *
      * @return bool
      */
-    public function signInByToken(?string $authToken = null): bool
+    final public function signInByToken(?string $authToken = null): bool
     {
         //TODO
 
@@ -38,7 +44,7 @@ class User extends CoreModel implements IModel, IUser
      *
      * @return bool
      */
-    public function signInByLoginAndPassword(
+    final public function signInByLoginAndPassword(
         ?string $login = null,
         ?string $password = null
     ): bool
@@ -61,7 +67,7 @@ class User extends CoreModel implements IModel, IUser
     /**
      * @return bool
      */
-    public function isSignedIn(): bool
+    final public function isSignedIn(): bool
     {
         //TODO
 
@@ -71,27 +77,31 @@ class User extends CoreModel implements IModel, IUser
     /**
      * @return int|null
      */
-    public function getId(): ?int
+    final public function getId(): ?int
     {
-        //TODO
+        if (empty($this->vo)) {
+            return null;
+        }
 
-        return null;
+        return $this->_vo->getId();
     }
 
     /**
      * @return string|null
      */
-    public function getLogin(): ?string
+    final public function getLogin(): ?string
     {
-        //TODO
+        if (empty($this->vo)) {
+            return null;
+        }
 
-        return null;
+        return $this->_vo->getLogin();
     }
 
     /**
      * @return IModel
      */
-    public function getRole(): IModel
+    final public function getRole(): IModel
     {
         return $this->_role;
     }
