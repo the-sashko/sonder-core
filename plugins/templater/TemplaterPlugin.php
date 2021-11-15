@@ -24,7 +24,7 @@ final class TemplaterPlugin
             throw new Exception('Template Theme Is Not Set');
         }
 
-        $themePath = $this->_getThemePath($theme);
+        $themePath = sprintf('%s/phtml', $this->getThemePath($theme));
 
         $templateFilePath = sprintf('%s/main.phtml', $themePath);
 
@@ -63,6 +63,51 @@ final class TemplaterPlugin
     }
 
     /**
+     * @param string $theme
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    final public function getThemePath(string $theme): string
+    {
+        $themePath = null;
+
+        $protectedDirPath = TemplaterPlugin::PROTECTED_DIR_PATH;
+
+        if (defined('APP_PROTECTED_DIR_PATH')) {
+            $protectedDirPath = APP_PROTECTED_DIR_PATH;
+        }
+
+        $themesPaths = [
+            $protectedDirPath . '/themes'
+        ];
+
+        if (
+            array_key_exists('themes', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['themes'])
+        ) {
+            $themesPaths = APP_SOURCE_PATHS['themes'];
+        }
+
+        foreach (array_reverse($themesPaths) as $path) {
+            $templatePath = sprintf('%s/%s/phtml', $path, $theme);
+
+            if (file_exists($templatePath) && is_dir($templatePath)) {
+                $themePath = $path;
+            }
+        }
+
+        if (empty($themePath)) {
+            throw new Exception(
+                sprintf('Frontend Theme %s Is Not Exists', $theme)
+            );
+        }
+
+        return $themePath;
+    }
+
+    /**
      * @param string $page
      *
      * @return string
@@ -88,52 +133,6 @@ final class TemplaterPlugin
         }
 
         return $cacheDirPath;
-    }
-
-    /**
-     * @param string $theme
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    private function _getThemePath(string $theme): string
-    {
-        $themePath = null;
-
-
-        $protectedDirPath = TemplaterPlugin::PROTECTED_DIR_PATH;
-
-        if (defined('APP_PROTECTED_DIR_PATH')) {
-            $protectedDirPath = APP_PROTECTED_DIR_PATH;
-        }
-
-        $themesPaths = [
-            $protectedDirPath . '/themes'
-        ];
-
-        if (
-            array_key_exists('themes', APP_SOURCE_PATHS) &&
-            is_array(APP_SOURCE_PATHS['themes'])
-        ) {
-            $themesPaths = APP_SOURCE_PATHS['themes'];
-        }
-
-        foreach (array_reverse($themesPaths) as $path) {
-            $path = sprintf('%s/%s/phtml', $path, $theme);
-
-            if (file_exists($path) && is_dir($path)) {
-                $themePath = $path;
-            }
-        }
-
-        if (empty($themePath)) {
-            throw new Exception(
-                sprintf('Frontend Theme %s Is Not Exists', $theme)
-            );
-        }
-
-        return $themePath;
     }
 
     /**
