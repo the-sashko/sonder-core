@@ -7,7 +7,6 @@ final class CryptPlugin
     /**
      * @param string|null $input
      * @param string|null $salt
-     *
      * @return string|null
      */
     final public function getHash(
@@ -30,8 +29,34 @@ final class CryptPlugin
     }
 
     /**
+     * @param string|null $uniqueUserString
+     * @param string|null $salt
+     * @return string|null
+     */
+    final public function getCsrfToken(
+        ?string $uniqueUserString = null,
+        ?string $salt = null
+    ): ?string
+    {
+        if (empty($uniqueUserString)) {
+            return null;
+        }
+
+        if (empty($salt)) {
+            return null;
+        }
+
+        $uniqueUserString = sprintf(
+            '%s+%s',
+            $uniqueUserString,
+            microtime()
+        );
+
+        return $this->getHash($uniqueUserString, $salt);
+    }
+
+    /**
      * @param string|null $input
-     *
      * @return string|null
      */
     final public function getTripCode(?string $input = null): ?string

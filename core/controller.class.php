@@ -74,7 +74,8 @@ class CoreController extends CoreObject implements IController
         }
 
         $this->assign([
-            'current_language' => $this->_language
+            'current_language' => $this->_language,
+            'csrf_token' => $this->request->getCsrfToken()
         ]);
 
         $values = (new CoreEvent)->run(
