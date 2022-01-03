@@ -56,6 +56,11 @@ final class TemplaterPlugin
         ];
 
         foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+            $valueName = ucwords($valueName, '_');
+            $valueName = lcfirst($valueName);
+            $valueName = explode('_', $valueName);
+            $valueName = implode('', $valueName);
+
             $$valueName = $value;
         }
 
@@ -94,7 +99,7 @@ final class TemplaterPlugin
             $templatePath = sprintf('%s/%s/phtml', $path, $theme);
 
             if (file_exists($templatePath) && is_dir($templatePath)) {
-                $themePath = $path;
+                $themePath = sprintf('%s/%s', $path, $theme);
             }
         }
 

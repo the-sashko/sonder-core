@@ -9,13 +9,10 @@ final class ThemePlugin
 {
     const DEFAULT_PUBLIC_DIR_PATH = __DIR__ . '/../../../../public';
 
-    const ASSETS_TYPES = [
-        'js',
-        'css',
-        'less',
-        'img',
-        'font'
-    ];
+    /**
+     * @var string
+     */
+    private string $_theme;
 
     /**
      * @var string
@@ -40,6 +37,8 @@ final class ThemePlugin
                 ThemePluginException::CODE_PLUGIN_THEME_PATH_NOT_SET_ERROR,
             );
         }
+
+        $this->_theme = $theme;
 
         $templaterPlugin = new TemplaterPlugin($theme);
 
@@ -72,32 +71,103 @@ final class ThemePlugin
      */
     final public function moveAssets(): void
     {
-        foreach (ThemePlugin::ASSETS_TYPES as $type) {
-            $this->_moveAssetsByType($type);
+        $themeAssets = null;
+
+        $metaValues = $this->_getMetaValues();
+
+        if (
+            array_key_exists('assets', $metaValues) &&
+            is_array($metaValues['assets'])
+        ) {
+            $themeAssets = $metaValues['assets'];
+        }
+
+        foreach ((array)$themeAssets as $type => $files) {
+            if (!empty($files) && is_array($files)) {
+                $this->_moveAssetsByType($type, $files);
+            }
         }
     }
 
     /**
-     * @param string $type
-     * @return bool
      * @throws ThemePluginException
      */
-    private function _moveAssetsByType(string $type): bool
+    final public function compileLessFiles(): void
     {
+        $lessAssets = null;
+
         $metaValues = $this->_getMetaValues();
 
         if (
-            !array_key_exists($type, $metaValues) ||
-            empty($metaValues[$type]) ||
-            !is_array($metaValues[$type])
+            array_key_exists('assets', $metaValues) &&
+            is_array($metaValues['assets']) &&
+            array_key_exists('less', $metaValues['assets']) &&
+            is_array($metaValues['assets']['less'])
         ) {
-            return false;
+            $lessAssets = $metaValues['assets']['less'];
         }
 
-        $publicAssetsDirPath = sprintf(
-            '%s/%s',
+        foreach ((array)$lessAssets as $file) {
+            if (!empty($file)) {
+                $this->_compileLessFile($file);
+            }
+        }
+    }
+
+    /**
+     * @param string $file
+     * @throws ThemePluginException
+     */
+    private function _compileLessFile(string $file): void
+    {
+        $file = explode('/', $file);
+        $file = end($file);
+
+        $lessFilePath = sprintf(
+            '%s/less/%s/%s',
             $this->_getAssetsDirPath(),
-            $type
+            $this->_theme,
+            $file
+        );
+
+        if (
+            empty($cssFileName) ||
+            $cssFileName == 'theme' ||
+            $cssFileName == 'style' ||
+            $cssFileName == 'app' ||
+            $cssFileName == 'main'
+        ) {
+            $cssFileName = $this->_theme;
+        }
+
+        if ($cssFileName != $this->_theme) {
+            $cssFileName = sprintf('%s_%s', $cssFileName, $this->_theme);
+        }
+
+        $cssFilePath = sprintf(
+            '%s/css/%s/%s.min.css',
+            $this->_getAssetsDirPath(),
+            $this->_theme,
+            $cssFileName
+        );
+
+        $cliDirPath = $this->_getCliDirPath();
+
+        `bash $cliDirPath/less.sh -i $lessFilePath -o $cssFilePath`;
+    }
+
+    /**
+     * @param string $type
+     * @param array $files
+     * @throws ThemePluginException
+     */
+    private function _moveAssetsByType(string $type, array $files): void
+    {
+        $publicAssetsDirPath = sprintf(
+            '%s/%s/%s',
+            $this->_getAssetsDirPath(),
+            $type,
+            $this->_theme
         );
 
         if (
@@ -107,13 +177,19 @@ final class ThemePlugin
             mkdir($publicAssetsDirPath, 0755, true);
         }
 
-        foreach ($metaValues[$type] as $file) {
+        foreach ($files as $file) {
             $themeFilePath = sprintf(
-                '%s/%s/%s',
+                '%s/%s',
                 $this->_themeDirPath,
-                $type,
                 $file
             );
+
+            $file = explode('/', $file);
+            $file = end($file);
+
+            if (!preg_match('/^min\.(.*?)$/su', $file)) {
+                $file = str_replace('.min', '', $file);
+            }
 
             $publicFilePath = sprintf(
                 '%s/%s',
@@ -123,8 +199,6 @@ final class ThemePlugin
 
             $this->_moveAssetFile($themeFilePath, $publicFilePath);
         }
-
-        return true;
     }
 
     /**
@@ -212,5 +286,24 @@ final class ThemePlugin
         }
 
         return ThemePlugin::DEFAULT_PUBLIC_DIR_PATH;
+    }
+
+    /**
+     * @return string
+     * @throws ThemePluginException
+     */
+    private function _getCliDirPath(): string
+    {
+        $cliDirPath = sprintf('%s/../cli', $this->_getPublicDirPath());
+        $cliDirPath = realpath($cliDirPath);
+
+        if (empty($cliDirPath)) {
+            throw new ThemePluginException(
+                ThemePluginException::MESSAGE_PLUGIN_CLI_DIR_MISSING_ERROR,
+                ThemePluginException::CODE_PLUGIN_CLI_DIR_MISSING_ERROR
+            );
+        }
+
+        return $cliDirPath;
     }
 }
