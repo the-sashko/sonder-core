@@ -12,6 +12,11 @@ use Exception;
 function renderPage(?string $page = null): void
 {
     foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+        $valueName = ucwords($valueName, '_');
+        $valueName = lcfirst($valueName);
+        $valueName = explode('_', $valueName);
+        $valueName = implode('', $valueName);
+
         $$valueName = $value;
     }
 
@@ -65,8 +70,13 @@ function renderPart(
         );
     }
 
-    foreach ($GLOBALS['template']['values'] as $param => $value) {
-        $$param = $value;
+    foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+        $valueName = ucwords($valueName, '_');
+        $valueName = lcfirst($valueName);
+        $valueName = explode('_', $valueName);
+        $valueName = implode('', $valueName);
+
+        $$valueName = $value;
     }
 
     $templatePartFile = sprintf(
