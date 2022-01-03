@@ -7,7 +7,15 @@ use Sonder\Core\Interfaces\IUser;
 
 final class RequestObject
 {
-    const DEFAULT_HTTP_METHOD = 'get';
+    const HTTP_METHOD_GET = 'get';
+    const HTTP_METHOD_HEAD = 'head';
+    const HTTP_METHOD_POST = 'post';
+    const HTTP_METHOD_PUT = 'put';
+    const HTTP_METHOD_DELETE = 'delete';
+    const HTTP_METHOD_CONNECT = 'connect';
+    const HTTP_METHOD_OPTIONS = 'options';
+    const HTTP_METHOD_TRACE = 'trace';
+    const HTTP_METHOD_PATCH = 'patch';
 
     const DEFAULT_URL = '/';
 
@@ -71,6 +79,11 @@ final class RequestObject
     /**
      * @var string|null
      */
+    private ?string $_csrfToken = null;
+
+    /**
+     * @var string|null
+     */
     private ?string $_controller = null;
 
     /**
@@ -118,7 +131,7 @@ final class RequestObject
     final public function getHttpMethod(): string
     {
         if (empty($this->_httpMethod)) {
-            return RequestObject::DEFAULT_HTTP_METHOD;
+            return RequestObject::HTTP_METHOD_GET;
         }
 
         return $this->_httpMethod;
@@ -336,6 +349,14 @@ final class RequestObject
     /**
      * @return string|null
      */
+    final public function getCsrfToken(): ?string
+    {
+        return $this->_csrfToken;
+    }
+
+    /**
+     * @return string|null
+     */
     final public function getController(): ?string
     {
         return $this->_controller;
@@ -434,6 +455,15 @@ final class RequestObject
     }
 
     /**
+     * @param string|null $csrfToken
+     * @return void
+     */
+    final public function setCsrfToken(?string $csrfToken = null): void
+    {
+        $this->_csrfToken = $csrfToken;
+    }
+
+    /**
      * @param string|null $controller
      */
     final public function setController(?string $controller = null): void
@@ -471,7 +501,7 @@ final class RequestObject
 
     private function _setHttpMethod(): void
     {
-        $this->_httpMethod = RequestObject::DEFAULT_HTTP_METHOD;
+        $this->_httpMethod = RequestObject::HTTP_METHOD_GET;
 
         $method = $_SERVER['REQUEST_METHOD'];
         $method = mb_convert_case($method, MB_CASE_LOWER);
