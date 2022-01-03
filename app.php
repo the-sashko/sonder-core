@@ -13,19 +13,10 @@ final class App
      */
     private string $_endpointName = 'app';
 
-    /**
-     * @var array|null
-     */
-    private ?array $_middlewares = null;
-
     final public function __construct()
     {
         if (defined('APP_ENDPOINT')) {
             $this->_endpointName = APP_ENDPOINT;
-        }
-
-        if (defined('APP_MIDDLEWARES')) {
-            $this->_middlewares = APP_MIDDLEWARES;
         }
 
         set_exception_handler([$this, 'exceptionHandler']);
@@ -45,7 +36,7 @@ final class App
 
             $endpoint = new $endpointClass();
 
-            $endpoint->run($this->_middlewares);
+            $endpoint->run();
         } catch (Throwable $exception) {
             $this->exceptionHandler($exception);
         }
