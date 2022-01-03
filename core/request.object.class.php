@@ -203,6 +203,31 @@ final class RequestObject
     }
 
     /**
+     * @param string|null $valueName
+     * @return string|null
+     */
+    final public function getPostValue(?string $valueName = null): ?string
+    {
+        if (empty($valueName)) {
+            return null;
+        }
+
+        if (empty($this->_postValues)) {
+            return null;
+        }
+
+        if (!array_key_exists($valueName, $this->_postValues)) {
+            return null;
+        }
+
+        if (empty($this->_postValues[$valueName])) {
+            return null;
+        }
+
+        return (string)$this->_postValues[$valueName];
+    }
+
+    /**
      * @return array|null
      */
     final public function getApiValues(): ?array
@@ -211,11 +236,28 @@ final class RequestObject
     }
 
     /**
-     * @return string
+     * @param string|null $valueName
+     * @return string|null
      */
-    final public function getLanguage(): string
+    final public function getApiValue(?string $valueName = null): ?string
     {
-        return $this->_language;
+        if (empty($valueName)) {
+            return null;
+        }
+
+        if (empty($this->_apiValues)) {
+            return null;
+        }
+
+        if (!array_key_exists($valueName, $this->_apiValues)) {
+            return null;
+        }
+
+        if (empty($this->_apiValues[$valueName])) {
+            return null;
+        }
+
+        return (string)$this->_apiValues[$valueName];
     }
 
     /**
@@ -224,6 +266,39 @@ final class RequestObject
     final public function getCliValues(): ?array
     {
         return $this->_cliValues;
+    }
+
+    /**
+     * @param string|null $valueName
+     * @return string|null
+     */
+    final public function getCliValue(?string $valueName = null): ?string
+    {
+        if (empty($valueName)) {
+            return null;
+        }
+
+        if (empty($this->_cliValues)) {
+            return null;
+        }
+
+        if (!array_key_exists($valueName, $this->_cliValues)) {
+            return null;
+        }
+
+        if (empty($this->_cliValues[$valueName])) {
+            return null;
+        }
+
+        return (string)$this->_cliValues[$valueName];
+    }
+
+    /**
+     * @return string
+     */
+    final public function getLanguage(): string
+    {
+        return $this->_language;
     }
 
     /**

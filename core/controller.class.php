@@ -19,7 +19,7 @@ class CoreController extends CoreObject implements IController
     /**
      * @var ResponseObject
      */
-    private ResponseObject $_response;
+    protected ResponseObject $response;
 
     /**
      * @var string
@@ -46,7 +46,7 @@ class CoreController extends CoreObject implements IController
 
         $this->request = $request;
 
-        $this->_response = new ResponseObject();
+        $this->response = new ResponseObject();
 
         $this->_language = static::DEFAULT_LANGUAGE;
 
@@ -74,21 +74,21 @@ class CoreController extends CoreObject implements IController
         }
 
         $this->assign([
-            'currentLanguage' => $this->_language
+            'current_language' => $this->_language
         ]);
 
         $values = (new CoreEvent)->run(
             CoreEvent::TYPE_INIT_CONTROLLER,
             [
                 'request' => $this->request,
-                'response' => $this->_response,
+                'response' => $this->response,
                 'render_values' => $this->_renderValues,
                 'render_theme' => $this->renderTheme
             ]
         );
 
         $this->request = $values['request'];
-        $this->_response = $values['response'];
+        $this->response = $values['response'];
         $this->_renderValues = $values['render_values'];
         $this->renderTheme = $values['render_theme'];
     }
@@ -102,8 +102,8 @@ class CoreController extends CoreObject implements IController
         bool   $isPermanent = false
     ): void
     {
-        $this->_response->redirect->setUrl($url);
-        $this->_response->redirect->setIsPermanent($isPermanent);
+        $this->response->redirect->setUrl($url);
+        $this->response->redirect->setIsPermanent($isPermanent);
     }
 
     /**
@@ -164,9 +164,9 @@ class CoreController extends CoreObject implements IController
 
         $content = $values['content'];
 
-        $this->_response->setContent($content);
+        $this->response->setContent($content);
 
-        return $this->_response;
+        return $this->response;
     }
 
     /**

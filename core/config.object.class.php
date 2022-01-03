@@ -52,6 +52,49 @@ final class ConfigObject
     }
 
     /**
+     * @param string|null $configName
+     * @param string|null $valueName
+     * @return string
+     * @throws Exception
+     */
+    final public function getValue(
+        ?string $configName = null,
+        ?string $valueName = null
+    ): string
+    {
+        if (empty($configName)) {
+            throw new Exception('Config Name Is Not Set');
+        }
+
+        if (empty($valueName)) {
+            throw new Exception('Config Value Name Is Not Set');
+        }
+
+        $configValues = $this->get($configName);
+
+        if (empty($configValues)) {
+            $errorMessage = sprintf(
+                'Config "%s" Is Empty',
+                $configName
+            );
+
+            throw new Exception($errorMessage);
+        }
+
+        if (!array_key_exists($valueName, $configValues)) {
+            $errorMessage = sprintf(
+                'Config "%s" Has Not Value "%s"',
+                $configName,
+                $valueName
+            );
+
+            throw new Exception($errorMessage);
+        }
+
+        return (string)$configValues[$valueName];
+    }
+
+    /**
      * @param string|null $configsDirPath
      * @throws Exception
      */

@@ -133,11 +133,11 @@ class CoreEndpoint implements IEndpoint
     {
         $controller = $this->_getControllerInstance();
 
-        $method = $this->_request->getMethod();
-
         if (!$this->_isValidControllerMethod($controller)) {
             throw new Exception('Invalid Controller Method');
         }
+
+        $method = $this->_request->getMethod();
 
         $this->_response = $controller->$method();
     }

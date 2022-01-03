@@ -35,7 +35,7 @@ final class CoreEvent implements IEvent
                 method_exists($hookClass, $hookMethod)
             ) {
                 $hook = new $hookClass($values);
-                $hook->$hookMethod($values);
+                $hook->$hookMethod();
 
                 $values = $hook->getValues();
             }
