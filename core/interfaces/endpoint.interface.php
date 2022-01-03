@@ -5,7 +5,7 @@ namespace Sonder\Core\Interfaces;
 interface IEndpoint
 {
     /**
-     * @param array|null $middlewares
+     * @return void
      */
-    public function run(?array $middlewares = null): void;
+    public function run(): void;
 }

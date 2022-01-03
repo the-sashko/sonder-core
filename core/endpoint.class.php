@@ -1,5 +1,4 @@
 <?php
-
 namespace Sonder\Core;
 
 use Exception;
@@ -53,18 +52,11 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
-     * @param array|null $middlewares
+     * @return void
      * @throws Exception
      */
-    final public function run(?array $middlewares = null): void
+    final public function run(): void
     {
-        if (!empty($middlewares)) {
-            $this->middlewares = array_merge(
-                $this->middlewares,
-                $middlewares
-            );
-        }
-
         $values = (new CoreEvent)->run(
             CoreEvent::TYPE_BEFORE_MIDDLEWARES,
             [
