@@ -27,7 +27,9 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
     {
         parent::__construct($values);
 
-        $this->checkInputValues();
+        if (!empty($values)) {
+            $this->checkInputValues();
+        }
     }
 
     /**

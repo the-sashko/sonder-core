@@ -74,6 +74,8 @@ class CoreController extends CoreObject implements IController
         }
 
         $this->assign([
+            'current_url' => $this->request->getUrl(),
+            'current_full_url' => $this->request->getFullUrl(),
             'current_language' => $this->_language,
             'csrf_token' => $this->request->getCsrfToken()
         ]);
@@ -97,14 +99,17 @@ class CoreController extends CoreObject implements IController
     /**
      * @param string $url
      * @param bool $isPermanent
+     * @return ResponseObject
      */
     final protected function redirect(
         string $url,
         bool   $isPermanent = false
-    ): void
+    ): ResponseObject
     {
         $this->response->redirect->setUrl($url);
         $this->response->redirect->setIsPermanent($isPermanent);
+
+        return $this->response;
     }
 
     /**

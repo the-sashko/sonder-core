@@ -2,11 +2,18 @@
 
 namespace Sonder\Core\Interfaces;
 
+use Sonder\Core\ValuesObject;
+
 interface IRole
 {
     /**
-     * @param string $roleActionIdent
-     * @return bool
+     * @param int|null $id
+     * @return ValuesObject|null
      */
-    public function can(string $roleActionIdent): bool;
+    public function getVOById(?int $id = null): ?ValuesObject;
+
+    /**
+     * @return ValuesObject
+     */
+    public function getGuestVO(): ValuesObject;
 }

@@ -5,10 +5,10 @@ namespace Sonder\Core\Interfaces;
 interface IUser
 {
     /**
-     * @param string|null $authToken
-     * @return bool
+     * @param string|null $apiToken
+     * @return void
      */
-    public function signInByToken(?string $authToken = null): bool;
+    public function signInByApiToken(?string $apiToken = null): void;
 
     /**
      * @param string|null $login
@@ -41,7 +41,7 @@ interface IUser
     public function getLogin(): ?string;
 
     /**
-     * @return IModel
+     * @return IRoleValuesObject
      */
-    public function getRole(): IModel;
+    public function getRole(): IRoleValuesObject;
 }

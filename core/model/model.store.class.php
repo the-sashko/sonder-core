@@ -2,18 +2,18 @@
 
 namespace Sonder\Core;
 
+use Exception;
 use Sonder\Core\Interfaces\IModelStore;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabaseCredentialsException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
-use Sonder\Plugins\DataBasePlugin\DataBasePlugin;
 
 class ModelStore implements IModelStore
 {
     /**
-     * @var DataBasePlugin
+     * @var object
      */
-    private DataBasePlugin $_db;
+    private object $_db;
 
     /**
      * @var string|null
@@ -30,10 +30,11 @@ class ModelStore implements IModelStore
      * @throws DatabaseCacheException
      * @throws DatabaseCredentialsException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     public function __construct(?array $configData = null)
     {
-        $this->_db = new DataBasePlugin();
+        $this->_db = CoreObject::getPlugin('database');
         $this->_db->connect($configData);
     }
 
