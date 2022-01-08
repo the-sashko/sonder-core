@@ -1,6 +1,6 @@
 <?php
 
-namespace Sonder\Plugins\DataBasePlugin;
+namespace Sonder\Plugins;
 
 use PDO;
 use PDOException;
@@ -10,9 +10,9 @@ use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabaseCredentialsException;
 use Sonder\Plugins\Database\Exceptions\DatabaseException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
-use Sonder\Plugins\Database\Interfaces\IDataBasePlugin;
+use Sonder\Plugins\Database\Interfaces\IDatabasePlugin;
 
-final class DataBasePlugin implements IDataBasePlugin
+final class DatabasePlugin implements IDatabasePlugin
 {
     const DEFAULT_SCOPE = 'default';
 

@@ -1,7 +1,7 @@
 <?php
 namespace Sonder\Plugins\Database\Interfaces;
 
-interface IDataBasePlugin
+interface IDatabasePlugin
 {
     /**
      * @param array|null $configData
