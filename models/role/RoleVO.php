@@ -3,8 +3,9 @@
 namespace Sonder\Models\Role;
 
 use Sonder\Core\ValuesObject;
+use Sonder\Core\Interfaces\IRoleValuesObject;
 
-final class RoleVO extends ValuesObject
+final class RoleValuesObject extends ValuesObject implements IRoleValuesObject
 {
     final public function getId(): int
     {
@@ -23,23 +24,13 @@ final class RoleVO extends ValuesObject
     final public function getActions(): array
     {
         //TODO
-
-        return [];
     }
 
-    final public function setId(?int $id = null): void
+    public function can(string $roleActionIdent): bool
     {
         //TODO
-    }
 
-    final public function setName(?string $name = null): void
-    {
-        //TODO
-    }
-
-    final public function setActions(?array $actions = null): void
-    {
-        //TODO
+        return true;
     }
 
     //TODO: cdate, mdate, ddate
