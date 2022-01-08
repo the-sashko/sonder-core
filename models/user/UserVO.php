@@ -2,82 +2,196 @@
 
 namespace Sonder\Models\User;
 
+use Exception;
+use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\ValuesObject;
-use Sonder\Models\Role;
 
-final class UserVO extends ValuesObject
+final class UserValuesObject extends ValuesObject
 {
+    /**
+     * @return int
+     * @throws Exception
+     */
     final public function getId(): int
     {
-        //TODO
-
-        return 0;
+        return (int)$this->get('id');
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     final public function getLogin(): string
     {
-        //TODO
-
-        return '';
+        return (string)$this->get('login');
     }
 
-    final public function getRole(): ?Role
+    /**
+     * @return int
+     * @throws Exception
+     */
+    final public function getRoleId(): int
     {
-        //TODO
-
-        return null;
+        return (int)$this->get('role_id');
     }
 
-    final public function getPasswordHash(): ?string
+    /**
+     * @return IRoleValuesObject|null
+     * @throws Exception
+     */
+    final public function getRole(): ?IRoleValuesObject
     {
-        //TODO
+        if (!$this->has('role')) {
+            return null;
+        }
 
-        return null;
+        return $this->get('role');
     }
 
-    final public function getAuthToken(): ?string
+    /**
+     * @return string
+     * @throws Exception
+     */
+    final public function getPasswordHash(): string
     {
-        //TODO
-
-        return null;
+        return (string)$this->get('password_hash');
     }
 
-    final public function getSessionToken(): ?string
+    /**
+     * @return string
+     * @throws Exception
+     */
+    final public function getApiToken(): string
     {
-        //TODO
-
-        return null;
+        return (string)$this->get('api_token');
     }
 
-    final public function setId(?int $id = null): void
+    /**
+     * @return string|null
+     * @throws Exception
+     */
+    final public function getWebToken(): ?string
     {
-        //TODO
+        return (string)$this->get('web_token');
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
+    final public function isActive(): bool
+    {
+        return (bool)$this->get('is_active');
+    }
+
+    /**
+     * @param string|null $login
+     * @return void
+     * @throws Exception
+     */
     final public function setLogin(?string $login = null): void
     {
-        //TODO
+        if (!empty($login)) {
+            $this->set('login', $login);
+        }
     }
 
-    final public function setRole(?Role $role = null): void
+    /**
+     * @param int|null $roleId
+     * @return void
+     * @throws Exception
+     */
+    final public function setRoleId(?int $roleId = null): void
     {
-        //TODO
+        if (!empty($roleId)) {
+            $this->set('role_id', $roleId);
+        }
     }
 
+    /**
+     * @param IRoleValuesObject|null $role
+     * @return void
+     * @throws Exception
+     */
+    final public function setRole(?IRoleValuesObject $role = null): void
+    {
+        if (!empty($role)) {
+            $this->set('role', $role);
+        }
+    }
+
+    /**
+     * @param string|null $passwordHash
+     * @return void
+     * @throws Exception
+     */
     final public function setPasswordHash(?string $passwordHash = null): void
     {
-        //TODO
+        if (!empty($passwordHash)) {
+            $this->set('password_hash', $passwordHash);
+        }
     }
 
-    final public function setAuthToken(?string $authToken = null): void
+    /**
+     * @param string|null $apiToken
+     * @return void
+     * @throws Exception
+     */
+    final public function setApiToken(?string $apiToken = null): void
     {
-        //TODO
+        if (!empty($apiToken)) {
+            $this->set('api_token', $apiToken);
+        }
     }
 
-    final public function setSessionToken(?string $sessionToken = null): void
+    /**
+     * @param string|null $webToken
+     * @return void
+     * @throws Exception
+     */
+    final public function setWebToken(?string $webToken = null): void
     {
-        //TODO
+        if (!empty($apiToken)) {
+            $this->set('web_token', $webToken);
+        }
     }
 
-    //TODO: cdate, mdate, ddate
+    /**
+     * @param bool $isActive
+     * @return void
+     * @throws Exception
+     */
+    final public function setActive(bool $isActive = true): void
+    {
+        $this->set('is_active', $isActive);
+    }
+
+    final public function exportRow(?array $params = null): ?array
+    {
+        $row = parent::exportRow($params);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        if (array_key_exists('role', $row) && empty($row['role'])) {
+            $row['role'] = $this->getRole()->getName();
+        }
+
+        if (array_key_exists('password_hash', $row)) {
+            unset($row['api_token']);
+        }
+
+        if (array_key_exists('web_token', $row)) {
+            unset($row['web_token']);
+        }
+
+        if (array_key_exists('api_token', $row)) {
+            unset($row['api_token']);
+        }
+
+        return $row;
+    }
+
+    //TODO: cdate, mdate, ddate, last_login_at
 }
