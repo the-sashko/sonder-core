@@ -10,8 +10,8 @@ interface IRoleValuesObject
     public function getName(): ?string;
 
     /**
-     * @param string $roleActionIdent
+     * @param string|null $roleActionIdent
      * @return bool
      */
-    public function can(string $roleActionIdent): bool;
+    public function can(?string $roleActionIdent = null): bool;
 }
