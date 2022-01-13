@@ -39,13 +39,13 @@ final class UserValuesObject extends ValuesObject
      * @return IRoleValuesObject|null
      * @throws Exception
      */
-    final public function getRole(): ?IRoleValuesObject
+    final public function getRoleVO(): ?IRoleValuesObject
     {
-        if (!$this->has('role')) {
+        if (!$this->has('role_vo')) {
             return null;
         }
 
-        return $this->get('role');
+        return $this->get('role_vo');
     }
 
     /**
@@ -109,14 +109,14 @@ final class UserValuesObject extends ValuesObject
     }
 
     /**
-     * @param IRoleValuesObject|null $role
+     * @param IRoleValuesObject|null $roleVO
      * @return void
      * @throws Exception
      */
-    final public function setRole(?IRoleValuesObject $role = null): void
+    final public function setRoleVO(?IRoleValuesObject $roleVO = null): void
     {
-        if (!empty($role)) {
-            $this->set('role', $role);
+        if (!empty($roleVO)) {
+            $this->set('role_vo', $roleVO);
         }
     }
 

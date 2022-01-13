@@ -150,7 +150,7 @@ final class User extends CoreModel implements IModel, IUser
      */
     final public function getRole(): IRoleValuesObject
     {
-        $role = $this->_currentUserVO->getRole();
+        $role = $this->_currentUserVO->getRoleVO();
 
         if (!empty($role)) {
             return $role;
@@ -170,12 +170,12 @@ final class User extends CoreModel implements IModel, IUser
     {
         $userVO = parent::getVO($row);
 
-        if (!empty($roleId)) {
+        if (!empty($userVO)) {
             $role = $this->getModel('role');
 
             $roleVO = $role->getVOById($userVO->getRoleId());
 
-            $userVO->setRole($roleVO);
+            $userVO->setRoleVO($roleVO);
         }
 
         return $userVO;
