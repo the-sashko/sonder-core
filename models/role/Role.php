@@ -35,6 +35,22 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param int $page
+     * @return array|null
+     * @throws Exception
+     */
+    final public function getRolesByPage(int $page): ?array
+    {
+        $rows = $this->store->getRoleRowsByPage($page, $this->itemsOnPage);
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        return $this->getVOArray($rows);
+    }
+
+    /**
      * @param int|null $id
      * @return RoleActionValuesObject|null
      */
@@ -69,6 +85,53 @@ final class Role extends CoreModel implements IModel, IRole
         return array_map(function ($row) {
             return new RoleActionValuesObject($row);
         }, $rows);
+    }
+
+    /**
+     * @return array|null
+     */
+    final public function getAllRoleActions(): ?array
+    {
+        $rows = $this->store->getAllRoleActionRows();
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        return array_map(function ($row) {
+            return new RoleActionValuesObject($row);
+        }, $rows);
+    }
+
+    /**
+     * @return array|null
+     * @throws Exception
+     */
+    final public function getAllRoles(): ?array
+    {
+        $rows = $this->store->getAllRoleRows();
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        return $this->getVOArray($rows);
+    }
+
+    /**
+     * @return int
+     */
+    final public function getRolesPageCount(): int
+    {
+        $rowsCount = $this->store->getRoleRowsCount();
+
+        $pageCount = (int)($rowsCount / $this->itemsOnPage);
+
+        if ($pageCount * $this->itemsOnPage < $rowsCount) {
+            $pageCount++;
+        }
+
+        return $pageCount;
     }
 
     /**
@@ -139,6 +202,102 @@ final class Role extends CoreModel implements IModel, IRole
         }
 
         return true;
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     */
+    final public function removeRoleActionById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->deleteRoleActionById($id);
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     */
+    final public function restoreRoleActionById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->restoreRoleActionById($id);
+    }
+
+    /**
+     * @param array|null $row
+     * @return ValuesObject
+     * @throws Exception
+     */
+    final protected function getVO(?array $row = null): ValuesObject
+    {
+        $roleVO = parent::getVO($row);
+
+        if (empty($roleVO->getId())) {
+            return $roleVO;
+        }
+
+        $this->_setParentToVO($roleVO);
+        $this->_setActionsToVO($roleVO);
+
+        return $roleVO;
+    }
+
+    /**
+     * @param ValuesObject $roleVO
+     * @return void
+     * @throws Exception
+     */
+    private function _setParentToVO(ValuesObject &$roleVO): void
+    {
+        if (!empty($roleVO->getParentId())) {
+            $parentVO = $this->getVOById($roleVO->getParentId());
+
+            $roleVO->setParentVO($parentVO);
+        }
+    }
+
+    /**
+     * @param ValuesObject $roleVO
+     * @return void
+     */
+    private function _setActionsToVO(ValuesObject &$roleVO): void
+    {
+        $actionRows = $this->store->getAllowedActionRowsByRoleId(
+            $roleVO->getId()
+        );
+
+        $roleVO->setAllowedActions($actionRows);
+
+        $actionRows = $this->store->getDeniedActionRowsByRoleId(
+            $roleVO->getId()
+        );
+
+        $roleVO->setDeniedActions($actionRows);
+
+        $roleParentVO = $roleVO->getParentVO();
+
+        while (!empty($roleParentVO)) {
+            $actionRows = $this->store->getAllowedActionRowsByRoleId(
+                $roleParentVO->getId()
+            );
+
+            $roleVO->setAllowedActions($actionRows);
+
+            $actionRows = $this->store->getDeniedActionRowsByRoleId(
+                $roleParentVO->getId()
+            );
+
+            $roleVO->setDeniedActions($actionRows);
+
+            $roleParentVO = $roleParentVO->getParentVO();
+        }
     }
 
     /**

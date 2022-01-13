@@ -119,7 +119,7 @@ final class RoleStore extends ModelStore implements IModelStore
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getAllRoleRows(
+    final public function getRoleRowsByPage(
         int  $page = 1,
         int  $itemsOnPage = 10,
         bool $excludeRemoved = false,
@@ -156,6 +156,35 @@ final class RoleStore extends ModelStore implements IModelStore
             $sqlWhere,
             $itemsOnPage,
             $offset
+        );
+
+        return $this->getRows($sql);
+    }
+
+    /**
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getAllRoleRows(): ?array
+    {
+        $sqlWhere = '
+            WHERE
+                ("ddate" IS NULL OR "ddate" < 1) AND
+                "is_active" = true
+        ';
+
+        $sql = '
+            SELECT *
+            FROM "%s"
+            %s
+            ORDER BY "id" DESC;
+        ';
+
+        $sql = sprintf(
+            $sql,
+            RoleStore::ROLES_TABLE,
+            $sqlWhere
         );
 
         return $this->getRows($sql);
@@ -202,6 +231,90 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = sprintf($sql, RoleStore::ROLE_ACTIONS_TABLE, $sqlWhere);
 
         return $this->getRow($sql);
+    }
+
+    /**
+     * @param int|null $roleId
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getAllowedActionRowsByRoleId(
+        ?int $roleId = null
+    ): ?array
+    {
+        if (empty($roleId)) {
+            return null;
+        }
+
+        return $this->getActionRowsByRoleId($roleId, true);
+    }
+
+    /**
+     * @param int|null $roleId
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getDeniedActionRowsByRoleId(
+        ?int $roleId = null
+    ): ?array
+    {
+        if (empty($roleId)) {
+            return null;
+        }
+
+        return $this->getActionRowsByRoleId($roleId, false);
+    }
+
+    /**
+     * @param int|null $roleId
+     * @param bool|null $isAllowed
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getActionRowsByRoleId(
+        ?int  $roleId = null,
+        ?bool $isAllowed = null
+    ): ?array
+    {
+        if (empty($roleId) || is_null($isAllowed)) {
+            return null;
+        }
+
+        $isAllowed = $isAllowed ? 'true' : 'false';
+
+        $sql = '
+            SELECT
+                "actions"."name" AS "name"
+            FROM "%s" AS "actions"
+            LEFT JOIN "%s" AS "role2action"
+                ON "role2action"."action_id" = "actions"."id"
+            WHERE
+                  "role2action"."role_id" = %d AND
+                  ("actions"."ddate" IS NULL OR "actions"."ddate" < 1) AND
+                  "actions"."is_active" = true AND
+                  "role2action"."is_allowed" = %s;
+        ';
+
+        $sql = sprintf(
+            $sql,
+            RoleStore::ROLE_ACTIONS_TABLE,
+            RoleStore::ROLE_TO_ACTIONS_TABLE,
+            $roleId,
+            $isAllowed
+        );
+
+        $rows = $this->getRows($sql);
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        return array_map(function ($row) {
+            return $row['name'];
+        }, $rows);
     }
 
     /**
@@ -289,6 +402,13 @@ final class RoleStore extends ModelStore implements IModelStore
         return $this->getRows($sql);
     }
 
+    /**
+     * @param int $page
+     * @param int $itemsOnPage
+     * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
     final public function getRoleActionRowsCount(
         int $page = 1,
         int $itemsOnPage = 10
@@ -312,11 +432,40 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param int $page
+     * @param int $itemsOnPage
+     * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getRoleRowsCount(
+        int $page = 1,
+        int $itemsOnPage = 10
+    ): int
+    {
+        $offset = $itemsOnPage * ($page - 1);
+
+        $sql = '
+            SELECT COUNT(*) AS "count"
+            FROM "%s";
+        ';
+
+        $sql = sprintf(
+            $sql,
+            RoleStore::ROLES_TABLE,
+            $itemsOnPage,
+            $offset
+        );
+
+        return (int)$this->getOne($sql);
+    }
+
+    /**
      * @return array|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getAllActionRows(): ?array
+    final public function getAllRoleActionRows(): ?array
     {
         $sqlWhere = '
             WHERE
@@ -383,6 +532,97 @@ final class RoleStore extends ModelStore implements IModelStore
         }
 
         return $this->deleteRowById(RoleStore::ROLES_TABLE, $id);
+    }
+
+    /**
+     * @param int|null $id
+     * @param bool $isSoftDelete
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function deleteRoleActionById(
+        ?int $id = null,
+        bool $isSoftDelete = true
+    ): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        $condition = sprintf('"id" = %d AND "is_system" = false', $id);
+
+        if ($isSoftDelete) {
+            $row = [
+                'ddate' => time(),
+                'is_active' => false
+            ];
+
+            return $this->updateRoleAction($row, $condition);
+        }
+
+        return $this->deleteRoleAction($condition);
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function restoreRoleActionById(?int $id = null): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        $condition = sprintf('"id" = %d', $id);
+
+        $row = [
+            'ddate' => null,
+            'is_active' => true
+        ];
+
+        return $this->updateRoleAction($row, $condition);
+    }
+
+    /**
+     * @param array|null $row
+     * @param string|null $condition
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function updateRoleAction(
+        ?array  $row = null,
+        ?string $condition = null
+    ): bool
+    {
+        if (empty($row) || empty($condition)) {
+            return false;
+        }
+
+        $row['mdate'] = time();
+
+        return $this->updateRows(
+            RoleStore::ROLE_ACTIONS_TABLE,
+            $row,
+            $condition
+        );
+    }
+
+    /**
+     * @param string|null $condition
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function deleteRoleAction(?string $condition = null): bool
+    {
+        if (empty($condition)) {
+            return false;
+        }
+
+        return $this->deleteRows(
+            RoleStore::ROLE_ACTIONS_TABLE,
+            $condition
+        );
     }
 
     /**
