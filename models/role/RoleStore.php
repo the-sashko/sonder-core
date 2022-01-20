@@ -2,6 +2,7 @@
 
 namespace Sonder\Models\Role;
 
+use Exception;
 use Sonder\Core\Interfaces\IModelStore;
 use Sonder\Core\ModelStore;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
@@ -628,6 +629,7 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $id
      * @return bool
+     * @throws DatabasePluginException
      */
     final public function restoreRoleById(?int $id = null): bool
     {
@@ -647,6 +649,7 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param RoleActionValuesObject|null $roleActionVO
      * @return bool
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function insertOrUpdateRoleAction(
         ?RoleActionValuesObject $roleActionVO = null
@@ -680,6 +683,62 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param int|null $roleId
+     * @param int|null $roleActionId
+     * @param bool $isAllowed
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function insertRoleToRoleAction(
+        ?int $roleId = null,
+        ?int $roleActionId = null,
+        bool $isAllowed = true
+    ): bool
+    {
+        if (empty($roleId) || empty($roleActionId)) {
+            return false;
+        }
+
+        $row = [
+            'role_id' => $roleId,
+            'action_id' => $roleActionId,
+            'is_allowed' => $isAllowed ? 'true' : 'false'
+        ];
+
+        return $this->addRow(RoleStore::ROLE_TO_ACTIONS_TABLE, $row);
+    }
+
+    /**
+     * @param int|null $roleId
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function deleteRoleToRoleActionByRoleId(?int $roleId = null): bool
+    {
+        if (empty($roleId)) {
+            return false;
+        }
+
+        $condition = sprintf('"role_id" = %d', $roleId);
+
+        return $this->deleteRows(RoleStore::ROLE_TO_ACTIONS_TABLE, $condition);
+    }
+
+    /**
+     * @param array|null $row
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function insertRole(?array $row = null): bool
+    {
+        if (empty($row)) {
+            return false;
+        }
+
+        return $this->addRow(RoleStore::ROLES_TABLE, $row);
+    }
+
+    /**
      * @param array|null $row
      * @param int|null $id
      * @return bool
@@ -699,5 +758,46 @@ final class RoleStore extends ModelStore implements IModelStore
             $row,
             $id
         );
+    }
+
+    /**
+     * @param array|null $row
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function updateRoleById(
+        ?array $row = null,
+        ?int   $id = null
+    ): bool
+    {
+        if (empty($row) || empty($id)) {
+            return false;
+        }
+
+        return $this->updateRowById(RoleStore::ROLES_TABLE, $row, $id);
+    }
+
+    /**
+     * @param RoleValuesObject|null $roleVO
+     * @return bool
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function insertOrUpdateRole(
+        ?RoleValuesObject $roleVO = null
+    ): bool
+    {
+        $id = $roleVO->getId();
+
+        if (empty($id)) {
+            $roleVO->setCdate();
+
+            return $this->insertRole($roleVO->exportRow());
+        }
+
+        $roleVO->setMdate();
+
+        return $this->updateRoleById($roleVO->exportRow(), $id);
     }
 }

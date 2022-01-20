@@ -19,6 +19,16 @@ final class RoleForm extends ModelFormObject
 
     const NAME_EXISTS_ERROR_MESSAGE = 'Role with this name already exists';
 
+    const PARENT_ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Parent Role Is Not Exists';
+
+    const ROLE_HAVE_CIRCULAR_DEPENDENCY_ERROR_MESSAGE = 'Role can not have ' .
+    'a circular dependency';
+
+    const ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role with id "%d" is not exists';
+
+    const ROLE_IS_SYSTEM_ERROR_MESSAGE = 'System role action can not be ' .
+    'changed';
+
     /**
      * @throws Exception
      */
@@ -112,6 +122,19 @@ final class RoleForm extends ModelFormObject
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    final public function getIsActive(): bool
+    {
+        if (!$this->has('is_active')) {
+            return false;
+        }
+
+        return (bool)$this->get('is_active');
+    }
+
+    /**
      * @param string|null $name
      *
      * @throws Exception
@@ -142,9 +165,19 @@ final class RoleForm extends ModelFormObject
     }
 
     /**
+     * @param bool $isActive
+     * @return void
      * @throws Exception
      */
-    private function _validateNameValue(): void
+    final public function setIsActive(bool $isActive = false): void
+    {
+        $this->set('is_active', $isActive);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function _validateNameValue(): void
     {
         $name = $this->getName();
 

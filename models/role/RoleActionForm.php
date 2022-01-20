@@ -7,15 +7,7 @@ use Sonder\Core\ModelFormObject;
 
 final class RoleActionForm extends ModelFormObject
 {
-    const NAME_MIN_LENGTH = 3;
-
-    const NAME_MAX_LENGTH = 255;
-
     const NAME_EMPTY_ERROR_MESSAGE = 'Name is empty';
-
-    const NAME_TOO_SHORT_ERROR_MESSAGE = 'Name is too short';
-
-    const NAME_TOO_LONG_ERROR_MESSAGE = 'Name is too long';
 
     const NAME_EXISTS_ERROR_MESSAGE = 'Role Action with this name already ' .
     'exists';
@@ -23,7 +15,8 @@ final class RoleActionForm extends ModelFormObject
     const ROLE_ACTION_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role Action with id ' .
     '"%d" is not exists';
 
-    const ROLE_ACTION_IS_SYSTEM = 'System role action can not be changed';
+    const ROLE_ACTION_IS_SYSTEM_ERROR_MESSAGE = 'System role action can not ' .
+    'be changed';
 
     /**
      * @return void

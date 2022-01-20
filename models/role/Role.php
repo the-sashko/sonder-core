@@ -9,8 +9,16 @@ use Sonder\Core\Interfaces\IRole;
 use Sonder\Core\ValuesObject;
 use Sonder\Models\Role\RoleActionForm;
 use Sonder\Models\Role\RoleActionValuesObject;
+use Sonder\Models\Role\RoleForm;
+use Sonder\Models\Role\RoleStore;
+use Sonder\Models\Role\RoleValuesObject;
+use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
+use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
 use Throwable;
 
+/**
+ * @property RoleStore $store
+ */
 final class Role extends CoreModel implements IModel, IRole
 {
     /**
@@ -53,6 +61,8 @@ final class Role extends CoreModel implements IModel, IRole
     /**
      * @param int|null $id
      * @return RoleActionValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getRoleActionVOById(
         ?int $id = null
@@ -70,6 +80,8 @@ final class Role extends CoreModel implements IModel, IRole
     /**
      * @param int $page
      * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getRoleActionsByPage(int $page): ?array
     {
@@ -89,6 +101,8 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getAllRoleActions(): ?array
     {
@@ -120,6 +134,8 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getRolesPageCount(): int
     {
@@ -136,6 +152,8 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getRoleActionsPageCount(): int
     {
@@ -170,7 +188,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws Exception
      */
-    final public function saveRoleAction(RoleActionForm &$roleActionForm): bool
+    final public function saveRoleAction(RoleActionForm $roleActionForm): bool
     {
         $roleActionForm->checkInputValues();
 
@@ -178,15 +196,18 @@ final class Role extends CoreModel implements IModel, IRole
             return false;
         }
 
-        if ($this->_checkIdInForm($roleActionForm)) {
-            $this->_checkNameInForm($roleActionForm);
+        if ($this->_checkIdInRoleActionForm($roleActionForm)) {
+            $this->_checkNameInRoleActionForm($roleActionForm);
         }
 
         if (!$roleActionForm->getStatus()) {
             return false;
         }
 
-        $roleActionVO = $this->_getRoleActionVOFromForm($roleActionForm, true);
+        $roleActionVO = $this->_getRoleActionVOFromForm(
+            $roleActionForm,
+            true
+        );
 
         try {
             if (!$this->store->insertOrUpdateRoleAction($roleActionVO)) {
@@ -205,8 +226,94 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param RoleForm $roleForm
+     * @return bool
+     * @throws Exception
+     */
+    final public function saveRole(RoleForm $roleForm): bool
+    {
+        $roleForm->checkInputValues();
+
+        if (!$roleForm->getStatus()) {
+            return false;
+        }
+
+        if ($this->_checkIdInRoleForm($roleForm)) {
+            $this->_checkNameInRoleForm($roleForm);
+        }
+
+        $this->_checkParentIdInRoleForm($roleForm);
+
+        if (!$roleForm->getStatus()) {
+            return false;
+        }
+
+        $roleVO = $this->_getRoleVOFromForm($roleForm, true);
+
+        $this->store->start();
+
+        $deniedActions = (array)$roleForm->getDeniedActions();
+        $allowedActions = (array)$roleForm->getAllowedActions();
+
+        try {
+            if (!$this->store->insertOrUpdateRole($roleVO)) {
+                $roleForm->setStatusFail();
+
+                $this->store->rollback();
+
+                return false;
+            }
+
+            $row = $this->store->getRoleRowByName($roleVO->getName());
+
+            if (empty($row)) {
+                $roleForm->setStatusFail();
+
+                $this->store->rollback();
+
+                return false;
+            }
+
+            /* @var $roleVO RoleValuesObject */
+            $roleVO = $this->getVO($row);
+
+            $this->store->deleteRoleToRoleActionByRoleId($roleVO->getId());
+
+            foreach ($deniedActions as $deniedActionId) {
+                $this->store->insertRoleToRoleAction(
+                    $roleVO->getId(),
+                    $deniedActionId,
+                    false
+                );
+            }
+
+            foreach ($allowedActions as $allowedActionId) {
+                if (!in_array($allowedActionId, $deniedActions)) {
+                    $this->store->insertRoleToRoleAction(
+                        $roleVO->getId(),
+                        $allowedActionId,
+                        true
+                    );
+                }
+            }
+
+            $this->store->commit();
+        } catch (Throwable $exp) {
+            $roleForm->setStatusFail();
+            $roleForm->setError($exp->getMessage());
+
+            $this->store->rollback();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param int|null $id
      * @return bool
+     * @throws DatabasePluginException
      */
     final public function removeRoleActionById(?int $id): bool
     {
@@ -220,6 +327,7 @@ final class Role extends CoreModel implements IModel, IRole
     /**
      * @param int|null $id
      * @return bool
+     * @throws DatabasePluginException
      */
     final public function restoreRoleActionById(?int $id): bool
     {
@@ -231,12 +339,41 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function removeRoleById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->deleteRoleById($id);
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function restoreRoleById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->restoreRoleById($id);
+    }
+
+    /**
      * @param array|null $row
      * @return ValuesObject
      * @throws Exception
      */
     final protected function getVO(?array $row = null): ValuesObject
     {
+        /* @var $roleVO RoleValuesObject */
         $roleVO = parent::getVO($row);
 
         if (empty($roleVO->getId())) {
@@ -250,11 +387,11 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
-     * @param ValuesObject $roleVO
+     * @param RoleValuesObject $roleVO
      * @return void
      * @throws Exception
      */
-    private function _setParentToVO(ValuesObject &$roleVO): void
+    private function _setParentToVO(RoleValuesObject $roleVO): void
     {
         if (!empty($roleVO->getParentId())) {
             $parentVO = $this->getVOById($roleVO->getParentId());
@@ -264,10 +401,11 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
-     * @param ValuesObject $roleVO
+     * @param RoleValuesObject $roleVO
      * @return void
+     * @throws Exception
      */
-    private function _setActionsToVO(ValuesObject &$roleVO): void
+    private function _setActionsToVO(RoleValuesObject $roleVO): void
     {
         $actionRows = $this->store->getAllowedActionRowsByRoleId(
             $roleVO->getId()
@@ -281,6 +419,7 @@ final class Role extends CoreModel implements IModel, IRole
 
         $roleVO->setDeniedActions($actionRows);
 
+        /* @var $roleParentVO RoleValuesObject */
         $roleParentVO = $roleVO->getParentVO();
 
         while (!empty($roleParentVO)) {
@@ -305,7 +444,9 @@ final class Role extends CoreModel implements IModel, IRole
      * @return void
      * @throws Exception
      */
-    private function _checkNameInForm(RoleActionForm &$roleActionForm): void
+    private function _checkNameInRoleActionForm(
+        RoleActionForm $roleActionForm
+    ): void
     {
         $translitPlugin = $this->getPlugin('translit');
 
@@ -324,7 +465,7 @@ final class Role extends CoreModel implements IModel, IRole
 
         if (
             !empty($name) &&
-            !$this->_isNameUniq($name, $roleActionForm->getId())
+            !$this->_isRoleActionNameUniq($name, $roleActionForm->getId())
         ) {
             $roleActionForm->setStatusFail();
 
@@ -339,7 +480,9 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws Exception
      */
-    private function _checkIdInForm(RoleActionForm &$roleActionForm): bool
+    private function _checkIdInRoleActionForm(
+        RoleActionForm $roleActionForm
+    ): bool
     {
         $id = $roleActionForm->getId();
 
@@ -363,8 +506,105 @@ final class Role extends CoreModel implements IModel, IRole
             $roleActionForm->setStatusFail();
 
             $roleActionForm->setError(
-                RoleActionForm::ROLE_ACTION_IS_SYSTEM
+                RoleActionForm::ROLE_ACTION_IS_SYSTEM_ERROR_MESSAGE
             );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param RoleForm $roleForm
+     * @return void
+     * @throws Exception
+     */
+    private function _checkNameInRoleForm(RoleForm $roleForm): void
+    {
+        $translitPlugin = $this->getPlugin('translit');
+
+        $name = $roleForm->getName();
+        $name = $translitPlugin->getSlug($name);
+
+        $roleForm->setName($name);
+
+        if (empty($name)) {
+            $roleForm->setStatusFail();
+            $roleForm->setError(RoleForm::NAME_EMPTY_ERROR_MESSAGE);
+        }
+
+        if (
+            !empty($name) &&
+            !$this->_isRoleNameUniq($name, $roleForm->getId())
+        ) {
+            $roleForm->setStatusFail();
+            $roleForm->setError(RoleForm::NAME_EXISTS_ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @param RoleForm $roleForm
+     * @return void
+     * @throws Exception
+     */
+    private function _checkParentIdInRoleForm(RoleForm $roleForm): void
+    {
+        $parentId = $roleForm->getParentId();
+        $id = $roleForm->getId();
+
+        /* @var $roleParentVO RoleValuesObject */
+        $roleParentVO = $this->getVOById($parentId);
+
+        if (!empty($parentId) && empty($roleParentVO)) {
+            $roleForm->setStatusFail();
+
+            $roleForm->setError(
+                RoleForm::PARENT_ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+        }
+
+        while (!empty($roleParentVO)) {
+            if ($id == $roleParentVO->getId()) {
+                $roleForm->setStatusFail();
+                $roleForm->setError(
+                    RoleForm::ROLE_HAVE_CIRCULAR_DEPENDENCY_ERROR_MESSAGE
+                );
+            }
+
+            $roleParentVO = $roleParentVO->getParentVO();
+        }
+    }
+
+    /**
+     * @param RoleForm $roleForm
+     * @return bool
+     * @throws Exception
+     */
+    private function _checkIdInRoleForm(RoleForm $roleForm): bool
+    {
+        $id = $roleForm->getId();
+
+        if (empty($id)) {
+            return true;
+        }
+
+        $roleVO = $this->_getRoleVOFromForm($roleForm);
+
+        if (empty($roleVO)) {
+            $roleForm->setStatusFail();
+
+            $roleForm->setError(
+                RoleForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        if ($roleVO->getIsSystem()) {
+            $roleForm->setStatusFail();
+
+            $roleForm->setError(RoleForm::ROLE_IS_SYSTEM_ERROR_MESSAGE);
 
             return false;
         }
@@ -376,10 +616,26 @@ final class Role extends CoreModel implements IModel, IRole
      * @param string|null $name
      * @param int|null $id
      * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
-    private function _isNameUniq(?string $name, ?int $id): bool
+    private function _isRoleActionNameUniq(?string $name, ?int $id): bool
     {
         $row = $this->store->getRoleActionRowByName($name, $id);
+
+        return empty($row);
+    }
+
+    /**
+     * @param string|null $name
+     * @param int|null $id
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _isRoleNameUniq(?string $name, ?int $id): bool
+    {
+        $row = $this->store->getRoleRowByName($name, $id);
 
         return empty($row);
     }
@@ -417,5 +673,41 @@ final class Role extends CoreModel implements IModel, IRole
         $roleActionVO->setIsActive($roleActionForm->getIsActive());
 
         return $roleActionVO;
+    }
+
+    /**
+     * @param RoleForm $roleForm
+     * @param bool $isCreateVOIfEmptyId
+     * @return RoleValuesObject|null
+     * @throws Exception
+     */
+    private function _getRoleVOFromForm(
+        RoleForm $roleForm,
+        bool     $isCreateVOIfEmptyId = false
+    ): ?RoleValuesObject
+    {
+        $row = null;
+
+        $id = $roleForm->getId();
+
+        if (empty($id) && !$isCreateVOIfEmptyId) {
+            return null;
+        }
+
+        if (!empty($id)) {
+            $row = $this->store->getRoleRowById($id);
+        }
+
+        if (!empty($id) && empty($row)) {
+            return null;
+        }
+
+        $roleVO = new RoleValuesObject($row);
+
+        $roleVO->setName($roleForm->getName());
+        $roleVO->setIsActive($roleForm->getIsActive());
+        $roleVO->setParentId($roleForm->getParentId());
+
+        return $roleVO;
     }
 }
