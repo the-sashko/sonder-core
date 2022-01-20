@@ -4,19 +4,10 @@ namespace Sonder\Models\User;
 
 use Exception;
 use Sonder\Core\Interfaces\IRoleValuesObject;
-use Sonder\Core\ValuesObject;
+use Sonder\Core\ModelValuesObject;
 
-final class UserValuesObject extends ValuesObject
+final class UserValuesObject extends ModelValuesObject
 {
-    /**
-     * @return int
-     * @throws Exception
-     */
-    final public function getId(): int
-    {
-        return (int)$this->get('id');
-    }
-
     /**
      * @return string
      * @throws Exception
@@ -193,5 +184,5 @@ final class UserValuesObject extends ValuesObject
         return $row;
     }
 
-    //TODO: cdate, mdate, ddate, last_login_at
+    //TODO: last_login_at
 }

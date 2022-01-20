@@ -8,7 +8,14 @@ use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\Interfaces\IUser;
 use Sonder\Core\ValuesObject;
+use Sonder\Models\User\UserStore;
+use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
+use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
 
+
+/**
+ * @property UserStore $store
+ */
 final class User extends CoreModel implements IModel, IUser
 {
     /**
@@ -35,7 +42,8 @@ final class User extends CoreModel implements IModel, IUser
     /**
      * @param string|null $apiToken
      * @return void
-     * @throws Exception
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function signInByApiToken(?string $apiToken = null): void
     {
@@ -50,7 +58,8 @@ final class User extends CoreModel implements IModel, IUser
      * @param string|null $login
      * @param string|null $password
      * @return bool
-     * @throws Exception
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function signInByLoginAndPassword(
         ?string $login = null,
@@ -96,7 +105,7 @@ final class User extends CoreModel implements IModel, IUser
 
     /**
      * @return bool
-     * @throws Exception
+     * @throws DatabasePluginException
      */
     public function signOut(): bool
     {
