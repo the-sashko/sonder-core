@@ -22,7 +22,7 @@ final class RoleForm extends ModelFormObject
     const PARENT_ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Parent Role Is Not Exists';
 
     const ROLE_HAVE_CIRCULAR_DEPENDENCY_ERROR_MESSAGE = 'Role can not have ' .
-    'a circular dependency';
+    'a circular dependencies';
 
     const ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role with id "%d" is not exists';
 

@@ -6,6 +6,7 @@ use Exception;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IRole;
+use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\ValuesObject;
 use Sonder\Models\Role\RoleActionForm;
 use Sonder\Models\Role\RoleActionValuesObject;
@@ -170,7 +171,8 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @return ValuesObject
-     * @throws Exception
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
     final public function getGuestVO(): ValuesObject
     {
@@ -373,7 +375,7 @@ final class Role extends CoreModel implements IModel, IRole
      */
     final protected function getVO(?array $row = null): ValuesObject
     {
-        /* @var $roleVO RoleValuesObject */
+        /* @var $roleVO IRoleValuesObject */
         $roleVO = parent::getVO($row);
 
         if (empty($roleVO->getId())) {
@@ -393,9 +395,18 @@ final class Role extends CoreModel implements IModel, IRole
      */
     private function _setParentToVO(RoleValuesObject $roleVO): void
     {
-        if (!empty($roleVO->getParentId())) {
-            $parentVO = $this->getVOById($roleVO->getParentId());
+        $parentVO = null;
 
+        if (!empty($roleVO->getParentId())) {
+            /* @var $parentVO RoleValuesObject */
+            $parentVO = $this->getVOById($roleVO->getParentId());
+        }
+
+        if (
+            !empty($parentVO) &&
+            $parentVO->getIsActive() &&
+            empty($parentVO->getDdate())
+        ) {
             $roleVO->setParentVO($parentVO);
         }
     }
