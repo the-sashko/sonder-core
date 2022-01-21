@@ -8,9 +8,13 @@ use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\Interfaces\IUser;
 use Sonder\Core\ValuesObject;
+use Sonder\Models\User\UserForm;
 use Sonder\Models\User\UserStore;
+use Sonder\Models\User\UserValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Plugins\TranslitPlugin;
+use Throwable;
 
 
 /**
@@ -19,9 +23,14 @@ use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
 final class User extends CoreModel implements IModel, IUser
 {
     /**
-     * @var ValuesObject
+     * @var int
      */
-    private ValuesObject $_currentUserVO;
+    protected int $itemsOnPage = 10;
+
+    /**
+     * @var UserValuesObject
+     */
+    private UserValuesObject $_currentUserVO;
 
     final public function __construct()
     {
@@ -44,6 +53,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return void
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function signInByApiToken(?string $apiToken = null): void
     {
@@ -60,6 +70,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return bool
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function signInByLoginAndPassword(
         ?string $login = null,
@@ -70,9 +81,9 @@ final class User extends CoreModel implements IModel, IUser
 
         $salt = $this->config->getValue('crypt', 'salt');
 
-        $passwordHash = $cryptPlugin->getHash(
-            sprintf('%s%s', $login, $password),
-            $salt
+        $passwordHash = $this->_getPasswordHashByLoginAndPassword(
+            $login,
+            $password
         );
 
         $row = $this->store->getRowByLoginAndPasswordHash(
@@ -100,12 +111,17 @@ final class User extends CoreModel implements IModel, IUser
         $sessionPlugin->set('user_id', (int)$this->getId());
         $sessionPlugin->set('user_token', $webToken);
 
-        return $this->store->updateWebTokenById($webToken, $this->getId());
+        return $this->store->updateWebTokenById(
+            $webToken,
+            $this->getId(),
+            time()
+        );
     }
 
     /**
      * @return bool
      * @throws DatabasePluginException
+     * @throws Exception
      */
     public function signOut(): bool
     {
@@ -123,6 +139,7 @@ final class User extends CoreModel implements IModel, IUser
 
     /**
      * @return bool
+     * @throws Exception
      */
     final public function isSignedIn(): bool
     {
@@ -130,7 +147,25 @@ final class User extends CoreModel implements IModel, IUser
     }
 
     /**
+     * @param int|null $id
+     * @return UserValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getVOById(?int $id = null): ?UserValuesObject
+    {
+        $row = $this->store->getUserRowById($id);
+
+        if (!empty($row)) {
+            return $this->getVO($row);
+        }
+
+        return null;
+    }
+
+    /**
      * @return int|null
+     * @throws Exception
      */
     final public function getId(): ?int
     {
@@ -143,6 +178,7 @@ final class User extends CoreModel implements IModel, IUser
 
     /**
      * @return string|null
+     * @throws Exception
      */
     final public function getLogin(): ?string
     {
@@ -165,18 +201,60 @@ final class User extends CoreModel implements IModel, IUser
             return $role;
         }
 
-        $role = $this->getModel('role');
+        /* @var $roleModel Role */
+        $roleModel = $this->getModel('role');
 
-        return $role->getGuestVO();
+        /* @var $guestVO IRoleValuesObject */
+        $guestVO = $roleModel->getGuestVO();
+
+        return $guestVO;
     }
 
     /**
+     * @param int $page
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function getUsersByPage(int $page): ?array
+    {
+        $rows = $this->store->getUserRowsByPage($page, $this->itemsOnPage);
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        return $this->getVOArray($rows);
+    }
+
+    /**
+     * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getUsersPageCount(): int
+    {
+        $rowsCount = $this->store->getUserRowsCount();
+
+        $pageCount = (int)($rowsCount / $this->itemsOnPage);
+
+        if ($pageCount * $this->itemsOnPage < $rowsCount) {
+            $pageCount++;
+        }
+
+        return $pageCount;
+    }
+
+
+    /**
      * @param array|null $row
-     * @return ValuesObject
+     * @return UserValuesObject
      * @throws Exception
      */
     final protected function getVO(?array $row = null): ValuesObject
     {
+        /* @var $userVO UserValuesObject */
         $userVO = parent::getVO($row);
 
         if (!empty($userVO)) {
@@ -188,5 +266,281 @@ final class User extends CoreModel implements IModel, IUser
         }
 
         return $userVO;
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function removeById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->deleteUserById($id);
+    }
+
+    /**
+     * @param int|null $id
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function restoreById(?int $id): bool
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        return $this->store->restoreUserById($id);
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function save(UserForm $userForm): bool
+    {
+        $userForm->checkInputValues();
+
+        if (!$userForm->getStatus()) {
+            return false;
+        }
+
+        if ($this->_checkIdInUserForm($userForm)) {
+            $this->_checkLoginInUserForm($userForm);
+        }
+
+        $this->_checkRoleIdInUserForm($userForm);
+
+        if (!$userForm->getStatus()) {
+            return false;
+        }
+
+        $userVO = $this->_getVOFromUserForm($userForm, true);
+
+        try {
+            if (!$this->store->insertOrUpdateUser($userVO)) {
+                $userForm->setStatusFail();
+
+                return false;
+            }
+        } catch (Throwable $exp) {
+            $userForm->setStatusFail();
+            $userForm->setError($exp->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _checkIdInUserForm(UserForm $userForm): bool
+    {
+        $id = $userForm->getId();
+
+        if (empty($id)) {
+            return true;
+        }
+
+        $userVO = $this->_getVOFromUserForm($userForm);
+
+        if (empty($userVO)) {
+            $userForm->setStatusFail();
+
+            $userForm->setError(
+                UserForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @param bool $isCreateVOIfEmptyId
+     * @return UserValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    private function _getVOFromUserForm(
+        UserForm $userForm,
+        bool     $isCreateVOIfEmptyId = false
+    ): ?UserValuesObject
+    {
+        $row = null;
+
+        $id = $userForm->getId();
+
+        if (empty($id) && !$isCreateVOIfEmptyId) {
+            return null;
+        }
+
+        if (!empty($id)) {
+            $row = $this->store->getUserRowById($id);
+        }
+
+        if (!empty($id) && empty($row)) {
+            return null;
+        }
+
+        $userVO = new UserValuesObject($row);
+
+        $passwordHash = $userVO->getPasswordHash();
+
+        if (empty($id)) {
+            $passwordHash = $this->_getPasswordHashByLoginAndPassword(
+                $userForm->getLogin(),
+                $userForm->getPassword()
+            );
+        }
+
+        $apiToken = $userVO->getApiToken();
+
+        if (empty($id) && $userForm->getIsAllowAccessByApi()) {
+            $apiToken = $this->_getApiTokenFromVO($userVO);
+        }
+
+        if (!$userForm->getIsAllowAccessByApi()) {
+            $apiToken = null;
+        }
+
+        $userVO->setLogin($userForm->getLogin());
+        $userVO->setIsActive($userForm->getIsActive());
+        $userVO->setRoleId($userForm->getRoleId());
+        $userVO->setPasswordHash($passwordHash);
+        $userVO->setApiToken($apiToken);
+
+        return $userVO;
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @return void
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    private function _checkLoginInUserForm(UserForm $userForm): void
+    {
+        /* @var $translitPlugin TranslitPlugin */
+        $translitPlugin = $this->getPlugin('translit');
+
+        $login = $userForm->getLogin();
+        $login = $translitPlugin->getSlug($login);
+
+        $userForm->setLogin($login);
+
+        if (empty($login)) {
+            $userForm->setStatusFail();
+            $userForm->setError(UserForm::LOGIN_EMPTY_ERROR_MESSAGE);
+        }
+
+        if (
+            !empty($login) &&
+            !$this->_isLoginUniq($login, $userForm->getId())
+        ) {
+            $userForm->setStatusFail();
+            $userForm->setError(UserForm::LOGIN_EXISTS_ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @param string|null $login
+     * @param int|null $id
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _isLoginUniq(?string $login, ?int $id): bool
+    {
+        $row = $this->store->getUserRowByLogin($login, $id);
+
+        return empty($row);
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @return void
+     * @throws Exception
+     */
+    private function _checkRoleIdInUserForm(UserForm $userForm): void
+    {
+        /* @var $roleModel Role */
+        $roleModel = $this->getModel('role');
+
+        $roleId = $userForm->getRoleId();
+
+        if (empty($roleModel->getVOById($roleId))) {
+            $userForm->setStatusFail();
+
+            $userForm->setError(
+                UserForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * @param string|null $login
+     * $id = $this->getId();
+     * @param string|null $password
+     * @return string|null
+     * @throws Exception
+     */
+    private function _getPasswordHashByLoginAndPassword(
+        ?string $login = null,
+        ?string $password = null
+    ): ?string
+    {
+        if (empty($login) || empty($password)) {
+            return null;
+        }
+
+        $cryptPlugin = $this->getPlugin('crypt');
+
+        $salt = $this->config->getValue('crypt', 'salt');
+
+        return $cryptPlugin->getHash(
+            sprintf('%s%s', $login, $password),
+            $salt
+        );
+    }
+
+    /**
+     * @param UserValuesObject|null $userVO
+     * @return string|null
+     * @throws Exception
+     */
+    private function _getApiTokenFromVO(?UserValuesObject $userVO): ?string
+    {
+        if (empty($userVO)) {
+            return null;
+        }
+
+        $cryptPlugin = $this->getPlugin('crypt');
+
+        $salt = $this->config->getValue('crypt', 'salt');
+
+        $userUniqueString = sprintf(
+            '%s%d%s',
+            json_encode($userVO->exportRow()),
+            rand(0, time()),
+            microtime()
+        );
+
+        return $cryptPlugin->getHash($userUniqueString, $salt);
     }
 }

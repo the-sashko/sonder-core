@@ -278,14 +278,16 @@ final class UserStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param array|null $webToken
+     * @param string|null $webToken
      * @param int|null $id
+     * @param int|null $lastLoginDate
      * @return bool
      * @throws DatabasePluginException
      */
     final public function updateWebTokenById(
         ?string $webToken = null,
-        ?int    $id = null
+        ?int    $id = null,
+        ?int    $lastLoginDate = null
     ): bool
     {
         if (empty($id)) {
@@ -295,6 +297,10 @@ final class UserStore extends ModelStore implements IModelStore
         $row = [
             'web_token' => $webToken
         ];
+
+        if (!empty($lastLoginDate)) {
+            $row['last_login_date'] = $lastLoginDate;
+        }
 
         return $this->updateUserById($row, $id);
     }
@@ -361,5 +367,121 @@ final class UserStore extends ModelStore implements IModelStore
         ];
 
         return $this->updateUserById($row, $id);
+    }
+
+    /**
+     * @param int $page
+     * @param int $itemsOnPage
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getUserRowsByPage(
+        int  $page = 1,
+        int  $itemsOnPage = 10,
+        bool $excludeRemoved = false,
+        bool $excludeInactive = false
+    ): ?array
+    {
+        $sqlWhere = 'WHERE true';
+
+        if ($excludeRemoved) {
+            $sqlWhere = sprintf(
+                '%s AND ("ddate" IS NULL OR "ddate" < 1)',
+                $sqlWhere
+            );
+        }
+
+        if ($excludeInactive) {
+            $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
+        }
+
+        $offset = $itemsOnPage * ($page - 1);
+
+        $sql = '
+            SELECT *
+            FROM "%s"
+            %s
+            ORDER BY "cdate" DESC
+            LIMIT %d
+            OFFSET %d;
+        ';
+
+        $sql = sprintf(
+            $sql,
+            UserStore::USERS_TABLE,
+            $sqlWhere,
+            $itemsOnPage,
+            $offset
+        );
+
+        return $this->getRows($sql);
+    }
+
+    /**
+     * @param int $page
+     * @param int $itemsOnPage
+     * @return int
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getUserRowsCount(
+        int $page = 1,
+        int $itemsOnPage = 10
+    ): int
+    {
+        $offset = $itemsOnPage * ($page - 1);
+
+        $sql = '
+            SELECT COUNT(*) AS "count"
+            FROM "%s";
+        ';
+
+        $sql = sprintf(
+            $sql,
+            UserStore::USERS_TABLE,
+            $itemsOnPage,
+            $offset
+        );
+
+        return (int)$this->getOne($sql);
+    }
+
+    /**
+     * @param UserValuesObject|null $userVO
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function insertOrUpdateUser(
+        ?UserValuesObject $userVO = null
+    ): bool
+    {
+        $id = $userVO->getId();
+
+        if (empty($id)) {
+            $userVO->setCdate();
+
+            return $this->insertUser($userVO->exportRow());
+        }
+
+        $userVO->setMdate();
+
+        return $this->updateUserById($userVO->exportRow(), $id);
+    }
+
+    /**
+     * @param array|null $row
+     * @return bool
+     * @throws DatabasePluginException
+     */
+    final public function insertUser(?array $row = null): bool
+    {
+        if (empty($row)) {
+            return false;
+        }
+
+        return $this->addRow(UserStore::USERS_TABLE, $row);
     }
 }

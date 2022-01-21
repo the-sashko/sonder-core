@@ -9,6 +9,21 @@ use Sonder\Core\ModelValuesObject;
 final class UserValuesObject extends ModelValuesObject
 {
     /**
+     * @var string|null
+     */
+    protected ?string $editLinkPattern = '/admin/user/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $removeLinkPattern = '/admin/users/remove/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $restoreLinkPattern = '/admin/users/restore/%d/';
+
+    /**
      * @return string
      * @throws Exception
      */
@@ -67,12 +82,25 @@ final class UserValuesObject extends ModelValuesObject
     }
 
     /**
-     * @return bool
+     * @param string|null $format
+     * @return string|int|null
      * @throws Exception
      */
-    final public function isActive(): bool
+    final public function getLastLoginDate(
+        ?string $format = null
+    ): string|int|null
     {
-        return (bool)$this->get('is_active');
+        $ddate = (int)$this->get('last_login_date');
+
+        if (empty($ddate)) {
+            return null;
+        }
+
+        if (empty($format)) {
+            return $ddate;
+        }
+
+        return date($format, $ddate);
     }
 
     /**
@@ -130,9 +158,7 @@ final class UserValuesObject extends ModelValuesObject
      */
     final public function setApiToken(?string $apiToken = null): void
     {
-        if (!empty($apiToken)) {
-            $this->set('api_token', $apiToken);
-        }
+        $this->set('api_token', $apiToken);
     }
 
     /**
@@ -184,5 +210,12 @@ final class UserValuesObject extends ModelValuesObject
         return $row;
     }
 
-    //TODO: last_login_at
+    /**
+     * @return void
+     * @throws Exception
+     */
+    final public function setLastLoginDate(): void
+    {
+        $this->set('last_login_date', time());
+    }
 }

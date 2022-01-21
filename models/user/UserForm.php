@@ -29,6 +29,12 @@ final class UserForm extends ModelFormObject
 
     const PASSWORD_TOO_LONG_ERROR_MESSAGE = 'Password is too long';
 
+    const ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role is not exist or inactive';
+
+    const ROLE_IS_NOT_SET_ERROR_MESSAGE = 'Role is not set';
+
+    const USER_IS_NOT_EXISTS_ERROR_MESSAGE = 'User is not exists';
+
     /**
      * @throws Exception
      */
@@ -38,11 +44,11 @@ final class UserForm extends ModelFormObject
 
         $this->_validateLoginValue();
         $this->_validatePasswordValue();
+        $this->_validateRoleId();
     }
 
     /**
      * @return int|null
-     *
      * @throws Exception
      */
     final public function getId(): ?int
@@ -62,7 +68,6 @@ final class UserForm extends ModelFormObject
 
     /**
      * @return int|null
-     *
      * @throws Exception
      */
     final public function getRoleId(): ?int
@@ -82,7 +87,6 @@ final class UserForm extends ModelFormObject
 
     /**
      * @return string|null
-     *
      * @throws Exception
      */
     final public function getLogin(): ?string
@@ -96,7 +100,6 @@ final class UserForm extends ModelFormObject
 
     /**
      * @return string|null
-     *
      * @throws Exception
      */
     final public function getPassword(): ?string
@@ -109,8 +112,34 @@ final class UserForm extends ModelFormObject
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    final public function getIsAllowAccessByApi(): bool
+    {
+        if (!$this->has('is_allow_access_by_api')) {
+            return false;
+        }
+
+        return (bool)$this->get('is_allow_access_by_api');
+    }
+
+    /**
+     * @return bool
+     * @throws Exception
+     */
+    final public function getIsActive(): bool
+    {
+        if (!$this->has('is_active')) {
+            return false;
+        }
+
+        return (bool)$this->get('is_active');
+    }
+
+    /**
      * @param string|null $login
-     *
+     * @return void
      * @throws Exception
      */
     final public function setLogin(?string $login = null): void
@@ -119,6 +148,29 @@ final class UserForm extends ModelFormObject
     }
 
     /**
+     * @param bool $isAllowAccessByApi
+     * @return void
+     * @throws Exception
+     */
+    final public function setIsAllowAccessByApi(
+        bool $isAllowAccessByApi = false
+    ): void
+    {
+        $this->set('is_allow_access_by_api', $isAllowAccessByApi);
+    }
+
+    /**
+     * @param bool $isActive
+     * @return void
+     * @throws Exception
+     */
+    final public function setIsActive(bool $isActive = false): void
+    {
+        $this->set('is_active', $isActive);
+    }
+
+    /**
+     * @return void
      * @throws Exception
      */
     private function _validateLoginValue(): void
@@ -142,14 +194,15 @@ final class UserForm extends ModelFormObject
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     private function _validatePasswordValue(): void
     {
-
+        $id = $this->getId();
         $password = $this->getPassword();
 
-        if (empty($password)) {
+        if (empty($id) && empty($password)) {
             $this->setError(UserForm::PASSWORD_EMPTY_ERROR_MESSAGE);
             $this->setStatusFail();
         }
@@ -167,6 +220,18 @@ final class UserForm extends ModelFormObject
             mb_strlen($password) < UserForm::PASSWORD_MIN_LENGTH
         ) {
             $this->setError(UserForm::PASSWORD_TOO_SHORT_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    private function _validateRoleId(): void
+    {
+        if (empty($this->getRoleId())) {
+            $this->setError(UserForm::ROLE_IS_NOT_SET_ERROR_MESSAGE);
             $this->setStatusFail();
         }
     }
