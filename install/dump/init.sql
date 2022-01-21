@@ -54,16 +54,17 @@ CREATE TABLE "role2action"
 
 CREATE TABLE "users"
 (
-    "id"            integer DEFAULT nextval('users_id_seq') NOT NULL,
-    "login"         character varying(64)                   NOT NULL,
-    "password_hash" character varying(128),
-    "api_token"     character varying(128),
-    "web_token"     character varying(128),
-    "role_id"       integer                                 NOT NULL,
-    "is_active"     boolean DEFAULT true                    NOT NULL,
-    "cdate"         integer                                 NOT NULL,
-    "mdate"         integer,
-    "ddate"         integer,
+    "id"              integer DEFAULT nextval('users_id_seq') NOT NULL,
+    "login"           character varying(64)                   NOT NULL,
+    "password_hash"   character varying(128),
+    "api_token"       character varying(128),
+    "web_token"       character varying(128),
+    "role_id"         integer                                 NOT NULL,
+    "last_login_date" integer,
+    "is_active"       boolean DEFAULT true                    NOT NULL,
+    "cdate"           integer                                 NOT NULL,
+    "mdate"           integer,
+    "ddate"           integer,
     CONSTRAINT "users_id" PRIMARY KEY ("id"),
     CONSTRAINT "users_login" UNIQUE ("login"),
     CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles" ("id")
