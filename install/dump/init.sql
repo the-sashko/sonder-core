@@ -56,6 +56,7 @@ CREATE TABLE "users"
 (
     "id"              integer DEFAULT nextval('users_id_seq') NOT NULL,
     "login"           character varying(64)                   NOT NULL,
+    "email"           character varying(128)                  NOT NULL,
     "password_hash"   character varying(128),
     "api_token"       character varying(128),
     "web_token"       character varying(128),
@@ -67,6 +68,7 @@ CREATE TABLE "users"
     "ddate"           integer,
     CONSTRAINT "users_id" PRIMARY KEY ("id"),
     CONSTRAINT "users_login" UNIQUE ("login"),
+    CONSTRAINT "users_email" UNIQUE ("email"),
     CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles" ("id")
         ON UPDATE CASCADE
         ON DELETE SET NULL
