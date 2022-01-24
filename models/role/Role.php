@@ -79,6 +79,27 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param int|null $id
+     * @return RoleValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function getRoleVOById(?int $id = null): ?RoleValuesObject
+    {
+        $row = $this->store->getRoleRowById($id);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        /* @var $roleVO RoleValuesObject */
+        $roleVO = $this->getVO($row);
+
+        return $roleVO;
+    }
+
+    /**
      * @param int $page
      * @return array|null
      * @throws DatabaseCacheException
@@ -186,6 +207,36 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param int|null $roleId
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getAllowedActionsByRoleId(?int $roleId = null): ?array
+    {
+        if (empty($roleId)) {
+            return null;
+        }
+
+        return $this->store->getAllowedActionRowsByRoleId($roleId);
+    }
+
+    /**
+     * @param int|null $roleId
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getDeniedActionsByRoleId(?int $roleId = null): ?array
+    {
+        if (empty($roleId)) {
+            return null;
+        }
+
+        return $this->store->getDeniedActionRowsByRoleId($roleId);
+    }
+
+    /**
      * @param RoleActionForm $roleActionForm
      * @return bool
      * @throws Exception
@@ -198,9 +249,8 @@ final class Role extends CoreModel implements IModel, IRole
             return false;
         }
 
-        if ($this->_checkIdInRoleActionForm($roleActionForm)) {
-            $this->_checkNameInRoleActionForm($roleActionForm);
-        }
+        $this->_checkIdInRoleActionForm($roleActionForm);
+        $this->_checkNameInRoleActionForm($roleActionForm);
 
         if (!$roleActionForm->getStatus()) {
             return false;
@@ -216,6 +266,18 @@ final class Role extends CoreModel implements IModel, IRole
                 $roleActionForm->setStatusFail();
 
                 return false;
+            }
+
+            if (!empty($roleActionForm->getId())) {
+                return true;
+            }
+
+            $id = $this->store->getRoleActionIdByName(
+                $roleActionVO->getName()
+            );
+
+            if (!empty($id)) {
+                $roleActionForm->setId($id);
             }
         } catch (Throwable $exp) {
             $roleActionForm->setStatusFail();
@@ -240,10 +302,8 @@ final class Role extends CoreModel implements IModel, IRole
             return false;
         }
 
-        if ($this->_checkIdInRoleForm($roleForm)) {
-            $this->_checkNameInRoleForm($roleForm);
-        }
-
+        $this->_checkIdInRoleForm($roleForm);
+        $this->_checkNameInRoleForm($roleForm);
         $this->_checkParentIdInRoleForm($roleForm);
 
         if (!$roleForm->getStatus()) {
@@ -300,6 +360,18 @@ final class Role extends CoreModel implements IModel, IRole
             }
 
             $this->store->commit();
+
+            if (!empty($roleForm->getId())) {
+                return true;
+            }
+
+            $id = $this->store->getRoleIdByName(
+                $roleForm->getName()
+            );
+
+            if (!empty($id)) {
+                $roleForm->setId($id);
+            }
         } catch (Throwable $exp) {
             $roleForm->setStatusFail();
             $roleForm->setError($exp->getMessage());
@@ -418,33 +490,23 @@ final class Role extends CoreModel implements IModel, IRole
      */
     private function _setActionsToVO(RoleValuesObject $roleVO): void
     {
-        $actionRows = $this->store->getAllowedActionRowsByRoleId(
-            $roleVO->getId()
-        );
+        $allowedActions = $this->getAllowedActionsByRoleId($roleVO->getId());
+        $deniedActions = $this->getDeniedActionsByRoleId($roleVO->getId());
 
-        $roleVO->setAllowedActions($actionRows);
-
-        $actionRows = $this->store->getDeniedActionRowsByRoleId(
-            $roleVO->getId()
-        );
-
-        $roleVO->setDeniedActions($actionRows);
+        $roleVO->setAllowedActions($allowedActions);
+        $roleVO->setDeniedActions($deniedActions);
 
         /* @var $roleParentVO RoleValuesObject */
         $roleParentVO = $roleVO->getParentVO();
 
         while (!empty($roleParentVO)) {
-            $actionRows = $this->store->getAllowedActionRowsByRoleId(
-                $roleParentVO->getId()
-            );
+            $roleParentId = $roleParentVO->getId();
 
-            $roleVO->setAllowedActions($actionRows);
+            $allowedActions = $this->getAllowedActionsByRoleId($roleParentId);
+            $deniedActions = $this->getDeniedActionsByRoleId($roleParentId);
 
-            $actionRows = $this->store->getDeniedActionRowsByRoleId(
-                $roleParentVO->getId()
-            );
-
-            $roleVO->setDeniedActions($actionRows);
+            $roleVO->setAllowedActions($allowedActions);
+            $roleVO->setDeniedActions($deniedActions);
 
             $roleParentVO = $roleParentVO->getParentVO();
         }

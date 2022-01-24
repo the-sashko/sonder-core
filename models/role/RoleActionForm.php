@@ -75,6 +75,16 @@ final class RoleActionForm extends ModelFormObject
     }
 
     /**
+     * @param int|null $id
+     * @return void
+     * @throws Exception
+     */
+    final public function setId(?int $id = null): void
+    {
+        $this->set('id', $id);
+    }
+
+    /**
      * @param string|null $name
      * @return void
      * @throws Exception

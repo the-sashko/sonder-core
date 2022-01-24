@@ -372,6 +372,62 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param string|null $name
+     * @return int|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getRoleActionIdByName(?string $name = null): ?int
+    {
+        if (empty($name)) {
+            return null;
+        }
+
+        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+
+        $sql = '
+            SELECT "id"
+            FROM "%s"
+            %s
+            LIMIT 1;
+        ';
+
+        $sql = sprintf($sql, RoleStore::ROLE_ACTIONS_TABLE, $sqlWhere);
+
+        $id = $this->getOne($sql);
+
+        return empty($id) ? null : (int)$id;
+    }
+
+    /**
+     * @param string|null $name
+     * @return int|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getRoleIdByName(?string $name = null): ?int
+    {
+        if (empty($name)) {
+            return null;
+        }
+
+        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+
+        $sql = '
+            SELECT "id"
+            FROM "%s"
+            %s
+            LIMIT 1;
+        ';
+
+        $sql = sprintf($sql, RoleStore::ROLES_TABLE, $sqlWhere);
+
+        $id = $this->getOne($sql);
+
+        return empty($id) ? null : (int)$id;
+    }
+
+    /**
      * @param int $page
      * @param int $itemsOnPage
      * @return array|null
@@ -599,8 +655,6 @@ final class RoleStore extends ModelStore implements IModelStore
         if (empty($row) || empty($condition)) {
             return false;
         }
-
-        $row['mdate'] = time();
 
         return $this->updateRows(
             RoleStore::ROLE_ACTIONS_TABLE,

@@ -27,6 +27,11 @@ final class RoleValuesObject
     protected ?string $restoreLinkPattern = '/admin/users/roles/restore/%d/';
 
     /**
+     * @var string|null
+     */
+    protected ?string $adminViewLinkPattern = '/admin/users/roles/view/%d/';
+
+    /**
      * @return string
      * @throws Exception
      */
@@ -114,6 +119,15 @@ final class RoleValuesObject
     final public function getIsSystem(): bool
     {
         return (bool)$this->get('is_system');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAdminViewLink(): string
+    {
+        return sprintf($this->adminViewLinkPattern, $this->getId());
     }
 
     /**
