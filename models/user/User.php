@@ -8,6 +8,7 @@ use Sonder\Core\Interfaces\IModel;
 use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\Interfaces\IUser;
 use Sonder\Core\ValuesObject;
+use Sonder\Models\User\CredentialsForm;
 use Sonder\Models\User\UserForm;
 use Sonder\Models\User\UserStore;
 use Sonder\Models\User\UserValuesObject;
@@ -311,10 +312,9 @@ final class User extends CoreModel implements IModel, IUser
             return false;
         }
 
-        if ($this->_checkIdInUserForm($userForm)) {
-            $this->_checkLoginInUserForm($userForm);
-        }
-
+        $this->_checkIdInUserForm($userForm);
+        $this->_checkLoginInUserForm($userForm);
+        $this->_checkEmailInUserForm($userForm);
         $this->_checkRoleIdInUserForm($userForm);
 
         if (!$userForm->getStatus()) {
@@ -329,9 +329,168 @@ final class User extends CoreModel implements IModel, IUser
 
                 return false;
             }
+
+            $id = $this->store->getUserIdByLogin($userForm->getLogin());
+
+            if (!empty($id)) {
+                $userForm->setId($id);
+            }
         } catch (Throwable $exp) {
             $userForm->setStatusFail();
             $userForm->setError($exp->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param CredentialsForm $credentialsForm
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function saveCredentials(
+        CredentialsForm $credentialsForm
+    ): bool
+    {
+        $credentialsForm->checkInputValues();
+
+        if (!$credentialsForm->getStatus()) {
+            return false;
+        }
+
+        $id = $credentialsForm->getId();
+
+        if (empty($id)) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        $this->_checkLoginInCredentialsForm($credentialsForm);
+
+        $userVO = $this->_getVOFromCredentialsForm($credentialsForm);
+
+        if (empty($userVO)) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        if (!$credentialsForm->getStatus()) {
+            return false;
+        }
+
+        $apiToken = null;
+
+        if ($credentialsForm->getIsAllowAccessByApi()) {
+            $apiToken = $userVO->getApiToken();
+        }
+
+        $passwordHash = $userVO->getPasswordHash();
+
+        $userVO->setMdate();
+
+        $row = $userVO->exportRow();
+
+        $row['api_token'] = $apiToken;
+
+        if (!empty($passwordHash)) {
+            $row['password_hash'] = $passwordHash;
+        }
+        $credentialsForm->checkInputValues();
+
+        if (!$credentialsForm->getStatus()) {
+            return false;
+        }
+
+        $id = $credentialsForm->getId();
+
+        if (empty($id)) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        $this->_checkLoginInCredentialsForm($credentialsForm);
+
+        $userVO = $this->_getVOFromCredentialsForm($credentialsForm);
+
+        if (empty($userVO)) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+            );
+
+            return false;
+        }
+
+        if (!$credentialsForm->getStatus()) {
+            return false;
+        }
+
+        $apiToken = null;
+
+        if ($credentialsForm->getIsAllowAccessByApi()) {
+            $apiToken = $userVO->getApiToken();
+        }
+
+        $passwordHash = $userVO->getPasswordHash();
+
+        $userVO->setMdate();
+
+        $row = $userVO->exportRow();
+
+        $row['api_token'] = $apiToken;
+
+        if (!empty($passwordHash)) {
+            $row['password_hash'] = $passwordHash;
+        }
+
+        try {
+            if (
+                !$this->store->updateUserById($row, $credentialsForm->getId())
+            ) {
+                $credentialsForm->setStatusFail();
+
+                return false;
+            }
+        } catch (Throwable $exp) {
+            $credentialsForm->setStatusFail();
+            $credentialsForm->setError($exp->getMessage());
+
+            return false;
+        }
+
+        return true;
+
+        try {
+            if (
+                !$this->store->updateUserById($row, $credentialsForm->getId())
+            ) {
+                $credentialsForm->setStatusFail();
+
+                return false;
+            }
+        } catch (Throwable $exp) {
+            $credentialsForm->setStatusFail();
+            $credentialsForm->setError($exp->getMessage());
 
             return false;
         }
@@ -399,30 +558,84 @@ final class User extends CoreModel implements IModel, IUser
 
         $userVO = new UserValuesObject($row);
 
-        $passwordHash = $userVO->getPasswordHash();
-
         if (empty($id)) {
             $passwordHash = $this->_getPasswordHashByLoginAndPassword(
                 $userForm->getLogin(),
                 $userForm->getPassword()
             );
-        }
 
-        $apiToken = $userVO->getApiToken();
+            $userVO->setPasswordHash($passwordHash);
+        }
 
         if (empty($id) && $userForm->getIsAllowAccessByApi()) {
             $apiToken = $this->_getApiTokenFromVO($userVO);
-        }
-
-        if (!$userForm->getIsAllowAccessByApi()) {
-            $apiToken = null;
+            $userVO->setApiToken($apiToken);
         }
 
         $userVO->setLogin($userForm->getLogin());
+        $userVO->setEmail($userForm->getEmail());
         $userVO->setIsActive($userForm->getIsActive());
         $userVO->setRoleId($userForm->getRoleId());
-        $userVO->setPasswordHash($passwordHash);
-        $userVO->setApiToken($apiToken);
+
+        return $userVO;
+    }
+
+    /**
+     * @param CredentialsForm $credentialsForm
+     * @return UserValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    private function _getVOFromCredentialsForm(
+        CredentialsForm $credentialsForm
+    ): ?UserValuesObject
+    {
+        $id = $credentialsForm->getId();
+
+        if (empty($id)) {
+            return null;
+        }
+
+        $row = $this->store->getUserRowById($id);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        $userVO = new UserValuesObject($row);
+
+        if (
+            $credentialsForm->getIsAllowAccessByApi() &&
+            empty($userVO->getApiToken())
+        ) {
+            $apiToken = $this->_getApiTokenFromVO($userVO);
+
+            $userVO->setApiToken($apiToken);
+        }
+
+        if (
+            $credentialsForm->getLogin() != $userVO->getLogin() &&
+            empty($credentialsForm->getPassword())
+        ) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::PASSWORD_EMPTY_ERROR_MESSAGE
+            );
+        }
+
+        $userVO->setLogin($credentialsForm->getLogin());
+
+        if (!empty($credentialsForm->getPassword())) {
+            $passwordHash = $this->_getPasswordHashByLoginAndPassword(
+                $credentialsForm->getLogin(),
+                $credentialsForm->getPassword()
+            );
+
+            $userVO->setPasswordHash($passwordHash);
+        }
+
 
         return $userVO;
     }
@@ -459,6 +672,81 @@ final class User extends CoreModel implements IModel, IUser
     }
 
     /**
+     * @param CredentialsForm $credentialsForm
+     * @return void
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _checkLoginInCredentialsForm(
+        CredentialsForm $credentialsForm
+    ): void
+    {
+        /* @var $translitPlugin TranslitPlugin */
+        $translitPlugin = $this->getPlugin('translit');
+
+        $login = $credentialsForm->getLogin();
+        $login = $translitPlugin->getSlug($login);
+
+        $credentialsForm->setLogin($login);
+
+        if (empty($login)) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::LOGIN_EMPTY_ERROR_MESSAGE
+            );
+        }
+
+        if (
+            !empty($login) &&
+            !$this->_isLoginUniq($login, $credentialsForm->getId())
+        ) {
+            $credentialsForm->setStatusFail();
+
+            $credentialsForm->setError(
+                CredentialsForm::LOGIN_EXISTS_ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * @param UserForm $userForm
+     * @return void
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _checkEmailInUserForm(UserForm $userForm): void
+    {
+        $email = $userForm->getEmail();
+
+        $email = preg_replace('/\s+/su', '', $email);
+        $email = mb_convert_case($email, MB_CASE_LOWER);
+
+        $userForm->setEmail($email);
+
+        if (empty($email)) {
+            $userForm->setStatusFail();
+            $userForm->setError(UserForm::EMAIL_EMPTY_ERROR_MESSAGE);
+        }
+
+        if (
+            !empty($email) &&
+            !preg_match(UserForm::EMAIL_PATTERN, $email)
+        ) {
+            $userForm->setStatusFail();
+            $userForm->setError(UserForm::EMAIL_HAS_BAD_FORMAT);
+        }
+
+        if (
+            !empty($email) &&
+            !$this->_isEmailUniq($email, $userForm->getId())
+        ) {
+            $userForm->setStatusFail();
+            $userForm->setError(UserForm::EMAIL_EXISTS_ERROR_MESSAGE);
+        }
+    }
+
+    /**
      * @param string|null $login
      * @param int|null $id
      * @return bool
@@ -468,6 +756,20 @@ final class User extends CoreModel implements IModel, IUser
     private function _isLoginUniq(?string $login, ?int $id): bool
     {
         $row = $this->store->getUserRowByLogin($login, $id);
+
+        return empty($row);
+    }
+
+    /**
+     * @param string|null $email
+     * @param int|null $id
+     * @return bool
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    private function _isEmailUniq(?string $email, ?int $id): bool
+    {
+        $row = $this->store->getUserRowByEmail($email, $id);
 
         return empty($row);
     }

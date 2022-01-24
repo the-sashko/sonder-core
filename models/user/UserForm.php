@@ -11,6 +11,10 @@ final class UserForm extends ModelFormObject
 
     const LOGIN_MAX_LENGTH = 255;
 
+    const EMAIL_MAX_LENGTH = 128;
+
+    const EMAIL_PATTERN = '/^(.*?)@(.*?)\.(.*?)$/su';
+
     const PASSWORD_MIN_LENGTH = 8;
 
     const PASSWORD_MAX_LENGTH = 255;
@@ -22,6 +26,14 @@ final class UserForm extends ModelFormObject
     const LOGIN_TOO_LONG_ERROR_MESSAGE = 'Login is too long';
 
     const LOGIN_EXISTS_ERROR_MESSAGE = 'User with this login already exists';
+
+    const EMAIL_EMPTY_ERROR_MESSAGE = 'Email is empty';
+
+    const EMAIL_TOO_LONG_ERROR_MESSAGE = 'Email is too long';
+
+    const EMAIL_HAS_BAD_FORMAT = 'Email has bad format';
+
+    const EMAIL_EXISTS_ERROR_MESSAGE = 'User with this email already exists';
 
     const PASSWORD_EMPTY_ERROR_MESSAGE = 'Password is empty';
 
@@ -43,8 +55,9 @@ final class UserForm extends ModelFormObject
         $this->setStatusSuccess();
 
         $this->_validateLoginValue();
+        $this->_validateEmailValue();
         $this->_validatePasswordValue();
-        $this->_validateRoleId();
+        $this->_validateRoleIdValue();
     }
 
     /**
@@ -102,6 +115,19 @@ final class UserForm extends ModelFormObject
      * @return string|null
      * @throws Exception
      */
+    final public function getEmail(): ?string
+    {
+        if ($this->has('email')) {
+            return $this->get('email');
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     * @throws Exception
+     */
     final public function getPassword(): ?string
     {
         if ($this->has('password')) {
@@ -138,6 +164,16 @@ final class UserForm extends ModelFormObject
     }
 
     /**
+     * @param int|null $id
+     * @return void
+     * @throws Exception
+     */
+    final public function setId(?int $id = null): void
+    {
+        $this->set('id', $id);
+    }
+
+    /**
      * @param string|null $login
      * @return void
      * @throws Exception
@@ -145,6 +181,16 @@ final class UserForm extends ModelFormObject
     final public function setLogin(?string $login = null): void
     {
         $this->set('login', $login);
+    }
+
+    /**
+     * @param string|null $email
+     * @return void
+     * @throws Exception
+     */
+    final public function setEmail(?string $email = null): void
+    {
+        $this->set('email', $email);
     }
 
     /**
@@ -197,6 +243,33 @@ final class UserForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
+    private function _validateEmailValue(): void
+    {
+        $email = $this->getEmail();
+
+        if (empty($email)) {
+            $this->setError(UserForm::EMAIL_EMPTY_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (!empty($email) && mb_strlen($email) > UserForm::EMAIL_MAX_LENGTH) {
+            $this->setError(UserForm::EMAIL_TOO_LONG_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (
+            !empty($email) &&
+            !preg_match(UserForm::EMAIL_PATTERN, $email)
+        ) {
+            $this->setError(UserForm::EMAIL_HAS_BAD_FORMAT);
+            $this->setStatusFail();
+        }
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     private function _validatePasswordValue(): void
     {
         $id = $this->getId();
@@ -228,7 +301,7 @@ final class UserForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
-    private function _validateRoleId(): void
+    private function _validateRoleIdValue(): void
     {
         if (empty($this->getRoleId())) {
             $this->setError(UserForm::ROLE_IS_NOT_SET_ERROR_MESSAGE);

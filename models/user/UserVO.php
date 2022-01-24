@@ -24,12 +24,32 @@ final class UserValuesObject extends ModelValuesObject
     protected ?string $restoreLinkPattern = '/admin/users/restore/%d/';
 
     /**
+     * @var string|null
+     */
+    protected ?string $adminViewLinkPattern = '/admin/users/view/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $adminCredentialsLinkPattern = '/admin/users/' .
+    'credentials/%d/';
+
+    /**
      * @return string
      * @throws Exception
      */
     final public function getLogin(): string
     {
         return (string)$this->get('login');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    final public function getEmail(): string
+    {
+        return (string)$this->get('email');
     }
 
     /**
@@ -64,19 +84,23 @@ final class UserValuesObject extends ModelValuesObject
     }
 
     /**
-     * @return string
+     * @return string|null
      * @throws Exception
      */
-    final public function getApiToken(): string
+    final public function getApiToken(): ?string
     {
+        if (!$this->has('api_token')) {
+            return null;
+        }
+
         return (string)$this->get('api_token');
     }
 
     /**
-     * @return string|null
+     * @return string
      * @throws Exception
      */
-    final public function getWebToken(): ?string
+    final public function getWebToken(): string
     {
         return (string)$this->get('web_token');
     }
@@ -104,6 +128,24 @@ final class UserValuesObject extends ModelValuesObject
     }
 
     /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAdminViewLink(): string
+    {
+        return sprintf($this->adminViewLinkPattern, $this->getId());
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAdminCredentialsLink(): string
+    {
+        return sprintf($this->adminCredentialsLinkPattern, $this->getId());
+    }
+
+    /**
      * @param string|null $login
      * @return void
      * @throws Exception
@@ -112,6 +154,18 @@ final class UserValuesObject extends ModelValuesObject
     {
         if (!empty($login)) {
             $this->set('login', $login);
+        }
+    }
+
+    /**
+     * @param string|null $email
+     * @return void
+     * @throws Exception
+     */
+    final public function setEmail(?string $email = null): void
+    {
+        if (!empty($email)) {
+            $this->set('email', $email);
         }
     }
 
@@ -183,6 +237,10 @@ final class UserValuesObject extends ModelValuesObject
         $this->set('is_active', $isActive);
     }
 
+    /**
+     * @param array|null $params
+     * @return array|null
+     */
     final public function exportRow(?array $params = null): ?array
     {
         $row = parent::exportRow($params);
@@ -196,7 +254,7 @@ final class UserValuesObject extends ModelValuesObject
         }
 
         if (array_key_exists('password_hash', $row)) {
-            unset($row['api_token']);
+            unset($row['password_hash']);
         }
 
         if (array_key_exists('web_token', $row)) {

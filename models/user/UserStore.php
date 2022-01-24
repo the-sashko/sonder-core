@@ -2,6 +2,7 @@
 
 namespace Sonder\Models\User;
 
+use Exception;
 use Sonder\Core\Interfaces\IModelStore;
 use Sonder\Core\ModelStore;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
@@ -61,6 +62,34 @@ final class UserStore extends ModelStore implements IModelStore
 
     /**
      * @param string|null $login
+     * @return int|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getUserIdByLogin(?string $login = null): ?int
+    {
+        if (empty($login)) {
+            return null;
+        }
+
+        $sqlWhere = sprintf('WHERE "login" = \'%s\'', $login);
+
+        $sql = '
+            SELECT "id"
+            FROM "%s"
+            %s
+            LIMIT 1;
+        ';
+
+        $sql = sprintf($sql, UserStore::USERS_TABLE, $sqlWhere);
+
+        $id = $this->getOne($sql);
+
+        return empty($id) ? null : (int)$id;
+    }
+
+    /**
+     * @param string|null $login
      * @param int|null $excludeId
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
@@ -81,8 +110,65 @@ final class UserStore extends ModelStore implements IModelStore
 
         $sqlWhere = sprintf('WHERE "login" = \'%s\'', $login);
 
-        if (empty($excludeId)) {
-            $sqlWhere = sprintf('%s AND "id" <> %d', $sqlWhere, $excludeId);
+        if (!empty($excludeId)) {
+            $sqlWhere = sprintf(
+                '%s AND "id" <> %d',
+                $sqlWhere,
+                $excludeId
+            );
+        }
+
+        if ($excludeRemoved) {
+            $sqlWhere = sprintf(
+                '%s AND ("ddate" IS NULL OR "ddate" < 1)',
+                $sqlWhere
+            );
+        }
+
+        if ($excludeInactive) {
+            $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
+        }
+
+        $sql = '
+            SELECT *
+            FROM "%s"
+            %s
+            LIMIT 1;
+        ';
+
+        $sql = sprintf($sql, UserStore::USERS_TABLE, $sqlWhere);
+
+        return $this->getRow($sql);
+    }
+
+    /**
+     * @param string|null $email
+     * @param int|null $excludeId
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
+     * @return array|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getUserRowByEmail(
+        ?string $email = null,
+        ?int    $excludeId = null,
+        bool    $excludeRemoved = false,
+        bool    $excludeInactive = false
+    ): ?array
+    {
+        if (empty($email)) {
+            return null;
+        }
+
+        $sqlWhere = sprintf('WHERE "email" = \'%s\'', $email);
+
+        if (!empty($excludeId)) {
+            $sqlWhere = sprintf(
+                '%s AND "id" <> %d',
+                $sqlWhere,
+                $excludeId
+            );
         }
 
         if ($excludeRemoved) {
@@ -453,6 +539,7 @@ final class UserStore extends ModelStore implements IModelStore
      * @param UserValuesObject|null $userVO
      * @return bool
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function insertOrUpdateUser(
         ?UserValuesObject $userVO = null
@@ -460,15 +547,38 @@ final class UserStore extends ModelStore implements IModelStore
     {
         $id = $userVO->getId();
 
+        $apiToken = $userVO->getApiToken();
+        $passwordHash = $userVO->getPasswordHash();
+
         if (empty($id)) {
             $userVO->setCdate();
 
-            return $this->insertUser($userVO->exportRow());
+            $row = $userVO->exportRow();
+
+            if (!empty($apiToken)) {
+                $row['api_token'] = $apiToken;
+            }
+
+            if (!empty($passwordHash)) {
+                $row['password_hash'] = $passwordHash;
+            }
+
+            return $this->insertUser($row);
         }
 
         $userVO->setMdate();
 
-        return $this->updateUserById($userVO->exportRow(), $id);
+        $row = $userVO->exportRow();
+
+        if (!empty($apiToken)) {
+            $row['api_token'] = $apiToken;
+        }
+
+        if (!empty($passwordHash)) {
+            $row['password_hash'] = $passwordHash;
+        }
+
+        return $this->updateUserById($row, $id);
     }
 
     /**
