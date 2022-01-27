@@ -123,6 +123,9 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         $this->request->setMethod($method);
     }
 
+    /**
+     * @return void
+     */
     private function _setRouteByUrlParams(): void
     {
         $controller = $this->request->getUrlValue('controller');
