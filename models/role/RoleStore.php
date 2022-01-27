@@ -460,59 +460,35 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param int $page
-     * @param int $itemsOnPage
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRoleActionRowsCount(
-        int $page = 1,
-        int $itemsOnPage = 10
-    ): int
+    final public function getRoleActionRowsCount(): int
     {
-        $offset = $itemsOnPage * ($page - 1);
-
         $sql = '
             SELECT COUNT(*) AS "count"
             FROM "%s";
         ';
 
-        $sql = sprintf(
-            $sql,
-            RoleStore::ROLE_ACTIONS_TABLE,
-            $itemsOnPage,
-            $offset
-        );
+        $sql = sprintf($sql, RoleStore::ROLE_ACTIONS_TABLE);
 
         return (int)$this->getOne($sql);
     }
 
     /**
-     * @param int $page
-     * @param int $itemsOnPage
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRoleRowsCount(
-        int $page = 1,
-        int $itemsOnPage = 10
-    ): int
+    final public function getRoleRowsCount(): int
     {
-        $offset = $itemsOnPage * ($page - 1);
-
         $sql = '
             SELECT COUNT(*) AS "count"
             FROM "%s";
         ';
 
-        $sql = sprintf(
-            $sql,
-            RoleStore::ROLES_TABLE,
-            $itemsOnPage,
-            $offset
-        );
+        $sql = sprintf($sql, RoleStore::ROLES_TABLE);
 
         return (int)$this->getOne($sql);
     }

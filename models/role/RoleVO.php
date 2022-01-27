@@ -227,4 +227,23 @@ final class RoleValuesObject
             $this->set('denied_actions', $deniedActions);
         }
     }
+
+    /**
+     * @param array|null $params
+     * @return array|null
+     */
+    final public function exportRow(?array $params = null): ?array
+    {
+        $row = parent::exportRow($params);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        if (array_key_exists('parent_vo', $row)) {
+            unset($row['parent_vo']);
+        }
+
+        return $row;
+    }
 }
