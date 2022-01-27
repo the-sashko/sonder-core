@@ -507,30 +507,18 @@ final class UserStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param int $page
-     * @param int $itemsOnPage
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getUserRowsCount(
-        int $page = 1,
-        int $itemsOnPage = 10
-    ): int
+    final public function getUserRowsCount(): int
     {
-        $offset = $itemsOnPage * ($page - 1);
-
         $sql = '
             SELECT COUNT(*) AS "count"
             FROM "%s";
         ';
 
-        $sql = sprintf(
-            $sql,
-            UserStore::USERS_TABLE,
-            $itemsOnPage,
-            $offset
-        );
+        $sql = sprintf($sql, UserStore::USERS_TABLE);
 
         return (int)$this->getOne($sql);
     }

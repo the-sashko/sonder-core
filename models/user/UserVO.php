@@ -228,13 +228,12 @@ final class UserValuesObject extends ModelValuesObject
     }
 
     /**
-     * @param bool $isActive
      * @return void
      * @throws Exception
      */
-    final public function setActive(bool $isActive = true): void
+    final public function setLastLoginDate(): void
     {
-        $this->set('is_active', $isActive);
+        $this->set('last_login_date', time());
     }
 
     /**
@@ -250,7 +249,7 @@ final class UserValuesObject extends ModelValuesObject
         }
 
         if (array_key_exists('role', $row) && empty($row['role'])) {
-            $row['role'] = $this->getRole()->getName();
+            unset($row['role']);
         }
 
         if (array_key_exists('password_hash', $row)) {
@@ -266,14 +265,5 @@ final class UserValuesObject extends ModelValuesObject
         }
 
         return $row;
-    }
-
-    /**
-     * @return void
-     * @throws Exception
-     */
-    final public function setLastLoginDate(): void
-    {
-        $this->set('last_login_date', time());
     }
 }
