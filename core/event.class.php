@@ -7,6 +7,7 @@ use Sonder\Core\Interfaces\IEvent;
 
 final class CoreEvent implements IEvent
 {
+    const TYPE_APP_RUN = 'app_run';
     const TYPE_BEFORE_MIDDLEWARES = 'before_middlewares';
     const TYPE_AFTER_MIDDLEWARES = 'after_middlewares';
     const TYPE_INIT_CONTROLLER = 'init_controller';
@@ -22,6 +23,12 @@ final class CoreEvent implements IEvent
     final public function run(string $type, array $values): array
     {
         $hookNames = (new ConfigObject)->get('hooks');
+
+        if (defined('APP_SYSTEM_HOOKS')) {
+            $hookNames = array_merge($hookNames, APP_SYSTEM_HOOKS);
+            $hookNames = array_unique($hookNames);
+        }
+
         $hookMethod = $this->_getHookMethodByType($type);
 
         foreach ($hookNames as $hookName) {

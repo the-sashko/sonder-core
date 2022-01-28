@@ -3,6 +3,7 @@
 namespace Sonder;
 
 use Exception;
+use Sonder\Core\CoreEvent;
 use Sonder\Core\CoreObject;
 use Throwable;
 
@@ -29,6 +30,8 @@ final class App
     final public function run(): void
     {
         try {
+            (new CoreEvent)->run(CoreEvent::TYPE_APP_RUN, []);
+
             $endpointClass = sprintf(
                 '\Sonder\Endpoints\%sEndpoint',
                 mb_convert_case($this->_endpointName, MB_CASE_TITLE)
