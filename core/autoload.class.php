@@ -77,9 +77,8 @@ final class AutoloadCore
         $classHierarchy = array_reverse($classHierarchy);
 
         $className = array_shift($classHierarchy);
-        $classType = array_shift($classHierarchy);
 
-        $className = mb_convert_case($className, MB_CASE_LOWER);
+        $classType = array_shift($classHierarchy);
         $classType = mb_convert_case($classType, MB_CASE_LOWER);
 
         return match ($classType) {
@@ -100,14 +99,11 @@ final class AutoloadCore
             return false;
         }
 
-        $endpointName = preg_replace(
-            '/^(.*?)endpoint$/su',
-            '$1',
+        $fileName = preg_replace(
+            '/^(.*?)endpoint$/sui',
+            '$1Endpoint.php',
             $className
         );
-
-        $endpointName = mb_convert_case($endpointName, MB_CASE_TITLE);
-        $fileName = sprintf('%sEndpoint.php', $endpointName);
 
         foreach ($this->_endpointPaths as $endpointDirPath) {
             $filePath = sprintf('%s/%s', $endpointDirPath, $fileName);
@@ -132,14 +128,11 @@ final class AutoloadCore
             return false;
         }
 
-        $middlewareName = preg_replace(
-            '/^(.*?)middleware$/su',
-            '$1',
+        $fileName = preg_replace(
+            '/^(.*?)middleware$/sui',
+            '$1Middleware.php',
             $className
         );
-
-        $middlewareName = mb_convert_case($middlewareName, MB_CASE_TITLE);
-        $fileName = sprintf('%sMiddleware.php', $middlewareName);
 
         foreach ($this->_middlewarePaths as $middlewareDirPath) {
             $filePath = sprintf('%s/%s', $middlewareDirPath, $fileName);
@@ -164,14 +157,11 @@ final class AutoloadCore
             return false;
         }
 
-        $controllerName = preg_replace(
-            '/^(.*?)controller$/su',
-            '$1',
+        $fileName = preg_replace(
+            '/^(.*?)controller$/sui',
+            '$1Controller.php',
             $className
         );
-
-        $controllerName = mb_convert_case($controllerName, MB_CASE_TITLE);
-        $fileName = sprintf('%sController.php', $controllerName);
 
         foreach ($this->_controllerPaths as $controllerDirPath) {
             $filePath = sprintf('%s/%s', $controllerDirPath, $fileName);
