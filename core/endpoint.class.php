@@ -1,4 +1,5 @@
 <?php
+
 namespace Sonder\Core;
 
 use Exception;
@@ -68,26 +69,42 @@ class CoreEndpoint implements IEndpoint
         $this->_request = $values['request'];
         $this->_response = $values['response'];
 
-        if (empty($this->_response)) {
-            $this->_runMiddlewares();
-
-            $values = (new CoreEvent)->run(
-                CoreEvent::TYPE_AFTER_MIDDLEWARES,
-                [
-                    'request' => $this->_request,
-                    'response' => $this->_response
-                ]
-            );
-
-            $this->_request = $values['request'];
-            $this->_response = $values['response'];
+        if (!empty($this->_response)) {
+            $this->_returnResponse();
         }
 
-        if (empty($this->_response)) {
-            $this->_runControllerMethod();
-            $this->_saveResponseToCache();
+        $this->_runMiddlewares();
+
+        $values = (new CoreEvent)->run(
+            CoreEvent::TYPE_AFTER_MIDDLEWARES,
+            [
+                'request' => $this->_request,
+                'response' => $this->_response
+            ]
+        );
+
+        $this->_request = $values['request'];
+        $this->_response = $values['response'];
+
+        if (!empty($this->_response)) {
+            $this->_returnResponse();
         }
 
+        $this->_runControllerMethod();
+        $this->_saveResponseToCache();
+
+        if (!empty($this->_response)) {
+            $this->_returnResponse();
+        }
+
+        throw new Exception('Response Is Empty');
+    }
+
+    /**
+     * @return void
+     */
+    private function _returnResponse(): void
+    {
         $this->_response->redirect->redirect();
 
         if (!headers_sent()) {
