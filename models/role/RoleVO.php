@@ -125,7 +125,7 @@ final class RoleValuesObject
      * @return string
      * @throws Exception
      */
-    public function getAdminViewLink(): string
+    final public function getAdminViewLink(): string
     {
         return sprintf($this->adminViewLinkPattern, $this->getId());
     }
@@ -135,7 +135,7 @@ final class RoleValuesObject
      * @return bool
      * @throws Exception
      */
-    public function can(?string $roleActionIdent = null): bool
+    final public function can(?string $roleActionIdent = null): bool
     {
         if (empty($roleActionIdent)) {
             return false;

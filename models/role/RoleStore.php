@@ -37,7 +37,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "id" = \'%d\'', $id);
+        $sqlWhere = sprintf('"id" = \'%d\'', $id);
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -53,7 +53,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -82,7 +82,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+        $sqlWhere = sprintf('"name" = \'%s\'', $name);
 
         if (!empty($excludeId)) {
             $sqlWhere = sprintf('%s AND "id" <> %d', $sqlWhere, $excludeId);
@@ -102,7 +102,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -127,7 +127,7 @@ final class RoleStore extends ModelStore implements IModelStore
         bool $excludeInactive = false
     ): ?array
     {
-        $sqlWhere = 'WHERE true';
+        $sqlWhere = 'true';
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -145,7 +145,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             ORDER BY "cdate" DESC
             LIMIT %d
             OFFSET %d;
@@ -170,16 +170,15 @@ final class RoleStore extends ModelStore implements IModelStore
     final public function getAllRoleRows(): ?array
     {
         $sqlWhere = '
-            WHERE
-                ("ddate" IS NULL OR "ddate" < 1) AND
-                "is_active" = true
+            ("ddate" IS NULL OR "ddate" < 1) AND
+            "is_active" = true
         ';
 
         $sql = '
             SELECT *
             FROM "%s"
-            %s
-            ORDER BY "id" DESC;
+            WHERE %s
+            ORDER BY "cdate" DESC;
         ';
 
         $sql = sprintf(
@@ -209,7 +208,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "id" = \'%d\'', $id);
+        $sqlWhere = sprintf('"id" = \'%d\'', $id);
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -225,7 +224,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -296,7 +295,8 @@ final class RoleStore extends ModelStore implements IModelStore
                   "role2action"."role_id" = %d AND
                   ("actions"."ddate" IS NULL OR "actions"."ddate" < 1) AND
                   "actions"."is_active" = true AND
-                  "role2action"."is_allowed" = %s;
+                  "role2action"."is_allowed" = %s
+            ORDER BY "actions"."name";
         ';
 
         $sql = sprintf(
@@ -338,7 +338,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+        $sqlWhere = sprintf('"name" = \'%s\'', $name);
 
         if (!empty($excludeId)) {
             $sqlWhere = sprintf(
@@ -362,7 +362,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -388,7 +388,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT "id"
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -416,7 +416,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = '
             SELECT "id"
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -460,35 +460,73 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRoleActionRowsCount(): int
+    final public function getRoleActionRowsCount(
+        bool $excludeRemoved = false,
+        bool $excludeInactive = false
+    ): int
     {
+        $sqlWhere = 'true';
+
+        if ($excludeRemoved) {
+            $sqlWhere = sprintf(
+                '%s AND ("ddate" IS NULL OR "ddate" < 1)',
+                $sqlWhere
+            );
+        }
+
+        if ($excludeInactive) {
+            $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
+        }
+
         $sql = '
-            SELECT COUNT(*) AS "count"
-            FROM "%s";
+            SELECT COUNT("id") AS "count"
+            FROM "%s"
+            WHERE %s;
         ';
 
-        $sql = sprintf($sql, RoleStore::ROLE_ACTIONS_TABLE);
+        $sql = sprintf($sql, RoleStore::ROLE_ACTIONS_TABLE, $sqlWhere);
 
         return (int)$this->getOne($sql);
     }
 
     /**
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRoleRowsCount(): int
+    final public function getRoleRowsCount(
+        bool $excludeRemoved = false,
+        bool $excludeInactive = false
+    ): int
     {
+        $sqlWhere = 'true';
+
+        if ($excludeRemoved) {
+            $sqlWhere = sprintf(
+                '%s AND ("ddate" IS NULL OR "ddate" < 1)',
+                $sqlWhere
+            );
+        }
+
+        if ($excludeInactive) {
+            $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
+        }
+
         $sql = '
-            SELECT COUNT(*) AS "count"
-            FROM "%s";
+            SELECT COUNT("id") AS "count"
+            FROM "%s"
+            WHERE %s;
         ';
 
-        $sql = sprintf($sql, RoleStore::ROLES_TABLE);
+        $sql = sprintf($sql, RoleStore::ROLES_TABLE, $sqlWhere);
 
         return (int)$this->getOne($sql);
     }
@@ -501,16 +539,15 @@ final class RoleStore extends ModelStore implements IModelStore
     final public function getAllRoleActionRows(): ?array
     {
         $sqlWhere = '
-            WHERE
-                 ("ddate" IS NULL OR "ddate" < 1) AND
-                 "is_active" = true
+            ("ddate" IS NULL OR "ddate" < 1) AND
+            "is_active" = true
         ';
 
         $sql = '
             SELECT *
             FROM "%s"
-            %s
-            ORDER BY "id" DESC;
+            WHERE %s
+            ORDER BY "cdate" DESC;
         ';
 
         $sql = sprintf(
