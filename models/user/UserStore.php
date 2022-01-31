@@ -35,7 +35,7 @@ final class UserStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "id" = \'%d\'', $id);
+        $sqlWhere = sprintf('"id" = \'%d\'', $id);
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -51,7 +51,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -72,12 +72,12 @@ final class UserStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "login" = \'%s\'', $login);
+        $sqlWhere = sprintf('"login" = \'%s\'', $login);
 
         $sql = '
             SELECT "id"
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -108,7 +108,7 @@ final class UserStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "login" = \'%s\'', $login);
+        $sqlWhere = sprintf('"login" = \'%s\'', $login);
 
         if (!empty($excludeId)) {
             $sqlWhere = sprintf(
@@ -132,7 +132,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -161,7 +161,7 @@ final class UserStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "email" = \'%s\'', $email);
+        $sqlWhere = sprintf('"email" = \'%s\'', $email);
 
         if (!empty($excludeId)) {
             $sqlWhere = sprintf(
@@ -185,7 +185,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -210,7 +210,7 @@ final class UserStore extends ModelStore implements IModelStore
         bool $excludeInactive = false
     ): ?array
     {
-        $sqlWhere = 'WHERE true';
+        $sqlWhere = 'true';
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -228,7 +228,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             ORDER BY "cdate" DESC
             LIMIT %d
             OFFSET %d;
@@ -258,13 +258,12 @@ final class UserStore extends ModelStore implements IModelStore
         }
 
         $sqlWhere = '
-            WHERE
-                "api_token" = \'%s\' AND
-                "is_active" = true AND
-                (
-                    "ddate" < 1 OR
-                    "ddate" IS NULL
-                )
+            "api_token" = \'%s\' AND
+            "is_active" = true AND
+            (
+                "ddate" < 1 OR
+                "ddate" IS NULL
+            )
         ';
 
         $sqlWhere = sprintf($sqlWhere, $apiToken);
@@ -272,7 +271,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -298,14 +297,13 @@ final class UserStore extends ModelStore implements IModelStore
         }
 
         $sqlWhere = '
-            WHERE
-                "id" = \'%d\' AND
-                "web_token" = \'%s\' AND
-                "is_active" = true AND
-                (
-                    "ddate" < 1 OR
-                    "ddate" IS NULL
-                )
+            "id" = \'%d\' AND
+            "web_token" = \'%s\' AND
+            "is_active" = true AND
+            (
+                "ddate" < 1 OR
+                "ddate" IS NULL
+            )
         ';
 
         $sqlWhere = sprintf($sqlWhere, $id, $webToken);
@@ -313,7 +311,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -339,14 +337,13 @@ final class UserStore extends ModelStore implements IModelStore
         }
 
         $sqlWhere = '
-            WHERE
-                "login" = \'%s\' AND
-                "password_hash" = \'%s\' AND
-                "is_active" = true AND
-                (
-                    "ddate" < 1 OR
-                    "ddate" IS NULL
-                )
+            "login" = \'%s\' AND
+            "password_hash" = \'%s\' AND
+            "is_active" = true AND
+            (
+                "ddate" < 1 OR
+                "ddate" IS NULL
+            )
         ';
 
         $sqlWhere = sprintf($sqlWhere, $login, $passwordHash);
@@ -354,7 +351,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             LIMIT 1;
         ';
 
@@ -471,7 +468,7 @@ final class UserStore extends ModelStore implements IModelStore
         bool $excludeInactive = false
     ): ?array
     {
-        $sqlWhere = 'WHERE true';
+        $sqlWhere = 'true';
 
         if ($excludeRemoved) {
             $sqlWhere = sprintf(
@@ -489,7 +486,7 @@ final class UserStore extends ModelStore implements IModelStore
         $sql = '
             SELECT *
             FROM "%s"
-            %s
+            WHERE %s
             ORDER BY "cdate" DESC
             LIMIT %d
             OFFSET %d;
@@ -507,18 +504,37 @@ final class UserStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getUserRowsCount(): int
+    final public function getUserRowsCount(
+        bool $excludeRemoved = false,
+        bool $excludeInactive = false
+    ): int
     {
+        $sqlWhere = 'true';
+
+        if ($excludeRemoved) {
+            $sqlWhere = sprintf(
+                '%s AND ("ddate" IS NULL OR "ddate" < 1)',
+                $sqlWhere
+            );
+        }
+
+        if ($excludeInactive) {
+            $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
+        }
+
         $sql = '
-            SELECT COUNT(*) AS "count"
-            FROM "%s";
+            SELECT COUNT("id") AS "count"
+            FROM "%s"
+            WHERE %s;
         ';
 
-        $sql = sprintf($sql, UserStore::USERS_TABLE);
+        $sql = sprintf($sql, UserStore::USERS_TABLE, $sqlWhere);
 
         return (int)$this->getOne($sql);
     }

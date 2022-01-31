@@ -131,7 +131,7 @@ final class UserValuesObject extends ModelValuesObject
      * @return string
      * @throws Exception
      */
-    public function getAdminViewLink(): string
+    final public function getAdminViewLink(): string
     {
         return sprintf($this->adminViewLinkPattern, $this->getId());
     }
