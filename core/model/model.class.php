@@ -54,6 +54,8 @@ class CoreModel extends CoreObject implements IModel
         $modelName = explode('\\', $modelClass);
         $modelName = end($modelName);
 
+        $formName = empty($formName) ? $modelName : $formName;
+
         $formName = (string)$formName;
         $formName = ucwords($formName, '_');
         $formName = ucfirst($formName);
