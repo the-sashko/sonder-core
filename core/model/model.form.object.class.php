@@ -90,6 +90,63 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
         $this->setStatusFail();
     }
 
+    final protected function getFileValueFromRequest(
+        ?string $fileName = null
+    ): ?array
+    {
+        if (
+            empty($_FILES) ||
+            !array_key_exists($fileName, $_FILES) &&
+            empty($_FILES[$fileName])
+        ) {
+            return null;
+        }
+
+        $name = null;
+        $extension = null;
+        $size = null;
+        $path = null;
+        $error = false;
+
+        if (array_key_exists('name', $_FILES[$fileName])) {
+            $name = $_FILES[$fileName]['name'];
+        }
+
+        if (!empty($fileName)) {
+            $extension = explode('.', $name);
+            $extension = end($extension);
+            $extension = mb_convert_case($extension, MB_CASE_LOWER);
+        }
+
+        if ($extension == 'jpeg') {
+            $extension = 'jpg';
+        }
+
+        if (array_key_exists('size', $_FILES[$fileName])) {
+            $size = (int)$_FILES[$fileName]['size'];
+        }
+
+        if (array_key_exists('tmp_name', $_FILES[$fileName])) {
+            $path = (string)$_FILES[$fileName]['tmp_name'];
+        }
+
+        if (array_key_exists('error', $_FILES[$fileName])) {
+            $error = (bool)$_FILES[$fileName]['error'];
+        }
+
+        if (empty($name) || empty($size) || empty($path)) {
+            return null;
+        }
+
+        return [
+            'name' => $name,
+            'extension' => $extension,
+            'size' => $size,
+            'path' => $path,
+            'error' => $error
+        ];
+    }
+
     /**
      * @return bool
      */
