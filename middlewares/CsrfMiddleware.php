@@ -68,6 +68,8 @@ final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
             $loggerPlugin->logError($errorMessage, 'security');
 
             $postValues = null;
+
+            $_FILES = [];
         }
 
         if (
