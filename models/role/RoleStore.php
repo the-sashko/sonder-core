@@ -383,7 +383,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+        $sqlWhere = sprintf('"name" = \'%s\'', $name);
 
         $sql = '
             SELECT "id"
@@ -411,7 +411,7 @@ final class RoleStore extends ModelStore implements IModelStore
             return null;
         }
 
-        $sqlWhere = sprintf('WHERE "name" = \'%s\'', $name);
+        $sqlWhere = sprintf('"name" = \'%s\'', $name);
 
         $sql = '
             SELECT "id"
