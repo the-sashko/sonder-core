@@ -102,11 +102,17 @@ final class App
 
         $debugBacktrace = array_map(
             function ($traceRow) {
-                return sprintf(
-                    '%s (%d)',
-                    $traceRow['file'],
-                    $traceRow['line']
-                );
+                if (!array_key_exists('file', $traceRow)) {
+                    return '...';
+                }
+
+                $line = '';
+
+                if (array_key_exists('line', $traceRow)) {
+                    $line = sprintf(' (%d)', (int)$traceRow['line']);
+                }
+
+                return sprintf('%s%s', $traceRow['file'], $line);
             },
 
             $debugBacktrace
