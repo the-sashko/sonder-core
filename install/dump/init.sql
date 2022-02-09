@@ -2,6 +2,7 @@ CREATE SEQUENCE "role_actions_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036
 CREATE SEQUENCE "roles_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE SEQUENCE "role2action_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE SEQUENCE "users_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE "cron_jobs_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 
 CREATE TABLE "role_actions"
 (
@@ -75,6 +76,22 @@ CREATE TABLE "users"
         NOT DEFERRABLE
 ) WITH (oids = false);
 
+CREATE TABLE "cron_jobs"
+(
+    "id"               integer DEFAULT nextval('cron_jobs_id_seq') NOT NULL,
+    "action"           character varying(128)                      NOT NULL,
+    "interval"         integer                                     NOT NULL,
+    "time_next_exec"   integer,
+    "last_exec_status" boolean DEFAULT true                        NOT NULL,
+    "error_message"    character varying(256),
+    "is_active"        boolean DEFAULT true                        NOT NULL,
+    "cdate"            integer                                     NOT NULL,
+    "mdate"            integer,
+    "ddate"            integer,
+    CONSTRAINT "cron_jobs_id" PRIMARY KEY ("id"),
+    CONSTRAINT "cron_jobs_action_interval" UNIQUE ("action", "interval")
+) WITH (oids = false);
+
 CREATE INDEX "role_actions_is_active" ON "role_actions" USING btree ("is_active");
 CREATE INDEX "role_actions_cdate" ON "role_actions" USING btree ("cdate");
 CREATE INDEX "role_actions_mdate" ON "role_actions" USING btree ("mdate");
@@ -124,3 +141,24 @@ CREATE INDEX "users_login_password_hash" ON "users" USING btree ("login", "passw
 CREATE INDEX "users_login_password_hash_is_active" ON "users" USING btree ("login", "password_hash", "is_active");
 CREATE INDEX "users_login_password_hash_is_active_ddate" ON "users"
     USING btree ("login", "password_hash", "is_active", "ddate");
+
+CREATE INDEX "cron_jobs_action" ON "cron_jobs" USING btree ("action");
+CREATE INDEX "cron_jobs_interval" ON "cron_jobs" USING btree ("interval");
+CREATE INDEX "cron_jobs_time_next_exec" ON "cron_jobs" USING btree ("time_next_exec");
+CREATE INDEX "cron_jobs_time_last_exec_status" ON "cron_jobs" USING btree ("last_exec_status");
+CREATE INDEX "cron_jobs_is_active" ON "cron_jobs" USING btree ("is_active");
+CREATE INDEX "cron_jobs_cdate" ON "cron_jobs" USING btree ("cdate");
+CREATE INDEX "cron_jobs_mdate" ON "cron_jobs" USING btree ("mdate");
+CREATE INDEX "cron_jobs_ddate" ON "cron_jobs" USING btree ("ddate");
+CREATE INDEX "cron_jobs_id_action" ON "cron_jobs" USING btree ("id", "action");
+CREATE INDEX "cron_jobs_id_interval" ON "cron_jobs" USING btree ("id", "interval");
+CREATE INDEX "cron_jobs_id_action_interval" ON "cron_jobs" USING btree ("id", "action", "interval");
+CREATE INDEX "cron_jobs_is_active_ddate" ON "cron_jobs" USING btree ("is_active", "ddate");
+CREATE INDEX "cron_jobs_action_time_next_exec" ON "cron_jobs" USING btree ("action", "time_next_exec");
+CREATE INDEX "cron_jobs_time_next_exec_is_active" ON "cron_jobs" USING btree ("time_next_exec", "is_active");
+CREATE INDEX "cron_jobs_time_next_exec_is_active_ddate" ON "cron_jobs"
+    USING btree ("time_next_exec", "is_active", "ddate");
+CREATE INDEX "cron_jobs_action_time_next_exec_is_active" ON "cron_jobs"
+    USING btree ("action", "time_next_exec", "is_active");
+CREATE INDEX "cron_jobs_action_time_next_exec_is_active_ddate" ON "cron_jobs"
+    USING btree ("action", "time_next_exec", "is_active", "ddate");

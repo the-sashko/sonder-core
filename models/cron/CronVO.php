@@ -3,27 +3,43 @@
 namespace Sonder\Models\Cron;
 
 use Exception;
-use Sonder\Core\ValuesObject;
+use Sonder\Core\Interfaces\ICronValuesObject;
+use Sonder\Core\ModelValuesObject;
 
-final class CronVO extends ValuesObject
+final class CronValuesObject
+    extends ModelValuesObject
+    implements ICronValuesObject
 {
-    const STATUS_WAITING = 'waiting';
-    const STATUS_FAILED = 'fail';
-    const STATUS_SUCCESS = 'success';
+    /**
+     * @var string|null
+     */
+    protected ?string $editLinkPattern = '/admin/settings/cron/job/%d/';
 
     /**
-     * @return int
-     *
-     * @throws Exception
+     * @var string|null
      */
-    final public function getId(): int
-    {
-        return (int)$this->get('id');
-    }
+    protected ?string $removeLinkPattern = '/admin/settings/cron/job/remove' .
+    '/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $restoreLinkPattern = '/admin/settings/cron/job' .
+    '/restore/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $adminViewLinkPattern = '/admin/settings/cron/job/view' .
+    '/%d/';
+
+    /**
+     * @var string|null
+     */
+    protected ?string $adminRunLinkPattern = '/admin/settings/cron/job/run/%d/';
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     final public function getAction(): string
@@ -32,26 +48,22 @@ final class CronVO extends ValuesObject
     }
 
     /**
-     * @return int
-     *
+     * @param bool|null $isFormatAsString
+     * @return string|int|null
      * @throws Exception
      */
-    final public function getInterval(): int
+    final public function getInterval(
+        bool $isFormatAsString = null
+    ): string|int|null
     {
-        return (int)$this->get('interval');
-    }
-
-    /**
-     * @return string|null
-     *
-     * @throws Exception
-     */
-    final public function getIntervalFormatted(): ?string
-    {
-        $intervalInSeconds = $this->getInterval();
+        $intervalInSeconds = $this->get('interval');
 
         if (empty($intervalInSeconds)) {
             return null;
+        }
+
+        if (!$isFormatAsString) {
+            return (int)$intervalInSeconds;
         }
 
         $intervalInMinutes = intdiv($intervalInSeconds, 60);
@@ -91,10 +103,10 @@ final class CronVO extends ValuesObject
 
         $intervalFormatted = sprintf(
             '%s %s %s %s',
-            (string)$intervalInDays,
-            (string)$intervalInHours,
-            (string)$intervalInMinutes,
-            (string)$intervalInSeconds
+            $intervalInDays,
+            $intervalInHours,
+            $intervalInMinutes,
+            $intervalInSeconds
         );
 
         $intervalFormatted = preg_replace(
@@ -117,163 +129,132 @@ final class CronVO extends ValuesObject
     }
 
     /**
-     * @return int
-     *
+     * @param string|null $format
+     * @return string|int|null
      * @throws Exception
      */
-    final public function getTimeNextExec(): int
+    final public function getTimeNextExec(
+        ?string $format = null
+    ): string|int|null
     {
-        return (int)$this->get('time_next_exec');
-    }
+        $timeNextExec = $this->get('time_next_exec');
 
-    /**
-     * @return string|null
-     *
-     * @throws Exception
-     */
-    final public function getTimeNextExecFormatted(): ?string
-    {
-        $getTimeNextExec = $this->getTimeNextExec();
-
-        if (empty($getTimeNextExec)) {
+        if (empty($timeNextExec)) {
             return null;
         }
 
-        return date('Y-m-d H:i:s', $getTimeNextExec);
+        if (empty($format)) {
+            return (int)$timeNextExec;
+        }
+
+        return date('Y-m-d H:i:s', $timeNextExec);
     }
 
     /**
      * @return bool
-     *
      * @throws Exception
      */
     final public function getLastExecStatus(): bool
     {
-        return (bool)$this->get('last_exec_status');
+        $lastExecStatus = $this->get('last_exec_status');
+
+        if (empty($lastExecStatus)) {
+            return false;
+        }
+
+        return (bool)$lastExecStatus;
     }
 
     /**
      * @return string|null
-     *
      * @throws Exception
      */
     final public function getErrorMessage(): ?string
     {
-        $lastExecStatus = $this->getLastExecStatus();
-        $isActive = $this->getIsActive();
+        $errorMessage = $this->get('error_message');
 
-        if (!$lastExecStatus && $isActive) {
-            return (string)$this->get('error_message');
+        if (empty($errorMessage)) {
+            return null;
         }
 
-        return null;
+        return $errorMessage;
     }
 
     /**
      * @return string
-     *
      * @throws Exception
      */
-    final public function getStatus(): string
+    final public function getAdminViewLink(): string
     {
-        $lastExecStatus = $this->getLastExecStatus();
-        $isActive = $this->getIsActive();
-
-        if (!$isActive) {
-            return static::STATUS_WAITING;
-        }
-
-        if (!$lastExecStatus) {
-            return static::STATUS_FAILED;
-        }
-
-        return static::STATUS_SUCCESS;
+        return sprintf($this->adminViewLinkPattern, $this->getId());
     }
 
     /**
-     * @return bool
-     *
+     * @return string
      * @throws Exception
      */
-    final public function getIsActive(): bool
+    final public function getAdminRunLink(): string
     {
-        return (bool)$this->get('is_active');
+        return sprintf($this->adminRunLinkPattern, $this->getId());
     }
 
     /**
      * @param string|null $action
-     *
+     * @return void
      * @throws Exception
      */
     final public function setAction(?string $action = null): void
     {
-        $this->set('action', $action);
+        if (!empty($action)) {
+            $this->set('action', $action);
+        }
     }
 
     /**
      * @param int|null $interval
-     *
+     * @return void
      * @throws Exception
      */
     final public function setInterval(?int $interval = null): void
     {
-        $this->set('interval', (int)$interval);
+        if (!empty($interval)) {
+            $this->set('interval', $interval);
+        }
     }
 
     /**
+     * @return void
      * @throws Exception
      */
     final public function setTimeNextExec(): void
     {
-        $timeNextExec = time() + $this->getInterval();
+        $interval = $this->getInterval();
+        $interval = empty($interval) ? 0 : $interval;
+
+        $timeNextExec = time() + $interval;
 
         $this->set('time_next_exec', $timeNextExec);
     }
 
     /**
-     * @param bool $status
-     *
+     * @param bool $lastExecStatus
+     * @return void
      * @throws Exception
      */
-    final public function setLastExecStatus(bool $status = false): void
+    final public function setLastExecStatus(bool $lastExecStatus = false): void
     {
-        $this->set('last_exec_status', $status);
-    }
-
-    /**
-     * @param bool $isActive
-     *
-     * @throws Exception
-     */
-    final public function setIsActive(bool $isActive = false): void
-    {
-        $this->set('is_active', $isActive);
+        $this->set('last_exec_status', $lastExecStatus);
     }
 
     /**
      * @param string|null $errorMessage
-     *
-     * @return bool
-     *
+     * @return void
      * @throws Exception
      */
-    final public function setErrorMessage(?string $errorMessage = null): bool
+    final public function setErrorMessage(?string $errorMessage = null): void
     {
-        $errorMessage = (string)$errorMessage;
-
-        if (empty(trim($errorMessage))) {
-            $this->set('error_message', null);
-            return false;
-        }
-
-        if (strlen($errorMessage) > 255) {
-            $errorMessage = mb_substr($errorMessage, 0, 254);
-            $errorMessage = sprintf('%s…', $errorMessage);
-        }
+        $errorMessage = empty($errorMessage) ? null : $errorMessage;
 
         $this->set('error_message', $errorMessage);
-        return true;
     }
-
-    //TODO: cdate, mdate, ddate
 }
