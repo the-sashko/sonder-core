@@ -517,9 +517,10 @@ final class User extends CoreModel implements IModel, IUser
         if (empty($userVO)) {
             $userForm->setStatusFail();
 
-            $userForm->setError(
-                UserForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
-            );
+            $userForm->setError(sprintf(
+                UserForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE,
+                $id
+            ));
 
             return false;
         }

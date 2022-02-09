@@ -45,7 +45,7 @@ final class UserForm extends ModelFormObject
 
     const ROLE_IS_NOT_SET_ERROR_MESSAGE = 'Role is not set';
 
-    const USER_IS_NOT_EXISTS_ERROR_MESSAGE = 'User is not exists';
+    const USER_IS_NOT_EXISTS_ERROR_MESSAGE = 'User with id "%d" is not exists';
 
     /**
      * @throws Exception
