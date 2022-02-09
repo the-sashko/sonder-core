@@ -560,24 +560,6 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param array|null $row
-     * @param int|null $id
-     * @return bool
-     * @throws DatabasePluginException
-     */
-    final public function updateRolaById(
-        ?array $row = null,
-        ?int   $id = null
-    ): bool
-    {
-        if (empty($row) || empty($id)) {
-            return false;
-        }
-
-        return $this->updateRowById(RoleStore::ROLES_TABLE, $row, $id);
-    }
-
-    /**
      * @param int|null $id
      * @param bool $isSoftDelete
      * @return bool

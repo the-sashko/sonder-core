@@ -568,9 +568,10 @@ final class Role extends CoreModel implements IModel, IRole
         if (empty($roleActionVO)) {
             $roleActionForm->setStatusFail();
 
-            $roleActionForm->setError(
-                RoleActionForm::ROLE_ACTION_IS_NOT_EXISTS_ERROR_MESSAGE
-            );
+            $roleActionForm->setError(sprintf(
+                RoleActionForm::ROLE_ACTION_IS_NOT_EXISTS_ERROR_MESSAGE,
+                $id
+            ));
 
             return false;
         }
@@ -667,9 +668,10 @@ final class Role extends CoreModel implements IModel, IRole
         if (empty($roleVO)) {
             $roleForm->setStatusFail();
 
-            $roleForm->setError(
-                RoleForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
-            );
+            $roleForm->setError(sprintf(
+                RoleForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE,
+                $id
+            ));
 
             return false;
         }
