@@ -2,6 +2,7 @@
 
 namespace Sonder\Models\Cron;
 
+use Exception;
 use Sonder\Core\Interfaces\IModelStore;
 use Sonder\Core\ModelStore;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
@@ -43,6 +44,47 @@ final class CronStore extends ModelStore implements IModelStore
     }
 
     /**
+     * @param string|null $alias
+     * @param int|null $excludeId
+     * @return int|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getCronJobIdRowByAlias(
+        ?string $alias = null,
+        ?int    $excludeId = null
+    ): ?int
+    {
+        if (empty($alias)) {
+            return null;
+        }
+
+        $sqlWhere = sprintf('"alias" = \'%s\'', $alias);
+
+        if (!empty($excludeId)) {
+            $sqlWhere = sprintf(
+                '%s AND "id" <> %d',
+                $sqlWhere,
+                $excludeId
+            );
+        }
+
+        $sql = '
+            SELECT "id"
+            FROM "%s"
+            WHERE %s
+            LIMIT 1;
+        ';
+
+        $sql = sprintf($sql, CronStore::CRON_JOBS_TABLE, $sqlWhere);
+
+        $id = $this->getOne($sql);
+
+        return empty($id) ? null : (int)$id;
+    }
+
+    /**
+     * @param string|null $controller
      * @param string|null $action
      * @param int|null $interval
      * @param int|null $excludeId
@@ -50,18 +92,24 @@ final class CronStore extends ModelStore implements IModelStore
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getCronJobIdRowByActionAndInterval(
+    final public function getCronJobIdRowByControllerAndActionAndInterval(
+        ?string $controller = null,
         ?string $action = null,
         ?int    $interval = null,
         ?int    $excludeId = null
     ): ?int
     {
-        if (empty($action) || empty($interval)) {
+        if (empty($controller) || empty($action) || empty($interval)) {
             return null;
         }
 
         $sqlWhere = sprintf(
-            '"action" = \'%s\' AND "interval" = %d',
+            '
+                "controller" = \'%s\' AND
+                "action" = \'%s\' AND
+                "interval" = %d
+            ',
+            $controller,
             $action,
             $interval
         );
@@ -245,6 +293,7 @@ final class CronStore extends ModelStore implements IModelStore
      * @param CronValuesObject|null $cronVO
      * @return bool
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function insertOrUpdateCronJob(
         ?CronValuesObject $cronVO = null

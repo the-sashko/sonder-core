@@ -3,6 +3,8 @@
 namespace Sonder\Models;
 
 use Exception;
+use ReflectionException;
+use ReflectionMethod;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\ICron;
 use Sonder\Core\Interfaces\IModel;
@@ -19,6 +21,8 @@ use Throwable;
  */
 final class Cron extends CoreModel implements IModel, ICron
 {
+    const JOB_METHOD_NAME_PATTERN = '/^display(.*?)$/su';
+
     /**
      * @var int
      */
@@ -107,7 +111,8 @@ final class Cron extends CoreModel implements IModel, ICron
         }
 
         $this->_checkIdInCronForm($cronForm);
-        $this->_checkActionAndIntervalInCronForm($cronForm);
+        $this->_checkAliasInCronForm($cronForm);
+        $this->_checkIsCronJobInFormUnique($cronForm);
 
         if (!$cronForm->getStatus()) {
             return false;
@@ -126,7 +131,8 @@ final class Cron extends CoreModel implements IModel, ICron
                 return true;
             }
 
-            $id = $this->store->getCronJobIdRowByActionAndInterval(
+            $id = $this->store->getCronJobIdRowByControllerAndActionAndInterval(
+                $cronVO->getController(),
                 $cronVO->getAction(),
                 $cronVO->getInterval()
             );
@@ -148,6 +154,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @param CronValuesObject|null $cronVO
      * @return bool
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function updateByVO(?CronValuesObject $cronVO = null): bool
     {
@@ -190,6 +197,27 @@ final class Cron extends CoreModel implements IModel, ICron
     }
 
     /**
+     * @return array
+     * @throws ReflectionException
+     */
+    final public function getAvailableJobs(): array
+    {
+        $jobs = [];
+
+        $controllers = $this->_getAvailableControllers();
+
+        foreach ($controllers as $controllerName => $controllerClassName) {
+            $methods = $this->_getAvailableMethods($controllerClassName);
+
+            if (!empty($methods)) {
+                $jobs[$controllerName] = $methods;
+            }
+        }
+
+        return $jobs;
+    }
+
+    /**
      * @param CronForm $cronForm
      * @return void
      * @throws DatabaseCacheException
@@ -204,7 +232,7 @@ final class Cron extends CoreModel implements IModel, ICron
             $cronForm->setStatusFail();
 
             $cronForm->setError(sprintf(
-                CronForm::CRON_JON_IS_NOT_EXISTS_ERROR_MESSAGE,
+                CronForm::CRON_JOB_IS_NOT_EXISTS_ERROR_MESSAGE,
                 $id
             ));
         }
@@ -218,17 +246,43 @@ final class Cron extends CoreModel implements IModel, ICron
      * @throws DatabasePluginException
      * @throws Exception
      */
-    private function _checkActionAndIntervalInCronForm(CronForm $cronForm): void
+    private function _checkAliasInCronForm(CronForm $cronForm): void
     {
-        if (!empty($this->store->getCronJobIdRowByActionAndInterval(
-            $cronForm->getAction(),
-            $cronForm->getInterval(),
+        $id = $this->store->getCronJobIdRowByAlias(
+            $cronForm->getAlias(),
             $cronForm->getId()
-        ))) {
+        );
+
+        if (!empty($id)) {
             $cronForm->setStatusFail();
 
             $cronForm->setError(
-                CronForm::ACTION_AND_INTERVAL_EXISTS_ERROR_MESSAGE
+                CronForm::ALIAS_EXISTS_ERROR_MESSAGE
+            );
+        }
+    }
+
+    /**
+     * @param CronForm $cronForm
+     * @return void
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    private function _checkIsCronJobInFormUnique(CronForm $cronForm): void
+    {
+        $id = $this->store->getCronJobIdRowByControllerAndActionAndInterval(
+            $cronForm->getController(),
+            $cronForm->getAction(),
+            $cronForm->getInterval(),
+            $cronForm->getId()
+        );
+
+        if (!empty($id)) {
+            $cronForm->setStatusFail();
+
+            $cronForm->setError(
+                CronForm::CRON_JOB_IS_NOT_UNIQUE
             );
         }
     }
@@ -264,10 +318,209 @@ final class Cron extends CoreModel implements IModel, ICron
 
         $cronVO = new CronValuesObject($row);
 
+        $cronVO->setAlias($cronForm->getAlias());
+        $cronVO->setController($cronForm->getController());
         $cronVO->setAction($cronForm->getAction());
         $cronVO->setInterval($cronForm->getInterval());
         $cronVO->setIsActive($cronForm->getIsActive());
 
         return $cronVO;
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getAvailableControllers(): array
+    {
+        $controllers = [];
+
+        $controllersPaths = $this->_getControllersPaths();
+
+        foreach ($controllersPaths as $controllersDirPath) {
+            $this->_setControllersFromDirPath(
+                $controllers,
+                $controllersDirPath
+            );
+        }
+
+        return $controllers;
+    }
+
+    /**
+     * @param string $controllerClassName
+     * @return array
+     * @throws ReflectionException
+     */
+    protected function _getAvailableMethods(string $controllerClassName): array
+    {
+        $methods = get_class_methods($controllerClassName);
+
+        foreach ($methods as $methodKey => $methodName) {
+            if (!$this->_isMethodValid($controllerClassName, $methodName)) {
+                unset($methods[$methodKey]);
+
+                continue;
+            }
+
+            $methods[$methodKey] = $this->_getFormattedMethodName($methodName);
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @param string $controllerClassName
+     * @param string $methodName
+     * @return bool
+     * @throws ReflectionException
+     */
+    protected function _isMethodValid(
+        string $controllerClassName,
+        string $methodName
+    ): bool
+    {
+        $reflection = new ReflectionMethod($controllerClassName, $methodName);
+
+        if (!$reflection->isPublic()) {
+            return false;
+        }
+
+        if (!preg_match(
+            Cron::JOB_METHOD_NAME_PATTERN,
+            $methodName
+        )) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $methodName
+     * @return string
+     */
+    protected function _getFormattedMethodName(string $methodName): string
+    {
+        $methodName = preg_replace(
+            Cron::JOB_METHOD_NAME_PATTERN,
+            '$1',
+            $methodName
+        );
+
+        $methodName = lcfirst($methodName);
+
+        $methodName = preg_replace(
+            '/([A-Z])/su',
+            '_$1',
+            $methodName
+        );
+
+        return mb_convert_case($methodName, MB_CASE_LOWER);
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function _getControllersPaths(): array
+    {
+        $controllersPaths = [
+            APP_PROTECTED_DIR_PATH . '/controllers',
+            APP_FRAMEWORK_DIR_PATH . '/controllers'
+        ];
+
+        if (
+            array_key_exists('controllers', APP_SOURCE_PATHS) &&
+            is_array(APP_SOURCE_PATHS['controllers'])
+        ) {
+            $controllersPaths = APP_SOURCE_PATHS['controllers'];
+        }
+
+        return $controllersPaths;
+    }
+
+    /**
+     * @param string $controllerFilePath
+     * @return string
+     */
+    protected function _getControllerNameFromFilePath(
+        string $controllerFilePath
+    ): string
+    {
+        $controllerName = preg_replace(
+            '/^(.*?)\/([a-z]+)Controller\.php$/sui',
+            '$2',
+            $controllerFilePath
+        );
+
+        $controllerName = lcfirst($controllerName);
+
+        $controllerName = preg_replace(
+            '/([A-Z])/su',
+            '_$1',
+            $controllerName
+        );
+
+        return mb_convert_case($controllerName, MB_CASE_LOWER);
+    }
+
+    /**
+     * @param array $controllers
+     * @param string $dirPath
+     * @return void
+     */
+    protected function _setControllersFromDirPath(
+        array  &$controllers,
+        string $dirPath
+    ): void
+    {
+        $filePathPattern = sprintf('%s/*Controller.php', $dirPath);
+
+        foreach ((array)glob($filePathPattern) as $controllerFilePath) {
+            $controllerName = $this->_getControllerNameFromFilePath(
+                $controllerFilePath
+            );
+
+            if (array_key_exists($controllerName, $controllers)) {
+                continue;
+            }
+
+            $controllerClassName = $this->_getControllerClassNameByFilePath(
+                $controllerFilePath
+            );
+
+            if (empty($controllerClassName)) {
+                continue;
+            }
+
+            $controllers[$controllerName] = $controllerClassName;
+        }
+    }
+
+    /**
+     * @param string $controllerFilePath
+     * @return string|null
+     */
+    protected function _getControllerClassNameByFilePath(
+        string $controllerFilePath
+    ): ?string
+    {
+        $controllerName = preg_replace(
+            '/^(.*?)\/([a-z]+)Controller\.php$/sui',
+            '$2',
+            $controllerFilePath
+        );
+
+        $controllerClassName = sprintf(
+            'Sonder\Controllers\%sController',
+            $controllerName
+        );
+
+        require_once $controllerFilePath;
+
+        if (!class_exists($controllerClassName)) {
+            return null;
+        }
+
+        return $controllerClassName;
     }
 }

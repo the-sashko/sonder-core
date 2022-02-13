@@ -7,9 +7,32 @@ use Sonder\Core\ModelFormObject;
 
 final class CronForm extends ModelFormObject
 {
+    const ALIAS_MIN_LENGTH = 3;
+
+    const ALIAS_MAX_LENGTH = 128;
+
+    const CONTROLLER_MIN_LENGTH = 3;
+
+    const CONTROLLER_MAX_LENGTH = 128;
+
     const ACTION_MIN_LENGTH = 3;
 
     const ACTION_MAX_LENGTH = 128;
+
+    const ALIAS_EMPTY_ERROR_MESSAGE = 'Alias is empty';
+
+    const ALIAS_TOO_SHORT_ERROR_MESSAGE = 'Alias is too short';
+
+    const ALIAS_TOO_LONG_ERROR_MESSAGE = 'Alias is too long';
+
+    const ALIAS_EXISTS_ERROR_MESSAGE = 'Cron job with this alias already ' .
+    'exists';
+
+    const CONTROLLER_EMPTY_ERROR_MESSAGE = 'Controller is empty';
+
+    const CONTROLLER_TOO_SHORT_ERROR_MESSAGE = 'Controller is too short';
+
+    const CONTROLLER_TOO_LONG_ERROR_MESSAGE = 'Controller is too long';
 
     const ACTION_EMPTY_ERROR_MESSAGE = 'Action is empty';
 
@@ -17,13 +40,12 @@ final class CronForm extends ModelFormObject
 
     const ACTION_TOO_LONG_ERROR_MESSAGE = 'Action is too long';
 
-    const ACTION_AND_INTERVAL_EXISTS_ERROR_MESSAGE = 'Cron job with this ' .
-    'action and interval already exists';
-
     const INTERVAL_EMPTY_ERROR_MESSAGE = 'Time interval is empty';
 
-    const CRON_JON_IS_NOT_EXISTS_ERROR_MESSAGE = 'Cron Job with id "%d" is '.
+    const CRON_JOB_IS_NOT_EXISTS_ERROR_MESSAGE = 'Cron job with id "%d" is ' .
     'not exists';
+
+    const CRON_JOB_IS_NOT_UNIQUE = 'Cron job is not unique';
 
     /**
      * @return void
@@ -33,6 +55,8 @@ final class CronForm extends ModelFormObject
     {
         $this->setStatusSuccess();
 
+        $this->_validateAliasValue();
+        $this->_validateControllerValue();
         $this->_validateActionValue();
         $this->_validateIntervalValue();
     }
@@ -54,6 +78,32 @@ final class CronForm extends ModelFormObject
         }
 
         return (int)$id;
+    }
+
+    /**
+     * @return string|null
+     * @throws Exception
+     */
+    final public function getAlias(): ?string
+    {
+        if ($this->has('alias')) {
+            return $this->get('alias');
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     * @throws Exception
+     */
+    final public function getController(): ?string
+    {
+        if ($this->has('controller')) {
+            return $this->get('controller');
+        }
+
+        return null;
     }
 
     /**
@@ -106,6 +156,26 @@ final class CronForm extends ModelFormObject
     }
 
     /**
+     * @param string|null $alias
+     * @return void
+     * @throws Exception
+     */
+    final public function setAlias(?string $alias = null): void
+    {
+        $this->set('alias', $alias);
+    }
+
+    /**
+     * @param string|null $controller
+     * @return void
+     * @throws Exception
+     */
+    final public function setController(?string $controller = null): void
+    {
+        $this->set('controller', $controller);
+    }
+
+    /**
      * @param string|null $action
      * @return void
      * @throws Exception
@@ -133,6 +203,60 @@ final class CronForm extends ModelFormObject
     final public function setIsActive(bool $isActive = false): void
     {
         $this->set('is_active', $isActive);
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    protected function _validateAliasValue(): void
+    {
+        $alias = $this->getAlias();
+
+        if (empty($alias)) {
+            $this->setError(CronForm::ALIAS_EMPTY_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (!empty($alias) && mb_strlen($alias) > CronForm::ALIAS_MAX_LENGTH) {
+            $this->setError(CronForm::ALIAS_TOO_LONG_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (!empty($alias) && mb_strlen($alias) < CronForm::ALIAS_MIN_LENGTH) {
+            $this->setError(CronForm::ALIAS_TOO_SHORT_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    protected function _validateControllerValue(): void
+    {
+        $controller = $this->getController();
+
+        if (empty($controller)) {
+            $this->setError(CronForm::CONTROLLER_EMPTY_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (
+            !empty($controller) &&
+            mb_strlen($controller) > CronForm::CONTROLLER_MAX_LENGTH
+        ) {
+            $this->setError(CronForm::CONTROLLER_TOO_LONG_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
+
+        if (
+            !empty($controller) &&
+            mb_strlen($controller) < CronForm::CONTROLLER_MIN_LENGTH
+        ) {
+            $this->setError(CronForm::CONTROLLER_TOO_SHORT_ERROR_MESSAGE);
+            $this->setStatusFail();
+        }
     }
 
     /**

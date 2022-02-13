@@ -10,6 +10,10 @@ final class CronValuesObject
     extends ModelValuesObject
     implements ICronValuesObject
 {
+    const STATUS_SCHEDULED = 'scheduled';
+    const STATUS_RUNNING = 'running';
+    const STATUS_UNKNOWN = 'unknown';
+
     /**
      * @var string|null
      */
@@ -42,18 +46,36 @@ final class CronValuesObject
      * @return string
      * @throws Exception
      */
+    final public function getAlias(): string
+    {
+        return (string)$this->get('alias');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    final public function getController(): string
+    {
+        return (string)$this->get('controller');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
     final public function getAction(): string
     {
         return (string)$this->get('action');
     }
 
     /**
-     * @param bool|null $isFormatAsString
+     * @param bool $isFormatAsString
      * @return string|int|null
      * @throws Exception
      */
     final public function getInterval(
-        bool $isFormatAsString = null
+        bool $isFormatAsString = false
     ): string|int|null
     {
         $intervalInSeconds = $this->get('interval');
@@ -151,18 +173,18 @@ final class CronValuesObject
     }
 
     /**
-     * @return bool
+     * @return string
      * @throws Exception
      */
-    final public function getLastExecStatus(): bool
+    final public function getStatus(): string
     {
-        $lastExecStatus = $this->get('last_exec_status');
+        $status = $this->get('status');
 
-        if (empty($lastExecStatus)) {
-            return false;
+        if (empty($status)) {
+            return CronValuesObject::STATUS_UNKNOWN;
         }
 
-        return (bool)$lastExecStatus;
+        return $status;
     }
 
     /**
@@ -196,6 +218,30 @@ final class CronValuesObject
     final public function getAdminRunLink(): string
     {
         return sprintf($this->adminRunLinkPattern, $this->getId());
+    }
+
+    /**
+     * @param string|null $alias
+     * @return void
+     * @throws Exception
+     */
+    final public function setAlias(?string $alias = null): void
+    {
+        if (!empty($alias)) {
+            $this->set('alias', $alias);
+        }
+    }
+
+    /**
+     * @param string|null $controller
+     * @return void
+     * @throws Exception
+     */
+    final public function setController(?string $controller = null): void
+    {
+        if (!empty($controller)) {
+            $this->set('controller', $controller);
+        }
     }
 
     /**
@@ -237,13 +283,15 @@ final class CronValuesObject
     }
 
     /**
-     * @param bool $lastExecStatus
+     * @param string|null $status
      * @return void
      * @throws Exception
      */
-    final public function setLastExecStatus(bool $lastExecStatus = false): void
+    final public function setStatus(?string $status = null): void
     {
-        $this->set('last_exec_status', $lastExecStatus);
+        if (!empty($status)) {
+            $this->set('status', $status);
+        }
     }
 
     /**
