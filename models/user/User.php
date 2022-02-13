@@ -367,7 +367,7 @@ final class User extends CoreModel implements IModel, IUser
             $credentialsForm->setStatusFail();
 
             $credentialsForm->setError(
-                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+                CredentialsForm::USER_NOT_EXISTS_ERROR_MESSAGE
             );
 
             return false;
@@ -381,7 +381,7 @@ final class User extends CoreModel implements IModel, IUser
             $credentialsForm->setStatusFail();
 
             $credentialsForm->setError(
-                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+                CredentialsForm::USER_NOT_EXISTS_ERROR_MESSAGE
             );
 
             return false;
@@ -420,7 +420,7 @@ final class User extends CoreModel implements IModel, IUser
             $credentialsForm->setStatusFail();
 
             $credentialsForm->setError(
-                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+                CredentialsForm::USER_NOT_EXISTS_ERROR_MESSAGE
             );
 
             return false;
@@ -434,7 +434,7 @@ final class User extends CoreModel implements IModel, IUser
             $credentialsForm->setStatusFail();
 
             $credentialsForm->setError(
-                CredentialsForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE
+                CredentialsForm::USER_NOT_EXISTS_ERROR_MESSAGE
             );
 
             return false;
@@ -517,7 +517,7 @@ final class User extends CoreModel implements IModel, IUser
             $userForm->setStatusFail();
 
             $userForm->setError(sprintf(
-                UserForm::USER_IS_NOT_EXISTS_ERROR_MESSAGE,
+                UserForm::USER_NOT_EXISTS_ERROR_MESSAGE,
                 $id
             ));
 
@@ -790,7 +790,7 @@ final class User extends CoreModel implements IModel, IUser
             $userForm->setStatusFail();
 
             $userForm->setError(
-                UserForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
+                UserForm::ROLE_NOT_EXISTS_ERROR_MESSAGE
             );
         }
     }

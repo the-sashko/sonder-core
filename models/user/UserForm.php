@@ -41,11 +41,11 @@ final class UserForm extends ModelFormObject
 
     const PASSWORD_TOO_LONG_ERROR_MESSAGE = 'Password is too long';
 
-    const ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role is not exist or inactive';
+    const ROLE_NOT_EXISTS_ERROR_MESSAGE = 'Role not exists or inactive';
 
     const ROLE_IS_NOT_SET_ERROR_MESSAGE = 'Role is not set';
 
-    const USER_IS_NOT_EXISTS_ERROR_MESSAGE = 'User with id "%d" is not exists';
+    const USER_NOT_EXISTS_ERROR_MESSAGE = 'User with id "%d" not exists';
 
     /**
      * @throws Exception

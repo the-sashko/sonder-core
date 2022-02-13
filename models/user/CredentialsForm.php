@@ -30,7 +30,7 @@ final class CredentialsForm extends ModelFormObject
 
     const PASSWORD_TOO_LONG_ERROR_MESSAGE = 'Password is too long';
 
-    const USER_IS_NOT_EXISTS_ERROR_MESSAGE = 'User is not exists';
+    const USER_NOT_EXISTS_ERROR_MESSAGE = 'User not exists';
 
     /**
      * @throws Exception
