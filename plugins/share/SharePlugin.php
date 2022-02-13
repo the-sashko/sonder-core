@@ -80,8 +80,8 @@ final class SharePlugin implements ISharePlugin
 
         if (!class_exists($platformClass)) {
             throw new SharePluginException(
-                SharePluginException::MESSAGE_PLATFORM_IS_NOT_EXISTS,
-                ShareException::CODE_PLATFORM_IS_NOT_EXISTS
+                SharePluginException::MESSAGE_PLATFORM_NOT_EXISTS,
+                ShareException::CODE_PLATFORM_NOT_EXISTS
             );
         }
 

@@ -105,7 +105,7 @@ final class TemplaterPlugin
 
         if (empty($themePath)) {
             throw new Exception(
-                sprintf('Frontend Theme %s Is Not Exists', $theme)
+                sprintf('Frontend Theme %s Not Exists', $theme)
             );
         }
 

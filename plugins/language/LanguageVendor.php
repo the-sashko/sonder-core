@@ -27,7 +27,7 @@ final class LanguageVendor
         if (!file_exists($poFilePath) || !is_file($poFilePath)) {
             throw new LanguageException(
                 'PO File Path Is Not Set',
-                LanguageException::PO_FILE_IS_NOT_EXISTS
+                LanguageException::PO_FILE_NOT_EXISTS
             );
         }
 
