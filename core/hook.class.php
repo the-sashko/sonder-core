@@ -4,6 +4,8 @@ namespace Sonder\Core;
 
 use Exception;
 use Sonder\Core\Interfaces\IHook;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\HookException;
 
 class CoreHook extends CoreObject implements IHook
 {
@@ -40,10 +42,14 @@ class CoreHook extends CoreObject implements IHook
     {
         if (!$this->has($valueName)) {
             $errorMessage = sprintf(
-                'Value %s Not Found In Hook Values',
+                HookException::MESSAGE_HOOK_VALUE_IS_NOT_EXIST,
                 $valueName
             );
-            throw new Exception($errorMessage);
+
+            throw new HookException(
+                $errorMessage,
+                AppException::CODE_HOOK_VALUE_IS_NOT_EXIST
+            );
         }
 
         return $this->_values[$valueName];

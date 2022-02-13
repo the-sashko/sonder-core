@@ -58,11 +58,17 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
         ];
     }
 
+    /**
+     * @return void
+     */
     final public function setStatusSuccess(): void
     {
         $this->_setStatus(true);
     }
 
+    /**
+     * @return void
+     */
     final public function setStatusFail(): void
     {
         $this->_setStatus();
@@ -90,6 +96,10 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
         $this->setStatusFail();
     }
 
+    /**
+     * @param string|null $fileName
+     * @return array|null
+     */
     final protected function getFileValueFromRequest(
         ?string $fileName = null
     ): ?array

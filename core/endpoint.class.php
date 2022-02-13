@@ -7,6 +7,8 @@ use ReflectionMethod;
 use Sonder\Core\Interfaces\IController;
 use Sonder\Core\Interfaces\IEndpoint;
 use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\EndpointException;
 
 class CoreEndpoint implements IEndpoint
 {
@@ -97,7 +99,10 @@ class CoreEndpoint implements IEndpoint
             $this->_returnResponse();
         }
 
-        throw new Exception('Response Is Empty');
+        throw new EndpointException(
+            EndpointException::MESSAGE_ENDPOINT_RESPONSE_IS_EMPTY,
+            AppException::CODE_ENDPOINT_RESPONSE_IS_EMPTY
+        );
     }
 
     /**
@@ -143,7 +148,10 @@ class CoreEndpoint implements IEndpoint
         $controller = $this->_getControllerInstance();
 
         if (!$this->_isValidControllerMethod($controller)) {
-            throw new Exception('Invalid Controller Method');
+            throw new EndpointException(
+                EndpointException::MESSAGE_ENDPOINT_INVALID_CONTROLLER_METHOD,
+                AppException::CODE_ENDPOINT_INVALID_CONTROLLER_METHOD
+            );
         }
 
         $method = $this->_request->getMethod();
@@ -176,7 +184,10 @@ class CoreEndpoint implements IEndpoint
         $controller = $this->_request->getController();
 
         if (empty($controller)) {
-            throw new Exception('Controller Is Not set');
+            throw new EndpointException(
+                EndpointException::MESSAGE_ENDPOINT_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_ENDPOINT_CONTROLLER_IS_NOT_SET
+            );
         }
 
         $controller = sprintf(

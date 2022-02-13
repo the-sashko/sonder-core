@@ -4,6 +4,8 @@ namespace Sonder\Core;
 
 use Exception;
 use Sonder\Core\Interfaces\IModel;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\CoreException;
 
 class CoreObject
 {
@@ -90,8 +92,14 @@ class CoreObject
         }
 
         if (!class_exists($pluginClassName, false)) {
-            throw new Exception(
-                sprintf('Plugin %s is not exist', $pluginName)
+            $errorMessage = sprintf(
+                CoreException::MESSAGE_CORE_PLUGIN_IS_NOT_EXIST,
+                $pluginName
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                AppException::CODE_CORE_PLUGIN_IS_NOT_EXIST
             );
         }
 
@@ -146,7 +154,16 @@ class CoreObject
                 $modelFileName
             );
 
+            $modelInitFilePath = sprintf('%s/init.php', $modelDirPath);
+
             if (file_exists($modelFilePath) && is_file($modelFilePath)) {
+                if (
+                    file_exists($modelInitFilePath) &&
+                    is_file($modelInitFilePath)
+                ) {
+                    require_once $modelInitFilePath;
+                }
+
                 foreach (glob($modelDirPath . '/*.php') as $filePath) {
                     if (is_file($filePath)) {
                         require_once $filePath;
@@ -158,8 +175,14 @@ class CoreObject
         }
 
         if (!class_exists($modelClassName, false)) {
-            throw new Exception(
-                sprintf('Model %s is not exist', $modelName)
+            $errorMessage = sprintf(
+                CoreException::MESSAGE_CORE_MODEL_IS_NOT_EXIST,
+                $modelName
+            );
+
+            throw new CoreException(
+                $errorMessage,
+                AppException::CODE_CORE_MODEL_IS_NOT_EXIST
             );
         }
 
