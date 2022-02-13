@@ -29,10 +29,10 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @param int|null $id
-     * @return ValuesObject|null
+     * @return IRoleValuesObject|null
      * @throws Exception
      */
-    final public function getVOById(?int $id = null): ?ValuesObject
+    final public function getVOById(?int $id = null): ?IRoleValuesObject
     {
         $row = $this->store->getRoleRowById($id);
 
@@ -191,11 +191,11 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
-     * @return ValuesObject
+     * @return IRoleValuesObject
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getGuestVO(): ValuesObject
+    final public function getGuestVO(): IRoleValuesObject
     {
         $row = $this->store->getRoleRowByName('guest');
 

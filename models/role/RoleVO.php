@@ -56,10 +56,10 @@ final class RoleValuesObject
     }
 
     /**
-     * @return ValuesObject|null
+     * @return IRoleValuesObject|null
      * @throws Exception
      */
-    final public function getParentVO(): ?ValuesObject
+    final public function getParentVO(): ?IRoleValuesObject
     {
         if (!$this->has('parent_vo')) {
             return null;
@@ -177,11 +177,11 @@ final class RoleValuesObject
     }
 
     /**
-     * @param ValuesObject|null $parentVO
+     * @param IRoleValuesObject|null $parentVO
      * @return void
      * @throws Exception
      */
-    final public function setParentVO(?ValuesObject $parentVO = null): void
+    final public function setParentVO(?IRoleValuesObject $parentVO = null): void
     {
         if (!empty($parentVO)) {
             $this->set('parent_vo', $parentVO);
