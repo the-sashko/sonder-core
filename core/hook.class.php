@@ -42,13 +42,13 @@ class CoreHook extends CoreObject implements IHook
     {
         if (!$this->has($valueName)) {
             $errorMessage = sprintf(
-                HookException::MESSAGE_HOOK_VALUE_IS_NOT_EXIST,
+                HookException::MESSAGE_HOOK_VALUE_NOT_EXISTS,
                 $valueName
             );
 
             throw new HookException(
                 $errorMessage,
-                AppException::CODE_HOOK_VALUE_IS_NOT_EXIST
+                AppException::CODE_HOOK_VALUE_NOT_EXISTS
             );
         }
 

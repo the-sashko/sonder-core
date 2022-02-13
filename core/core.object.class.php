@@ -93,13 +93,13 @@ class CoreObject
 
         if (!class_exists($pluginClassName, false)) {
             $errorMessage = sprintf(
-                CoreException::MESSAGE_CORE_PLUGIN_IS_NOT_EXIST,
+                CoreException::MESSAGE_CORE_PLUGIN_NOT_EXISTS,
                 $pluginName
             );
 
             throw new CoreException(
                 $errorMessage,
-                AppException::CODE_CORE_PLUGIN_IS_NOT_EXIST
+                AppException::CODE_CORE_PLUGIN_NOT_EXISTS
             );
         }
 
@@ -176,13 +176,13 @@ class CoreObject
 
         if (!class_exists($modelClassName, false)) {
             $errorMessage = sprintf(
-                CoreException::MESSAGE_CORE_MODEL_IS_NOT_EXIST,
+                CoreException::MESSAGE_CORE_MODEL_NOT_EXISTS,
                 $modelName
             );
 
             throw new CoreException(
                 $errorMessage,
-                AppException::CODE_CORE_MODEL_IS_NOT_EXIST
+                AppException::CODE_CORE_MODEL_NOT_EXISTS
             );
         }
 

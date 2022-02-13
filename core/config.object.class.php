@@ -44,7 +44,7 @@ final class ConfigObject
 
         if (!array_key_exists($configName, $this->_values)) {
             throw new Exception(
-                sprintf('Config %s Is Not Exists', $configName)
+                sprintf('Config %s Not Exists', $configName)
             );
         }
 
