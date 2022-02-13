@@ -78,18 +78,21 @@ CREATE TABLE "users"
 
 CREATE TABLE "cron_jobs"
 (
-    "id"               integer DEFAULT nextval('cron_jobs_id_seq') NOT NULL,
-    "action"           character varying(128)                      NOT NULL,
-    "interval"         integer                                     NOT NULL,
-    "time_next_exec"   integer,
-    "last_exec_status" boolean DEFAULT true                        NOT NULL,
-    "error_message"    character varying(256),
-    "is_active"        boolean DEFAULT true                        NOT NULL,
-    "cdate"            integer                                     NOT NULL,
-    "mdate"            integer,
-    "ddate"            integer,
+    "id"             integer               DEFAULT nextval('cron_jobs_id_seq') NOT NULL,
+    "alias"          character varying(128)                                    NOT NULL,
+    "controller"     character varying(128)                                    NOT NULL,
+    "action"         character varying(128)                                    NOT NULL,
+    "interval"       integer                                                   NOT NULL,
+    "time_next_exec" integer,
+    "status"         character varying(16) DEFAULT true                        NOT NULL,
+    "error_message"  character varying(256),
+    "is_active"      boolean               DEFAULT true                        NOT NULL,
+    "cdate"          integer                                                   NOT NULL,
+    "mdate"          integer,
+    "ddate"          integer,
     CONSTRAINT "cron_jobs_id" PRIMARY KEY ("id"),
-    CONSTRAINT "cron_jobs_action_interval" UNIQUE ("action", "interval")
+    CONSTRAINT "cron_jobs_alias" UNIQUE ("alias"),
+    CONSTRAINT "cron_jobs_controller_action_interval" UNIQUE ("controller", "action", "interval")
 ) WITH (oids = false);
 
 CREATE INDEX "role_actions_is_active" ON "role_actions" USING btree ("is_active");
@@ -142,23 +145,18 @@ CREATE INDEX "users_login_password_hash_is_active" ON "users" USING btree ("logi
 CREATE INDEX "users_login_password_hash_is_active_ddate" ON "users"
     USING btree ("login", "password_hash", "is_active", "ddate");
 
+CREATE INDEX "cron_jobs_controller" ON "cron_jobs" USING btree ("controller");
 CREATE INDEX "cron_jobs_action" ON "cron_jobs" USING btree ("action");
 CREATE INDEX "cron_jobs_interval" ON "cron_jobs" USING btree ("interval");
 CREATE INDEX "cron_jobs_time_next_exec" ON "cron_jobs" USING btree ("time_next_exec");
-CREATE INDEX "cron_jobs_time_last_exec_status" ON "cron_jobs" USING btree ("last_exec_status");
+CREATE INDEX "cron_jobs_time_status" ON "cron_jobs" USING btree ("status");
 CREATE INDEX "cron_jobs_is_active" ON "cron_jobs" USING btree ("is_active");
 CREATE INDEX "cron_jobs_cdate" ON "cron_jobs" USING btree ("cdate");
 CREATE INDEX "cron_jobs_mdate" ON "cron_jobs" USING btree ("mdate");
 CREATE INDEX "cron_jobs_ddate" ON "cron_jobs" USING btree ("ddate");
-CREATE INDEX "cron_jobs_id_action" ON "cron_jobs" USING btree ("id", "action");
-CREATE INDEX "cron_jobs_id_interval" ON "cron_jobs" USING btree ("id", "interval");
-CREATE INDEX "cron_jobs_id_action_interval" ON "cron_jobs" USING btree ("id", "action", "interval");
+CREATE INDEX "cron_jobs_id_alias" ON "cron_jobs" USING btree ("id", "alias");
+CREATE INDEX "cron_jobs_id_controller_action_interval" ON "cron_jobs"
+    USING btree ("id", "controller", "action", "interval");
 CREATE INDEX "cron_jobs_is_active_ddate" ON "cron_jobs" USING btree ("is_active", "ddate");
-CREATE INDEX "cron_jobs_action_time_next_exec" ON "cron_jobs" USING btree ("action", "time_next_exec");
-CREATE INDEX "cron_jobs_time_next_exec_is_active" ON "cron_jobs" USING btree ("time_next_exec", "is_active");
 CREATE INDEX "cron_jobs_time_next_exec_is_active_ddate" ON "cron_jobs"
     USING btree ("time_next_exec", "is_active", "ddate");
-CREATE INDEX "cron_jobs_action_time_next_exec_is_active" ON "cron_jobs"
-    USING btree ("action", "time_next_exec", "is_active");
-CREATE INDEX "cron_jobs_action_time_next_exec_is_active_ddate" ON "cron_jobs"
-    USING btree ("action", "time_next_exec", "is_active", "ddate");
