@@ -2,18 +2,16 @@
 
 namespace Sonder\Core\Interfaces;
 
-use Sonder\Core\ValuesObject;
-
 interface IRole
 {
     /**
      * @param int|null $id
-     * @return ValuesObject|null
+     * @return IRoleValuesObject|null
      */
-    public function getVOById(?int $id = null): ?ValuesObject;
+    public function getVOById(?int $id = null): ?IRoleValuesObject;
 
     /**
-     * @return ValuesObject
+     * @return IRoleValuesObject
      */
-    public function getGuestVO(): ValuesObject;
+    public function getGuestVO(): IRoleValuesObject;
 }

@@ -4,5 +4,5 @@ namespace Sonder\Core\Interfaces;
 
 interface IRoleActionValuesObject
 {
-    //TODO
+    public function getName(): string;
 }

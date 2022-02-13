@@ -14,17 +14,25 @@ interface IModelFormObject
      */
     public function getErrors(): ?array;
 
+    /**
+     * @return void
+     */
     public function setStatusSuccess(): void;
 
+    /**
+     * @return void
+     */
     public function setStatusFail(): void;
 
     /**
      * @param array|null $errors
+     * @return void
      */
     public function setErrors(?array $errors = null): void;
 
     /**
      * @param string|null $error
+     * @return void
      */
     public function setError(?string $error = null): void;
 }

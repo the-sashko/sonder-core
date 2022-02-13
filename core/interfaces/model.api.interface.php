@@ -30,6 +30,7 @@ interface IModelApi
     /**
      * @param RequestObject $request
      * @param ResponseObject $response
+     * @return void
      */
     public function init(
         RequestObject  $request,

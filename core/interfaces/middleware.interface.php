@@ -6,6 +6,9 @@ use Sonder\Core\ResponseObject;
 
 interface IMiddleware
 {
+    /**
+     * @return void
+     */
     public function run(): void;
 
     /**

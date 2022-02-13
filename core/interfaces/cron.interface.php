@@ -4,5 +4,8 @@ namespace Sonder\Core\Interfaces;
 
 interface ICron
 {
-    //TODO
+    /**
+     * @return array|null
+     */
+    public function getJobsForRunning(): ?array;
 }
