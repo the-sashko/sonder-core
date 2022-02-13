@@ -5,6 +5,8 @@ namespace Sonder\Middlewares;
 use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\MiddlewareException;
 
 final class CliMiddleware extends CoreMiddleware implements IMiddleware
 {
@@ -29,11 +31,17 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
         $cliValues = $this->_getCliValues();
 
         if (empty($controller)) {
-            throw new Exception('Controller Is Not Set');
+            throw new MiddlewareException(
+                MiddlewareException::MESSAGE_MIDDLEWARE_CONTROLLER_IS_NOT_SET,
+                AppException::CODE_MIDDLEWARE_CONTROLLER_IS_NOT_SET,
+            );
         }
 
         if (empty($method)) {
-            throw new Exception('Controller Method Is Not Set');
+            throw new MiddlewareException(
+                MiddlewareException::MESSAGE_MIDDLEWARE_METHOD_IS_NOT_SET,
+                AppException::CODE_MIDDLEWARE_METHOD_IS_NOT_SET,
+            );
         }
 
         $this->request->setController($controller);

@@ -6,6 +6,8 @@ use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
 use Sonder\Core\RequestObject;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\MiddlewareException;
 
 final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
 {
@@ -17,10 +19,10 @@ final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
     final public function run(): void
     {
         if (empty($this->request->getSession())) {
-            $errorMessage = 'CSRF Middleware Must Be Run After Session ' .
-                'Middleware';
-
-            throw new Exception($errorMessage);
+            throw new MiddlewareException(
+                MiddlewareException::MESSAGE_MIDDLEWARE_CSRF_RUNNING_BEFORE_SESSION,
+                AppException::CODE_MIDDLEWARE_CSRF_RUNNING_BEFORE_SESSION
+            );
         }
 
         $cryptPlugin = $this->getPlugin('crypt');

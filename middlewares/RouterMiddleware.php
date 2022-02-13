@@ -5,6 +5,8 @@ namespace Sonder\Middlewares;
 use Exception;
 use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\MiddlewareException;
 
 final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 {
@@ -25,10 +27,15 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
             APP_ROUTING_TYPE != RouterMiddleware::DEFAULT_ROUTING_TYPE &&
             APP_ROUTING_TYPE != RouterMiddleware::ANNOTATIONS_ROUTING_TYPE
         ) {
-            throw new Exception(sprintf(
-                'Routing Type %s Is Not Supporting',
+            $errorMessage = sprintf(
+                MiddlewareException::MESSAGE_MIDDLEWARE_ROUTING_TYPE_IS_NOT_SUPPORTED,
                 APP_ROUTING_TYPE
-            ));
+            );
+
+            throw new MiddlewareException(
+                $errorMessage,
+                AppException::CODE_MIDDLEWARE_ROUTING_TYPE_IS_NOT_SUPPORTED
+            );
         }
 
         if (
