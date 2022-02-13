@@ -28,6 +28,10 @@ require_once(__DIR__ . '/core/core.object.class.php');
 $autoload(__DIR__ . '/core/interfaces', $autoload);
 $autoload(__DIR__ . '/core', $autoload);
 
+require_once(__DIR__ . '/exceptions/AppException.php');
+
+$autoload(__DIR__ . '/exceptions', $autoload);
+
 $hooksPaths = [
     APP_PROTECTED_DIR_PATH . '/hooks'
 ];
