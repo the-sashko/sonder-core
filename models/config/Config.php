@@ -86,7 +86,7 @@ final class Config extends CoreModel implements IModel
             $configVO = $this->getConfig($name);
 
             if (empty($configVO)) {
-                $errors[] = sprintf('Config "%s" is not exists', $name);
+                $errors[] = sprintf('Config "%s" Not Exists', $name);
             }
 
             $values = $configVO->getValues();
