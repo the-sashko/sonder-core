@@ -124,7 +124,7 @@ final class User extends CoreModel implements IModel, IUser
      * @throws DatabasePluginException
      * @throws Exception
      */
-    public function signOut(): bool
+    final public function signOut(): bool
     {
         if (!$this->isSignedIn()) {
             return false;
@@ -246,7 +246,6 @@ final class User extends CoreModel implements IModel, IUser
 
         return $pageCount;
     }
-
 
     /**
      * @param array|null $row
@@ -798,7 +797,6 @@ final class User extends CoreModel implements IModel, IUser
 
     /**
      * @param string|null $login
-     * $id = $this->getId();
      * @param string|null $password
      * @return string|null
      * @throws Exception
