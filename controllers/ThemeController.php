@@ -25,6 +25,8 @@ final class ThemeController extends CoreController implements IController
             $themePlugin = $this->getPlugin('theme', $theme);
             $themePlugin->moveAssets();
             $themePlugin->compileLessFiles();
+
+            //TODO: is it needed?
             //$themePlugin->minifyJsFiles();
         }
 
