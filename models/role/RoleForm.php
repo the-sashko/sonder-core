@@ -19,12 +19,12 @@ final class RoleForm extends ModelFormObject
 
     const NAME_EXISTS_ERROR_MESSAGE = 'Role with this name already exists';
 
-    const PARENT_ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Parent Role Is Not Exists';
+    const PARENT_ROLE_NOT_EXISTS_ERROR_MESSAGE = 'Parent role not exists';
 
     const ROLE_HAVE_CIRCULAR_DEPENDENCY_ERROR_MESSAGE = 'Role can not have ' .
     'a circular dependencies';
 
-    const ROLE_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role with id "%d" is not exists';
+    const ROLE_NOT_EXISTS_ERROR_MESSAGE = 'Role with id "%d" not exists';
 
     const ROLE_IS_SYSTEM_ERROR_MESSAGE = 'System role action can not be ' .
     'changed';

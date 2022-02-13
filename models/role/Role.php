@@ -200,7 +200,7 @@ final class Role extends CoreModel implements IModel, IRole
         $row = $this->store->getRoleRowByName('guest');
 
         if (empty($row)) {
-            throw new Exception('Guest Role Is Not Exists In Database');
+            throw new Exception('Guest Role Not Exists In Database');
         }
 
         return $this->getVO($row);
@@ -569,7 +569,7 @@ final class Role extends CoreModel implements IModel, IRole
             $roleActionForm->setStatusFail();
 
             $roleActionForm->setError(sprintf(
-                RoleActionForm::ROLE_ACTION_IS_NOT_EXISTS_ERROR_MESSAGE,
+                RoleActionForm::ROLE_ACTION_NOT_EXISTS_ERROR_MESSAGE,
                 $id
             ));
 
@@ -634,7 +634,7 @@ final class Role extends CoreModel implements IModel, IRole
             $roleForm->setStatusFail();
 
             $roleForm->setError(
-                RoleForm::PARENT_ROLE_IS_NOT_EXISTS_ERROR_MESSAGE
+                RoleForm::PARENT_ROLE_NOT_EXISTS_ERROR_MESSAGE
             );
         }
 
@@ -669,7 +669,7 @@ final class Role extends CoreModel implements IModel, IRole
             $roleForm->setStatusFail();
 
             $roleForm->setError(sprintf(
-                RoleForm::ROLE_IS_NOT_EXISTS_ERROR_MESSAGE,
+                RoleForm::ROLE_NOT_EXISTS_ERROR_MESSAGE,
                 $id
             ));
 

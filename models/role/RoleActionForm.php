@@ -12,8 +12,8 @@ final class RoleActionForm extends ModelFormObject
     const NAME_EXISTS_ERROR_MESSAGE = 'Role Action with this name already ' .
     'exists';
 
-    const ROLE_ACTION_IS_NOT_EXISTS_ERROR_MESSAGE = 'Role Action with id ' .
-    '"%d" is not exists';
+    const ROLE_ACTION_NOT_EXISTS_ERROR_MESSAGE = 'Role Action with id "%d" ' .
+    'not exists';
 
     const ROLE_ACTION_IS_SYSTEM_ERROR_MESSAGE = 'System role action can not ' .
     'be changed';
