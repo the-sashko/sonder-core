@@ -232,7 +232,7 @@ final class Cron extends CoreModel implements IModel, ICron
             $cronForm->setStatusFail();
 
             $cronForm->setError(sprintf(
-                CronForm::CRON_JOB_IS_NOT_EXISTS_ERROR_MESSAGE,
+                CronForm::CRON_JOB_NOT_EXISTS_ERROR_MESSAGE,
                 $id
             ));
         }

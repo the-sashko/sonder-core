@@ -42,8 +42,8 @@ final class CronForm extends ModelFormObject
 
     const INTERVAL_EMPTY_ERROR_MESSAGE = 'Time interval is empty';
 
-    const CRON_JOB_IS_NOT_EXISTS_ERROR_MESSAGE = 'Cron job with id "%d" is ' .
-    'not exists';
+    const CRON_JOB_NOT_EXISTS_ERROR_MESSAGE = 'Cron job with id "%d" not ' .
+    'exists';
 
     const CRON_JOB_IS_NOT_UNIQUE = 'Cron job is not unique';
 
