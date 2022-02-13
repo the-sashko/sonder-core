@@ -36,4 +36,14 @@ interface IModelApi
         RequestObject  $request,
         ResponseObject $response
     ): void;
+
+    /**
+     * @param array|null $data
+     * @param bool $status
+     * @return ResponseObject
+     */
+    public function getApiResponse(
+        ?array $data = null,
+        bool   $status = true
+    ): ResponseObject;
 }

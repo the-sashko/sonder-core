@@ -2,6 +2,7 @@
 
 namespace Sonder\Core;
 
+use Exception;
 use Sonder\Core\Interfaces\IModelApi;
 
 abstract class ModelApiCore implements IModelApi
@@ -60,5 +61,31 @@ abstract class ModelApiCore implements IModelApi
     {
         $this->request = $request;
         $this->response = $response;
+    }
+
+    /**
+     * @param array|null $data
+     * @param bool $status
+     * @return ResponseObject
+     * @throws Exception
+     */
+    final public function getApiResponse(
+        ?array $data = null,
+        bool   $status = true
+    ): ResponseObject
+    {
+        $responseContent = [];
+
+        $responseContent['status'] = $status ? 'success' : 'error';
+
+        if (!empty($data)) {
+            $responseContent['data'] = $data;
+        }
+
+        $this->response->setContentType('json');
+
+        $this->response->setContent(json_encode($responseContent));
+
+        return $this->response;
     }
 }
