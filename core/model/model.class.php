@@ -10,12 +10,12 @@ class CoreModel extends CoreObject implements IModel
     /**
      * @var object|null
      */
-    protected ?object $store = null;
+    public ?object $api = null;
 
     /**
      * @var object|null
      */
-    protected ?object $api = null;
+    protected ?object $store = null;
 
     /**
      * @var int

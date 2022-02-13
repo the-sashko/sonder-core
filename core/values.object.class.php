@@ -22,6 +22,23 @@ class ValuesObject
     }
 
     /**
+     * @return array
+     */
+    final public function __serialize(): array
+    {
+        return (array)$this->exportRow();
+    }
+
+    /**
+     * @param array $values
+     * @return void
+     */
+    public function __unserialize(array $values): void
+    {
+        $this->_values = $values;
+    }
+
+    /**
      * @param array|null $params
      * @return array|null
      */
