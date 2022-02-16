@@ -10,6 +10,9 @@ use Sonder\Models\Cron;
 use Sonder\Models\Cron\CronValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Plugins\Language\Exceptions\LanguageException;
+use Sonder\Plugins\LanguagePlugin;
+use Sonder\Plugins\RouterPlugin;
 
 final class CronController extends CoreController implements IController
 {
@@ -59,13 +62,27 @@ final class CronController extends CoreController implements IController
         return $this->response;
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     final public function jobRouter(): void
     {
-        //TODO
+        /* @var $routerPlugin RouterPlugin */
+        $routerPlugin = $this->getPlugin('router');
+
+        $routerPlugin->cleanCache();
     }
 
+    /**
+     * @return void
+     * @throws LanguageException
+     */
     final public function jobTranslations(): void
     {
-        //TODO
+        /* @var $languagePlugin LanguagePlugin */
+        $languagePlugin = $this->getPlugin('language');
+
+        $languagePlugin->generateDictionaries();
     }
 }
