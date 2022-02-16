@@ -187,7 +187,7 @@ final class RoleForm extends ModelFormObject
     /**
      * @throws Exception
      */
-    protected function _validateNameValue(): void
+    private function _validateNameValue(): void
     {
         $name = $this->getName();
 
