@@ -393,7 +393,7 @@ final class User extends CoreModel implements IModel, IUser
 
         $apiToken = null;
 
-        if ($credentialsForm->getIsAllowAccessByApi()) {
+        if ($credentialsForm->isAllowAccessByApi()) {
             $apiToken = $userVO->getApiToken();
         }
 
@@ -446,7 +446,7 @@ final class User extends CoreModel implements IModel, IUser
 
         $apiToken = null;
 
-        if ($credentialsForm->getIsAllowAccessByApi()) {
+        if ($credentialsForm->isAllowAccessByApi()) {
             $apiToken = $userVO->getApiToken();
         }
 
@@ -567,14 +567,14 @@ final class User extends CoreModel implements IModel, IUser
             $userVO->setPasswordHash($passwordHash);
         }
 
-        if (empty($id) && $userForm->getIsAllowAccessByApi()) {
+        if (empty($id) && $userForm->isAllowAccessByApi()) {
             $apiToken = $this->_getApiTokenFromVO($userVO);
             $userVO->setApiToken($apiToken);
         }
 
         $userVO->setLogin($userForm->getLogin());
         $userVO->setEmail($userForm->getEmail());
-        $userVO->setIsActive($userForm->getIsActive());
+        $userVO->setIsActive($userForm->isActive());
         $userVO->setRoleId($userForm->getRoleId());
 
         return $userVO;
@@ -606,7 +606,7 @@ final class User extends CoreModel implements IModel, IUser
         $userVO = new UserValuesObject($row);
 
         if (
-            $credentialsForm->getIsAllowAccessByApi() &&
+            $credentialsForm->isAllowAccessByApi() &&
             empty($userVO->getApiToken())
         ) {
             $apiToken = $this->_getApiTokenFromVO($userVO);

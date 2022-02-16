@@ -92,7 +92,7 @@ final class CredentialsForm extends ModelFormObject
      * @return bool
      * @throws Exception
      */
-    final public function getIsAllowAccessByApi(): bool
+    final public function isAllowAccessByApi(): bool
     {
         if (!$this->has('is_allow_access_by_api')) {
             return false;
