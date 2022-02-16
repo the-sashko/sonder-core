@@ -15,9 +15,9 @@ final class CronForm extends ModelFormObject
 
     const CONTROLLER_MAX_LENGTH = 128;
 
-    const ACTION_MIN_LENGTH = 3;
+    const METHOD_MIN_LENGTH = 3;
 
-    const ACTION_MAX_LENGTH = 128;
+    const METHOD_MAX_LENGTH = 128;
 
     const ALIAS_EMPTY_ERROR_MESSAGE = 'Alias is empty';
 
@@ -34,11 +34,11 @@ final class CronForm extends ModelFormObject
 
     const CONTROLLER_TOO_LONG_ERROR_MESSAGE = 'Controller is too long';
 
-    const ACTION_EMPTY_ERROR_MESSAGE = 'Action is empty';
+    const METHOD_EMPTY_ERROR_MESSAGE = 'Method is empty';
 
-    const ACTION_TOO_SHORT_ERROR_MESSAGE = 'Action is too short';
+    const METHOD_TOO_SHORT_ERROR_MESSAGE = 'Method is too short';
 
-    const ACTION_TOO_LONG_ERROR_MESSAGE = 'Action is too long';
+    const METHOD_TOO_LONG_ERROR_MESSAGE = 'Method is too long';
 
     const INTERVAL_EMPTY_ERROR_MESSAGE = 'Time interval is empty';
 
@@ -57,7 +57,7 @@ final class CronForm extends ModelFormObject
 
         $this->_validateAliasValue();
         $this->_validateControllerValue();
-        $this->_validateActionValue();
+        $this->_validateMethodValue();
         $this->_validateIntervalValue();
     }
 
@@ -110,10 +110,10 @@ final class CronForm extends ModelFormObject
      * @return string|null
      * @throws Exception
      */
-    final public function getAction(): ?string
+    final public function getMethod(): ?string
     {
-        if ($this->has('action')) {
-            return $this->get('action');
+        if ($this->has('method')) {
+            return $this->get('method');
         }
 
         return null;
@@ -176,13 +176,13 @@ final class CronForm extends ModelFormObject
     }
 
     /**
-     * @param string|null $action
+     * @param string|null $method
      * @return void
      * @throws Exception
      */
-    final public function setAction(?string $action = null): void
+    final public function setMethod(?string $method = null): void
     {
-        $this->set('action', $action);
+        $this->set('$method', $method);
     }
 
     /**
@@ -209,7 +209,7 @@ final class CronForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
-    protected function _validateAliasValue(): void
+    private function _validateAliasValue(): void
     {
         $alias = $this->getAlias();
 
@@ -233,7 +233,7 @@ final class CronForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
-    protected function _validateControllerValue(): void
+    private function _validateControllerValue(): void
     {
         $controller = $this->getController();
 
@@ -263,22 +263,27 @@ final class CronForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
-    protected function _validateActionValue(): void
+    private function _validateMethodValue(): void
     {
-        $action = $this->getAction();
+        $method = $this->getMethod();
 
-        if (empty($action)) {
-            $this->setError(CronForm::ACTION_EMPTY_ERROR_MESSAGE);
+        if (empty($method)) {
+            $this->setError(CronForm::METHOD_EMPTY_ERROR_MESSAGE);
             $this->setStatusFail();
         }
 
-        if (!empty($action) && mb_strlen($action) > CronForm::ACTION_MAX_LENGTH) {
-            $this->setError(CronForm::ACTION_TOO_LONG_ERROR_MESSAGE);
+        if (
+            !empty($method) &&
+            mb_strlen($method) > CronForm::METHOD_MAX_LENGTH
+        ) {
+            $this->setError(CronForm::METHOD_TOO_LONG_ERROR_MESSAGE);
             $this->setStatusFail();
         }
 
-        if (!empty($action) && mb_strlen($action) < CronForm::ACTION_MIN_LENGTH) {
-            $this->setError(CronForm::ACTION_TOO_SHORT_ERROR_MESSAGE);
+        if (
+            !empty($method) &&
+            mb_strlen($method) < CronForm::METHOD_MIN_LENGTH) {
+            $this->setError(CronForm::METHOD_TOO_SHORT_ERROR_MESSAGE);
             $this->setStatusFail();
         }
     }
@@ -287,7 +292,7 @@ final class CronForm extends ModelFormObject
      * @return void
      * @throws Exception
      */
-    protected function _validateIntervalValue(): void
+    private function _validateIntervalValue(): void
     {
         $interval = $this->getInterval();
         $interval = empty($interval) ? 0 : $interval;

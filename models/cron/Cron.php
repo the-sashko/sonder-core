@@ -8,12 +8,14 @@ use ReflectionMethod;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\ICron;
 use Sonder\Core\Interfaces\IModel;
+use Sonder\Core\RequestObject;
 use Sonder\Core\ValuesObject;
 use Sonder\Models\Cron\CronForm;
 use Sonder\Models\Cron\CronStore;
 use Sonder\Models\Cron\CronValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Plugins\LoggerPlugin;
 use Throwable;
 
 /**
@@ -21,12 +23,105 @@ use Throwable;
  */
 final class Cron extends CoreModel implements IModel, ICron
 {
-    const JOB_METHOD_NAME_PATTERN = '/^display(.*?)$/su';
+    const JOB_METHOD_NAME_PATTERN = '/^job(.*?)$/su';
 
     /**
      * @var int
      */
     protected int $itemsOnPage = 100;
+
+    /**
+     * @param CronValuesObject|null $cronVO
+     * @return bool
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function runJob(?CronValuesObject $cronVO = null): bool
+    {
+        if (empty($cronVO)) {
+            return false;
+        }
+
+        $status = true;
+
+        echo sprintf(
+            "[%s] Start \"%s\" Job\n",
+            date('Y-m-d H:i:s'),
+            $cronVO->getAlias()
+        );
+
+        /* @var $loggerPlugin LoggerPlugin */
+        $loggerPlugin = $this->getPlugin('logger');
+
+        $loggerPlugin->log(
+            'Start Cron Job',
+            mb_convert_case($cronVO->getAlias(), MB_CASE_LOWER),
+            'cron'
+        );
+
+        $cronVO->setStatus(CronValuesObject::STATUS_RUNNING);
+        $this->updateByVO($cronVO);
+
+        try {
+            $controllerClassName = $this->_getControllerClassNameFromVO(
+                $cronVO
+            );
+
+            $methodName = $this->_getMethodNameFromVO($cronVO);
+
+            $controller = new $controllerClassName(new RequestObject());
+
+            $controller->$methodName();
+
+            $cronVO->setTimeNextExec();
+            $cronVO->setStatus(CronValuesObject::STATUS_SCHEDULED);
+        } catch (Throwable $exp) {
+            $cronVO->setStatus(CronValuesObject::STATUS_ERROR);
+            $cronVO->setErrorMessage($exp->getMessage());
+
+            $logErrorMessage = sprintf(
+                'Cron Job Error: %s',
+                $exp->getMessage()
+            );
+
+            $logName = sprintf(
+                'cron_%s',
+                mb_convert_case($cronVO->getAlias(), MB_CASE_LOWER)
+            );
+
+            $loggerPlugin->log(
+                $logErrorMessage,
+                mb_convert_case($cronVO->getAlias(), MB_CASE_LOWER),
+                'cron'
+            );
+
+            $loggerPlugin->logError($logErrorMessage, $logName);
+
+            echo sprintf(
+                "[%s] Error \"%s\"\n",
+                date('Y-m-d H:i:s'),
+                $exp->getMessage()
+            );
+
+            $status = false;
+        }
+
+        $this->updateByVO($cronVO);
+
+        $loggerPlugin->log(
+            'End Cron Job',
+            mb_convert_case($cronVO->getAlias(), MB_CASE_LOWER),
+            'cron'
+        );
+
+        echo sprintf(
+            "[%s] End \"%s\" Job\n\n",
+            date('Y-m-d H:i:s'),
+            $cronVO->getAlias()
+        );
+
+        return $status;
+    }
 
     /**
      * @param int|null $id
@@ -131,9 +226,9 @@ final class Cron extends CoreModel implements IModel, ICron
                 return true;
             }
 
-            $id = $this->store->getCronJobIdRowByControllerAndActionAndInterval(
+            $id = $this->store->getCronJobIdRowByControllerAndMethodAndInterval(
                 $cronVO->getController(),
-                $cronVO->getAction(),
+                $cronVO->getMethod(),
                 $cronVO->getInterval()
             );
 
@@ -161,6 +256,8 @@ final class Cron extends CoreModel implements IModel, ICron
         if (empty($cronVO)) {
             return false;
         }
+
+        $cronVO->setMdate();
 
         return $this->store->updateCronJobById(
             $cronVO->exportRow(),
@@ -271,9 +368,9 @@ final class Cron extends CoreModel implements IModel, ICron
      */
     private function _checkIsCronJobInFormUnique(CronForm $cronForm): void
     {
-        $id = $this->store->getCronJobIdRowByControllerAndActionAndInterval(
+        $id = $this->store->getCronJobIdRowByControllerAndMethodAndInterval(
             $cronForm->getController(),
-            $cronForm->getAction(),
+            $cronForm->getMethod(),
             $cronForm->getInterval(),
             $cronForm->getId()
         );
@@ -320,7 +417,7 @@ final class Cron extends CoreModel implements IModel, ICron
 
         $cronVO->setAlias($cronForm->getAlias());
         $cronVO->setController($cronForm->getController());
-        $cronVO->setAction($cronForm->getAction());
+        $cronVO->setMethod($cronForm->getMethod());
         $cronVO->setInterval($cronForm->getInterval());
         $cronVO->setIsActive($cronForm->getIsActive());
 
@@ -330,7 +427,7 @@ final class Cron extends CoreModel implements IModel, ICron
     /**
      * @return array
      */
-    protected function _getAvailableControllers(): array
+    private function _getAvailableControllers(): array
     {
         $controllers = [];
 
@@ -351,7 +448,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @return array
      * @throws ReflectionException
      */
-    protected function _getAvailableMethods(string $controllerClassName): array
+    private function _getAvailableMethods(string $controllerClassName): array
     {
         $methods = get_class_methods($controllerClassName);
 
@@ -374,7 +471,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @return bool
      * @throws ReflectionException
      */
-    protected function _isMethodValid(
+    private function _isMethodValid(
         string $controllerClassName,
         string $methodName
     ): bool
@@ -399,7 +496,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @param string $methodName
      * @return string
      */
-    protected function _getFormattedMethodName(string $methodName): string
+    private function _getFormattedMethodName(string $methodName): string
     {
         $methodName = preg_replace(
             Cron::JOB_METHOD_NAME_PATTERN,
@@ -421,7 +518,7 @@ final class Cron extends CoreModel implements IModel, ICron
     /**
      * @return string[]
      */
-    protected function _getControllersPaths(): array
+    private function _getControllersPaths(): array
     {
         $controllersPaths = [
             APP_PROTECTED_DIR_PATH . '/controllers',
@@ -442,7 +539,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @param string $controllerFilePath
      * @return string
      */
-    protected function _getControllerNameFromFilePath(
+    private function _getControllerNameFromFilePath(
         string $controllerFilePath
     ): string
     {
@@ -468,7 +565,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @param string $dirPath
      * @return void
      */
-    protected function _setControllersFromDirPath(
+    private function _setControllersFromDirPath(
         array  &$controllers,
         string $dirPath
     ): void
@@ -500,7 +597,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @param string $controllerFilePath
      * @return string|null
      */
-    protected function _getControllerClassNameByFilePath(
+    private function _getControllerClassNameByFilePath(
         string $controllerFilePath
     ): ?string
     {
@@ -522,5 +619,46 @@ final class Cron extends CoreModel implements IModel, ICron
         }
 
         return $controllerClassName;
+    }
+
+    /**
+     * @param CronValuesObject $cronVO
+     * @return string
+     * @throws Exception
+     */
+    private function _getControllerClassNameFromVO(
+        CronValuesObject $cronVO
+    ): string
+    {
+        $controllerClassName = $cronVO->getController();
+
+        $controllerClassName = array_map(function ($controllerClassNamePart) {
+            return mb_convert_case($controllerClassNamePart, MB_CASE_TITLE);
+        }, explode('_', $controllerClassName));
+
+        $controllerClassName = implode('', $controllerClassName);
+
+        return sprintf(
+            'Sonder\Controllers\%sController',
+            $controllerClassName
+        );
+    }
+
+    /**
+     * @param CronValuesObject $cronVO
+     * @return string
+     * @throws Exception
+     */
+    private function _getMethodNameFromVO(CronValuesObject $cronVO): string
+    {
+        $methodName = $cronVO->getMethod();
+
+        $methodName = array_map(function ($methodNamePart) {
+            return mb_convert_case($methodNamePart, MB_CASE_TITLE);
+        }, explode('_', $methodName));
+
+        $methodName = lcfirst(implode('', $methodName));
+
+        return sprintf('job%s', $methodName);
     }
 }

@@ -17,7 +17,7 @@ interface ICronValuesObject
     /**
      * @return string
      */
-    public function getAction(): string;
+    public function getMethod(): string;
 
     /**
      * @param bool $isFormatAsString

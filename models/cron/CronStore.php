@@ -85,32 +85,32 @@ final class CronStore extends ModelStore implements IModelStore
 
     /**
      * @param string|null $controller
-     * @param string|null $action
+     * @param string|null $method
      * @param int|null $interval
      * @param int|null $excludeId
      * @return int|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getCronJobIdRowByControllerAndActionAndInterval(
+    final public function getCronJobIdRowByControllerAndMethodAndInterval(
         ?string $controller = null,
-        ?string $action = null,
+        ?string $method = null,
         ?int    $interval = null,
         ?int    $excludeId = null
     ): ?int
     {
-        if (empty($controller) || empty($action) || empty($interval)) {
+        if (empty($controller) || empty($method) || empty($interval)) {
             return null;
         }
 
         $sqlWhere = sprintf(
             '
                 "controller" = \'%s\' AND
-                "action" = \'%s\' AND
+                "method" = \'%s\' AND
                 "interval" = %d
             ',
             $controller,
-            $action,
+            $method,
             $interval
         );
 
@@ -196,7 +196,10 @@ final class CronStore extends ModelStore implements IModelStore
             SELECT *
             FROM "%s"
             WHERE 
-                "time_next_exec" >= %d AND
+                (
+                    "time_next_exec" IS NULL OR
+                    "time_next_exec" <= %d
+                ) AND
                 ("ddate" IS NULL OR "ddate" < 1) AND
                 "is_active" = true
             ORDER BY "time_next_exec" DESC;

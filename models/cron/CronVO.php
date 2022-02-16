@@ -12,6 +12,7 @@ final class CronValuesObject
 {
     const STATUS_SCHEDULED = 'scheduled';
     const STATUS_RUNNING = 'running';
+    const STATUS_ERROR = 'error';
     const STATUS_UNKNOWN = 'unknown';
 
     /**
@@ -64,9 +65,9 @@ final class CronValuesObject
      * @return string
      * @throws Exception
      */
-    final public function getAction(): string
+    final public function getMethod(): string
     {
-        return (string)$this->get('action');
+        return (string)$this->get('method');
     }
 
     /**
@@ -245,14 +246,14 @@ final class CronValuesObject
     }
 
     /**
-     * @param string|null $action
+     * @param string|null $method
      * @return void
      * @throws Exception
      */
-    final public function setAction(?string $action = null): void
+    final public function setMethod(?string $method = null): void
     {
-        if (!empty($action)) {
-            $this->set('action', $action);
+        if (!empty($method)) {
+            $this->set('method', $method);
         }
     }
 
