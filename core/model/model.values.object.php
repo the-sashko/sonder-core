@@ -43,7 +43,7 @@ class ModelValuesObject extends ValuesObject
      * @return string|null
      * @throws Exception
      */
-    public function getLink(): ?string
+    final public function getLink(): ?string
     {
         if (empty($this->linkPattern)) {
             return null;
@@ -60,7 +60,7 @@ class ModelValuesObject extends ValuesObject
      * @return string|null
      * @throws Exception
      */
-    public function getEditLink(): ?string
+    final public function getEditLink(): ?string
     {
         if (empty($this->editLinkPattern)) {
             return null;
@@ -73,7 +73,7 @@ class ModelValuesObject extends ValuesObject
      * @return string|null
      * @throws Exception
      */
-    public function getRemoveLink(): ?string
+    final public function getRemoveLink(): ?string
     {
         if (empty($this->removeLinkPattern)) {
             return null;
@@ -86,7 +86,7 @@ class ModelValuesObject extends ValuesObject
      * @return string|null
      * @throws Exception
      */
-    public function getRestoreLink(): ?string
+    final public function getRestoreLink(): ?string
     {
         if (empty($this->restoreLinkPattern)) {
             return null;
@@ -99,7 +99,7 @@ class ModelValuesObject extends ValuesObject
      * @return bool
      * @throws Exception
      */
-    final public function getIsActive(): bool
+    final public function isActive(): bool
     {
         return (bool)$this->get('is_active');
     }
