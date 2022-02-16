@@ -3,6 +3,10 @@ ini_set('error_reporting', (string)E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 $_SERVER = [
     'HTTP_COOKIE' => '',
     'HTTP_ACCEPT_LANGUAGE' => 'en-US,en',
