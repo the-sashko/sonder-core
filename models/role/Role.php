@@ -476,7 +476,7 @@ final class Role extends CoreModel implements IModel, IRole
 
         if (
             !empty($parentVO) &&
-            $parentVO->getIsActive() &&
+            $parentVO->isActive() &&
             empty($parentVO->getDdate())
         ) {
             $roleVO->setParentVO($parentVO);
@@ -576,7 +576,7 @@ final class Role extends CoreModel implements IModel, IRole
             return false;
         }
 
-        if ($roleActionVO->getIsSystem()) {
+        if ($roleActionVO->isSystem()) {
             $roleActionForm->setStatusFail();
 
             $roleActionForm->setError(
@@ -676,7 +676,7 @@ final class Role extends CoreModel implements IModel, IRole
             return false;
         }
 
-        if ($roleVO->getIsSystem()) {
+        if ($roleVO->isSystem()) {
             $roleForm->setStatusFail();
 
             $roleForm->setError(RoleForm::ROLE_IS_SYSTEM_ERROR_MESSAGE);
@@ -745,7 +745,7 @@ final class Role extends CoreModel implements IModel, IRole
         $roleActionVO = new RoleActionValuesObject($row);
 
         $roleActionVO->setName($roleActionForm->getName());
-        $roleActionVO->setIsActive($roleActionForm->getIsActive());
+        $roleActionVO->setIsActive($roleActionForm->isActive());
 
         return $roleActionVO;
     }
@@ -780,7 +780,7 @@ final class Role extends CoreModel implements IModel, IRole
         $roleVO = new RoleValuesObject($row);
 
         $roleVO->setName($roleForm->getName());
-        $roleVO->setIsActive($roleForm->getIsActive());
+        $roleVO->setIsActive($roleForm->isActive());
         $roleVO->setParentId($roleForm->getParentId());
 
         return $roleVO;

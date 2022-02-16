@@ -125,7 +125,7 @@ final class RoleForm extends ModelFormObject
      * @return bool
      * @throws Exception
      */
-    final public function getIsActive(): bool
+    final public function isActive(): bool
     {
         if (!$this->has('is_active')) {
             return false;

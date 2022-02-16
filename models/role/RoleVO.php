@@ -116,7 +116,7 @@ final class RoleValuesObject
      * @return bool
      * @throws Exception
      */
-    final public function getIsSystem(): bool
+    final public function isSystem(): bool
     {
         return (bool)$this->get('is_system');
     }
