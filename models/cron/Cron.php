@@ -419,7 +419,7 @@ final class Cron extends CoreModel implements IModel, ICron
         $cronVO->setController($cronForm->getController());
         $cronVO->setMethod($cronForm->getMethod());
         $cronVO->setInterval($cronForm->getInterval());
-        $cronVO->setIsActive($cronForm->getIsActive());
+        $cronVO->setIsActive($cronForm->isActive());
 
         return $cronVO;
     }
