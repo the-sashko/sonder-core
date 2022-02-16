@@ -7,6 +7,7 @@ use Exception;
 final class ResponseObject
 {
     const CONTENT_TYPES = [
+        'text' => 'text/plain',
         'html' => 'text/html',
         'json' => 'application/json'
     ];
