@@ -31,7 +31,7 @@ final class UserForm extends ModelFormObject
 
     const EMAIL_TOO_LONG_ERROR_MESSAGE = 'Email is too long';
 
-    const EMAIL_HAS_BAD_FORMAT = 'Email has bad format';
+    const EMAIL_HAS_BAD_FORMAT_ERROR_MESSAGE = 'Email has bad format';
 
     const EMAIL_EXISTS_ERROR_MESSAGE = 'User with this email already exists';
 
@@ -105,7 +105,10 @@ final class UserForm extends ModelFormObject
     final public function getLogin(): ?string
     {
         if ($this->has('login')) {
-            return $this->get('login');
+            $login = $this->get('login');
+            $login = preg_replace('/(\s+)/su', '', $login);
+
+            return empty($login) ? null : $login;
         }
 
         return null;
@@ -118,7 +121,10 @@ final class UserForm extends ModelFormObject
     final public function getEmail(): ?string
     {
         if ($this->has('email')) {
-            return $this->get('email');
+            $email = $this->get('email');
+            $email = preg_replace('/(\s+)/su', '', $email);
+
+            return empty($email) ? null : $email;
         }
 
         return null;
@@ -180,6 +186,8 @@ final class UserForm extends ModelFormObject
      */
     final public function setLogin(?string $login = null): void
     {
+        $login = preg_replace('/(\s+)/su', '', $login);
+
         $this->set('login', $login);
     }
 
@@ -190,6 +198,8 @@ final class UserForm extends ModelFormObject
      */
     final public function setEmail(?string $email = null): void
     {
+        $email = preg_replace('/(\s+)/su', '', $email);
+
         $this->set('email', $email);
     }
 
@@ -261,7 +271,7 @@ final class UserForm extends ModelFormObject
             !empty($email) &&
             !preg_match(UserForm::EMAIL_PATTERN, $email)
         ) {
-            $this->setError(UserForm::EMAIL_HAS_BAD_FORMAT);
+            $this->setError(UserForm::EMAIL_HAS_BAD_FORMAT_ERROR_MESSAGE);
             $this->setStatusFail();
         }
     }

@@ -273,7 +273,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function removeById(?int $id): bool
+    final public function removeById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -287,7 +287,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function restoreById(?int $id): bool
+    final public function restoreById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -753,7 +753,7 @@ final class User extends CoreModel implements IModel, IUser
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    private function _isLoginUniq(?string $login, ?int $id): bool
+    private function _isLoginUniq(?string $login = null, ?int $id = null): bool
     {
         $row = $this->store->getUserRowByLogin($login, $id);
 
@@ -767,7 +767,7 @@ final class User extends CoreModel implements IModel, IUser
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    private function _isEmailUniq(?string $email, ?int $id): bool
+    private function _isEmailUniq(?string $email = null, ?int $id = null): bool
     {
         $row = $this->store->getUserRowByEmail($email, $id);
 
