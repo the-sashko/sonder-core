@@ -389,7 +389,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function removeRoleActionById(?int $id): bool
+    final public function removeRoleActionById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -403,7 +403,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function restoreRoleActionById(?int $id): bool
+    final public function restoreRoleActionById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -417,7 +417,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function removeRoleById(?int $id): bool
+    final public function removeRoleById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -431,7 +431,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function restoreRoleById(?int $id): bool
+    final public function restoreRoleById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -694,7 +694,10 @@ final class Role extends CoreModel implements IModel, IRole
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    private function _isRoleActionNameUniq(?string $name, ?int $id): bool
+    private function _isRoleActionNameUniq(
+        ?string $name = null,
+        ?int    $id = null
+    ): bool
     {
         $row = $this->store->getRoleActionRowByName($name, $id);
 
@@ -708,7 +711,10 @@ final class Role extends CoreModel implements IModel, IRole
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    private function _isRoleNameUniq(?string $name, ?int $id): bool
+    private function _isRoleNameUniq(
+        ?string $name = null,
+        ?int    $id = null
+    ): bool
     {
         $row = $this->store->getRoleRowByName($name, $id);
 
