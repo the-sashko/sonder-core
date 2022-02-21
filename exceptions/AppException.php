@@ -26,4 +26,5 @@ class AppException extends Exception
     const CODE_API_NOT_SUPPORTED_API_CALLS = 5004;
     const CODE_API_INVALID_CRUD_ACTION = 5005;
     const CODE_API_INVALID_HTTP_METHOD = 5006;
+    const CODE_API_METHOD_IS_NOT_SUPPORTED = 5007;
 }

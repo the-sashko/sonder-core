@@ -14,4 +14,7 @@ final class ApiException extends AppException
     const MESSAGE_API_INVALID_CRUD_ACTION = 'Invalid CRUD Action';
 
     const MESSAGE_API_INVALID_HTTP_METHOD = 'Invalid HTTP Method';
+
+    const MESSAGE_API_METHOD_IS_NOT_SUPPORTED = 'This Method Is Not 
+    Supported';
 }
