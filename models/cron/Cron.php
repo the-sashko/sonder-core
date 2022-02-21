@@ -270,7 +270,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function removeCronJobById(?int $id): bool
+    final public function removeCronJobById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
@@ -284,7 +284,7 @@ final class Cron extends CoreModel implements IModel, ICron
      * @return bool
      * @throws DatabasePluginException
      */
-    final public function restoreCronJobById(?int $id): bool
+    final public function restoreCronJobById(?int $id = null): bool
     {
         if (empty($id)) {
             return false;
