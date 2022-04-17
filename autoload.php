@@ -14,7 +14,6 @@ $autoload = function (string $directory, Closure $autoload) {
         }
 
         if (preg_match('/^(.*?)\.php$/su', $filePath)) {
-
             require_once $filePath;
         }
     }

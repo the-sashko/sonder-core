@@ -92,7 +92,7 @@ final class DatabaseCredentials implements IDataBaseCredentials
     /**
      * @return string|null
      */
-   final  public function getCacheType(): ?string
+    final  public function getCacheType(): ?string
     {
         return $this->_cacheType;
     }
