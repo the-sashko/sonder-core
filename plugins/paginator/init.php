@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__.'/paginator.plugin.php';
+require_once __DIR__ . '/PaginatorPlugin.php';

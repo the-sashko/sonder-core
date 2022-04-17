@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Plugins\Rss\Exceptions;
+namespace Sonder\Plugins\Rss\Exceptions;
 
-class RssLinkException extends RssException
+final class RssLinkException extends RssException
 {
     const MESSAGE_LINK_VALUES_ARE_EMPTY = 'RSS Link Entity Values Are Empty';
 

@@ -1,7 +1,6 @@
 <?php
-$annotationPluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
+$annotationPluginAutoload = function (string $dir, Closure $autoload): void {
+    foreach (glob($dir . '/*') as $fileItem) {
         if ($fileItem == __FILE__) {
             continue;
         }
@@ -18,10 +17,10 @@ $annotationPluginAutoload = function(string $dir, Closure $autoload): void
     }
 };
 
-require_once __DIR__.'/exceptions/AnnotationException.php';
+require_once __DIR__ . '/exceptions/AnnotationException.php';
 
-$annotationPluginAutoload(__DIR__.'/exceptions', $annotationPluginAutoload);
-$annotationPluginAutoload(__DIR__.'/interfaces', $annotationPluginAutoload);
-$annotationPluginAutoload(__DIR__.'/classes', $annotationPluginAutoload);
+$annotationPluginAutoload(__DIR__ . '/exceptions', $annotationPluginAutoload);
+$annotationPluginAutoload(__DIR__ . '/interfaces', $annotationPluginAutoload);
+$annotationPluginAutoload(__DIR__ . '/classes', $annotationPluginAutoload);
 
-require_once __DIR__.'/annotation.plugin.php';
+require_once __DIR__ . '/AnnotationPlugin.php';

@@ -1,7 +1,6 @@
 <?php
-$databasePluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
+$databasePluginAutoload = function (string $dir, Closure $autoload): void {
+    foreach (glob($dir . '/*') as $fileItem) {
         if ($fileItem == __FILE__) {
             continue;
         }
@@ -18,10 +17,10 @@ $databasePluginAutoload = function(string $dir, Closure $autoload): void
     }
 };
 
-require_once __DIR__.'/exceptions/DatabaseException.php';
+require_once __DIR__ . '/exceptions/DatabaseException.php';
 
-$databasePluginAutoload(__DIR__.'/exceptions', $databasePluginAutoload);
-$databasePluginAutoload(__DIR__.'/interfaces', $databasePluginAutoload);
-$databasePluginAutoload(__DIR__.'/classes', $databasePluginAutoload);
+$databasePluginAutoload(__DIR__ . '/exceptions', $databasePluginAutoload);
+$databasePluginAutoload(__DIR__ . '/interfaces', $databasePluginAutoload);
+$databasePluginAutoload(__DIR__ . '/classes', $databasePluginAutoload);
 
-require_once __DIR__.'/database.plugin.php';
+require_once __DIR__ . '/DatabasePlugin.php';

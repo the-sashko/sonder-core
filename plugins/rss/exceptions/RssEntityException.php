@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Plugins\Rss\Exceptions;
+namespace Sonder\Plugins\Rss\Exceptions;
 
-class RssEntityException extends RssException
+final class RssEntityException extends RssException
 {
     const MESSAGE_ENTITY_VALUES_ARE_EMPTY = 'RSS Plugin Entity Values Are ' .
     'Empty';

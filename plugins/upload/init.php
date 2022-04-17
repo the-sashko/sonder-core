@@ -24,4 +24,4 @@ $uploadPluginAutoload(__DIR__.'/exceptions', $uploadPluginAutoload);
 $uploadPluginAutoload(__DIR__.'/interfaces', $uploadPluginAutoload);
 $uploadPluginAutoload(__DIR__.'/classes', $uploadPluginAutoload);
 
-require_once __DIR__.'/upload.plugin.php';
+require_once __DIR__.'/UploadPlugin.php';

@@ -1,7 +1,13 @@
 <?php
-namespace Core\Plugins\Session\Interfaces;
+
+namespace Sonder\Plugins\Session\Interfaces;
 
 interface ISessionSecurity
 {
-    public function escapeInput($input = null);
+    /**
+     * @param null $input
+     *
+     * @return mixed
+     */
+    public function escapeInput($input = null): mixed;
 }

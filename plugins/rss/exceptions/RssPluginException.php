@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Plugins\Rss\Exceptions;
+namespace Sonder\Plugins\Rss\Exceptions;
 
-class RssPluginException extends RssException
+final class RssPluginException extends RssException
 {
     const MESSAGE_PLUGIN_TITLE_IS_EMPTY = 'RSS Channel Title Is Empty';
 

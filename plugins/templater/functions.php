@@ -1,44 +1,54 @@
 <?php
+
+namespace Sonder;
+
+use Exception;
+
 /**
- * Generate And Display HTML From Template Page
- *
- * @param string|null $page Template Page Name
+ * @param string|null $page
  *
  * @throws Exception
  */
 function renderPage(?string $page = null): void
 {
-    foreach ($GLOBALS['template_params'] as $param => $value) {
-        $$param = $value;
+    foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+        $valueName = ucwords($valueName, '_');
+        $valueName = lcfirst($valueName);
+        $valueName = explode('_', $valueName);
+        $valueName = implode('', $valueName);
+
+        $$valueName = $value;
     }
 
     $pageFilePath = sprintf(
-        '%s/%s/pages/%s.phtml',
-        $GLOBALS['template_dir'],
-        $GLOBALS['template_area'],
+        '%s/pages/%s.phtml',
+        $GLOBALS['template']['dir'],
         $page
     );
 
     if (!file_exists($pageFilePath) || !is_file($pageFilePath)) {
-        throw new Exception(sprintf('Template Page "%s" Missing', $page));
+        throw new Exception(sprintf(
+            'Template Page "%s" Not Found',
+            $page
+        ));
     }
 
     include_once($pageFilePath);
 }
 
 /**
- * @param string|null $part   Template Part Name
- * @param array|null  $values Array Of Values For Using In Template Part
- * @param int|null    $ttl    Cache TTL
+ * @param string|null $part
+ * @param array|null $values
+ * @param int|null $ttl
  *
- * @return bool Returning true After Displaying
+ * @return bool
  *
  * @throws Exception
  */
 function renderPart(
-    ?string $part   = null,
+    ?string $part = null,
     ?array  $values = null,
-    ?int    $ttl    = null
+    ?int    $ttl = null
 ): bool
 {
     if (!empty($ttl)) {
@@ -54,30 +64,38 @@ function renderPart(
     }
 
     if (!empty($values)) {
-        foreach ($values as $templateDataKey => $templateDataValue) {
-            $GLOBALS['template_params'][$templateDataKey] = $templateDataValue;
-        }
+        $GLOBALS['template']['values'] = array_merge(
+            $GLOBALS['template']['values'],
+            $values
+        );
     }
 
-    foreach ($GLOBALS['template_params'] as $param => $value) {
-        $$param = $value;
+    foreach ($GLOBALS['template']['values'] as $valueName => $value) {
+        $valueName = ucwords($valueName, '_');
+        $valueName = lcfirst($valueName);
+        $valueName = explode('_', $valueName);
+        $valueName = implode('', $valueName);
+
+        $$valueName = $value;
     }
 
     $templatePartFile = sprintf(
-        '%s/%s/parts/%s.phtml',
-        $GLOBALS['template_dir'],
-        $GLOBALS['template_area'],
+        '%s/parts/%s.phtml',
+        $GLOBALS['template']['dir'],
         $part
     );
 
     if (!file_exists($templatePartFile) || !is_file($templatePartFile)) {
-        throw new Exception(sprintf('Template Part "%s" Is Not Found', $part));
+        throw new Exception(
+            sprintf('Template Part "%s" Is Not Found', $part)
+        );
     }
 
     include($templatePartFile);
 
     if ($ttl > 0) {
-        $partData = (string) ob_get_clean();
+        $partData = (string)ob_get_clean();
+
         saveTemplateDataToCache($part, $partData, $ttl);
 
         echo $partData;
@@ -87,15 +105,15 @@ function renderPart(
 }
 
 /**
- * @param string|null $part Template Part Name
+ * @param string|null $part
  *
- * @return string|null Data From Cache
+ * @return string|null
  */
 function getTemplateDataFromCache(?string $part = null): ?string
 {
     $cacheFilePath = sprintf(
         '%s/%s.html',
-        $GLOBALS['template_cache_dir'],
+        $GLOBALS['template']['cache_dir'],
         $part
     );
 
@@ -105,10 +123,10 @@ function getTemplateDataFromCache(?string $part = null): ?string
 
         if (
             array_key_exists('timestamp', $partCacheData) &&
-            time() < (int) $partCacheData['timestamp'] &&
+            time() < (int)$partCacheData['timestamp'] &&
             array_key_exists('data', $partCacheData)
         ) {
-            return (string) $partCacheData['data'];
+            return (string)$partCacheData['data'];
         }
     }
 
@@ -116,24 +134,24 @@ function getTemplateDataFromCache(?string $part = null): ?string
 }
 
 /**
- * @param string|null $partName Template Part Name
- * @param string|null $partData Template Part Data
- * @param int|null    $ttl      Cache TTL
+ * @param string|null $partName
+ * @param string|null $partData
+ * @param int|null $ttl
  */
 function saveTemplateDataToCache(
     ?string $partName = null,
     ?string $partData = null,
-    ?int    $ttl      = null
+    ?int    $ttl = null
 ): void
 {
     $cacheData = [
         'timestamp' => time() + $ttl,
-        'data'      => $partData
+        'data' => $partData
     ];
 
     $cacheFilePath = sprintf(
         '%s/%s.html',
-        $GLOBALS['template_cache_dir'],
+        $GLOBALS['template']['cache_dir'],
         $partName
     );
 
@@ -146,9 +164,7 @@ function saveTemplateDataToCache(
 }
 
 /**
- * Alias For renderPage Function
- *
- * @param string|null $page Template Page Name
+ * @param string|null $page
  *
  * @throws Exception
  */
@@ -158,20 +174,25 @@ function __page(?string $page = null): void
 }
 
 /**
- * Alias For renderPart Function
- *
- * @param string|null $part    Template Part Name
- * @param array|null  $values  Array Of Values For Using In Template Part
- * @param bool        $isCache Is Use Cache
+ * @param string|null $part
+ * @param array|null $values
+ * @param bool $isCache
+ * @param int|null $ttl
  *
  * @throws Exception
  */
 function __part(
-    ?string $part    = null,
-    ?array  $values  = null,
-    bool    $isCache = false
+    ?string $part = null,
+    ?array  $values = null,
+    bool    $isCache = false,
+    ?int    $ttl = null
 ): void
 {
-    $ttl = $isCache ? (int) $GLOBALS['template_ttl'] : 0;
+    $ttl = empty($ttl) ? (int)$GLOBALS['template']['ttl'] : $ttl;
+
+    if (!$isCache) {
+        $ttl = 0;
+    }
+
     renderPart($part, $values, $ttl);
 }

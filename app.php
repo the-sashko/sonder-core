@@ -1,100 +1,57 @@
 <?php
 
-use Core\Plugins\Router\Classes\RouterEntity;
-use Core\Plugins\Router\Exceptions\RouterEntityException;
-use Core\Plugins\Router\Exceptions\RouterPluginException;
+namespace Sonder;
 
-/**
- * Main Application Class
- */
-class App
+use Exception;
+use Sonder\Core\CoreEvent;
+use Sonder\Core\CoreObject;
+use Throwable;
+
+final class App
 {
-    public function __construct()
+    /**
+     * @var string
+     */
+    private string $_endpointName = 'app';
+
+    final public function __construct()
     {
-        require_once __DIR__ . '/autoload.php';
+        if (defined('APP_ENDPOINT')) {
+            $this->_endpointName = APP_ENDPOINT;
+        }
 
         set_exception_handler([$this, 'exceptionHandler']);
         set_error_handler([$this, 'errorHandler']);
-
-        $_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
     }
 
     /**
-     * Main Method For Application
-     *
-     * @throws CoreException
-     * @throws RouterEntityException
-     * @throws RouterPluginException
+     * @throws Exception
      */
-    public function run(): void
+    final public function run(): void
     {
-        $urlRoute = $this->_parseUrl();
-
-        if (empty($urlRoute)) {
-            $this->_notFoundHandler();
-        }
-
-        $controller = $urlRoute->getController();
-        $method = $urlRoute->getMethod();
-        $params = $urlRoute->getParams();
-        $page = $urlRoute->getPage();
-        $language = $urlRoute->getLanguage();
-
-        if (!$this->isControllerExist($controller)) {
-            $errorMessage = '%s. Controller: %s';
-
-            $errorMessage = sprintf(
-                $errorMessage,
-                CoreException::MESSAGE_CORE_CONTROLLER_IS_NOT_EXIST,
-                $controller
-            );
-
-            throw new CoreException(
-                $errorMessage,
-                CoreException::CODE_CORE_CONTROLLER_IS_NOT_EXIST
-            );
-        }
-
-        require_once sprintf(
-            '%s/../controllers/%s.php',
-            __DIR__,
-            $controller
-        );
-
         try {
-            $controller = new $controller($params, $page, $language);
+            (new CoreEvent)->run(CoreEvent::TYPE_APP_RUN, []);
 
-            if (!$this->isValidControllerMethod($controller, $method)) {
-                $errorMessage = '%s. Controller: %s. Action: %s';
+            $endpointClass = sprintf(
+                '\Sonder\Endpoints\%sEndpoint',
+                mb_convert_case($this->_endpointName, MB_CASE_TITLE)
+            );
 
-                $errorMessage = sprintf(
-                    $errorMessage,
-                    CoreException::MESSAGE_CORE_INVALID_ACTION_CONTROLLER,
-                    get_class($controller),
-                    $method
-                );
+            $endpoint = new $endpointClass();
 
-                throw new CoreException(
-                    $errorMessage,
-                    CoreException::CODE_CORE_INVALID_ACTION_CONTROLLER
-                );
-            }
-
-            $controller->$method();
-        } catch (Throwable $exp) {
-            $this->exceptionHandler($exp);
+            $endpoint->run();
+        } catch (Throwable $thr) {
+            $this->exceptionHandler($thr);
         }
-
-        exit(0);
     }
 
     /**
-     * Errors Handler
+     * @param int $errorCode
+     * @param string $errorMessage
+     * @param string $errorFile
+     * @param int $errorLine
      *
-     * @param int $errorCode HTTP Response Code
-     * @param string $errorMessage Error Message
-     * @param string $errorFile File With Error
-     * @param int $errorLine Line In File With Error
+     * @throws Exception
      */
     final public function errorHandler(
         int    $errorCode,
@@ -103,6 +60,9 @@ class App
         int    $errorLine
     ): void
     {
+        $loggerPlugin = CoreObject::getPlugin('logger');
+        $errorPlugin = CoreObject::getPlugin('error');
+
         $debugBacktrace = $this->_getDebugBacktrace();
 
         $logMessage = sprintf(
@@ -114,32 +74,49 @@ class App
             implode(' -> ', array_reverse($debugBacktrace))
         );
 
-        (new LoggerPlugin)->logError($logMessage);
+        $loggerPlugin->logError($logMessage);
 
-        (new ErrorPlugin)->displayError(
+        $errorPlugin->displayError(
             $errorCode,
             $errorMessage,
             $errorFile,
             $errorLine,
             $debugBacktrace,
-            OUTPUT_FORMAT
+            APP_RESPONSE_FORMAT
         );
 
         exit(0);
     }
 
     /**
-     * Exceptions Handler
+     * @param Throwable $exception
      *
-     * @param Throwable|null $exception Exception Instance
+     * @throws Exception
      */
-    final public function exceptionHandler(?Throwable $exception = null): void
+    final public function exceptionHandler(Throwable $exception): void
     {
-        if (empty($exception)) {
-            exit(0);
-        }
+        $loggerPlugin = CoreObject::getPlugin('logger');
+        $errorPlugin = CoreObject::getPlugin('error');
 
-        $debugBacktrace = $this->_getDebugBacktrace();
+        $debugBacktrace = $exception->getTrace();
+
+        $debugBacktrace = array_map(
+            function ($traceRow) {
+                if (!array_key_exists('file', $traceRow)) {
+                    return '...';
+                }
+
+                $line = '';
+
+                if (array_key_exists('line', $traceRow)) {
+                    $line = sprintf(' (%d)', (int)$traceRow['line']);
+                }
+
+                return sprintf('%s%s', $traceRow['file'], $line);
+            },
+
+            $debugBacktrace
+        );
 
         $logMessage = sprintf(
             'Error #%d: %s. File: %s (%d). Trace: %s',
@@ -160,136 +137,49 @@ class App
             $logName
         );
 
-        (new LoggerPlugin)->logError($logMessage, $logName);
+        if (empty($logName)) {
+            $logName = $loggerPlugin::DEFAULT_ERROR_LOG_NAME;
+        }
 
-        (new ErrorPlugin)->displayError(
+        $logName = preg_replace(
+            '/([^A-Za-z])/su',
+            '_',
+            $logName
+        );
+
+
+        $logName = preg_replace(
+            '/([A-Z])/su',
+            '_$1',
+            $logName
+        );
+
+        $logName = preg_replace('/([_]+)/su', '_', $logName);
+
+        $logName = preg_replace(
+            '/((^_)|(_$))/su',
+            '',
+            $logName
+        );
+
+        $logName = mb_convert_case($logName, MB_CASE_LOWER);
+
+        $loggerPlugin->logError($logMessage, $logName);
+
+        $errorPlugin->displayError(
             $exception->getCode(),
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine(),
             $debugBacktrace,
-            OUTPUT_FORMAT
+            APP_RESPONSE_FORMAT
         );
 
         exit(0);
     }
 
     /**
-     * Check Is Method Public And Exists In Controller
-     *
-     * @param ControllerCore|null $controller ControllerCore Instance
-     * @param string|null $method Name Of Method
-     *
-     * @return bool Is Method Public And Exists In Controller
-     */
-    final protected function isValidControllerMethod(
-        ?ControllerCore $controller = null,
-        ?string         $method = null
-    ): bool
-    {
-        if (empty($controller) || empty($method)) {
-            return false;
-        }
-
-        if (!method_exists($controller, $method)) {
-            return false;
-        }
-
-        $reflection = new ReflectionMethod($controller, $method);
-
-        if (!$reflection->isPublic()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check Is Controller Exists
-     *
-     * @param string|null $controller Var
-     *
-     * @return bool Is Controller Exists
-     */
-    final protected function isControllerExist(?string $controller = null): bool
-    {
-        if (empty($controller)) {
-            return false;
-        }
-
-        return file_exists(
-            sprintf(
-                '%s/../controllers/%s.php',
-                __DIR__,
-                $controller
-            )
-        );
-    }
-
-    /**
-     * Parse Controller, Method Of Controller And Params From URL
-     *
-     * @return RouterEntity|null
-     *
-     * @throws RouterPluginException
-     */
-    private function _parseUrl(): ?RouterEntity
-    {
-        $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
-        parse_str($urlParams, $urlParams);
-
-        $_SERVER['REQUEST_URI'] = parse_url(
-            $_SERVER['REQUEST_URI'],
-            PHP_URL_PATH
-        );
-
-        $url = (string)$_SERVER['REQUEST_URI'];
-
-        $routerPlugin = new RouterPlugin();
-
-        $urlRoute = $routerPlugin->getRoute($url);
-
-        if (empty($urlRoute)) {
-            return null;
-        }
-
-        $urlRoute->setParams($urlParams);
-
-        return $urlRoute;
-    }
-
-    /**
-     * URL Not Found Handler
-     */
-    private function _notFoundHandler(): void
-    {
-        if (
-            defined('APP_NOT_FOUND_URL') &&
-            !empty(APP_NOT_FOUND_URL) &&
-            $_SERVER['REQUEST_URI'] != APP_NOT_FOUND_URL
-        ) {
-            header(sprintf('Location: %s', APP_NOT_FOUND_URL));
-            exit(0);
-        }
-
-        header('HTTP/1.1 404 Not Found');
-
-        $errorPlugin = new ErrorPlugin();
-
-        $errorCode = ErrorPlugin::HTTP_NOT_FOUND;
-        $errorMessage = $errorPlugin->getHttpErrorMessage($errorCode);
-
-        $errorPlugin->handleHttpError($errorCode);
-
-        echo sprintf('Error %d: %s', $errorCode, $errorMessage);
-
-        exit(0);
-    }
-
-    /**
-     * Get Backtrace For Debug
-     *
-     * @return array Backtrace
+     * @return array
      */
     private function _getDebugBacktrace(): array
     {

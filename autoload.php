@@ -1,17 +1,53 @@
 <?php
-require_once __DIR__ . '/plugins/autoload.php';
-require_once __DIR__ . '/classes/values.object.class.php';
-require_once __DIR__ . '/classes/form.object.class.php';
-require_once __DIR__ . '/classes/common.class.php';
-require_once __DIR__ . '/classes/hook.class.php';
-require_once __DIR__ . '/classes/model.store.class.php';
-require_once __DIR__ . '/classes/api/model.api.result.object.class.php';
-require_once __DIR__ . '/classes/api/model.api.class.php';
-require_once __DIR__ . '/classes/model.class.php';
-require_once __DIR__ . '/classes/model.auth.interface.php';
-require_once __DIR__ . '/classes/response.class.php';
-require_once __DIR__ . '/classes/controller.class.php';
-require_once __DIR__ . '/classes/cron/model.store.cron.class.php';
-require_once __DIR__ . '/classes/cron/model.values.object.cron.class.php';
-require_once __DIR__ . '/classes/cron/model.cron.class.php';
-require_once __DIR__ . '/classes/cron/controller.cron.class.php';
+
+namespace Sonder;
+
+use Closure;
+use Sonder\Core\AutoloadCore;
+
+$autoload = function (string $directory, Closure $autoload) {
+    foreach ((array)glob($directory . '/*') as $filePath) {
+        if (is_dir($filePath)) {
+            $autoload($filePath, $autoload);
+
+            continue;
+        }
+
+        if (preg_match('/^(.*?)\.php$/su', $filePath)) {
+            require_once $filePath;
+        }
+    }
+};
+
+require_once(__DIR__ . '/core/values.object.class.php');
+require_once(__DIR__ . '/core/cache.object.class.php');
+require_once(__DIR__ . '/core/config.object.class.php');
+require_once(__DIR__ . '/core/core.object.class.php');
+
+$autoload(__DIR__ . '/core/interfaces', $autoload);
+$autoload(__DIR__ . '/core', $autoload);
+
+require_once(__DIR__ . '/exceptions/AppException.php');
+
+$autoload(__DIR__ . '/exceptions', $autoload);
+
+$hooksPaths = [
+    APP_PROTECTED_DIR_PATH . '/hooks'
+];
+
+if (
+    array_key_exists('hooks', APP_SOURCE_PATHS) &&
+    is_array(APP_SOURCE_PATHS['hooks'])
+) {
+    $hooksPaths = APP_SOURCE_PATHS['hooks'];
+}
+
+foreach ($hooksPaths as $hooksPath) {
+    if (file_exists($hooksPath) && $hooksPath) {
+        $autoload($hooksPath, $autoload);
+    }
+}
+
+spl_autoload_register(function ($name) {
+    (new AutoloadCore)->load($name);
+});

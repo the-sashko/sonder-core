@@ -1,7 +1,6 @@
 <?php
-$rssPluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
+$rssPluginAutoload = function (string $dir, Closure $autoload): void {
+    foreach (glob($dir . '/*') as $fileItem) {
         if ($fileItem == __FILE__) {
             continue;
         }
@@ -18,10 +17,10 @@ $rssPluginAutoload = function(string $dir, Closure $autoload): void
     }
 };
 
-require_once __DIR__.'/exceptions/RssException.php';
+require_once __DIR__ . '/exceptions/RssException.php';
 
-$rssPluginAutoload(__DIR__.'/exceptions', $rssPluginAutoload);
-$rssPluginAutoload(__DIR__.'/interfaces', $rssPluginAutoload);
-$rssPluginAutoload(__DIR__.'/classes', $rssPluginAutoload);
+$rssPluginAutoload(__DIR__ . '/exceptions', $rssPluginAutoload);
+$rssPluginAutoload(__DIR__ . '/interfaces', $rssPluginAutoload);
+$rssPluginAutoload(__DIR__ . '/classes', $rssPluginAutoload);
 
-require_once __DIR__.'/rss.plugin.php';
+require_once __DIR__ . '/RssPlugin.php';

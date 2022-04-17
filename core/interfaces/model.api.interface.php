@@ -1,0 +1,49 @@
+<?php
+
+namespace Sonder\Core\Interfaces;
+
+use Sonder\Core\RequestObject;
+use Sonder\Core\ResponseObject;
+
+interface IModelApi
+{
+    /**
+     * @return ResponseObject
+     */
+    public function actionCreate(): ResponseObject;
+
+    /**
+     * @return ResponseObject
+     */
+    public function actionGet(): ResponseObject;
+
+    /**
+     * @return ResponseObject
+     */
+    public function actionUpdate(): ResponseObject;
+
+    /**
+     * @return ResponseObject
+     */
+    public function actionDelete(): ResponseObject;
+
+    /**
+     * @param RequestObject $request
+     * @param ResponseObject $response
+     * @return void
+     */
+    public function init(
+        RequestObject  $request,
+        ResponseObject $response
+    ): void;
+
+    /**
+     * @param array|null $data
+     * @param bool $status
+     * @return ResponseObject
+     */
+    public function getApiResponse(
+        ?array $data = null,
+        bool   $status = true
+    ): ResponseObject;
+}

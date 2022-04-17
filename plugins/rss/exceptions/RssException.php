@@ -1,8 +1,10 @@
 <?php
 
-namespace Core\Plugins\Rss\Exceptions;
+namespace Sonder\Plugins\Rss\Exceptions;
 
-class RssException extends \Exception
+use Exception;
+
+class RssException extends Exception
 {
     const CODE_PLUGIN_TITLE_IS_EMPTY = 1001;
     const CODE_PLUGIN_LINK_IS_EMPTY = 1002;

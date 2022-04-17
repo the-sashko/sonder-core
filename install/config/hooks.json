@@ -1,11 +1,3 @@
-{
-  "onBeforeControllerInit": [],
-  "onAfterControllerInit": [],
-  "onBeforeRender": [
-    {
-      "hook": "example",
-      "method": "setExampleData"
-    }
-  ],
-  "onAfterRender": []
-}
+[
+  "<HOOK_NAME>"
+]

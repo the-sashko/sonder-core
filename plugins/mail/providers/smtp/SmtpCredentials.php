@@ -1,52 +1,86 @@
 <?php
-class SmtpCredentials implements IMailCredentials
+
+namespace Sonder\Plugins\Mail\Providers\Smtp;
+
+use Exception;
+use Sonder\Plugins\Mail\Interfaces\IMailCredentials;
+
+final class SmtpCredentials implements IMailCredentials
 {
+    const CONFIG_FILE_PATH_PATTERN = __DIR__ . '/../../../../../config/%s.json';
+
     const DEFAULT_REPLY_EMAIL = 'noreply@noreply.noreply';
 
     const DEFAULT_SENDER_NAME = 'Web Service Automatic Mailer';
 
-    private $_serverAddress = null;
+    /**
+     * @var string|null
+     */
+    private ?string $_serverAddress = null;
 
-    private $_serverPort = null;
+    /**
+     * @var int|null
+     */
+    private ?int $_serverPort = null;
 
-    private $_login = null;
+    /**
+     * @var string|null
+     */
+    private ?string $_login = null;
 
-    private $_password = null;
+    /**
+     * @var string|null
+     */
+    private ?string $_password = null;
 
-    private $_replyEmail = null;
+    /**
+     * @var string|null
+     */
+    private ?string $_replyEmail = null;
 
-    private $_senderName = null;
+    /**
+     * @var string|null
+     */
+    private ?string $_senderName = null;
 
-    public function __construct()
+    /**
+     * @throws Exception
+     */
+    final public function __construct()
     {
-        $this->_loadConfig();
+        if (!$this->_loadConfig()) {
+            throw new Exception('Can Not Load SMTP Config');
+        }
     }
 
+    /**
+     * @return bool
+     */
     private function _loadConfig(): bool
     {
-        $mailConfigData = (array) $this->_getConfigData('mail');
-        $mainConfigData = (array) $this->_getConfigData('main');
+        $mailConfigData = (array)$this->_getConfigData('mail');
+        $mainConfigData = (array)$this->_getConfigData('main');
 
         if (!array_key_exists('smtp', $mailConfigData)) {
             return false;
         }
 
-        $smptpConfig = (array) $mailConfigData['smtp'];
+        $smtpConfig = (array)$mailConfigData['smtp'];
 
-        if (array_key_exists('server', $smptpConfig)) {
-            $this->_setServerAddress($smptpConfig['server']);
+        if (array_key_exists('server', $smtpConfig)) {
+            $this->_setServerAddress($smtpConfig['server']);
         }
 
-        if (array_key_exists('port', $smptpConfig)) {
-            $this->_setServerPort((int) $smptpConfig['port']);
+        if (array_key_exists('port', $smtpConfig)) {
+            $this->_setServerPort((int)$smtpConfig['port']);
         }
 
-        if (array_key_exists('login', $smptpConfig)) {
-            $this->_setLogin($smptpConfig['login']);
+        if (array_key_exists('login', $smtpConfig)) {
+            $this->_setLogin($smtpConfig['login']);
         }
 
-        if (array_key_exists('password', $smptpConfig)) {
-            $this->_setPassword($smptpConfig['password']);
+        if (array_key_exists('password', $smtpConfig)) {
+            $this->_setPassword($smtpConfig['password']);
         }
 
         if (array_key_exists('admin_email', $mainConfigData)) {
@@ -60,60 +94,89 @@ class SmtpCredentials implements IMailCredentials
         return true;
     }
 
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
     public function getServerAddress(): string
     {
         if (empty($this->_serverAddress)) {
-            throw new \Exception('SMTP Server Address Is Not Set');
+            throw new Exception('SMTP Server Address Is Not Set');
         }
 
-        return (string) $this->_serverAddress;
+        return (string)$this->_serverAddress;
     }
 
+    /**
+     * @return int
+     *
+     * @throws Exception
+     */
     public function getServerPort(): int
     {
         if (empty($this->_serverPort)) {
-            throw new \Exception('SMTP Server Port Is Not Set');
+            throw new Exception('SMTP Server Port Is Not Set');
         }
 
-        return (int) $this->_serverPort;
+        return (int)$this->_serverPort;
     }
 
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
     public function getLogin(): string
     {
         if (empty($this->_login)) {
-            throw new \Exception('SMTP Login Is Not Set');
+            throw new Exception('SMTP Login Is Not Set');
         }
 
-        return (string) $this->_login;
+        return (string)$this->_login;
     }
 
+    /**
+     * @return string
+     *
+     * @throws Exception
+     */
     public function getPassword(): string
     {
         if (empty($this->_password)) {
-            throw new \Exception('SMTP Password Is Not Set');
+            throw new Exception('SMTP Password Is Not Set');
         }
 
-        return (string) $this->_password;
+        return (string)$this->_password;
     }
 
+    /**
+     * @return string
+     */
     public function getReplyEmail(): string
     {
         if (empty($this->_replyEmail)) {
-            return static::DEFAULT_REPLY_EMAIL;
+            return SmtpCredentials::DEFAULT_REPLY_EMAIL;
         }
 
-        return (string) $this->_replyEmail;
+        return (string)$this->_replyEmail;
     }
 
+    /**
+     * @return string
+     */
     public function getSenderName(): string
     {
         if (empty($this->_senderName)) {
-            return static::DEFAULT_SENDER_NAME;
+            return SmtpCredentials::DEFAULT_SENDER_NAME;
         }
 
-        return (string) $this->_senderName;
+        return (string)$this->_senderName;
     }
 
+    /**
+     * @param string|null $serverAddress
+     */
     private function _setServerAddress(?string $serverAddress = null): void
     {
         if (!empty($serverAddress)) {
@@ -121,22 +184,31 @@ class SmtpCredentials implements IMailCredentials
         }
     }
 
+    /**
+     * @param int|null $serverPort
+     */
     private function _setServerPort(?int $serverPort = null): void
     {
-        $serverPort = (int) $serverPort;
+        $serverPort = (int)$serverPort;
 
         if ($serverPort > 0) {
             $this->_serverPort = $serverPort;
         }
     }
 
-    private function _setLogin(?string $loign = null): void
+    /**
+     * @param string|null $login
+     */
+    private function _setLogin(?string $login = null): void
     {
-        if (!empty($loign)) {
-            $this->_login = $loign;
+        if (!empty($login)) {
+            $this->_login = $login;
         }
     }
 
+    /**
+     * @param string|null $password
+     */
     private function _setPassword(?string $password = null): void
     {
         if (!empty($password)) {
@@ -144,31 +216,50 @@ class SmtpCredentials implements IMailCredentials
         }
     }
 
+    /**
+     * @param string|null $replyEmail
+     */
     private function _setReplyEmail(?string $replyEmail = null): void
     {
         if (!empty($replyEmail)) {
-            $replyEmail = static::DEFAULT_REPLY_EMAIL;
+            $replyEmail = SmtpCredentials::DEFAULT_REPLY_EMAIL;
         }
 
         $this->_replyEmail = $replyEmail;
     }
 
+    /**
+     * @param string|null $senderName
+     */
     private function _setSenderName(?string $senderName = null): void
     {
         if (!empty($senderName)) {
-            $senderName = static::DEFAULT_SENDER_NAME;
+            $senderName = SmtpCredentials::DEFAULT_SENDER_NAME;
         }
 
         $this->_senderName = $senderName;
     }
 
+    /**
+     * @param string|null $configIdent
+     * @return array|null
+     */
     private function _getConfigData(?string $configIdent = null): ?array
     {
         if (empty($configIdent)) {
             return null;
         }
 
-        $configFilePath = __DIR__.'/../../../../../config/%s.json';
+        $configFilePath = SmtpCredentials::CONFIG_FILE_PATH_PATTERN;
+
+        if (defined('APP_PROTECTED_DIR_PATH')) {
+            $configFilePath = sprintf(
+                '%s/config/%s.json',
+                APP_PROTECTED_DIR_PATH,
+                '%s'
+            );
+        }
+
         $configFilePath = sprintf($configFilePath, $configIdent);
 
         if (!file_exists($configFilePath) || !is_file($configFilePath)) {
@@ -177,6 +268,6 @@ class SmtpCredentials implements IMailCredentials
 
         $configData = file_get_contents($configFilePath);
 
-        return (array) json_decode($configData, true);
+        return (array)json_decode($configData, true);
     }
 }

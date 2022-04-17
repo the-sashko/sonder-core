@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__.'/error.plugin.php';
+require_once __DIR__ . '/ErrorPlugin.php';

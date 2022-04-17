@@ -1,15 +1,11 @@
 <?php
 
-namespace Core\Plugins\Rss\Interfaces;
-
-use Core\Plugins\Rss\Exceptions\RssEntityException;
+namespace Sonder\Plugins\Rss\Interfaces;
 
 interface IRssEntity
 {
     /**
      * @return string|null
-     *
-     * @throws RssEntityException
      */
-    public function getXML(): ?string;
+    public function getXml(): ?string;
 }

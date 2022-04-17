@@ -1,8 +1,6 @@
 <?php
 
-namespace Core\Plugins\Rss\Interfaces;
-
-use Core\Plugins\Rss\Exceptions\RssPluginException;
+namespace Sonder\Plugins\Rss\Interfaces;
 
 interface IRssPlugin
 {
@@ -12,10 +10,6 @@ interface IRssPlugin
      * @param string|null $channelImage
      * @param string|null $channelDescription
      * @param array|null $links
-     *
-     * @throws RssEntityException
-     * @throws RssLinkException
-     * @throws RssPluginException
      */
     public function load(
         ?string $channelTitle = null,
@@ -27,8 +21,6 @@ interface IRssPlugin
 
     /**
      * @param string|null $fileName
-     *
-     * @throws RssPluginException
      */
     public function save(?string $fileName = null): void;
 }

@@ -1,7 +1,6 @@
 <?php
-$imagePluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
+$imagePluginAutoload = function (string $dir, Closure $autoload): void {
+    foreach (glob($dir . '/*') as $fileItem) {
         if ($fileItem == __FILE__) {
             continue;
         }
@@ -18,10 +17,10 @@ $imagePluginAutoload = function(string $dir, Closure $autoload): void
     }
 };
 
-require_once __DIR__.'/exceptions/ImageException.php';
+require_once __DIR__ . '/exceptions/ImageException.php';
 
-$imagePluginAutoload(__DIR__.'/exceptions', $imagePluginAutoload);
-$imagePluginAutoload(__DIR__.'/interfaces', $imagePluginAutoload);
-$imagePluginAutoload(__DIR__.'/classes', $imagePluginAutoload);
+$imagePluginAutoload(__DIR__ . '/exceptions', $imagePluginAutoload);
+$imagePluginAutoload(__DIR__ . '/interfaces', $imagePluginAutoload);
+$imagePluginAutoload(__DIR__ . '/classes', $imagePluginAutoload);
 
-require_once __DIR__.'/image.plugin.php';
+require_once __DIR__ . '/ImagePlugin.php';

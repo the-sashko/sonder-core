@@ -1,13 +1,14 @@
 <?php
-namespace Core\Plugins\Upload\Exceptions;
 
-class UploadSaverException extends UploadException
+namespace Sonder\Plugins\Upload\Exceptions;
+
+final class UploadSaverException extends UploadException
 {
-    const MESSAGE_SAVER_SETTINGS_ARE_NOT_SET = 'Upload Plugin Settings Are '.
-                                               'Not Set';
+    const MESSAGE_SAVER_SETTINGS_ARE_NOT_SET = 'Upload Plugin Settings Are ' .
+    'Not Set';
 
-    const MESSAGE_SAVER_FILE_HAS_BAD_EXTENSION = 'Upload File Has Bad '.
-                                                 'Extension';
+    const MESSAGE_SAVER_FILE_HAS_BAD_EXTENSION = 'Upload File Has Bad ' .
+    'Extension';
 
     const MESSAGE_SAVER_FILE_TOO_LARGE = 'Upload File Is Too Large';
 
