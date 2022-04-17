@@ -175,3 +175,9 @@
 - Rename project to Sonder Core
 - Migrate to PHP8
 - Multiple improvements in codestyle
+
+## v2.0.0 (17/04/2022)
+
+### Improvements
+
+- Deep refactoring framework structure
