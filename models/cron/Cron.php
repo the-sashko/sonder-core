@@ -75,13 +75,13 @@ final class Cron extends CoreModel implements IModel, ICron
 
             $cronVO->setTimeNextExec();
             $cronVO->setStatus(CronValuesObject::STATUS_SCHEDULED);
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $cronVO->setStatus(CronValuesObject::STATUS_ERROR);
-            $cronVO->setErrorMessage($exp->getMessage());
+            $cronVO->setErrorMessage($thr->getMessage());
 
             $logErrorMessage = sprintf(
                 'Cron Job Error: %s',
-                $exp->getMessage()
+                $thr->getMessage()
             );
 
             $logName = sprintf(
@@ -100,7 +100,7 @@ final class Cron extends CoreModel implements IModel, ICron
             echo sprintf(
                 "[%s] Error \"%s\"\n",
                 date('Y-m-d H:i:s'),
-                $exp->getMessage()
+                $thr->getMessage()
             );
 
             $status = false;
@@ -235,9 +235,9 @@ final class Cron extends CoreModel implements IModel, ICron
             if (!empty($id)) {
                 $cronForm->setId($id);
             }
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $cronForm->setStatusFail();
-            $cronForm->setError($exp->getMessage());
+            $cronForm->setError($thr->getMessage());
 
             return false;
         }

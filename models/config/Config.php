@@ -96,8 +96,8 @@ final class Config extends CoreModel implements IModel
             }
 
             file_put_contents($configVO->getFilePath(), json_encode($values));
-        } catch (Throwable $exp) {
-            $errors[] = $exp->getMessage();
+        } catch (Throwable $thr) {
+            $errors[] = $thr->getMessage();
         }
 
         return $errors;

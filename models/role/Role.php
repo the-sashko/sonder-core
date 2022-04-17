@@ -279,9 +279,9 @@ final class Role extends CoreModel implements IModel, IRole
             if (!empty($id)) {
                 $roleActionForm->setId($id);
             }
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $roleActionForm->setStatusFail();
-            $roleActionForm->setError($exp->getMessage());
+            $roleActionForm->setError($thr->getMessage());
 
             return false;
         }
@@ -372,9 +372,9 @@ final class Role extends CoreModel implements IModel, IRole
             if (!empty($id)) {
                 $roleForm->setId($id);
             }
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $roleForm->setStatusFail();
-            $roleForm->setError($exp->getMessage());
+            $roleForm->setError($thr->getMessage());
 
             $this->store->rollback();
 

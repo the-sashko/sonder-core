@@ -5,6 +5,7 @@ namespace Sonder\Models;
 use Exception;
 use Sonder\Core\CoreModel;
 use Sonder\Core\Interfaces\IModel;
+use Sonder\Core\Interfaces\IRole;
 use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\Interfaces\IUser;
 use Sonder\Core\ValuesObject;
@@ -152,6 +153,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return UserValuesObject|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function getVOById(?int $id = null): ?UserValuesObject
     {
@@ -205,10 +207,7 @@ final class User extends CoreModel implements IModel, IUser
         /* @var $roleModel Role */
         $roleModel = $this->getModel('role');
 
-        /* @var $guestVO IRoleValuesObject */
-        $guestVO = $roleModel->getGuestVO();
-
-        return $guestVO;
+        return $roleModel->getGuestVO();
     }
 
     /**
@@ -258,6 +257,7 @@ final class User extends CoreModel implements IModel, IUser
         $userVO = parent::getVO($row);
 
         if (!empty($userVO)) {
+            /* @var $role IRole */
             $role = $this->getModel('role');
 
             $roleVO = $role->getVOById($userVO->getRoleId());
@@ -334,9 +334,9 @@ final class User extends CoreModel implements IModel, IUser
             if (!empty($id)) {
                 $userForm->setId($id);
             }
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $userForm->setStatusFail();
-            $userForm->setError($exp->getMessage());
+            $userForm->setError($thr->getMessage());
 
             return false;
         }
@@ -470,26 +470,9 @@ final class User extends CoreModel implements IModel, IUser
 
                 return false;
             }
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
             $credentialsForm->setStatusFail();
-            $credentialsForm->setError($exp->getMessage());
-
-            return false;
-        }
-
-        return true;
-
-        try {
-            if (
-                !$this->store->updateUserById($row, $credentialsForm->getId())
-            ) {
-                $credentialsForm->setStatusFail();
-
-                return false;
-            }
-        } catch (Throwable $exp) {
-            $credentialsForm->setStatusFail();
-            $credentialsForm->setError($exp->getMessage());
+            $credentialsForm->setError($thr->getMessage());
 
             return false;
         }
@@ -502,6 +485,7 @@ final class User extends CoreModel implements IModel, IUser
      * @return bool
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     private function _checkIdInUserForm(UserForm $userForm): bool
     {
@@ -734,7 +718,9 @@ final class User extends CoreModel implements IModel, IUser
             !preg_match(UserForm::EMAIL_PATTERN, $email)
         ) {
             $userForm->setStatusFail();
-            $userForm->setError(UserForm::EMAIL_HAS_BAD_FORMAT);
+            $userForm->setError(
+                UserForm::EMAIL_HAS_BAD_FORMAT_ERROR_MESSAGE
+            );
         }
 
         if (

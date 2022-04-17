@@ -103,7 +103,24 @@ final class ApiController extends CoreController implements IController
 
         try {
             $model = $this->getModel($modelName);
-        } catch (Throwable $exp) {
+        } catch (Throwable $thr) {
+            /* @var $loggerPlugin LoggerPlugin */
+            $loggerPlugin = $this->getPlugin('logger');
+
+            $errorMessage = sprintf(
+                'Error: %s. Debug data: %s',
+                $thr->getMessage(),
+                json_encode([
+                    'url' => $this->request->getUrl(),
+                    'http_method' => $this->request->getHttpMethod(),
+                    'user_agent' => $this->request->getUserAgent(),
+                    'ip' => $this->request->getIp(),
+                    'api_values' => $this->request->getApiValues()
+                ])
+            );
+
+            $loggerPlugin->logError($errorMessage, 'api');
+
             $errorMessage = sprintf(
                 ApiException::MESSAGE_API_CAN_NOT_RETRIEVE_MODEL,
                 $modelName

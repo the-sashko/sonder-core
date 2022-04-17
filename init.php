@@ -128,8 +128,8 @@ try {
     require_once APP_FRAMEWORK_DIR_PATH . '/app.php';
 
     (new Sonder\App)->run();
-} catch (Exception $exp) {
-    $errorMessage = $exp->getMessage();
+} catch (Throwable $thr) {
+    $errorMessage = $thr->getMessage();
 
     $errorMessage = sprintf(
         'Can Not Start Application: %s',

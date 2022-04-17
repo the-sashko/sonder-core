@@ -40,8 +40,8 @@ final class App
             $endpoint = new $endpointClass();
 
             $endpoint->run();
-        } catch (Throwable $exception) {
-            $this->exceptionHandler($exception);
+        } catch (Throwable $thr) {
+            $this->exceptionHandler($thr);
         }
     }
 
