@@ -5,6 +5,7 @@ namespace Sonder\Plugins;
 use Exception;
 use Sonder\Plugins\Mail\Interfaces\IMailProvider;
 use Sonder\Plugins\Mail\Interfaces\IMailResponse;
+use Throwable;
 
 final class MailPlugin
 {
@@ -134,8 +135,8 @@ final class MailPlugin
                 $replyEmail,
                 $senderName
             );
-        } catch (Exception $exp) {
-            $errorMessage = $exp->getMessage();
+        } catch (Throwable $thr) {
+            $errorMessage = $thr->getMessage();
 
             $this->_handleSendingError(
                 $email,

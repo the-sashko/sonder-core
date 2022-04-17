@@ -2,7 +2,7 @@
 
 namespace Sonder\Plugins;
 
-use Exception;
+use Throwable;
 
 final class YoutubePlugin
 {
@@ -276,7 +276,7 @@ final class YoutubePlugin
         foreach ($urls as $url) {
             try {
                 $content = file_get_contents($url);
-            } catch (Exception $exp) {
+            } catch (Throwable $thr) {
                 continue;
             }
 
