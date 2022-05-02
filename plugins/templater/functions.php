@@ -162,37 +162,3 @@ function saveTemplateDataToCache(
     file_put_contents($cacheFilePath, json_encode($cacheData));
     chmod($cacheFilePath, 0775);
 }
-
-/**
- * @param string|null $page
- *
- * @throws Exception
- */
-function __page(?string $page = null): void
-{
-    renderPage($page);
-}
-
-/**
- * @param string|null $part
- * @param array|null $values
- * @param bool $isCache
- * @param int|null $ttl
- *
- * @throws Exception
- */
-function __part(
-    ?string $part = null,
-    ?array  $values = null,
-    bool    $isCache = false,
-    ?int    $ttl = null
-): void
-{
-    $ttl = empty($ttl) ? (int)$GLOBALS['template']['ttl'] : $ttl;
-
-    if (!$isCache) {
-        $ttl = 0;
-    }
-
-    renderPart($part, $values, $ttl);
-}

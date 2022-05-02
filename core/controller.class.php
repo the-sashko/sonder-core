@@ -4,6 +4,7 @@ namespace Sonder\Core;
 
 use Exception;
 use Sonder\Core\Interfaces\IController;
+use Sonder\Plugins\TemplaterPlugin;
 
 class CoreController extends CoreObject implements IController
 {
@@ -148,6 +149,7 @@ class CoreController extends CoreObject implements IController
 
         $themeName = $this->_getRenderTheme();
 
+        /* @var TemplaterPlugin $templaterPlugin */
         $templaterPlugin = $this->getPlugin('templater', $themeName);
 
         $values = (new CoreEvent)->run(

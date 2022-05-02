@@ -43,7 +43,7 @@ final class TemplaterPlugin
      * @return string
      */
     final public function render(
-        string $page,
+        string $templatePage,
         ?array $values = null,
         ?int   $ttl = null
     ): string
@@ -52,19 +52,14 @@ final class TemplaterPlugin
             'dir' => $this->_themePath,
             'values' => (array)$values,
             'ttl' => (int)$ttl,
-            'cache_dir' => $this->_getCacheDirPath($page)
+            'cache_dir' => $this->_getCacheDirPath($templatePage)
         ];
 
-        foreach ($GLOBALS['template']['values'] as $valueName => $value) {
-            $valueName = ucwords($valueName, '_');
-            $valueName = lcfirst($valueName);
-            $valueName = explode('_', $valueName);
-            $valueName = implode('', $valueName);
+        ob_start();
 
-            $$valueName = $value;
-        }
+        include_once(sprintf('%s/main.phtml', $this->_themePath));
 
-        return $this->_renderPage($page);
+        return (string)ob_get_clean();
     }
 
     /**
@@ -138,21 +133,5 @@ final class TemplaterPlugin
         }
 
         return $cacheDirPath;
-    }
-
-    /**
-     * @param string|null $templatePage
-     *
-     * @return string
-     */
-    private function _renderPage(?string $templatePage = null): string
-    {
-        ob_start();
-
-        if (!empty($templatePage)) {
-            include_once(sprintf('%s/main.phtml', $this->_themePath));
-        }
-
-        return (string)ob_get_clean();
     }
 }
