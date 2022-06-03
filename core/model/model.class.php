@@ -28,6 +28,11 @@ class CoreModel extends CoreObject implements IModel
     private ?string $_valuesObjectClass = null;
 
     /**
+     * @var string|null
+     */
+    private ?string $_simpleValuesObjectClass = null;
+
+    /**
      * @throws Exception
      */
     public function __construct()
@@ -35,7 +40,7 @@ class CoreModel extends CoreObject implements IModel
         parent::__construct();
 
         $this->_setStore();
-        $this->_setValuesObject();
+        $this->_setValuesObjectClasses();
         $this->_setApi();
     }
 
@@ -83,7 +88,21 @@ class CoreModel extends CoreObject implements IModel
     protected function getVO(?array $row = null): ValuesObject
     {
         if (empty($this->_valuesObjectClass)) {
-            throw new Exception('Value Object class not set');
+            throw new Exception('Value Object Class Not set');
+        }
+
+        return new $this->_valuesObjectClass($row);
+    }
+
+    /**
+     * @param array|null $row
+     * @return ValuesObject
+     * @throws Exception
+     */
+    protected function getSimpleVO(?array $row = null): ValuesObject
+    {
+        if (empty($this->_valuesObjectClass)) {
+            throw new Exception('Simple Value Object Class Not Set');
         }
 
         return new $this->_valuesObjectClass($row);
@@ -114,6 +133,30 @@ class CoreModel extends CoreObject implements IModel
     }
 
     /**
+     * @param array|null $rows
+     * @return array|null
+     * @throws Exception
+     */
+    final protected function getSimpleVOArray(?array $rows = null): ?array
+    {
+        $simpleVoArray = [];
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        foreach ($rows as $row) {
+            $simpleValuesObject = $this->getSimpleVO($row);
+
+            if (!empty($simpleValuesObject)) {
+                $simpleVoArray[] = $simpleValuesObject;
+            }
+        }
+
+        return $simpleVoArray;
+    }
+
+    /**
      * @throws Exception
      */
     private function _setStore(): void
@@ -135,12 +178,22 @@ class CoreModel extends CoreObject implements IModel
     /**
      * @return void
      */
-    private function _setValuesObject(): void
+    private function _setValuesObjectClasses(): void
     {
         $modelClass = get_called_class();
 
         $modelName = explode('\\', $modelClass);
         $modelName = end($modelName);
+
+        $simpleValuesObjectClass = sprintf(
+            '%s\\%sSimpleValuesObject',
+            $modelClass,
+            $modelName
+        );
+
+        if (class_exists($simpleValuesObjectClass)) {
+            $this->_simpleValuesObjectClass = $simpleValuesObjectClass;
+        }
 
         $valuesObjectClass = sprintf(
             '%s\\%sValuesObject',
