@@ -7,6 +7,7 @@ use Sonder\Core\CoreMiddleware;
 use Sonder\Core\Interfaces\IMiddleware;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\MiddlewareException;
+use Sonder\Plugins\RouterPlugin;
 
 final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 {
@@ -14,7 +15,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
 
     const DEFAULT_CONTROLLER = 'main';
 
-    const DEFAULT_METHOD = 'displayIndex';
+    const DEFAULT_METHOD = 'displayNotFound';
 
     const ANNOTATIONS_ROUTING_TYPE = 'annotations';
 
@@ -78,6 +79,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
             $controllersPaths = APP_SOURCE_PATHS['controllers'];
         }
 
+        /* @var RouterPlugin $routerPlugin */
         $routerPlugin = $this->getPlugin('router', $controllersPaths);
 
         $routerPlugin->cleanCache();
