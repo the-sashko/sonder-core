@@ -248,8 +248,8 @@ final class UserValuesObject extends ModelValuesObject
             return null;
         }
 
-        if (array_key_exists('role', $row) && empty($row['role'])) {
-            unset($row['role']);
+        if (array_key_exists('role_vo', $row) && empty($row['role_vo'])) {
+            unset($row['role_vo']);
         }
 
         if (array_key_exists('password_hash', $row)) {

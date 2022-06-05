@@ -4,39 +4,25 @@ namespace Sonder\Models\Role;
 
 use Exception;
 use Sonder\Core\Interfaces\IRoleValuesObject;
-use Sonder\Core\ModelValuesObject;
+use Sonder\Core\ModelSimpleValuesObject;
 
-final class RoleValuesObject
-    extends ModelValuesObject
+final class RoleSimpleValuesObject
+    extends ModelSimpleValuesObject
     implements IRoleValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $editLinkPattern = '/admin/users/role/%d/';
-
-    /**
-     * @var string|null
-     */
-    protected ?string $removeLinkPattern = '/admin/users/roles/remove/%d/';
-
-    /**
-     * @var string|null
-     */
-    protected ?string $restoreLinkPattern = '/admin/users/roles/restore/%d/';
-
-    /**
-     * @var string|null
-     */
-    protected ?string $adminViewLinkPattern = '/admin/users/roles/view/%d/';
-
     /**
      * @return string
      * @throws Exception
      */
     final public function getName(): string
     {
-        return (string)$this->get('name');
+        $name = null;
+
+        if ($this->has('name')) {
+            $name = $this->get('name');
+        }
+
+        return (string)$name;
     }
 
     /**
@@ -60,11 +46,11 @@ final class RoleValuesObject
      */
     final public function getParentVO(): ?IRoleValuesObject
     {
-        if (!$this->has('parent_vo')) {
+        if (!$this->has('parent_simple_vo')) {
             return null;
         }
 
-        $parent = $this->get('parent_vo');
+        $parent = $this->get('parent_simple_vo');
 
         if (empty($parent)) {
             return null;
@@ -112,67 +98,11 @@ final class RoleValuesObject
     }
 
     /**
-     * @return bool
      * @throws Exception
      */
-    final public function isSystem(): bool
+    public function can(?string $roleActionIdent = null): bool
     {
-        return (bool)$this->get('is_system');
-    }
-
-    /**
-     * @return string
-     * @throws Exception
-     */
-    final public function getAdminViewLink(): string
-    {
-        return sprintf($this->adminViewLinkPattern, $this->getId());
-    }
-
-    /**
-     * @param string|null $roleActionIdent
-     * @return bool
-     * @throws Exception
-     */
-    final public function can(?string $roleActionIdent = null): bool
-    {
-        if (empty($roleActionIdent)) {
-            return false;
-        }
-
-        if (!in_array($roleActionIdent, (array)$this->getAllowedActions())) {
-            return false;
-        }
-
-        if (in_array($roleActionIdent, (array)$this->getDeniedActions())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string|null $name
-     * @return void
-     * @throws Exception
-     */
-    final public function setName(?string $name = null): void
-    {
-        if (!empty($name)) {
-            $this->set('name', $name);
-        }
-    }
-
-    /**
-     * @param int|null $parentId
-     * @return void
-     * @throws Exception
-     */
-    final public function setParentId(?int $parentId = null): void
-    {
-        if (!empty($parentId)) {
-            $this->set('parent_id', $parentId);
-        }
+        throw new Exception('Method can() Is Not Implemented');
     }
 
     /**
@@ -183,7 +113,7 @@ final class RoleValuesObject
     final public function setParentVO(?IRoleValuesObject $parentVO = null): void
     {
         if (!empty($parentVO)) {
-            $this->set('parent_vo', $parentVO);
+            $this->set('parent_simple_vo', $parentVO);
         }
     }
 
@@ -230,19 +160,15 @@ final class RoleValuesObject
     /**
      * @param array|null $params
      * @return array|null
+     * @throws Exception
      */
     final public function exportRow(?array $params = null): ?array
     {
-        $row = parent::exportRow($params);
-
-        if (empty($row)) {
-            return null;
-        }
-
-        if (array_key_exists('parent_vo', $row)) {
-            unset($row['parent_vo']);
-        }
-
-        return $row;
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'allowed_actions' => $this->getAllowedActions(),
+            'denied_actions' => $this->getDeniedActions()
+        ];
     }
 }

@@ -29,8 +29,8 @@ final class RoleStore extends ModelStore implements IModelStore
      */
     final public function getRoleRowById(
         ?int $id = null,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         if (empty($id)) {
@@ -74,8 +74,8 @@ final class RoleStore extends ModelStore implements IModelStore
     final public function getRoleRowByName(
         ?string $name = null,
         ?int    $excludeId = null,
-        bool    $excludeRemoved = false,
-        bool    $excludeInactive = false
+        bool    $excludeRemoved = true,
+        bool    $excludeInactive = true
     ): ?array
     {
         if (empty($name)) {
@@ -123,8 +123,8 @@ final class RoleStore extends ModelStore implements IModelStore
     final public function getRoleRowsByPage(
         int  $page = 1,
         int  $itemsOnPage = 10,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         $sqlWhere = 'true';
@@ -200,8 +200,8 @@ final class RoleStore extends ModelStore implements IModelStore
      */
     final public function getRoleActionRowById(
         ?int $id = null,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         if (empty($id)) {
@@ -330,8 +330,8 @@ final class RoleStore extends ModelStore implements IModelStore
     final public function getRoleActionRowByName(
         ?string $name = null,
         ?int    $excludeId = null,
-        bool    $excludeRemoved = false,
-        bool    $excludeInactive = false
+        bool    $excludeRemoved = true,
+        bool    $excludeInactive = true
     ): ?array
     {
         if (empty($name)) {
@@ -467,8 +467,8 @@ final class RoleStore extends ModelStore implements IModelStore
      * @throws DatabasePluginException
      */
     final public function getRoleActionRowsCount(
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): int
     {
         $sqlWhere = 'true';
@@ -503,8 +503,8 @@ final class RoleStore extends ModelStore implements IModelStore
      * @throws DatabasePluginException
      */
     final public function getRoleRowsCount(
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): int
     {
         $sqlWhere = 'true';

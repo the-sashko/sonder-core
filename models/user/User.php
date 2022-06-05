@@ -11,6 +11,7 @@ use Sonder\Core\Interfaces\IUser;
 use Sonder\Core\ValuesObject;
 use Sonder\Models\User\CredentialsForm;
 use Sonder\Models\User\UserForm;
+use Sonder\Models\User\UserSimpleValuesObject;
 use Sonder\Models\User\UserStore;
 use Sonder\Models\User\UserValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
@@ -150,17 +151,46 @@ final class User extends CoreModel implements IModel, IUser
 
     /**
      * @param int|null $id
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return UserValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function getVOById(
+        ?int $id = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?UserValuesObject
+    {
+        $row = $this->store->getUserRowById(
+            $id,
+            $excludeRemoved,
+            $excludeInactive
+        );
+
+        if (!empty($row)) {
+            return $this->getVO($row);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int|null $id
+     * @return UserSimpleValuesObject|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      * @throws Exception
      */
-    final public function getVOById(?int $id = null): ?UserValuesObject
+    final public function getSimpleVOById(
+        ?int $id = null
+    ): ?UserSimpleValuesObject
     {
         $row = $this->store->getUserRowById($id);
 
         if (!empty($row)) {
-            return $this->getVO($row);
+            return $this->getSimpleVO($row);
         }
 
         return null;
@@ -211,15 +241,47 @@ final class User extends CoreModel implements IModel, IUser
     }
 
     /**
+     * @return IRoleValuesObject
+     * @throws Exception
+     */
+    final public function getRoleSimpleVO(): IRoleValuesObject
+    {
+        /* @var $role ValuesObject */
+        $role = $this->_currentUserVO->getRoleVO();
+
+        if (!empty($role)) {
+            /* @var $simpleRole IRoleValuesObject */
+            $simpleRole = $this->simplifyVO($role);
+
+            return $simpleRole;
+        }
+
+        /* @var $roleModel Role */
+        $roleModel = $this->getModel('role');
+
+        return $roleModel->getGuestSimpleVO();
+    }
+
+    /**
      * @param int $page
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return array|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
-     * @throws Exception
      */
-    final public function getUsersByPage(int $page): ?array
+    final public function getUsersByPage(
+        int  $page,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?array
     {
-        $rows = $this->store->getUserRowsByPage($page, $this->itemsOnPage);
+        $rows = $this->store->getUserRowsByPage(
+            $page,
+            $this->itemsOnPage,
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         if (empty($rows)) {
             return null;
@@ -229,13 +291,21 @@ final class User extends CoreModel implements IModel, IUser
     }
 
     /**
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getUsersPageCount(): int
+    final public function getUsersPageCount(
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): int
     {
-        $rowsCount = $this->store->getUserRowsCount();
+        $rowsCount = $this->store->getUserRowsCount(
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         $pageCount = (int)($rowsCount / $this->itemsOnPage);
 
@@ -262,7 +332,33 @@ final class User extends CoreModel implements IModel, IUser
 
             $roleVO = $role->getVOById($userVO->getRoleId());
 
+            if (empty($roleVO)) {
+                $roleVO = $role->getGuestVO();
+            }
+
             $userVO->setRoleVO($roleVO);
+        }
+
+        return $userVO;
+    }
+
+    /**
+     * @param array|null $row
+     * @return UserValuesObject
+     * @throws Exception
+     */
+    final protected function getSimpleVO(?array $row = null): ValuesObject
+    {
+        /* @var $userVO UserSimpleValuesObject */
+        $userVO = parent::getSimpleVO($row);
+
+        if (!empty($userVO)) {
+            /* @var $role IRole */
+            $role = $this->getModel('role');
+
+            $simpleRoleVO = $role->getRoleSimpleVOById($userVO->getRoleId());
+
+            $userVO->setRoleVO($simpleRoleVO);
         }
 
         return $userVO;
@@ -533,7 +629,11 @@ final class User extends CoreModel implements IModel, IUser
         }
 
         if (!empty($id)) {
-            $row = $this->store->getUserRowById($id);
+            $row = $this->store->getUserRowById(
+                $id,
+                false,
+                false
+            );
         }
 
         if (!empty($id) && empty($row)) {
@@ -581,7 +681,11 @@ final class User extends CoreModel implements IModel, IUser
             return null;
         }
 
-        $row = $this->store->getUserRowById($id);
+        $row = $this->store->getUserRowById(
+            $id,
+            false,
+            false
+        );
 
         if (empty($row)) {
             return null;
@@ -741,7 +845,12 @@ final class User extends CoreModel implements IModel, IUser
      */
     private function _isLoginUniq(?string $login = null, ?int $id = null): bool
     {
-        $row = $this->store->getUserRowByLogin($login, $id);
+        $row = $this->store->getUserRowByLogin(
+            $login,
+            $id,
+            false,
+            false
+        );
 
         return empty($row);
     }
@@ -755,7 +864,12 @@ final class User extends CoreModel implements IModel, IUser
      */
     private function _isEmailUniq(?string $email = null, ?int $id = null): bool
     {
-        $row = $this->store->getUserRowByEmail($email, $id);
+        $row = $this->store->getUserRowByEmail(
+            $email,
+            $id,
+            false,
+            false
+        );
 
         return empty($row);
     }

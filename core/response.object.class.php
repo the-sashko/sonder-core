@@ -59,6 +59,8 @@ final class ResponseObject
 
     const DEFAULT_HTTP_CODE = 200;
 
+    const NOT_FOUND_HTTP_CODE = 404;
+
     /**
      * @var int
      */

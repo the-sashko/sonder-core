@@ -101,11 +101,29 @@ class CoreModel extends CoreObject implements IModel
      */
     protected function getSimpleVO(?array $row = null): ValuesObject
     {
-        if (empty($this->_valuesObjectClass)) {
+        if (empty($this->_simpleValuesObjectClass)) {
             throw new Exception('Simple Value Object Class Not Set');
         }
 
-        return new $this->_valuesObjectClass($row);
+        return new $this->_simpleValuesObjectClass($row);
+    }
+
+    /**
+     * @param ValuesObject|null $fullVO
+     * @return ValuesObject|null
+     * @throws Exception
+     */
+    protected function simplifyVO(?ValuesObject $fullVO = null): ?ValuesObject
+    {
+        if (empty($this->_simpleValuesObjectClass)) {
+            throw new Exception('Simple Value Object Class Not Set');
+        }
+
+        if (empty($fullVO)) {
+            return null;
+        }
+
+        return new $this->_simpleValuesObjectClass($fullVO->exportRow());
     }
 
     /**

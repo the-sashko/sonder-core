@@ -12,7 +12,7 @@ use function Sonder\renderPart;
  *
  * @throws Exception
  */
-function __page(?string $page = null): void
+function __page(?string $page = null):  void
 {
     renderPage($page);
 }

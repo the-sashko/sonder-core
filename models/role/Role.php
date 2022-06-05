@@ -9,8 +9,10 @@ use Sonder\Core\Interfaces\IRole;
 use Sonder\Core\Interfaces\IRoleValuesObject;
 use Sonder\Core\ValuesObject;
 use Sonder\Models\Role\RoleActionForm;
+use Sonder\Models\Role\RoleActionSimpleValuesObject;
 use Sonder\Models\Role\RoleActionValuesObject;
 use Sonder\Models\Role\RoleForm;
+use Sonder\Models\Role\RoleSimpleValuesObject;
 use Sonder\Models\Role\RoleStore;
 use Sonder\Models\Role\RoleValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
@@ -29,28 +31,44 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @param int|null $id
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return IRoleValuesObject|null
-     * @throws Exception
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
-    final public function getVOById(?int $id = null): ?IRoleValuesObject
+    final public function getVOById(
+        ?int $id = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?IRoleValuesObject
     {
-        $row = $this->store->getRoleRowById($id);
+        /* @var $roleVO ?IRoleValuesObject */
+        $roleVO = $this->getRoleVOById($id, $excludeRemoved, $excludeInactive);
 
-        if (!empty($row)) {
-            return $this->getVO($row);
-        }
-
-        return null;
+        return $roleVO;
     }
 
     /**
      * @param int $page
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return array|null
-     * @throws Exception
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
      */
-    final public function getRolesByPage(int $page): ?array
+    final public function getRolesByPage(
+        int  $page,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?array
     {
-        $rows = $this->store->getRoleRowsByPage($page, $this->itemsOnPage);
+        $rows = $this->store->getRoleRowsByPage(
+            $page,
+            $this->itemsOnPage,
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         if (empty($rows)) {
             return null;
@@ -61,15 +79,23 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @param int|null $id
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return RoleActionValuesObject|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
     final public function getRoleActionVOById(
-        ?int $id = null
+        ?int $id = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?RoleActionValuesObject
     {
-        $row = $this->store->getRoleActionRowById($id);
+        $row = $this->store->getRoleActionRowById(
+            $id,
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         if (empty($row)) {
             return null;
@@ -80,14 +106,43 @@ final class Role extends CoreModel implements IModel, IRole
 
     /**
      * @param int|null $id
+     * @return RoleActionSimpleValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     */
+    final public function GetRoleActionSimpleVOById(
+        ?int $id = null
+    ): ?RoleActionSimpleValuesObject
+    {
+        $row = $this->store->getRoleActionRowById($id);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        return new RoleActionSimpleValuesObject($row);
+    }
+
+    /**
+     * @param int|null $id
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return RoleValuesObject|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      * @throws Exception
      */
-    final public function getRoleVOById(?int $id = null): ?RoleValuesObject
+    final public function getRoleVOById(
+        ?int $id = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?RoleValuesObject
     {
-        $row = $this->store->getRoleRowById($id);
+        $row = $this->store->getRoleRowById(
+            $id,
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         if (empty($row)) {
             return null;
@@ -100,12 +155,39 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param int|null $id
+     * @return RoleSimpleValuesObject|null
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function getRoleSimpleVOById(
+        ?int $id = null
+    ): ?RoleSimpleValuesObject
+    {
+        $row = $this->store->getRoleRowById($id);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        /* @var $roleVO RoleSimpleValuesObject */
+        $roleVO = $this->getSimpleVO($row);
+
+        return $roleVO;
+    }
+
+    /**
      * @param int $page
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return array|null
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRoleActionsByPage(int $page): ?array
+    final public function getRoleActionsByPage(
+        int $page
+    ): ?array
     {
         $rows = $this->store->getRoleActionRowsByPage(
             $page,
@@ -155,13 +237,21 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
+     * @param bool $excludeRemoved
+     * @param bool $excludeInactive
      * @return int
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
-    final public function getRolesPageCount(): int
+    final public function getRolesPageCount(
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): int
     {
-        $rowsCount = $this->store->getRoleRowsCount();
+        $rowsCount = $this->store->getRoleRowsCount(
+            $excludeRemoved,
+            $excludeInactive
+        );
 
         $pageCount = (int)($rowsCount / $this->itemsOnPage);
 
@@ -179,7 +269,7 @@ final class Role extends CoreModel implements IModel, IRole
      */
     final public function getRoleActionsPageCount(): int
     {
-        $rowsCount = $this->store->getRoleActionRowsCount();
+        $rowsCount = $this->store->getRoleActionRowsCount(false, false);
 
         $pageCount = (int)($rowsCount / $this->itemsOnPage);
 
@@ -194,6 +284,7 @@ final class Role extends CoreModel implements IModel, IRole
      * @return IRoleValuesObject
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
+     * @throws Exception
      */
     final public function getGuestVO(): IRoleValuesObject
     {
@@ -203,7 +294,30 @@ final class Role extends CoreModel implements IModel, IRole
             throw new Exception('Guest Role Not Exists In Database');
         }
 
-        return $this->getVO($row);
+        /* @var $guestRoleVO IRoleValuesObject */
+        $guestRoleVO = $this->getVO($row);
+
+        return $guestRoleVO;
+    }
+
+    /**
+     * @return IRoleValuesObject
+     * @throws DatabaseCacheException
+     * @throws DatabasePluginException
+     * @throws Exception
+     */
+    final public function getGuestSimpleVO(): IRoleValuesObject
+    {
+        $row = $this->store->getRoleRowByName('guest');
+
+        if (empty($row)) {
+            throw new Exception('Guest Role Not Exists In Database');
+        }
+
+        /* @var $guestRoleVO IRoleValuesObject */
+        $guestRoleVO = $this->getSimpleVO($row);
+
+        return $guestRoleVO;
     }
 
     /**
@@ -326,7 +440,12 @@ final class Role extends CoreModel implements IModel, IRole
                 return false;
             }
 
-            $row = $this->store->getRoleRowByName($roleVO->getName());
+            $row = $this->store->getRoleRowByName(
+                $roleVO->getName(),
+                null,
+                false,
+                false
+            );
 
             if (empty($row)) {
                 $roleForm->setStatusFail();
@@ -461,11 +580,31 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
-     * @param RoleValuesObject $roleVO
+     * @param array|null $row
+     * @return ValuesObject
+     * @throws Exception
+     */
+    final protected function getSimpleVO(?array $row = null): ValuesObject
+    {
+        /* @var $roleVO IRoleValuesObject */
+        $roleVO = parent::getSimpleVO($row);
+
+        if (empty($roleVO->getId())) {
+            return $roleVO;
+        }
+
+        $this->_setParentToVO($roleVO);
+        $this->_setActionsToVO($roleVO);
+
+        return $roleVO;
+    }
+
+    /**
+     * @param IRoleValuesObject $roleVO
      * @return void
      * @throws Exception
      */
-    private function _setParentToVO(RoleValuesObject $roleVO): void
+    private function _setParentToVO(IRoleValuesObject $roleVO): void
     {
         $parentVO = null;
 
@@ -484,11 +623,11 @@ final class Role extends CoreModel implements IModel, IRole
     }
 
     /**
-     * @param RoleValuesObject $roleVO
+     * @param IRoleValuesObject $roleVO
      * @return void
      * @throws Exception
      */
-    private function _setActionsToVO(RoleValuesObject $roleVO): void
+    private function _setActionsToVO(IRoleValuesObject $roleVO): void
     {
         $allowedActions = $this->getAllowedActionsByRoleId($roleVO->getId());
         $deniedActions = $this->getDeniedActionsByRoleId($roleVO->getId());
@@ -496,7 +635,7 @@ final class Role extends CoreModel implements IModel, IRole
         $roleVO->setAllowedActions($allowedActions);
         $roleVO->setDeniedActions($deniedActions);
 
-        /* @var $roleParentVO RoleValuesObject */
+        /* @var $roleParentVO IRoleValuesObject */
         $roleParentVO = $roleVO->getParentVO();
 
         while (!empty($roleParentVO)) {
@@ -699,7 +838,7 @@ final class Role extends CoreModel implements IModel, IRole
         ?int    $id = null
     ): bool
     {
-        $row = $this->store->getRoleActionRowByName($name, $id);
+        $row = $this->store->getRoleActionRowByName($name, $id, false, false);
 
         return empty($row);
     }
@@ -716,7 +855,7 @@ final class Role extends CoreModel implements IModel, IRole
         ?int    $id = null
     ): bool
     {
-        $row = $this->store->getRoleRowByName($name, $id);
+        $row = $this->store->getRoleRowByName($name, $id, false, false);
 
         return empty($row);
     }
@@ -741,7 +880,11 @@ final class Role extends CoreModel implements IModel, IRole
         }
 
         if (!empty($id)) {
-            $row = $this->store->getRoleActionRowById($id);
+            $row = $this->store->getRoleActionRowById(
+                $id,
+                false,
+                false
+            );
         }
 
         if (!empty($id) && empty($row)) {
@@ -776,7 +919,7 @@ final class Role extends CoreModel implements IModel, IRole
         }
 
         if (!empty($id)) {
-            $row = $this->store->getRoleRowById($id);
+            $row = $this->store->getRoleRowById($id, false, false);
         }
 
         if (!empty($id) && empty($row)) {

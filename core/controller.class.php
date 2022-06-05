@@ -75,6 +75,7 @@ class CoreController extends CoreObject implements IController
         }
 
         $this->assign([
+            'current_host' => $this->request->getHost(),
             'current_url' => $this->request->getUrl(),
             'current_full_url' => $this->request->getFullUrl(),
             'current_language' => $this->_language,

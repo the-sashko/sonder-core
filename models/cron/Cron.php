@@ -148,7 +148,9 @@ final class Cron extends CoreModel implements IModel, ICron
      * @throws DatabasePluginException
      * @throws Exception
      */
-    final public function getCronJobsByPage(int $page): ?array
+    final public function getCronJobsByPage(
+        int $page
+    ): ?array
     {
         $rows = $this->store->getCronJobRowsByPage($page, $this->itemsOnPage);
 

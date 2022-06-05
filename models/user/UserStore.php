@@ -27,8 +27,8 @@ final class UserStore extends ModelStore implements IModelStore
      */
     final public function getUserRowById(
         ?int $id = null,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         if (empty($id)) {
@@ -100,8 +100,8 @@ final class UserStore extends ModelStore implements IModelStore
     final public function getUserRowByLogin(
         ?string $login = null,
         ?int    $excludeId = null,
-        bool    $excludeRemoved = false,
-        bool    $excludeInactive = false
+        bool    $excludeRemoved = true,
+        bool    $excludeInactive = true
     ): ?array
     {
         if (empty($login)) {
@@ -153,8 +153,8 @@ final class UserStore extends ModelStore implements IModelStore
     final public function getUserRowByEmail(
         ?string $email = null,
         ?int    $excludeId = null,
-        bool    $excludeRemoved = false,
-        bool    $excludeInactive = false
+        bool    $excludeRemoved = true,
+        bool    $excludeInactive = true
     ): ?array
     {
         if (empty($email)) {
@@ -206,8 +206,8 @@ final class UserStore extends ModelStore implements IModelStore
     final public function getAllUsers(
         int  $page = 1,
         int  $itemsOnPage = 10,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         $sqlWhere = 'true';
@@ -464,8 +464,8 @@ final class UserStore extends ModelStore implements IModelStore
     final public function getUserRowsByPage(
         int  $page = 1,
         int  $itemsOnPage = 10,
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): ?array
     {
         $sqlWhere = 'true';
@@ -511,8 +511,8 @@ final class UserStore extends ModelStore implements IModelStore
      * @throws DatabasePluginException
      */
     final public function getUserRowsCount(
-        bool $excludeRemoved = false,
-        bool $excludeInactive = false
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
     ): int
     {
         $sqlWhere = 'true';
