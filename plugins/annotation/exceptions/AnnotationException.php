@@ -3,12 +3,11 @@
 namespace Sonder\Plugins\Annotation\Exceptions;
 
 use Exception;
+use Throwable;
 
-class AnnotationException extends Exception
+class AnnotationException extends Exception implements Throwable
 {
-    const CODE_PLUGIN_CLASS_IS_EMPTY = 1001;
-    const CODE_PLUGIN_METHOD_NAME_IS_EMPTY = 1002;
-    const CODE_PLUGIN_ANNOTATION_IS_EMPTY = 1003;
+    const MESSAGE_NAME_IS_EMPTY = 'Annotation Name In Annotation Plugin Is Empty';
 
-    const CODE_ENTITY_NAME_IS_EMPTY = 2001;
+    const CODE_NAME_IS_EMPTY = 1001;
 }

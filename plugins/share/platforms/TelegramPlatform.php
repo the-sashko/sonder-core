@@ -8,7 +8,7 @@ use Sonder\Plugins\Share\Interfaces\ISharePlatform;
 
 final class TelegramPlatform extends AbstractPlatform implements ISharePlatform
 {
-    const TELEGRAM_API_URL = 'https://api.telegram.org';
+    private const TELEGRAM_API_URL = 'https://api.telegram.org';
 
     /**
      * @param string $message

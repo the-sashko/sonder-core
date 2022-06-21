@@ -2,14 +2,13 @@
 
 namespace Sonder\Plugins\Router\Classes;
 
-use Sonder\Plugins\Router\Exceptions\RouterCacheException;
-use Sonder\Plugins\Router\Exceptions\RouterException;
 use Sonder\Plugins\Router\Interfaces\IRouterCache;
 use Sonder\Plugins\Router\Interfaces\IRouterEntity;
 
+#[IRouterCache]
 final class RouterCache implements IRouterCache
 {
-    const CACHE_DIR_PATH = __DIR__ . '/../../../../cache/router';
+    private const CACHE_DIR_PATH = __DIR__ . '/../../../../cache/router';
 
     /**
      * @return array|null
@@ -39,20 +38,10 @@ final class RouterCache implements IRouterCache
 
     /**
      * @param string $url
-     *
      * @return IRouterEntity|null
-     *
-     * @throws RouterCacheException
      */
     final public function getRouteByUrl(string $url): ?IRouterEntity
     {
-        if (empty($url)) {
-            throw new RouterCacheException(
-                RouterCacheException::MESSAGE_CACHE_URL_IS_NOT_SET,
-                RouterException::CODE_CACHE_URL_IS_NOT_SET
-            );
-        }
-
         if (defined('APP_MODE') && APP_MODE == 'dev') {
             return null;
         }
@@ -86,11 +75,12 @@ final class RouterCache implements IRouterCache
     }
 
     /**
-     * @param array|null $routes
+     * @param array $routes
+     * @return void
      */
-    final public function saveRoutes(?array $routes = null): void
+    final public function saveRoutes(array $routes): void
     {
-        $routes = array_map('serialize', (array)$routes);
+        $routes = array_map('serialize', $routes);
         $routes = json_encode($routes);
 
         $cacheFilePath = $this->_getCacheFilePath();
@@ -103,30 +93,12 @@ final class RouterCache implements IRouterCache
     }
 
     /**
-     * @param string|null $url
-     * @param IRouterEntity|null $route
-     *
-     * @throws RouterCacheException
+     * @param string $url
+     * @param IRouterEntity $route
+     * @return void
      */
-    final public function saveRouteUrl(
-        ?string        $url = null,
-        ?IRouterEntity $route = null
-    ): void
+    final public function saveRouteUrl(string $url, IRouterEntity $route): void
     {
-        if (empty($url)) {
-            throw new RouterCacheException(
-                RouterCacheException::MESSAGE_CACHE_URL_IS_NOT_SET,
-                RouterException::CODE_CACHE_URL_IS_NOT_SET
-            );
-        }
-
-        if (empty($route)) {
-            throw new RouterCacheException(
-                RouterCacheException::MESSAGE_CACHE_ROUTE_IS_NOT_SET,
-                RouterException::CODE_CACHE_ROUTE_IS_NOT_SET
-            );
-        }
-
         $serializedRoute = serialize($route);
 
         $cacheFilePath = $this->_getUrlCacheFilePath($url);
@@ -152,6 +124,9 @@ final class RouterCache implements IRouterCache
         file_put_contents($cacheFilePath, json_encode($cacheData));
     }
 
+    /**
+     * @return void
+     */
     final public function clean(): void
     {
         $cacheFilePath = $this->_getCacheFilePath();
@@ -188,7 +163,6 @@ final class RouterCache implements IRouterCache
 
     /**
      * @param string $url
-     *
      * @return string
      */
     private function _getUrlCacheFilePath(string $url): string
@@ -208,6 +182,7 @@ final class RouterCache implements IRouterCache
 
     /**
      * @param string $cacheFilePath
+     * @return void
      */
     private function _createCacheUrlCacheFile(string $cacheFilePath): void
     {

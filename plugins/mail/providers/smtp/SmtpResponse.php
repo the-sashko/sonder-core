@@ -6,7 +6,7 @@ use Sonder\Plugins\Mail\Interfaces\IMailResponse;
 
 final class SmtpResponse implements IMailResponse
 {
-    const DEFAULT_ERROR_MESSAGE = 'Unknown Server Error';
+    private const DEFAULT_ERROR_MESSAGE = 'Unknown Server Error';
 
     /**
      * @var bool

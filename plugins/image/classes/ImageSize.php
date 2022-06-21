@@ -8,7 +8,7 @@ use Sonder\Plugins\Image\Interfaces\IImageSize;
 
 final class ImageSize implements IImageSize
 {
-    const PREFIX_FULL = 'full';
+    final public const PREFIX_FULL = 'full';
 
     /**
      * @var int|null
@@ -27,7 +27,6 @@ final class ImageSize implements IImageSize
 
     /**
      * @param array|null $values
-     *
      * @throws ImageSizeException
      */
     final public function __construct(?array $values = null)
@@ -77,7 +76,6 @@ final class ImageSize implements IImageSize
 
     /**
      * @param int|null $height
-     *
      * @throws ImageSizeException
      */
     final public function setHeight(?int $height = null): void
@@ -94,7 +92,6 @@ final class ImageSize implements IImageSize
 
     /**
      * @param int|null $width
-     *
      * @throws ImageSizeException
      */
     final public function setWidth(?int $width = null): void
@@ -111,9 +108,7 @@ final class ImageSize implements IImageSize
 
     /**
      * @param array|null $values
-     *
      * @return bool
-     *
      * @throws ImageSizeException
      */
     private function _isValuesHasCorrectFormat(?array $values = null): bool

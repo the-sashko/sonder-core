@@ -4,15 +4,15 @@ namespace Sonder\Plugins;
 
 final class LoggerPlugin
 {
-    const DEFAULT_LOG_NAME = 'app';
+    final public const DEFAULT_ERROR_LOG_NAME = 'error';
 
-    const DEFAULT_ERROR_LOG_NAME = 'error';
+    final public const DEFAULT_LOG_NAME = 'app';
 
-    const DEFAULT_LOG_TYPE = 'common';
+    private const DEFAULT_LOG_TYPE = 'info';
 
-    const ERROR_LOG_TYPE = 'error';
+    private const ERROR_LOG_TYPE = 'error';
 
-    const LOG_FILE_PATH_PATTERN = '%s/../../../logs/%s';
+    private const LOG_FILE_PATH_PATTERN = '%s/../../../logs/%s';
 
     /**
      * @param string|null $message

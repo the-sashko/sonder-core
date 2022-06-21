@@ -1,4 +1,5 @@
 <?php
+
 foreach (glob(__DIR__ . '/*', GLOB_ONLYDIR) as $pluginDirPath) {
     $iniFilePath = sprintf('%s/init.php', $pluginDirPath);
 

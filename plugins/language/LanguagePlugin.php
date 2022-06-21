@@ -3,19 +3,19 @@
 namespace Sonder\Plugins;
 
 use Sonder\Plugins\Language\LanguageVendor;
-use Sonder\Plugins\Language\Exceptions\LanguageException;
+use Sonder\Plugins\Language\LanguageException;
 
 final class LanguagePlugin
 {
-    const DEFAULT_LANGUAGE = 'en';
+    private const DEFAULT_LANGUAGE = 'en';
 
-    const DEFAULT_LOCALE = 'en_US';
+    private const DEFAULT_LOCALE = 'en_US';
 
-    const DICTIONARIES_DIR = __DIR__ . '/../../../res/lang/src';
+    private const DICTIONARIES_DIR = __DIR__ . '/../../../res/lang/src';
 
-    const LOCALE_DIR = __DIR__ . '/../../../res/lang/locale';
+    private const LOCALE_DIR = __DIR__ . '/../../../res/lang/locale';
 
-    const CONFIG_DIR = __DIR__ . '/../../../config';
+    private const CONFIG_DIR = __DIR__ . '/../../../config';
 
     private ?string $_language = null;
 
@@ -37,9 +37,7 @@ final class LanguagePlugin
 
     /**
      * @param string|null $inputString
-     *
      * @return string|null
-     *
      * @throws LanguageException
      */
     final public function translate(?string $inputString = null): ?string
@@ -120,7 +118,6 @@ final class LanguagePlugin
 
     /**
      * @param string|null $language
-     *
      * @return string
      */
     private function _getLocale(?string $language = null): string
@@ -131,7 +128,10 @@ final class LanguagePlugin
             $language = $this->_language;
         }
 
-        $localeConfigPath = sprintf('%s/locale.json', LanguagePlugin::CONFIG_DIR);
+        $localeConfigPath = sprintf(
+            '%s/locale.json',
+            LanguagePlugin::CONFIG_DIR
+        );
 
         if (!file_exists($localeConfigPath) || !is_file($localeConfigPath)) {
             return $defaultLocale;
@@ -233,7 +233,6 @@ final class LanguagePlugin
      * @param string|null $poFilePath
      * @param string|null $moFilePath
      * @param string|null $locale
-     *
      * @throws LanguageException
      */
     private function _generateDictionaryFile(
@@ -241,8 +240,7 @@ final class LanguagePlugin
         ?string $poFilePath = null,
         ?string $moFilePath = null,
         ?string $locale = null
-    ): void
-    {
+    ): void {
         if (!$this->_prepareDictionaryFile(
             $sourceFilePath,
             $poFilePath,
@@ -304,7 +302,6 @@ final class LanguagePlugin
      * @param string|null $poFilePath
      * @param string|null $moFilePath
      * @param string|null $locale
-     *
      * @return bool
      */
     private function _prepareDictionaryFile(
@@ -312,8 +309,7 @@ final class LanguagePlugin
         ?string $poFilePath = null,
         ?string $moFilePath = null,
         ?string $locale = null
-    ): bool
-    {
+    ): bool {
         if (
             empty($sourceFilePath) ||
             empty($poFilePath) ||

@@ -9,7 +9,7 @@ use Sonder\Plugins\Database\Interfaces\IDataBaseCacheAdapter;
  */
 final class DatabaseFileCacheAdapter implements IDataBaseCacheAdapter
 {
-    const CACHE_DIR_PATH = __DIR__ . '/../../../../../cache/db';
+    private const CACHE_DIR_PATH = __DIR__ . '/../../../../../cache/db';
 
     /**
      * @param string $sql

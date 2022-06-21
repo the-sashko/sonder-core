@@ -2,17 +2,16 @@
 
 namespace Sonder\Plugins;
 
-final class ErrorPlugin
+use Sonder\Plugins\Error\OutputFormatEnum;
+use Sonder\Plugins\Error\IErrorPlugin;
+
+final class ErrorPlugin implements IErrorPlugin
 {
-    const OUTPUT_FORMAT_HTML = 'html';
+    private const HTML_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_html.phtml';
 
-    const OUTPUT_FORMAT_JSON = 'json';
+    private const TEXT_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_text.phtml';
 
-    const HTML_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_html.phtml';
-
-    const TEXT_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_text.phtml';
-
-    const HTTP_ERROR_CODE = 500;
+    final public function __construct(private readonly string $_outputFormat) {}
 
     /**
      * @param int $code
@@ -20,22 +19,26 @@ final class ErrorPlugin
      * @param string $file
      * @param int $line
      * @param array|null $debugBacktrace
-     * @param string|null $outputFormat
-     *
+     * @param int $httpResponseCode
      * @return bool
      */
     final public function displayError(
-        int     $code,
-        string  $message,
-        string  $file,
-        int     $line,
-        ?array  $debugBacktrace = null,
-        ?string $outputFormat = null
-    ): bool
-    {
-        http_response_code(ErrorPlugin::HTTP_ERROR_CODE);
+        int $code,
+        string $message,
+        string $file,
+        int $line,
+        ?array $debugBacktrace,
+        int $httpResponseCode = 500
+    ): bool {
+        $outputFormat = OutputFormatEnum::tryFrom($this->_outputFormat);
 
-        if ($outputFormat == ErrorPlugin::OUTPUT_FORMAT_HTML) {
+        if (empty($outputFormat)) {
+            $outputFormat = OutputFormatEnum::DEFAULT;
+        }
+
+        http_response_code($httpResponseCode);
+
+        if ($outputFormat == OutputFormatEnum::HTML) {
             return $this->_displayHtmlError(
                 $code,
                 $message,
@@ -45,7 +48,7 @@ final class ErrorPlugin
             );
         }
 
-        if ($outputFormat == ErrorPlugin::OUTPUT_FORMAT_JSON) {
+        if ($outputFormat == OutputFormatEnum::JSON) {
             return $this->_displayJsonError(
                 $code,
                 $message,
@@ -70,17 +73,15 @@ final class ErrorPlugin
      * @param string $file
      * @param int $line
      * @param array|null $debugBacktrace
-     *
      * @return bool
      */
     private function _displayHtmlError(
-        int    $code,
+        int $code,
         string $message,
         string $file,
-        int    $line,
+        int $line,
         ?array $debugBacktrace
-    ): bool
-    {
+    ): bool {
         $isDisplay = (bool)ini_get('display_errors');
 
         if (!$isDisplay) {
@@ -100,17 +101,15 @@ final class ErrorPlugin
      * @param string $file
      * @param int $line
      * @param array|null $debugBacktrace
-     *
      * @return bool
      */
     private function _displayJsonError(
-        int    $code,
+        int $code,
         string $message,
         string $file,
-        int    $line,
+        int $line,
         ?array $debugBacktrace
-    ): bool
-    {
+    ): bool {
         $output = [];
 
         $isDisplay = (bool)ini_get('display_errors');
@@ -149,17 +148,15 @@ final class ErrorPlugin
      * @param string $file
      * @param int $line
      * @param array|null $debugBacktrace
-     *
      * @return bool
      */
     private function _displayTextError(
-        int    $code,
+        int $code,
         string $message,
         string $file,
-        int    $line,
+        int $line,
         ?array $debugBacktrace
-    ): bool
-    {
+    ): bool {
         $isDisplay = (bool)ini_get('display_errors');
 
         if (!$isDisplay) {

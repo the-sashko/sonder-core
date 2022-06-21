@@ -4,9 +4,9 @@ namespace Sonder\Plugins;
 
 final class TranslitPlugin
 {
-    const SLUG_MAX_LENGTH = 60;
+    private const SLUG_MAX_LENGTH = 60;
 
-    const CYRILLIC_ALPHABET = [
+    private const CYRILLIC_ALPHABET = [
         'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И',
         'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т',
         'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю',
@@ -16,7 +16,7 @@ final class TranslitPlugin
         'ш', 'щ', 'ы', 'э', 'ю', 'я', 'і', 'ї', 'є', 'ґ'
     ];
 
-    const LATIN_ALPHABET = [
+    private const LATIN_ALPHABET = [
         'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'Y',
         'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T',
         'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Sch', 'Y', 'E', 'Yu',

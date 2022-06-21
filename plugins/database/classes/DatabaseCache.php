@@ -8,12 +8,13 @@ use Sonder\Plugins\Database\Interfaces\IDataBaseCache;
 
 final class DatabaseCache implements IDataBaseCache
 {
-    const DEFAULT_SCOPE = 'default';
+    private const DEFAULT_SCOPE = 'default';
 
-    const DEFAULT_TTL = 60 * 15;
+    private const DEFAULT_TTL = 900; // 15 min
 
-    const ADAPTER_FILE = 'file';
-    const ADAPTER_MOCK = 'mock';
+    private const ADAPTER_FILE = 'file';
+
+    private const ADAPTER_MOCK = 'mock';
 
     /**
      * @var DatabaseFileCacheAdapter|null
@@ -22,7 +23,6 @@ final class DatabaseCache implements IDataBaseCache
 
     /**
      * @param string|null $adapter
-     *
      * @throws DatabaseCacheException
      */
     final public function __construct(?string $adapter = null)
@@ -46,18 +46,15 @@ final class DatabaseCache implements IDataBaseCache
      * @param array|null $data
      * @param string|null $scope
      * @param int|null $ttl
-     *
      * @return bool
-     *
      * @throws DatabaseCacheException
      */
     final public function set(
         ?string $sql = null,
-        ?array  $data = null,
+        ?array $data = null,
         ?string $scope = null,
-        ?int    $ttl = null
-    ): bool
-    {
+        ?int $ttl = null
+    ): bool {
         if (empty($sql)) {
             throw new DatabaseCacheException(
                 DatabaseCacheException::MESSAGE_CACHE_SQL_IS_EMPTY,
@@ -87,16 +84,13 @@ final class DatabaseCache implements IDataBaseCache
     /**
      * @param string|null $sql
      * @param string|null $scope
-     *
      * @return array|null
-     *
      * @throws DatabaseCacheException
      */
     final public function get(
         ?string $sql = null,
         ?string $scope = null
-    ): ?array
-    {
+    ): ?array {
         if (empty($sql)) {
             throw new DatabaseCacheException(
                 DatabaseCacheException::MESSAGE_CACHE_SQL_IS_EMPTY,
@@ -123,7 +117,6 @@ final class DatabaseCache implements IDataBaseCache
 
     /**
      * @param string|null $scope
-     *
      * @return bool
      */
     final public function clean(?string $scope = null): bool

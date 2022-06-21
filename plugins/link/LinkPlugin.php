@@ -6,9 +6,9 @@ use Sonder\Plugins\Link\Classes\Parser;
 
 final class LinkPlugin
 {
-    const SHORTCODE_REGEXP = '/\[Link\:(.*?)\:\"(.*?)\"\]/su';
+    private const SHORTCODE_REGEXP = '/\[Link\:(.*?)\:\"(.*?)\"\]/su';
 
-    const CACHE_DIR_PATH = __DIR__ . '/../../../res/cache/link';
+    private const CACHE_DIR_PATH = __DIR__ . '/../../../res/cache/link';
 
     /**
      * @var Parser

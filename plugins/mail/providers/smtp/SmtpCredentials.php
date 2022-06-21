@@ -7,11 +7,11 @@ use Sonder\Plugins\Mail\Interfaces\IMailCredentials;
 
 final class SmtpCredentials implements IMailCredentials
 {
-    const CONFIG_FILE_PATH_PATTERN = __DIR__ . '/../../../../../config/%s.json';
+    private const CONFIG_FILE_PATH_PATTERN = __DIR__ . '/../../../../../config/%s.json';
 
-    const DEFAULT_REPLY_EMAIL = 'noreply@noreply.noreply';
+    private const DEFAULT_REPLY_EMAIL = 'noreply@noreply.noreply';
 
-    const DEFAULT_SENDER_NAME = 'Web Service Automatic Mailer';
+    private const DEFAULT_SENDER_NAME = 'Web Service Automatic Mailer';
 
     /**
      * @var string|null
@@ -54,49 +54,7 @@ final class SmtpCredentials implements IMailCredentials
     }
 
     /**
-     * @return bool
-     */
-    private function _loadConfig(): bool
-    {
-        $mailConfigData = (array)$this->_getConfigData('mail');
-        $mainConfigData = (array)$this->_getConfigData('main');
-
-        if (!array_key_exists('smtp', $mailConfigData)) {
-            return false;
-        }
-
-        $smtpConfig = (array)$mailConfigData['smtp'];
-
-        if (array_key_exists('server', $smtpConfig)) {
-            $this->_setServerAddress($smtpConfig['server']);
-        }
-
-        if (array_key_exists('port', $smtpConfig)) {
-            $this->_setServerPort((int)$smtpConfig['port']);
-        }
-
-        if (array_key_exists('login', $smtpConfig)) {
-            $this->_setLogin($smtpConfig['login']);
-        }
-
-        if (array_key_exists('password', $smtpConfig)) {
-            $this->_setPassword($smtpConfig['password']);
-        }
-
-        if (array_key_exists('admin_email', $mainConfigData)) {
-            $this->_setReplyEmail($mainConfigData['admin_email']);
-        }
-
-        if (array_key_exists('site_name', $mainConfigData)) {
-            $this->_setSenderName($mainConfigData['site_name']);
-        }
-
-        return true;
-    }
-
-    /**
      * @return string
-     *
      * @throws Exception
      */
     public function getServerAddress(): string
@@ -110,7 +68,6 @@ final class SmtpCredentials implements IMailCredentials
 
     /**
      * @return int
-     *
      * @throws Exception
      */
     public function getServerPort(): int
@@ -124,7 +81,6 @@ final class SmtpCredentials implements IMailCredentials
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     public function getLogin(): string
@@ -138,7 +94,6 @@ final class SmtpCredentials implements IMailCredentials
 
     /**
      * @return string
-     *
      * @throws Exception
      */
     public function getPassword(): string
@@ -269,5 +224,46 @@ final class SmtpCredentials implements IMailCredentials
         $configData = file_get_contents($configFilePath);
 
         return (array)json_decode($configData, true);
+    }
+
+    /**
+     * @return bool
+     */
+    private function _loadConfig(): bool
+    {
+        $mailConfigData = (array)$this->_getConfigData('mail');
+        $mainConfigData = (array)$this->_getConfigData('main');
+
+        if (!array_key_exists('smtp', $mailConfigData)) {
+            return false;
+        }
+
+        $smtpConfig = (array)$mailConfigData['smtp'];
+
+        if (array_key_exists('server', $smtpConfig)) {
+            $this->_setServerAddress($smtpConfig['server']);
+        }
+
+        if (array_key_exists('port', $smtpConfig)) {
+            $this->_setServerPort((int)$smtpConfig['port']);
+        }
+
+        if (array_key_exists('login', $smtpConfig)) {
+            $this->_setLogin($smtpConfig['login']);
+        }
+
+        if (array_key_exists('password', $smtpConfig)) {
+            $this->_setPassword($smtpConfig['password']);
+        }
+
+        if (array_key_exists('admin_email', $mainConfigData)) {
+            $this->_setReplyEmail($mainConfigData['admin_email']);
+        }
+
+        if (array_key_exists('site_name', $mainConfigData)) {
+            $this->_setSenderName($mainConfigData['site_name']);
+        }
+
+        return true;
     }
 }

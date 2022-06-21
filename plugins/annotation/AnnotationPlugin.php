@@ -6,46 +6,26 @@ use Generator;
 use ReflectionMethod;
 use Sonder\Plugins\Annotation\Classes\AnnotationComment;
 use Sonder\Plugins\Annotation\Classes\AnnotationEntity;
-use Sonder\Plugins\Annotation\Exceptions\AnnotationException;
-use Sonder\Plugins\Annotation\Exceptions\AnnotationPluginException;
+use Sonder\Plugins\Annotation\AnnotationException;
 use Sonder\Plugins\Annotation\Interfaces\IAnnotationPlugin;
 
+#[IAnnotationPlugin]
 final class AnnotationPlugin implements IAnnotationPlugin
 {
     /**
-     * @param string|null $className
-     * @param string|null $methodName
-     * @param string|null $annotationName
-     *
+     * @param string $className
+     * @param string $methodName
+     * @param string $annotationName
      * @return string|null
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     final public function getAnnotation(
-        ?string $className = null,
-        ?string $methodName = null,
-        ?string $annotationName = null
-    ): ?string
-    {
-        if (empty($className)) {
-            throw new AnnotationPluginException(
-                AnnotationPluginException::MESSAGE_PLUGIN_CLASS_IS_EMPTY,
-                AnnotationException::CODE_PLUGIN_CLASS_IS_EMPTY
-            );
-        }
-
-        if (empty($methodName)) {
-            throw new AnnotationPluginException(
-                AnnotationPluginException::MESSAGE_PLUGIN_METHOD_NAME_IS_EMPTY,
-                AnnotationException::CODE_PLUGIN_METHOD_NAME_IS_EMPTY
-            );
-        }
-
-        if (empty($annotationName)) {
-            throw new AnnotationPluginException(
-                AnnotationPluginException::MESSAGE_PLUGIN_ANNOTATION_IS_EMPTY,
-                AnnotationException::CODE_PLUGIN_ANNOTATION_IS_EMPTY
-            );
+        string $className,
+        string $methodName,
+        string $annotationName
+    ): ?string {
+        if (empty($className) || empty($methodName) || empty($annotationName)) {
+            return null;
         }
 
         $annotations = $this->getMethodAnnotations($className, $methodName);
@@ -60,39 +40,23 @@ final class AnnotationPlugin implements IAnnotationPlugin
     }
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
+     * @param string $className
+     * @param string $methodName
      * @return Generator
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     final public function getMethodAnnotations(
-        ?string $className = null,
-        ?string $methodName = null
-    ): Generator
-    {
-        if (empty($className)) {
-            throw new AnnotationPluginException(
-                AnnotationPluginException::MESSAGE_PLUGIN_CLASS_IS_EMPTY,
-                AnnotationException::CODE_PLUGIN_CLASS_IS_EMPTY
-            );
-        }
-
-        if (empty($methodName)) {
-            throw new AnnotationPluginException(
-                AnnotationPluginException::MESSAGE_PLUGIN_METHOD_NAME_IS_EMPTY,
-                AnnotationException::CODE_PLUGIN_METHOD_NAME_IS_EMPTY
-            );
-        }
-
+        string $className,
+        string $methodName
+    ): Generator {
         $comments = $this->_getMethodComments($className, $methodName);
 
         foreach ($comments as $comment) {
-            if (!preg_match('/^@(.*?)\s(.*?)$/su', $comment)) {
+            if (!preg_match('/^@(.*?)\s(.*?)$/su', (string)$comment)) {
                 continue;
             }
 
-            list($name, $value) = preg_split('/\s+/su', $comment, 2);
+            [$name, $value] = preg_split('/\s+/u', $comment, 2);
 
             $name = preg_replace('/^@(.*?)$/', '$1', $name);
 
@@ -109,14 +73,12 @@ final class AnnotationPlugin implements IAnnotationPlugin
     /**
      * @param string $className
      * @param string $methodName
-     *
      * @return Generator
      */
     private function _getMethodComments(
         string $className,
         string $methodName
-    ): Generator
-    {
+    ): Generator {
         if (empty($methodName) || !method_exists($className, $methodName)) {
             return null;
         }
@@ -127,11 +89,13 @@ final class AnnotationPlugin implements IAnnotationPlugin
         $comments = explode("\n", $comments);
 
         foreach ($comments as $comment) {
-            if (!empty($comment)) {
-                $comment = new AnnotationComment($comment);
-
-                yield $comment->getComment();
+            if (empty($comment)) {
+                continue;
             }
+
+            $comment = new AnnotationComment($comment);
+
+            yield $comment->getText();
         }
     }
 }

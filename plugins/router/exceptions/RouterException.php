@@ -3,16 +3,11 @@
 namespace Sonder\Plugins\Router\Exceptions;
 
 use Exception;
+use Throwable;
 
-class RouterException extends Exception
+class RouterException extends Exception implements Throwable
 {
-    const CODE_PLUGIN_URL_IS_NOT_SET = 1001;
+    const MESSAGE_URL_IS_NOT_SET = 'Router Plugin URL Is Not Set';
 
-    const CODE_ENTITY_ROUTE_IS_NOT_SET = 2001;
-    const CODE_ENTITY_CONTROLLER_IS_NOT_SET = 2002;
-    const CODE_ENTITY_FILE_PATH_IS_NOT_SET = 2003;
-    const CODE_ENTITY_METHOD_IS_NOT_SET = 2004;
-
-    const CODE_CACHE_URL_IS_NOT_SET = 3001;
-    const CODE_CACHE_ROUTE_IS_NOT_SET = 3002;
+    const CODE_URL_IS_NOT_SET = 1001;
 }

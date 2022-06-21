@@ -1,6 +1,9 @@
 <?php
 namespace Sonder\Plugins\Database\Interfaces;
 
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 interface IDatabasePlugin
 {
     /**

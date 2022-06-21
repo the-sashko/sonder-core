@@ -2,6 +2,9 @@
 
 namespace Sonder\Plugins\Annotation\Interfaces;
 
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS)]
 interface IAnnotationEntity
 {
     /**

@@ -4,8 +4,11 @@ namespace Sonder\Plugins;
 
 final class IpPlugin
 {
-    const DEFAULT_IP = '0.0.0.0';
+    protected const DEFAULT_IP = '0.0.0.0';
 
+    /**
+     * @return string
+     */
     final public function getIp(): string
     {
         $ipAddress = IpPlugin::DEFAULT_IP;
@@ -18,12 +21,19 @@ final class IpPlugin
         return $ipAddress;
     }
 
+    /**
+     * @return string
+     */
     final public function getIpHash(): string
     {
         return hash('sha256', $this->getIp());
     }
 
-    public function _escapeInput(?string $inputString = null): string
+    /**
+     * @param string|null $inputString
+     * @return string
+     */
+    private function _escapeInput(?string $inputString = null): string
     {
         $inputString = (string)$inputString;
         $inputString = strip_tags($inputString);
@@ -38,6 +48,10 @@ final class IpPlugin
         return $inputString;
     }
 
+    /**
+     * @param string $ipAddress
+     * @return void
+     */
     private function _setIpFromCloudflareHttpHeaders(string &$ipAddress): void
     {
         if (
@@ -50,6 +64,10 @@ final class IpPlugin
         }
     }
 
+    /**
+     * @param string $ipAddress
+     * @return void
+     */
     private function _setIpFromForwardedHttpHeaders(string &$ipAddress): void
     {
         if (
@@ -81,6 +99,10 @@ final class IpPlugin
         }
     }
 
+    /**
+     * @param string $ipAddress
+     * @return void
+     */
     private function _setIpFromDefaultHttpHeaders(string &$ipAddress): void
     {
         if (
@@ -91,6 +113,10 @@ final class IpPlugin
         }
     }
 
+    /**
+     * @param string $ipAddress
+     * @return void
+     */
     private function _setIpFromClientHttpHeaders(string &$ipAddress): void
     {
         if (

@@ -3,12 +3,13 @@
 namespace Sonder\Plugins;
 
 use Sonder\Plugins\Date\Interfaces\IDatePlugin;
-use Sonder\Plugins\Language\Exceptions\LanguageException;
+use Sonder\Plugins\Language\LanguageException;
+
 use function Sonder\__t;
 
 final class DatePlugin implements IDatePlugin
 {
-    const MONTHS = [
+    private const MONTHS = [
         'January',
         'February',
         'March',
@@ -25,9 +26,7 @@ final class DatePlugin implements IDatePlugin
 
     /**
      * @param int|null $timestamp
-     *
      * @return string|null
-     *
      * @throws LanguageException
      */
     final public function getDateFromTimestamp(?int $timestamp = null): ?string

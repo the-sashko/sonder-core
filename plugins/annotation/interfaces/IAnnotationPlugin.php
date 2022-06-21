@@ -2,31 +2,31 @@
 
 namespace Sonder\Plugins\Annotation\Interfaces;
 
+use Attribute;
 use Generator;
 
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 interface IAnnotationPlugin
 {
     /**
-     * @param string|null $className
-     * @param string|null $methodName
-     * @param string|null $annotationName
-     *
+     * @param string $className
+     * @param string $methodName
+     * @param string $annotationName
      * @return string|null
      */
     public function getAnnotation(
-        ?string $className = null,
-        ?string $methodName = null,
-        ?string $annotationName = null
+        string $className,
+        string $methodName,
+        string $annotationName
     ): ?string;
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
-     *
+     * @param string $className
+     * @param string $methodName
      * @return Generator
      */
     public function getMethodAnnotations(
-        ?string $className = null,
-        ?string $methodName = null
+        string $className,
+        string $methodName
     ): Generator;
 }

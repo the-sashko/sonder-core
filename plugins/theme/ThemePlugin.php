@@ -7,7 +7,7 @@ use Sonder\Plugins\Theme\ThemePluginException;
 
 final class ThemePlugin
 {
-    const DEFAULT_PUBLIC_DIR_PATH = __DIR__ . '/../../../../public';
+    private const DEFAULT_PUBLIC_DIR_PATH = __DIR__ . '/../../../../public';
 
     /**
      * @var string
@@ -209,8 +209,7 @@ final class ThemePlugin
     private function _moveAssetFile(
         string $themeFilePath,
         string $publicFilePath
-    ): void
-    {
+    ): void {
         if (!file_exists($themeFilePath) || !is_file($themeFilePath)) {
             $errorMessage = sprintf(
                 ThemePluginException::MESSAGE_PLUGIN_ASSETS_FILE_MISSING_ERROR,

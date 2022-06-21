@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../session/init.php';
 
 require_once __DIR__ . '/LanguageException.php';

@@ -11,15 +11,15 @@ use Sonder\Plugins\Rss\Interfaces\IRssLink;
 
 final class RssLink implements IRssLink
 {
-    const VALUES_TITLE_KEY = 'title';
+    private const VALUES_TITLE_KEY = 'title';
 
-    const VALUES_LINK_KEY = 'link';
+    private const VALUES_LINK_KEY = 'link';
 
-    const VALUES_TIMESTAMP_KEY = 'timestamp';
+    private const VALUES_TIMESTAMP_KEY = 'timestamp';
 
-    const VALUES_DESCRIPTION_KEY = 'description';
+    private const VALUES_DESCRIPTION_KEY = 'description';
 
-    const XML_FILE_PATH = __DIR__ . '/../xml/link.xml';
+    private const XML_FILE_PATH = __DIR__ . '/../xml/link.xml';
 
     private ?string $_title = null;
 
@@ -31,7 +31,6 @@ final class RssLink implements IRssLink
 
     /**
      * @param array|null $values
-     *
      * @throws RssLinkException
      */
     final public function __construct(?array $values = null)
@@ -79,9 +78,7 @@ final class RssLink implements IRssLink
 
     /**
      * @return string|null
-     *
      * @throws RssLinkException
-     *
      * @throws Exception
      */
     final public function getXml(): ?string

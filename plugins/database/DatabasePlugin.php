@@ -12,9 +12,10 @@ use Sonder\Plugins\Database\Exceptions\DatabaseException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
 use Sonder\Plugins\Database\Interfaces\IDatabasePlugin;
 
+#[IDatabasePlugin]
 final class DatabasePlugin implements IDatabasePlugin
 {
-    const DEFAULT_SCOPE = 'default';
+    private const DEFAULT_SCOPE = 'default';
 
     /**
      * @var DatabaseCache|null
@@ -33,7 +34,6 @@ final class DatabasePlugin implements IDatabasePlugin
 
     /**
      * @param array|null $configData
-     *
      * @throws DatabaseCacheException
      * @throws DatabaseCredentialsException
      * @throws DatabasePluginException
@@ -95,18 +95,15 @@ final class DatabasePlugin implements IDatabasePlugin
      * @param string|null $sql
      * @param string|null $scope
      * @param int|null $ttl
-     *
      * @return array|null
-     *
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
      */
     final public function select(
         ?string $sql = null,
         ?string $scope = null,
-        ?int    $ttl = null
-    ): ?array
-    {
+        ?int $ttl = null
+    ): ?array {
         if (empty($sql)) {
             throw new DatabasePluginException(
                 DatabasePluginException::MESSAGE_PLUGIN_SQL_IS_EMPTY,
@@ -164,16 +161,13 @@ final class DatabasePlugin implements IDatabasePlugin
     /**
      * @param string|null $sql
      * @param string|null $scope
-     *
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function query(
         ?string $sql = null,
         ?string $scope = null
-    ): bool
-    {
+    ): bool {
         if (empty($sql)) {
             throw new DatabasePluginException(
                 DatabasePluginException::MESSAGE_PLUGIN_SQL_IS_EMPTY,
@@ -220,7 +214,6 @@ final class DatabasePlugin implements IDatabasePlugin
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function transactionStart(): bool
@@ -232,7 +225,6 @@ final class DatabasePlugin implements IDatabasePlugin
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function transactionCommit(): bool
@@ -244,7 +236,6 @@ final class DatabasePlugin implements IDatabasePlugin
 
     /**
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     final public function transactionRollback(): bool
@@ -257,7 +248,6 @@ final class DatabasePlugin implements IDatabasePlugin
     /**
      * @param string|null $sql
      * @return bool
-     *
      * @throws DatabasePluginException
      */
     private function _transactionQuery(?string $sql = null): bool
@@ -300,7 +290,6 @@ final class DatabasePlugin implements IDatabasePlugin
 
     /**
      * @param string|null $errorMessage
-     *
      * @throws DatabasePluginException
      */
     private function _error(?string $errorMessage = null): void

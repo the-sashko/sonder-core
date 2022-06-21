@@ -12,9 +12,9 @@ use Sonder\Plugins\Rss\Interfaces\IRssPlugin;
 
 final class RssPlugin implements IRssPlugin
 {
-    const DEFAULT_FILE_NAME = 'rss';
+    private const DEFAULT_FILE_NAME = 'rss';
 
-    const RSS_DIR_PATH = __DIR__ . '/../../../../public/xml';
+    private const RSS_DIR_PATH = __DIR__ . '/../../../../public/xml';
 
     /**
      * @var IRssEntity|null
@@ -27,7 +27,6 @@ final class RssPlugin implements IRssPlugin
      * @param string|null $channelImage
      * @param string|null $channelDescription
      * @param array|null $links
-     *
      * @throws RssEntityException
      * @throws RssPluginException
      * @throws RssLinkException
@@ -37,9 +36,8 @@ final class RssPlugin implements IRssPlugin
         ?string $channelLink = null,
         ?string $channelImage = null,
         ?string $channelDescription = null,
-        ?array  $links = null
-    ): void
-    {
+        ?array $links = null
+    ): void {
         if (empty($channelTitle)) {
             throw new RssPluginException(
                 RssPluginException::MESSAGE_PLUGIN_TITLE_IS_EMPTY,
@@ -88,7 +86,6 @@ final class RssPlugin implements IRssPlugin
 
     /**
      * @param string|null $fileName
-     *
      * @throws RssPluginException
      */
     public function save(?string $fileName = null): void

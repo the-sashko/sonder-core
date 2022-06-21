@@ -9,7 +9,7 @@ use Sonder\Plugins\Share\Interfaces\ISharePlatform;
 
 final class TwitterPlatform extends AbstractPlatform implements ISharePlatform
 {
-    const MESSAGE_MAX_LENGTH = 140;
+    private const MESSAGE_MAX_LENGTH = 140;
 
     /**
      * @var object|null

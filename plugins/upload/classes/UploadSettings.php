@@ -8,9 +8,9 @@ use Sonder\Plugins\Upload\Interfaces\IUploadSettings;
 
 final class UploadSettings implements IUploadSettings
 {
-    const DEFAULT_FILE_SIZE = 1024 * 1024 * 2;
+    private const DEFAULT_FILE_SIZE = 1024 * 1024 * 2;
 
-    const PROTECTED_DIR_PATH = __DIR__ . '/../../../..';
+    private const PROTECTED_DIR_PATH = __DIR__ . '/../../../..';
 
     /**
      * @var string|null

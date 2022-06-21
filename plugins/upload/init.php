@@ -1,27 +1,37 @@
 <?php
-$uploadPluginAutoload = function(string $dir, Closure $autoload): void
-{
-    foreach (glob($dir.'/*') as $fileItem) {
-        if ($fileItem == __FILE__) {
-            continue;
+
+namespace Sonder\Plugins\Upload;
+
+if (function_exists('\Sonder\Core\Utils\loadDirectory')) {
+    $autoload = \Sonder\Core\Utils\loadDirectory(...);
+} else {
+    /**
+     * @param string $directory
+     * @return void
+     */
+    $autoload = function (string $directory) use (&$autoload): void {
+        foreach (glob($directory . '/*') as $fileItem) {
+            if ($fileItem == __FILE__) {
+                continue;
+            }
+
+            if (is_dir($fileItem)) {
+                $autoload($fileItem, $autoload);
+
+                continue;
+            }
+
+            if (preg_match('/^(.*?)\.php$/', $fileItem)) {
+                include_once $fileItem;
+            }
         }
+    };
+}
 
-        if (is_dir($fileItem)) {
-            $autoload($fileItem, $autoload);
+require_once __DIR__ . '/exceptions/UploadException.php';
 
-            continue;
-        }
+$autoload(__DIR__ . '/exceptions');
+$autoload(__DIR__ . '/interfaces');
+$autoload(__DIR__ . '/classes');
 
-        if (preg_match('/^(.*?)\.php$/', $fileItem)) {
-            include_once $fileItem;
-        }
-    }
-};
-
-require_once __DIR__.'/exceptions/UploadException.php';
-
-$uploadPluginAutoload(__DIR__.'/exceptions', $uploadPluginAutoload);
-$uploadPluginAutoload(__DIR__.'/interfaces', $uploadPluginAutoload);
-$uploadPluginAutoload(__DIR__.'/classes', $uploadPluginAutoload);
-
-require_once __DIR__.'/UploadPlugin.php';
+require_once __DIR__ . '/UploadPlugin.php';

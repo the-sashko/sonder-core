@@ -2,57 +2,52 @@
 
 namespace Sonder\Plugins\Session\Interfaces;
 
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS)]
 interface ISessionValuesObject
 {
     /**
-     * @param string|null $valueName
-     *
+     * @param string $valueName
      * @return mixed
      */
-    public function get(?string $valueName = null): mixed;
+    public function get(string $valueName): mixed;
 
     /**
-     * @param string|null $valueName
-     *
+     * @param string $valueName
      * @return mixed
      */
-    public function getFlash(?string $valueName = null): mixed;
+    public function getFlash(string $valueName): mixed;
 
     /**
-     * @param string|null $valueName
-     *
-     * @param null $valueData
+     * @param string $valueName
+     * @param mixed|null $valueData
+     * @return void
      */
-    public function set(?string $valueName = null, $valueData = null): void;
+    public function set(string $valueName, mixed $valueData = null): void;
 
     /**
-     * @param string|null $valueName
-     *
-     * @param null $valueData
+     * @param string $valueName
+     * @param mixed|null $valueData
+     * @return void
      */
-    public function setFlash(
-        ?string $valueName = null,
-                $valueData = null
-    ): void;
+    public function setFlash(string $valueName, mixed $valueData = null): void;
 
     /**
-     * @param string|null $valueName
-     *
+     * @param string $valueName
      * @return bool
      */
-    public function remove(?string $valueName = null): bool;
+    public function remove(string $valueName): bool;
 
     /**
-     * @param string|null $valueName
-     *
+     * @param string $valueName
      * @return bool
      */
-    public function has(?string $valueName = null): bool;
+    public function has(string $valueName): bool;
 
     /**
-     * @param string|null $valueName
-     *
+     * @param string $valueName
      * @return bool
      */
-    public function hasFlash(?string $valueName = null): bool;
+    public function hasFlash(string $valueName): bool;
 }

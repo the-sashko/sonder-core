@@ -8,9 +8,9 @@ use Sonder\Plugins\Upload\Interfaces\IUploadFile;
 
 final class UploadFile implements IUploadFile
 {
-    const DEFAULT_FILE_NAME = 'file';
+    private const DEFAULT_FILE_NAME = 'file';
 
-    const TRANSLIT_DICT = [
+    private const TRANSLIT_DICT = [
         'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g',
         'ґ' => 'g', 'д' => 'd', 'е' => 'e', 'є' => 'e',
         'ё' => 'e', 'ж' => 'zh', 'з' => 'z', 'i' => 'i',

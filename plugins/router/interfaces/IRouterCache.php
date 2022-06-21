@@ -2,6 +2,9 @@
 
 namespace Sonder\Plugins\Router\Interfaces;
 
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 interface IRouterCache
 {
     /**
@@ -16,18 +19,20 @@ interface IRouterCache
     public function getRouteByUrl(string $url): ?IRouterEntity;
 
     /**
-     * @param array|null $routes
+     * @param array $routes
+     * @return void
      */
-    public function saveRoutes(?array $routes = null): void;
+    public function saveRoutes(array $routes): void;
 
     /**
-     * @param string|null $url
-     * @param IRouterEntity|null $route
+     * @param string $url
+     * @param IRouterEntity $route
+     * @return void
      */
-    public function saveRouteUrl(
-        ?string        $url = null,
-        ?IRouterEntity $route = null
-    ): void;
+    public function saveRouteUrl(string $url, IRouterEntity $route): void;
 
+    /**
+     * @return void
+     */
     public function clean(): void;
 }

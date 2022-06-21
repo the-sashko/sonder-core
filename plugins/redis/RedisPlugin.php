@@ -8,7 +8,7 @@ use Predis\Client;
 
 final class RedisPlugin
 {
-    const CONFIG_FILE_PATH = __DIR__ . '/../../../config/redis.json';
+    private const CONFIG_FILE_PATH = __DIR__ . '/../../../config/redis.json';
 
     /**
      * @var Client

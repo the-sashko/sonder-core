@@ -35,7 +35,8 @@ final class PaginatorPlugin
         ?int    $pageCount = null,
         ?int    $currentPage = null,
         ?string $link = null
-    ): ?string {
+    ): ?string
+    {
         if (empty($pageCount) || $pageCount < 2 || empty($link)) {
             return null;
         }
@@ -103,7 +104,9 @@ final class PaginatorPlugin
         }
 
         for (
-            $page = $this->_pageCount - 2; $page <= $this->_pageCount; $page++
+            $page = $this->_pageCount - 2;
+            $page <= $this->_pageCount;
+            $page++
         ) {
             $this->_pages[$page] = $page;
         }

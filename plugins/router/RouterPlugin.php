@@ -4,25 +4,30 @@ namespace Sonder\Plugins;
 
 use Generator;
 use ReflectionClass;
-use Sonder\Plugins\Annotation\Exceptions\AnnotationPluginException;
+use Sonder\Plugins\Annotation\AnnotationException;
+use Sonder\Plugins\Annotation\Interfaces\IAnnotationPlugin;
 use Sonder\Plugins\Router\Classes\RouterCache;
 use Sonder\Plugins\Router\Classes\RouterEntity;
-use Sonder\Plugins\Router\Exceptions\RouterException;
-use Sonder\Plugins\Router\Exceptions\RouterPluginException;
+use Sonder\Plugins\Router\RouterAnnotationNamesEnum;
+use Sonder\Plugins\Router\RouterException;
+use Sonder\Plugins\Router\Interfaces\IRouterCache;
 use Sonder\Plugins\Router\Interfaces\IRouterEntity;
 use Sonder\Plugins\Router\Interfaces\IRouterPlugin;
 
+#[IRouterPlugin]
 final class RouterPlugin implements IRouterPlugin
 {
-    const DEFAULT_AREA = 'default';
+    private const DEFAULT_AREA = 'default';
 
-    const DEFAULT_CONTROLLERS_DIR_PATHS = [
+    private const DEFAULT_CONTROLLERS_DIR_PATHS = [
         __DIR__ . '/../../../controllers'
     ];
 
-    private RouterCache $_cache;
+    #[IRouterCache]
+    private IRouterCache $_cache;
 
-    private AnnotationPlugin $_annotationPlugin;
+    #[IAnnotationPlugin]
+    private IAnnotationPlugin $_annotationPlugin;
 
     private string $_area;
 
@@ -44,19 +49,16 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @param string|null $url
-     *
      * @return IRouterEntity|null
-     *
-     * @throws AnnotationPluginException
-     * @throws RouterPluginException
-     * @throws Router\Exceptions\RouterCacheException
+     * @throws AnnotationException
+     * @throws RouterException
      */
-    final public function getRoute(?string $url = null): ?IRouterEntity
+    final public function getRoute(string $url = null): ?IRouterEntity
     {
         if (empty($url)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_URL_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_URL_IS_NOT_SET
+            throw new RouterException(
+                RouterException::MESSAGE_URL_IS_NOT_SET,
+                RouterException::CODE_URL_IS_NOT_SET
             );
         }
 
@@ -84,11 +86,17 @@ final class RouterPlugin implements IRouterPlugin
         return $route;
     }
 
+    /**
+     * @return void
+     */
     final public function cleanCache(): void
     {
         $this->_cache->clean();
     }
 
+    /**
+     * @return void
+     */
     private function _setArea(): void
     {
         $this->_area = RouterPlugin::DEFAULT_AREA;
@@ -100,11 +108,11 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @param array|null $controllersDirPaths
+     * @return void
      */
     private function _setControllersDirPaths(
         ?array $controllersDirPaths = null
-    ): void
-    {
+    ): void {
         if (empty($controllersDirPaths)) {
             $controllersDirPaths = $this->_getDefaultControllersDirPaths();
         }
@@ -113,7 +121,7 @@ final class RouterPlugin implements IRouterPlugin
     }
 
     /**
-     * @return array
+     * @return array|string[]
      */
     private function _getDefaultControllersDirPaths(): array
     {
@@ -128,7 +136,6 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @param string $url
-     *
      * @return string
      */
     private function _extractLanguageFromUrl(string $url): string
@@ -150,25 +157,24 @@ final class RouterPlugin implements IRouterPlugin
                 $url
             );
         }
+
         return !empty($url) ? $url : '/';
     }
 
     /**
      * @param string $url
-     *
      * @return IRouterEntity|null
-     *
-     * @throws AnnotationPluginException
-     * @throws RouterPluginException
+     * @throws AnnotationException
+     * @throws RouterException
      */
     private function _getRouteByUrl(string $url): ?IRouterEntity
     {
         $routeByUrl = null;
 
         if (empty($url)) {
-            throw new RouterPluginException(
-                RouterPluginException::MESSAGE_PLUGIN_URL_IS_NOT_SET,
-                RouterException::CODE_PLUGIN_URL_IS_NOT_SET
+            throw new RouterException(
+                RouterException::MESSAGE_URL_IS_NOT_SET,
+                RouterException::CODE_URL_IS_NOT_SET
             );
         }
 
@@ -195,8 +201,7 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @return Generator|null
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRoutesFromAnnotations(): ?Generator
     {
@@ -234,13 +239,11 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @param string $controllersDirPath
-     *
      * @return array
      */
     private function _getControllersDisplayMethodsByDirPath(
         string $controllersDirPath
-    ): array
-    {
+    ): array {
         $displayMethods = [];
 
         $controllersFilePathPattern = sprintf(
@@ -275,7 +278,7 @@ final class RouterPlugin implements IRouterPlugin
 
             $displayMethods = array_merge(
                 $displayMethods,
-                $displayMethodsByClassName ?? []
+                empty($displayMethodsByClassName) ? [] : $displayMethodsByClassName
             );
         }
 
@@ -285,14 +288,12 @@ final class RouterPlugin implements IRouterPlugin
     /**
      * @param string $className
      * @param string $filePath
-     *
      * @return Generator|null
      */
     private function _getDisplayMethodsByClassName(
         string $className,
         string $filePath
-    ): ?Generator
-    {
+    ): ?Generator {
         if (!class_exists($className)) {
             return null;
         }
@@ -310,7 +311,6 @@ final class RouterPlugin implements IRouterPlugin
                 continue;
             }
 
-
             yield [
                 'file_path' => $filePath,
                 'class_name' => $className,
@@ -323,23 +323,24 @@ final class RouterPlugin implements IRouterPlugin
 
     /**
      * @param array $classesMethod
-     *
      * @return RouterEntity|null
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRoutesFromClassMethod(
         array $classesMethod
-    ): ?RouterEntity
-    {
+    ): ?RouterEntity {
         $controllerClass = $classesMethod['class_name'];
         $controllerFilePath = $classesMethod['file_path'];
-        $method = $classesMethod['method'];
+        $controllerMethod = $classesMethod['method'];
 
-        $area = $this->_getRouteArea($controllerClass, $method);
-        $path = $this->_getRoutePath($controllerClass, $method);
-        $params = $this->_getRouteParams($controllerClass, $method);
-        $noCache = $this->_getRouteNoCache($controllerClass, $method);
+        if (empty($controllerClass) || empty($controllerFilePath) || empty($controllerMethod)) {
+            return null;
+        }
+
+        $area = $this->_getRouteArea($controllerClass, $controllerMethod);
+        $path = $this->_getRoutePath($controllerClass, $controllerMethod);
+        $params = $this->_getRouteParams($controllerClass, $controllerMethod);
+        $noCache = $this->_getRouteNoCache($controllerClass, $controllerMethod);
 
         if (empty($path)) {
             return null;
@@ -349,36 +350,33 @@ final class RouterPlugin implements IRouterPlugin
             $area,
             $path,
             $params,
+            $noCache,
             $controllerClass,
+            $controllerMethod,
             $controllerFilePath,
-            $method,
-            $noCache
         );
     }
 
     /**
      * @param string $className
      * @param string $methodName
-     *
      * @return string
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRouteArea(
         string $className,
         string $methodName
-    ): string
-    {
+    ): string {
         $routeArea = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
-            'area'
+            RouterAnnotationNamesEnum::AREA->name
         );
 
         $routeArea = mb_convert_case((string)$routeArea, MB_CASE_LOWER);
 
         $routeArea = preg_replace(
-            '/([^a-z]+)/su',
+            '/([^a-z]+)/u',
             '',
             $routeArea
         );
@@ -389,24 +387,21 @@ final class RouterPlugin implements IRouterPlugin
     /**
      * @param string $className
      * @param string $methodName
-     *
      * @return string|null
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRoutePath(
         string $className,
         string $methodName
-    ): ?string
-    {
+    ): ?string {
         $routePath = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
-            'route'
+            RouterAnnotationNamesEnum::ROUTE->value
         );
 
         $routePath = preg_replace(
-            '/\s+/su',
+            '/\s+/u',
             '',
             (string)$routePath
         );
@@ -415,26 +410,23 @@ final class RouterPlugin implements IRouterPlugin
     }
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
-     *
+     * @param string $className
+     * @param string $methodName
      * @return string|null
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRouteParams(
-        string $className = null,
-        string $methodName = null
-    ): ?string
-    {
+        string $className,
+        string $methodName
+    ): ?string {
         $routeParams = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
-            'url_params'
+            RouterAnnotationNamesEnum::URL_PARAMS->value
         );
 
         $routeParams = preg_replace(
-            '/\s+/su',
+            '/\s+/u',
             '',
             (string)$routeParams
         );
@@ -443,28 +435,25 @@ final class RouterPlugin implements IRouterPlugin
     }
 
     /**
-     * @param string|null $className
-     * @param string|null $methodName
-     *
+     * @param string $className
+     * @param string $methodName
      * @return bool
-     *
-     * @throws AnnotationPluginException
+     * @throws AnnotationException
      */
     private function _getRouteNoCache(
-        ?string $className = null,
-        ?string $methodName = null
-    ): bool
-    {
+        string $className,
+        string $methodName
+    ): bool {
         $noCache = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
-            'no_cache'
+            RouterAnnotationNamesEnum::NO_CACHE->value
         );
 
         $noCache = mb_convert_case((string)$noCache, MB_CASE_LOWER);
 
         $noCache = preg_replace(
-            '/([^a-z]+)/su',
+            '/([^a-z]+)/u',
             '',
             $noCache
         );

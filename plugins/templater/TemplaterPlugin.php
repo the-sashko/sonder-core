@@ -6,7 +6,7 @@ use Exception;
 
 final class TemplaterPlugin
 {
-    const PROTECTED_DIR_PATH = __DIR__ . '/../../..';
+    private const PROTECTED_DIR_PATH = __DIR__ . '/../../..';
 
     /**
      * @var string|null

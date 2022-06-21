@@ -2,20 +2,19 @@
 
 namespace Sonder\Plugins;
 
-use Sonder\Plugins\Language\Exceptions\LanguageException;
+use Sonder\Plugins\Language\LanguageException;
+
 use function Sonder\__t;
 
 final class BreadcrumbsPlugin
 {
-    const MAIN_TEMPLATE_PATH = __DIR__ . '/html/main.html';
-    const ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/element.html';
-    const LAST_ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/last_element.html';
+    private const MAIN_TEMPLATE_PATH = __DIR__ . '/html/main.html';
+    private const ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/element.html';
+    private const LAST_ELEMENT_TEMPLATE_PATH = __DIR__ . '/html/last_element.html';
 
     /**
      * @param array|null $pagePath
-     *
      * @return string
-     *
      * @throws LanguageException
      */
     final public function getHtml(?array $pagePath = null): string

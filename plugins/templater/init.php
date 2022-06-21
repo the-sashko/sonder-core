@@ -9,10 +9,9 @@ use function Sonder\renderPart;
 
 /**
  * @param string|null $page
- *
  * @throws Exception
  */
-function __page(?string $page = null):  void
+function __page(?string $page = null): void
 {
     renderPage($page);
 }
@@ -22,16 +21,14 @@ function __page(?string $page = null):  void
  * @param array|null $values
  * @param bool $isCache
  * @param int|null $ttl
- *
  * @throws Exception
  */
 function __part(
     ?string $part = null,
-    ?array  $values = null,
-    bool    $isCache = false,
-    ?int    $ttl = null
-): void
-{
+    ?array $values = null,
+    bool $isCache = false,
+    ?int $ttl = null
+): void {
     $ttl = empty($ttl) ? (int)$GLOBALS['template']['ttl'] : $ttl;
 
     if (!$isCache) {

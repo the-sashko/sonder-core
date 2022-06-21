@@ -9,7 +9,7 @@ use Sonder\Plugins\Mail\Providers\AbstractMailProvider;
 
 final class SmtpProvider extends AbstractMailProvider
 {
-    const DEFAULT_SUBJECT = 'Subject not set';
+    private const DEFAULT_SUBJECT = 'Subject not set';
 
     /**
      * @param string|null $providerIdent

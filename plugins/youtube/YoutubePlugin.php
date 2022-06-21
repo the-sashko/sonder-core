@@ -6,15 +6,15 @@ use Throwable;
 
 final class YoutubePlugin
 {
-    const LINK_REGEXP = '/^(.*?)(https|http)\:\/\/' .
+    private const LINK_REGEXP = '/^(.*?)(https|http)\:\/\/' .
     '(m\.youtube|www\.youtube|youtube)\.com\/' .
     'watch(.*?)(\s(.*?)$|$)/su';
 
-    const SHORT_LINK_REGEXP = '/(.*?)(https|http)\:\/\/' .
+    private const SHORT_LINK_REGEXP = '/(.*?)(https|http)\:\/\/' .
     '(m\.youtu|www\.youtu|youtu)\.be\/' .
     '(.*?)(\s(.*?)$|$)/su';
 
-    const THUMBNAIL_URL_LIST = [
+    private const THUMBNAIL_URL_LIST = [
         'https://img.youtube.com/vi/%s/maxresdefault.jpg',
         'https://img.youtube.com/vi/%s/hqdefault.jpg',
         'https://img.youtube.com/vi/%s/mqdefault.jpg',
@@ -26,15 +26,15 @@ final class YoutubePlugin
         'https://img.youtube.com/vi/%s/0.jpg'
     ];
 
-    const SHORTCODE_REGEXP = '/^(.*?)\[Youtube:(.*?)\](.*?)$/su';
+    private const SHORTCODE_REGEXP = '/^(.*?)\[Youtube:(.*?)\](.*?)$/su';
 
-    const SHORTCODE_TEMPLATE = '[Youtube:%s]';
+    private const SHORTCODE_TEMPLATE = '[Youtube:%s]';
 
-    const CACHE_DIR_PATH = __DIR__ . '/../../../cache/youtube';
+    private const CACHE_DIR_PATH = __DIR__ . '/../../../cache/youtube';
 
-    const DEFAULT_IMAGE_DIR_PATH = __DIR__ . '/res/image.jpg';
+    private const DEFAULT_IMAGE_DIR_PATH = __DIR__ . '/res/image.jpg';
 
-    const DEFAULT_TITLE = 'Youtube Video';
+    private const DEFAULT_TITLE = 'Youtube Video';
 
     private ?string $_defaultTitle = null;
 
@@ -55,7 +55,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $text
-     *
      * @return string|null
      */
     final public function parseYoutubeUrls(?string $text = null): ?string
@@ -81,7 +80,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $text
-     *
      * @return string|null
      */
     final public function parseYoutubeShortCodes(?string $text = null): ?string
@@ -108,7 +106,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $code
-     *
      * @return string|null
      */
     final public function getThumbnailByCode(?string $code = null): ?string
@@ -133,14 +130,12 @@ final class YoutubePlugin
     /**
      * @param string|null $url
      * @param bool $isReturnTimeParam
-     *
      * @return string|null
      */
     final public function getVideoCodeFromUrl(
         ?string $url = null,
-        bool    $isReturnTimeParam = true
-    ): ?string
-    {
+        bool $isReturnTimeParam = true
+    ): ?string {
         $code = null;
 
         if (!$this->_isValidUrl($url)) {
@@ -191,7 +186,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $url
-     *
      * @return bool
      */
     private function _isValidUrl(?string $url = null): bool
@@ -213,7 +207,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $code
-     *
      * @return array|null
      */
     private function _getMetaData(?string $code = null): ?array
@@ -244,7 +237,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $code
-     *
      * @return string|null
      */
     private function _sanitizeVideoCode(?string $code = null): ?string
@@ -296,7 +288,6 @@ final class YoutubePlugin
 
     /**
      * @param string $code
-     *
      * @return array
      */
     private function _getThumbnailUrls(string $code): array
@@ -312,7 +303,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $code
-     *
      * @return string
      */
     private function _getTitleByCode(?string $code = null): string
@@ -355,7 +345,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $text
-     *
      * @return string
      */
     private function _normalizeUrls(?string $text = null): string
@@ -393,7 +382,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $text
-     *
      * @return string
      */
     private function _parseYoutubeFullUrls(?string $text = null): string
@@ -404,7 +392,11 @@ final class YoutubePlugin
             return $text;
         }
 
-        $url = preg_replace(YoutubePlugin::LINK_REGEXP, '$2://$3.com/watch$4', $text);
+        $url = preg_replace(
+            YoutubePlugin::LINK_REGEXP,
+            '$2://$3.com/watch$4',
+            $text
+        );
 
         $code = $this->getVideoCodeFromUrl($url);
 
@@ -419,7 +411,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $text
-     *
      * @return string
      */
     private function _parseYoutubeShortUrls(?string $text = null): string
@@ -430,7 +421,11 @@ final class YoutubePlugin
             return $text;
         }
 
-        $url = preg_replace(YoutubePlugin::SHORT_LINK_REGEXP, '$2://$3.be/$4', $text);
+        $url = preg_replace(
+            YoutubePlugin::SHORT_LINK_REGEXP,
+            '$2://$3.be/$4',
+            $text
+        );
 
         $code = $this->getVideoCodeFromUrl($url);
 
@@ -445,7 +440,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $url
-     *
      * @return array
      */
     private function _getUrlParams(?string $url = null): array
@@ -463,7 +457,6 @@ final class YoutubePlugin
 
     /**
      * @param string|null $url
-     *
      * @return string|null
      */
     private function _getTimeFromUrl(?string $url = null): ?string

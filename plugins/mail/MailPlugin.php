@@ -9,7 +9,7 @@ use Throwable;
 
 final class MailPlugin
 {
-    const LOG_DIR_PATH = __DIR__ . '/../../../logs/mail';
+    private const LOG_DIR_PATH = __DIR__ . '/../../../logs/mail';
 
     /**
      * @var IMailProvider

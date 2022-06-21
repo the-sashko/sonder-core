@@ -7,21 +7,21 @@ use QRcode;
 
 final class QrPlugin
 {
-    const ERROR_CORRECTION_LEVEL_LOW = 'L';
+    private const ERROR_CORRECTION_LEVEL_LOW = 'L';
 
-    const ERROR_CORRECTION_LEVEL_MIDDLE = 'M';
+    private const ERROR_CORRECTION_LEVEL_MIDDLE = 'M';
 
-    const ERROR_CORRECTION_LEVEL_HEIGHT = 'Q';
+    private const ERROR_CORRECTION_LEVEL_HEIGHT = 'Q';
 
-    const ERROR_CORRECTION_LEVEL_BEST = 'H';
+    private const ERROR_CORRECTION_LEVEL_BEST = 'H';
 
-    const PUBLIC_DIR_PATH = __DIR__.'/../../../../public';
+    private const PUBLIC_DIR_PATH = __DIR__.'/../../../../public';
 
-    const DEFAULT_CELL_SIZE = 5;
+    private const DEFAULT_CELL_SIZE = 5;
 
-    const DEFAULT_CELL_INDENT = 2;
+    private const DEFAULT_CELL_INDENT = 2;
 
-    const DEFAULT_FILE_NAME = 'qr.png';
+    private const DEFAULT_FILE_NAME = 'qr.png';
 
     /**
      * @param string|null $text

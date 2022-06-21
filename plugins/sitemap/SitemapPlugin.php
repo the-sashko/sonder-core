@@ -4,33 +4,33 @@ namespace Sonder\Plugins;
 
 final class SitemapPlugin
 {
-    const PUBLIC_DIR_PATH = __DIR__ . '/../../../../public/';
+    private const PUBLIC_DIR_PATH = __DIR__ . '/../../../../public/';
 
-    const DEFAULT_FILE_NAME = 'sitemap';
+    private const DEFAULT_FILE_NAME = 'sitemap';
 
-    const DEFAULT_FREQUENCY = 'hourly';
+    private const DEFAULT_FREQUENCY = 'hourly';
 
-    const DEFAULT_HOST = 'http://localhost';
+    private const DEFAULT_HOST = 'http://localhost';
 
-    const DEFAULT_PRIORITY = 0.5;
+    private const DEFAULT_PRIORITY = 0.5;
 
-    const SITEMAP_INDEX_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>' .
+    private const SITEMAP_INDEX_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>' .
     "\n" . '<sitemapindex xmlns="' .
     'https://www.sitemaps.org/schemas/sitemap/' .
     '0.9">%s' . "\n" . '</sitemapindex>';
 
-    const SITEMAP_ITEM_TEMPLATE = '%s' . "\n" .
+    private const SITEMAP_ITEM_TEMPLATE = '%s' . "\n" .
     '    <sitemap>' . "\n" .
     '        <loc>%s/xml/%s.xml</loc>' . "\n" .
     '        <lastmod>%s</lastmod>' . "\n" .
     '    </sitemap>';
 
-    const SITEMAP_URLS_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>' .
+    private const SITEMAP_URLS_TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>' .
     "\n" . '<urlset xmlns="' .
     'https://www.sitemaps.org/schemas/sitemap/' .
     '0.9">%s' . "\n" . '</urlset>';
 
-    const SITEMAP_URL_TEMPLATE = '%s' . "\n" .
+    private const SITEMAP_URL_TEMPLATE = '%s' . "\n" .
     '    <url>' . "\n" .
     '        <loc>%s</loc>' . "\n" .
     '        <changefreq>%s</changefreq>' . "\n" .

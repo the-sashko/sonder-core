@@ -5,17 +5,16 @@
  * @var string $file
  * @var int $line
  */
+
 ?>
 Error #<?= $code ?>: <?= $message; ?>
 
 File: <?= $file; ?> (<?= $line; ?>)
 Trace:
 <?php
-if (!empty($debugBacktrace)):
-    foreach ($debugBacktrace as $debugBacktraceStep):
-        ?>
-        <?= $debugBacktraceStep . "\n"; ?>
-    <?php
-    endforeach;
-endif;
+if (!empty($debugBacktrace)) {
+    foreach ($debugBacktrace as $debugBacktraceStep) {
+        echo $debugBacktraceStep . "\n";
+    }
+}
 ?>

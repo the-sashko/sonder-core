@@ -9,17 +9,17 @@ use Sonder\Plugins\Rss\Interfaces\IRssEntity;
 
 final class RssEntity implements IRssEntity
 {
-    const VALUES_CHANNEL_TITLE_KEY = 'channel_title';
+    private const VALUES_CHANNEL_TITLE_KEY = 'channel_title';
 
-    const VALUES_CHANNEL_LINK_KEY = 'channel_link';
+    private const VALUES_CHANNEL_LINK_KEY = 'channel_link';
 
-    const VALUES_CHANNEL_IMAGE_KEY = 'channel_image';
+    private const VALUES_CHANNEL_IMAGE_KEY = 'channel_image';
 
-    const VALUES_CHANNEL_DESCRIPTION_KEY = 'channel_description';
+    private const VALUES_CHANNEL_DESCRIPTION_KEY = 'channel_description';
 
-    const VALUES_LINKS_KEY = 'links';
+    private const VALUES_LINKS_KEY = 'links';
 
-    const XML_FILE_PATH = __DIR__ . '/../xml/entity.xml';
+    private const XML_FILE_PATH = __DIR__ . '/../xml/entity.xml';
 
     /**
      * @var string|mixed|null
@@ -132,7 +132,6 @@ final class RssEntity implements IRssEntity
 
     /**
      * @return string|null
-     *
      * @throws RssEntityException
      */
     final public function getXml(): ?string

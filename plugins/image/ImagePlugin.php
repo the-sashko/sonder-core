@@ -12,9 +12,9 @@ use Sonder\Plugins\Image\Interfaces\IImagePlugin;
 
 final class ImagePlugin implements IImagePlugin
 {
-    const DEFAULT_IMAGE_FORMAT = 'png';
+    private const DEFAULT_IMAGE_FORMAT = 'png';
 
-    const DEFAULT_SIZE_VALUES = [
+    private const DEFAULT_SIZE_VALUES = [
         'thumbnail' => [
             'height' => 64,
             'width' => 64,
@@ -65,9 +65,7 @@ final class ImagePlugin implements IImagePlugin
      * @param string|null $imageDirPath
      * @param string|null $imageFileName
      * @param string|null $imageFormat
-     *
      * @param array|null $sizes
-     *
      * @throws ImagePluginException
      * @throws ImageSizeException
      * @throws ImagickException
@@ -77,9 +75,8 @@ final class ImagePlugin implements IImagePlugin
         ?string $imageDirPath = null,
         ?string $imageFileName = null,
         ?string $imageFormat = null,
-        ?array  $sizes = null
-    ): void
-    {
+        ?array $sizes = null
+    ): void {
         if (empty($imageFilePath)) {
             throw new ImagePluginException(
                 ImagePluginException::MESSAGE_PLUGIN_FILE_PATH_IS_NOT_SET,
@@ -141,7 +138,6 @@ final class ImagePlugin implements IImagePlugin
 
     /**
      * @param ImageSize|null $size
-     *
      * @throws ImagePluginException
      * @throws ImageSizeException
      * @throws ImagickException
@@ -193,7 +189,6 @@ final class ImagePlugin implements IImagePlugin
 
     /**
      * @return Imagick
-     *
      * @throws ImagickException
      */
     private function _getImageObject(): Imagick
@@ -209,18 +204,15 @@ final class ImagePlugin implements IImagePlugin
      * @param ImageSize|null $size
      * @param int|null $originalWidth
      * @param int|null $originalHeight
-     *
      * @return ImageSize
-     *
      * @throws ImagePluginException
      * @throws ImageSizeException
      */
     private function _calculateSize(
         ?ImageSize $size = null,
-        ?int       $originalWidth = null,
-        ?int       $originalHeight = null
-    ): ImageSize
-    {
+        ?int $originalWidth = null,
+        ?int $originalHeight = null
+    ): ImageSize {
         if (empty($size)) {
             throw new ImagePluginException(
                 ImagePluginException::MESSAGE_PLUGIN_SIZE_OBJECT_IS_EMPTY,
@@ -262,19 +254,16 @@ final class ImagePlugin implements IImagePlugin
      * @param ImageSize|null $size
      * @param int|null $originalWidth
      * @param int|null $originalHeight
-     *
      * @return Imagick
-     *
      * @throws ImagePluginException
      * @throws ImagickException
      */
     private function _changeImageRatio(
-        Imagick    $imageObject,
+        Imagick $imageObject,
         ?ImageSize $size = null,
-        ?int       $originalWidth = null,
-        ?int       $originalHeight = null
-    ): Imagick
-    {
+        ?int $originalWidth = null,
+        ?int $originalHeight = null
+    ): Imagick {
         $this->_checkImageSize($size);
 
         if (empty($originalWidth)) {
@@ -326,7 +315,6 @@ final class ImagePlugin implements IImagePlugin
 
     /**
      * @param ImageSize|null $size
-     *
      * @throws ImagePluginException
      */
     private function _checkImageSize(?ImageSize $size = null): void
@@ -349,15 +337,13 @@ final class ImagePlugin implements IImagePlugin
     /**
      * @param Imagick|null $imageObject
      * @param string|null $filePrefix
-     *
      * @throws ImagePluginException
      * @throws ImagickException
      */
     private function _saveImage(
         Imagick $imageObject = null,
         ?string $filePrefix = null
-    ): void
-    {
+    ): void {
         if (empty($imageObject)) {
             throw new ImagePluginException(
                 ImagePluginException::MESSAGE_PLUGIN_IMAGE_OBJECT_IS_EMPTY,
@@ -409,9 +395,7 @@ final class ImagePlugin implements IImagePlugin
 
     /**
      * @param string|null $filePrefix
-     *
      * @return string
-     *
      * @throws ImagePluginException
      */
     private function _getImageFilePath(?string $filePrefix = null): string

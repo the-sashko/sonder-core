@@ -8,11 +8,11 @@ use Sonder\Plugins\Database\Interfaces\IDataBaseCredentials;
 
 final class DatabaseCredentials implements IDataBaseCredentials
 {
-    const DEFAULT_HOST = 'localhost';
+    private const DEFAULT_HOST = 'localhost';
 
-    const DEFAULT_PORT = 5433;
+    private const DEFAULT_PORT = 5433;
 
-    const DEFAULT_CACHE_TYPE = 'mock';
+    private const DEFAULT_CACHE_TYPE = 'mock';
 
     /**
      * @var string|null
@@ -36,7 +36,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
 
     /**
      * @param array|null $configData
-     *
      * @throws DatabaseCredentialsException
      */
     final public function __construct(?array $configData = null)
@@ -58,7 +57,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
 
     /**
      * @return string
-     *
      * @throws DatabaseCredentialsException
      */
     final public function getDsn(): string
@@ -100,7 +98,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
     /**
      * @param array $configData
      * @return string
-     *
      * @throws DatabaseCredentialsException
      */
     private function _getTypeFromConfig(array $configData): string
@@ -123,7 +120,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
     /**
      * @param array $configData
      * @return string
-     *
      * @throws DatabaseCredentialsException
      */
     private function _getDataBaseNameFromConfig(array $configData): string
@@ -145,7 +141,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
 
     /**
      * @param array $configData
-     *
      * @return string
      */
     private function _getHostFromConfig(array $configData): string
@@ -162,7 +157,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
 
     /**
      * @param array $configData
-     *
      * @return int
      */
     private function _getPortFromConfig(array $configData): int
@@ -222,7 +216,6 @@ final class DatabaseCredentials implements IDataBaseCredentials
 
     /**
      * @param array $configData
-     *
      * @throws DatabaseCredentialsException
      */
     private function _setDsnFromConfig(array $configData): void

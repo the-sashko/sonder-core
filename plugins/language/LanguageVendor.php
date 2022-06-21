@@ -2,8 +2,6 @@
 
 namespace Sonder\Plugins\Language;
 
-use Sonder\Plugins\Language\Exceptions\LanguageException;
-
 final class LanguageVendor
 {
     /**
