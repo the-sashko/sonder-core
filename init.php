@@ -1,4 +1,5 @@
 <?php
+
 try {
     if (!defined('APP_FRAMEWORK_DIR_PATH')) {
         define('APP_FRAMEWORK_DIR_PATH', realpath(__DIR__));
@@ -22,6 +23,10 @@ try {
         define(
             'APP_SOURCE_PATHS',
             [
+                'enums' => [
+                    APP_PROTECTED_DIR_PATH . '/enums'
+                ],
+
                 'endpoints' => [
                     APP_PROTECTED_DIR_PATH . '/endpoints',
                     APP_FRAMEWORK_DIR_PATH . '/endpoints'

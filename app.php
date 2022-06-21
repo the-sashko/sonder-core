@@ -5,6 +5,12 @@ namespace Sonder;
 use Exception;
 use Sonder\Core\CoreEvent;
 use Sonder\Core\CoreObject;
+use Sonder\Core\Interfaces\ICoreException;
+use Sonder\Enums\EventTypesEnum;
+use Sonder\Enums\HttpCodesEnum;
+use Sonder\Exceptions\CoreException;
+use Sonder\Plugins\ErrorPlugin;
+use Sonder\Plugins\LoggerPlugin;
 use Throwable;
 
 final class App
@@ -30,7 +36,7 @@ final class App
     final public function run(): void
     {
         try {
-            (new CoreEvent)->run(CoreEvent::TYPE_APP_RUN, []);
+            (new CoreEvent)->run(EventTypesEnum::APP_RUN, []);
 
             $endpointClass = sprintf(
                 '\Sonder\Endpoints\%sEndpoint',
@@ -50,17 +56,19 @@ final class App
      * @param string $errorMessage
      * @param string $errorFile
      * @param int $errorLine
-     *
-     * @throws Exception
+     * @return never
+     * @throws CoreException
      */
     final public function errorHandler(
-        int    $errorCode,
+        int $errorCode,
         string $errorMessage,
         string $errorFile,
-        int    $errorLine
-    ): void
-    {
-        $loggerPlugin = CoreObject::getPlugin('logger');
+        int $errorLine
+    ): never {
+        /* @var $loggerPlugin LoggerPlugin */
+        $loggerPlugin = CoreObject::getPlugin('logger', APP_RESPONSE_FORMAT);
+
+        /* @var $errorPlugin ErrorPlugin */
         $errorPlugin = CoreObject::getPlugin('error');
 
         $debugBacktrace = $this->_getDebugBacktrace();
@@ -82,7 +90,7 @@ final class App
             $errorFile,
             $errorLine,
             $debugBacktrace,
-            APP_RESPONSE_FORMAT
+            HttpCodesEnum::INTERNAL_SERVER_ERROR->value
         );
 
         exit(0);
@@ -90,13 +98,16 @@ final class App
 
     /**
      * @param Throwable $exception
-     *
-     * @throws Exception
+     * @return never
+     * @throws CoreException
      */
-    final public function exceptionHandler(Throwable $exception): void
+    final public function exceptionHandler(Throwable $exception): never
     {
+        /* @var $loggerPlugin LoggerPlugin */
         $loggerPlugin = CoreObject::getPlugin('logger');
-        $errorPlugin = CoreObject::getPlugin('error');
+
+        /* @var $errorPlugin ErrorPlugin */
+        $errorPlugin = CoreObject::getPlugin('error', APP_RESPONSE_FORMAT);
 
         $debugBacktrace = $exception->getTrace();
 
@@ -108,7 +119,7 @@ final class App
 
                 $line = '';
 
-                if (array_key_exists('line', $traceRow)) {
+                if (isset($traceRow['line'])) {
                     $line = sprintf(' (%d)', (int)$traceRow['line']);
                 }
 
@@ -147,7 +158,6 @@ final class App
             $logName
         );
 
-
         $logName = preg_replace(
             '/([A-Z])/su',
             '_$1',
@@ -166,13 +176,19 @@ final class App
 
         $loggerPlugin->logError($logMessage, $logName);
 
+        $httpResponseCode = HttpCodesEnum::INTERNAL_SERVER_ERROR->value;
+
+        if ($exception instanceof ICoreException) {
+            $httpResponseCode = $exception->getHttpResponseCode();
+        }
+
         $errorPlugin->displayError(
             $exception->getCode(),
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine(),
             $debugBacktrace,
-            APP_RESPONSE_FORMAT
+            $httpResponseCode
         );
 
         exit(0);
@@ -192,11 +208,11 @@ final class App
         foreach ($debugBacktrace as $key => $debugBacktraceStep) {
             $debugBacktrace[$key] = '…';
 
-            if (array_key_exists('file', $debugBacktraceStep)) {
+            if (isset($debugBacktraceStep['file'])) {
                 $debugBacktrace[$key] = $debugBacktraceStep['file'];
             }
 
-            if (array_key_exists('line', $debugBacktraceStep)) {
+            if (isset($debugBacktraceStep['line'])) {
                 $debugBacktrace[$key] = sprintf(
                     '%s (%d)',
                     $debugBacktrace[$key],

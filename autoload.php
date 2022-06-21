@@ -2,34 +2,44 @@
 
 namespace Sonder;
 
-use Closure;
 use Sonder\Core\AutoloadCore;
+use function Sonder\Core\Utils\loadDirectory;
 
-$autoload = function (string $directory, Closure $autoload) {
-    foreach ((array)glob($directory . '/*') as $filePath) {
-        if (is_dir($filePath)) {
-            $autoload($filePath, $autoload);
+require_once __DIR__ . '/core/tools/autoloader.class.php';
 
-            continue;
-        }
+loadDirectory(__DIR__ . '/core/interfaces');
 
-        if (preg_match('/^(.*?)\.php$/su', $filePath)) {
-            require_once $filePath;
-        }
-    }
-};
+loadDirectory(__DIR__ . '/interfaces');
+
+loadDirectory(__DIR__ . '/enums');
 
 require_once(__DIR__ . '/core/values.object.class.php');
 require_once(__DIR__ . '/core/cache.object.class.php');
 require_once(__DIR__ . '/core/config.object.class.php');
 require_once(__DIR__ . '/core/core.object.class.php');
 
-$autoload(__DIR__ . '/core/interfaces', $autoload);
-$autoload(__DIR__ . '/core', $autoload);
+loadDirectory(__DIR__ . '/core');
 
 require_once(__DIR__ . '/exceptions/AppException.php');
 
-$autoload(__DIR__ . '/exceptions', $autoload);
+loadDirectory(__DIR__ . '/exceptions');
+
+$enumsPaths = [
+    APP_PROTECTED_DIR_PATH . '/enums'
+];
+
+if (
+    array_key_exists('enums', APP_SOURCE_PATHS) &&
+    is_array(APP_SOURCE_PATHS['enums'])
+) {
+    $enumsPaths = APP_SOURCE_PATHS['enums'];
+}
+
+foreach ($enumsPaths as $enumsPath) {
+    if (file_exists($enumsPath) && is_dir($enumsPath)) {
+        loadDirectory($enumsPath);
+    }
+}
 
 $hooksPaths = [
     APP_PROTECTED_DIR_PATH . '/hooks'
@@ -43,8 +53,8 @@ if (
 }
 
 foreach ($hooksPaths as $hooksPath) {
-    if (file_exists($hooksPath) && $hooksPath) {
-        $autoload($hooksPath, $autoload);
+    if (file_exists($hooksPath) && is_dir($hooksPath)) {
+        loadDirectory($hooksPath);
     }
 }
 
