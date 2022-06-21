@@ -2,25 +2,33 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IModel;
+use Sonder\Enums\ConfigNamesEnum;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Exceptions\ModelException;
+use Sonder\Interfaces\IModel;
+use Sonder\Interfaces\IModelApi;
+use Sonder\Interfaces\IModelFormObject;
+use Sonder\Interfaces\IModelSimpleValuesObject;
+use Sonder\Interfaces\IModelStore;
+use Sonder\Interfaces\IModelValuesObject;
 
+#[IModel]
 class CoreModel extends CoreObject implements IModel
 {
-    /**
-     * @var object|null
-     */
-    public ?object $api = null;
+    protected const ITEMS_ON_PAGE = 10;
 
     /**
-     * @var object|null
+     * @var IModelApi|null
      */
-    protected ?object $store = null;
+    #[IModelApi]
+    public ?IModelApi $api = null;
 
     /**
-     * @var int
+     * @var IModelStore|null
      */
-    protected int $itemsOnPage = 10;
+    #[IModelStore]
+    protected ?IModelStore $store = null;
 
     /**
      * @var string|null
@@ -33,7 +41,7 @@ class CoreModel extends CoreObject implements IModel
     private ?string $_simpleValuesObjectClass = null;
 
     /**
-     * @throws Exception
+     * @throws ConfigException
      */
     public function __construct()
     {
@@ -47,13 +55,12 @@ class CoreModel extends CoreObject implements IModel
     /**
      * @param array|null $formValues
      * @param string|null $formName
-     * @return ModelFormObject|null
+     * @return IModelFormObject|null
      */
     final public function getForm(
-        ?array  $formValues = null,
+        ?array $formValues = null,
         ?string $formName = null
-    ): ?ModelFormObject
-    {
+    ): ?IModelFormObject {
         $modelClass = get_called_class();
 
         $modelName = explode('\\', $modelClass);
@@ -68,7 +75,7 @@ class CoreModel extends CoreObject implements IModel
         $formName = implode('', $formName);
 
         $formClass = sprintf(
-            '%s\\%sForm',
+            '%s\\Forms\\%sForm',
             $modelClass,
             $formName
         );
@@ -82,13 +89,16 @@ class CoreModel extends CoreObject implements IModel
 
     /**
      * @param array|null $row
-     * @return ValuesObject
-     * @throws Exception
+     * @return IModelValuesObject
+     * @throws ModelException
      */
-    protected function getVO(?array $row = null): ValuesObject
+    protected function getVO(?array $row = null): IModelValuesObject
     {
         if (empty($this->_valuesObjectClass)) {
-            throw new Exception('Value Object Class Not set');
+            throw new ModelException(
+                ModelException::MESSAGE_MODEL_VALUES_OBJECT_CLASS_NOT_EXISTS,
+                AppException::CODE_MODEL_VALUES_OBJECT_CLASS_NOT_EXISTS
+            );
         }
 
         return new $this->_valuesObjectClass($row);
@@ -96,27 +106,34 @@ class CoreModel extends CoreObject implements IModel
 
     /**
      * @param array|null $row
-     * @return ValuesObject
-     * @throws Exception
+     * @return IModelSimpleValuesObject
+     * @throws ModelException
      */
-    protected function getSimpleVO(?array $row = null): ValuesObject
+    protected function getSimpleVO(?array $row = null): IModelSimpleValuesObject
     {
         if (empty($this->_simpleValuesObjectClass)) {
-            throw new Exception('Simple Value Object Class Not Set');
+            throw new ModelException(
+                ModelException::MESSAGE_MODEL_SIMPLE_VALUES_OBJECT_CLASS_NOT_EXISTS,
+                AppException::CODE_MODEL_SIMPLE_VALUES_OBJECT_CLASS_NOT_EXISTS
+            );
         }
 
         return new $this->_simpleValuesObjectClass($row);
     }
 
     /**
-     * @param ValuesObject|null $fullVO
-     * @return ValuesObject|null
-     * @throws Exception
+     * @param IModelValuesObject|null $fullVO
+     * @return IModelSimpleValuesObject|null
+     * @throws ModelException
      */
-    protected function simplifyVO(?ValuesObject $fullVO = null): ?ValuesObject
-    {
+    protected function simplifyVO(
+        ?IModelValuesObject $fullVO = null
+    ): ?IModelSimpleValuesObject {
         if (empty($this->_simpleValuesObjectClass)) {
-            throw new Exception('Simple Value Object Class Not Set');
+            throw new ModelException(
+                ModelException::MESSAGE_MODEL_SIMPLE_VALUES_OBJECT_CLASS_NOT_EXISTS,
+                AppException::CODE_MODEL_SIMPLE_VALUES_OBJECT_CLASS_NOT_EXISTS
+            );
         }
 
         if (empty($fullVO)) {
@@ -129,7 +146,7 @@ class CoreModel extends CoreObject implements IModel
     /**
      * @param array|null $rows
      * @return array|null
-     * @throws Exception
+     * @throws ModelException
      */
     final protected function getVOArray(?array $rows = null): ?array
     {
@@ -153,7 +170,7 @@ class CoreModel extends CoreObject implements IModel
     /**
      * @param array|null $rows
      * @return array|null
-     * @throws Exception
+     * @throws ModelException
      */
     final protected function getSimpleVOArray(?array $rows = null): ?array
     {
@@ -175,7 +192,8 @@ class CoreModel extends CoreObject implements IModel
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ConfigException
      */
     private function _setStore(): void
     {
@@ -187,7 +205,7 @@ class CoreModel extends CoreObject implements IModel
         $storeClass = sprintf('%s\\%sStore', $modelClass, $modelName);
 
         if (class_exists($storeClass)) {
-            $databaseConfig = $this->config->get('database');
+            $databaseConfig = $this->config->get(ConfigNamesEnum::DATABASE);
 
             $this->store = new $storeClass($databaseConfig);
         }
@@ -204,7 +222,7 @@ class CoreModel extends CoreObject implements IModel
         $modelName = end($modelName);
 
         $simpleValuesObjectClass = sprintf(
-            '%s\\%sSimpleValuesObject',
+            '%s\\ValuesObjects\\%sSimpleValuesObject',
             $modelClass,
             $modelName
         );
@@ -214,7 +232,7 @@ class CoreModel extends CoreObject implements IModel
         }
 
         $valuesObjectClass = sprintf(
-            '%s\\%sValuesObject',
+            '%s\\ValuesObjects\\%sValuesObject',
             $modelClass,
             $modelName
         );

@@ -2,28 +2,33 @@
 
 namespace Sonder\Core;
 
-use Exception;
+use Sonder\Enums\CacheTypesEnum;
+use Sonder\Enums\ConfigNamesEnum;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\CacheException;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Interfaces\ICacheObject;
+use Sonder\Interfaces\IConfigObject;
 
-final class ConfigObject
+#[IConfigObject]
+final class ConfigObject implements IConfigObject
 {
-    const CACHE_TTL = 60 * 30;
+    private const CACHE_VALUE_NAME = 'values';
 
-    /**
-     * @var array
-     */
+    private const CACHE_TTL = 1800; // 30 min
+
     private array $_values;
 
-    /**
-     * @var CacheObject
-     */
+    #[ICacheObject]
     private CacheObject $_cache;
 
     /**
-     * @throws Exception
+     * @throws CacheException
+     * @throws ConfigException
      */
     final public function __construct()
     {
-        $this->_cache = new CacheObject('config');
+        $this->_cache = new CacheObject(CacheTypesEnum::CONFIG);
 
         if (!$this->_setValuesFromCache()) {
             $this->_setValues();
@@ -32,71 +37,125 @@ final class ConfigObject
     }
 
     /**
-     * @param string|null $configName
+     * @param string|ConfigNamesEnum $configName
      * @return array
-     * @throws Exception
+     * @throws ConfigException
      */
-    final public function get(?string $configName = null): array
+    final public function get(string|ConfigNamesEnum $configName): array
     {
-        if (empty($configName)) {
-            throw new Exception('Config Name Is Not Set');
+        if (!is_string($configName)) {
+            $configName = $configName->value;
         }
 
-        if (!array_key_exists($configName, $this->_values)) {
-            throw new Exception(
-                sprintf('Config %s Not Exists', $configName)
+        if (array_key_exists($configName, $this->_values)) {
+            return (array)$this->_values[$configName];
+        }
+
+        if (empty(ConfigNamesEnum::tryFrom($configName))) {
+            $errorMessage = sprintf(
+                ConfigException::MESSAGE_CONFIG_INVALID_CONFIG_NAME,
+                $configName
+            );
+
+            throw new ConfigException(
+                $errorMessage,
+                AppException::CODE_CONFIG_INVALID_CONFIG_NAME
             );
         }
 
-        return (array)$this->_values[$configName];
+        $errorMessage = sprintf(
+            ConfigException::MESSAGE_CONFIG_NOT_EXISTS,
+            $configName
+        );
+
+        throw new ConfigException(
+            $errorMessage,
+            AppException::CODE_CONFIG_NOT_EXISTS
+        );
     }
 
     /**
-     * @param string|null $configName
-     * @param string|null $valueName
+     * @param string|ConfigNamesEnum $configName
+     * @param string $valueName
      * @return string
-     * @throws Exception
+     * @throws ConfigException
      */
     final public function getValue(
-        ?string $configName = null,
-        ?string $valueName = null
-    ): string
-    {
-        if (empty($configName)) {
-            throw new Exception('Config Name Is Not Set');
+        string|ConfigNamesEnum $configName,
+        string $valueName
+    ): string {
+        if (!is_string($configName)) {
+            $configName = $configName->value;
         }
 
         if (empty($valueName)) {
-            throw new Exception('Config Value Name Is Not Set');
+            throw new ConfigException(
+                ConfigException::MESSAGE_CONFIG_VALUE_NAME_IS_NOT_SET,
+                AppException::CODE_CONFIG_VALUE_NAME_IS_NOT_SET
+            );
         }
 
         $configValues = $this->get($configName);
 
         if (empty($configValues)) {
             $errorMessage = sprintf(
-                'Config "%s" Is Empty',
+                ConfigException::MESSAGE_CONFIG_CONFIG_IS_EMPTY,
                 $configName
             );
 
-            throw new Exception($errorMessage);
-        }
-
-        if (!array_key_exists($valueName, $configValues)) {
-            $errorMessage = sprintf(
-                'Config "%s" Has Not Value "%s"',
-                $configName,
-                $valueName
+            throw new ConfigException(
+                $errorMessage,
+                AppException::CODE_CONFIG_CONFIG_IS_EMPTY
             );
-
-            throw new Exception($errorMessage);
         }
 
-        return (string)$configValues[$valueName];
+        if (array_key_exists($valueName, $configValues)) {
+            return (string)$configValues[$valueName];
+        }
+
+        $errorMessage = sprintf(
+            ConfigException::MESSAGE_CONFIG_CONFIG_HAS_NOT_VALUE,
+            $configName,
+            $valueName
+        );
+
+        throw new ConfigException(
+            $errorMessage,
+            AppException::CODE_CONFIG_CONFIG_HAS_NOT_VALUE
+        );
+    }
+
+    /**
+     * @param string|ConfigNamesEnum $configName
+     * @param string $valueName
+     * @return bool
+     * @throws ConfigException
+     */
+    final public function hasValue(
+        string|ConfigNamesEnum $configName,
+        string $valueName
+    ): bool {
+        if (!is_string($configName)) {
+            $configName = $configName->value;
+        }
+
+        if (empty($valueName)) {
+            return false;
+        }
+
+        $configValues = $this->get($configName);
+
+        if (empty($configValues)) {
+            return false;
+        }
+
+        return array_key_exists($valueName, $configValues);
     }
 
     /**
      * @param string|null $configsDirPath
-     * @throws Exception
+     * @return void
+     * @throws ConfigException
      */
     private function _setValues(?string $configsDirPath = null): void
     {
@@ -138,7 +197,7 @@ final class ConfigObject
     /**
      * @param string $configFilePath
      * @return string
-     * @throws Exception
+     * @throws ConfigException
      */
     private function _getConfigNameFormFilePath(string $configFilePath): string
     {
@@ -154,31 +213,36 @@ final class ConfigObject
         $configName = mb_convert_case($configName, MB_CASE_LOWER);
 
         $configName = preg_replace(
-            '/[^a-z]/su',
+            '/[^a-z]/u',
             '_',
             $configName
         );
 
         $configName = preg_replace(
-            '/([_]+)/su',
+            '/(_+)/u',
             '_',
             $configName
         );
 
         $configName = preg_replace(
-            '/((^_)|(_$))/su',
+            '/((^_)|(_$))/u',
             '',
             $configName
         );
 
-        if (empty($configName)) {
-            throw new Exception(sprintf(
-                'Config File %s Has Bad Name',
-                $configFileName
-            ));
+        if (!empty($configName)) {
+            return $configName;
         }
 
-        return $configName;
+        $errorMessage = sprintf(
+            ConfigException::MESSAGE_CONFIG_CONFIG_FILE_HAS_BAD_FORMAT,
+            $configFileName
+        );
+
+        throw new ConfigException(
+            $errorMessage,
+            AppException::CODE_CONFIG_CONFIG_FILE_HAS_BAD_FORMAT
+        );
     }
 
     /**
@@ -186,7 +250,7 @@ final class ConfigObject
      */
     private function _setValuesFromCache(): bool
     {
-        $values = $this->_cache->get('values');
+        $values = $this->_cache->get(ConfigObject::CACHE_VALUE_NAME);
 
         if (empty($values)) {
             return false;
@@ -198,12 +262,13 @@ final class ConfigObject
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws CacheException
      */
     private function _saveValuesToCache(): void
     {
         $this->_cache->save(
-            'values',
+            ConfigObject::CACHE_VALUE_NAME,
             $this->_values,
             ConfigObject::CACHE_TTL
         );

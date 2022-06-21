@@ -2,27 +2,23 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IEvent;
+use Sonder\Enums\ConfigNamesEnum;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Interfaces\IEvent;
+use Sonder\Interfaces\IEventTypesEnum;
 
+#[IEvent]
 final class CoreEvent implements IEvent
 {
-    const TYPE_APP_RUN = 'app_run';
-    const TYPE_BEFORE_MIDDLEWARES = 'before_middlewares';
-    const TYPE_AFTER_MIDDLEWARES = 'after_middlewares';
-    const TYPE_INIT_CONTROLLER = 'init_controller';
-    const TYPE_BEFORE_RENDER = 'before_render';
-    const TYPE_AFTER_RENDER = 'after_render';
-
     /**
-     * @param string $type
+     * @param IEventTypesEnum $type
      * @param array $values
      * @return array
-     * @throws Exception
+     * @throws ConfigException
      */
-    final public function run(string $type, array $values): array
+    final public function run(IEventTypesEnum $type, array $values): array
     {
-        $hookNames = (new ConfigObject)->get('hooks');
+        $hookNames = (new ConfigObject)->get(ConfigNamesEnum::HOOKS);
 
         if (defined('APP_SYSTEM_HOOKS')) {
             $hookNames = array_merge($hookNames, APP_SYSTEM_HOOKS);
@@ -52,12 +48,12 @@ final class CoreEvent implements IEvent
     }
 
     /**
-     * @param string $type
+     * @param IEventTypesEnum $type
      * @return string
      */
-    private function _getHookMethodByType(string $type): string
+    private function _getHookMethodByType(IEventTypesEnum $type): string
     {
-        $hookMethod = explode('_', $type);
+        $hookMethod = explode('_', $type->value);
 
         foreach ($hookMethod as $key => $hookMethodPart) {
             $hookMethod[$key] = mb_convert_case($hookMethodPart, MB_CASE_TITLE);

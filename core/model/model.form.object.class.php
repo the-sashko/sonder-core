@@ -2,11 +2,15 @@
 
 namespace Sonder\Core;
 
-use Sonder\Core\Interfaces\IModelFormObject;
+use Sonder\Interfaces\IModelFormFileObject;
+use Sonder\Interfaces\IModelFormObject;
+use Sonder\Interfaces\IValuesObject;
 
+#[IValuesObject]
+#[IModelFormObject]
 abstract class ModelFormObject extends ValuesObject implements IModelFormObject
 {
-    const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
+    final protected const DEFAULT_ERROR_MESSAGE = 'Unknown Error';
 
     /**
      * @var bool
@@ -18,6 +22,9 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
      */
     public array $errors = [];
 
+    /**
+     * @return void
+     */
     abstract protected function checkInputValues(): void;
 
     /**
@@ -41,7 +48,7 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
     }
 
     /**
-     * @return array|null
+     * @return array|string[]|null
      */
     final public function getErrors(): ?array
     {
@@ -76,6 +83,7 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
 
     /**
      * @param array|null $errors
+     * @return void
      */
     final public function setErrors(?array $errors = null): void
     {
@@ -87,6 +95,7 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
 
     /**
      * @param string|null $error
+     * @return void
      */
     final public function setError(?string $error = null): void
     {
@@ -98,63 +107,26 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
 
     /**
      * @param string|null $fileName
-     * @return array|null
+     * @return IModelFormFileObject|null
      */
     final protected function getFileValueFromRequest(
         ?string $fileName = null
-    ): ?array
-    {
+    ): ?IModelFormFileObject {
+        if (empty($fileName) || empty($_FILES) || !isset($fileName, $_FILES)) {
+            return null;
+        }
+
+        $modelFormFileObject = new ModelFormFileObject($fileName);
+
         if (
-            empty($_FILES) ||
-            !array_key_exists($fileName, $_FILES) &&
-            empty($_FILES[$fileName])
+            empty($modelFormFileObject->getName()) ||
+            empty($modelFormFileObject->getSize()) ||
+            empty($modelFormFileObject->getPath())
         ) {
             return null;
         }
 
-        $name = null;
-        $extension = null;
-        $size = null;
-        $path = null;
-        $error = false;
-
-        if (array_key_exists('name', $_FILES[$fileName])) {
-            $name = $_FILES[$fileName]['name'];
-        }
-
-        if (!empty($fileName)) {
-            $extension = explode('.', $name);
-            $extension = end($extension);
-            $extension = mb_convert_case($extension, MB_CASE_LOWER);
-        }
-
-        if ($extension == 'jpeg') {
-            $extension = 'jpg';
-        }
-
-        if (array_key_exists('size', $_FILES[$fileName])) {
-            $size = (int)$_FILES[$fileName]['size'];
-        }
-
-        if (array_key_exists('tmp_name', $_FILES[$fileName])) {
-            $path = (string)$_FILES[$fileName]['tmp_name'];
-        }
-
-        if (array_key_exists('error', $_FILES[$fileName])) {
-            $error = (bool)$_FILES[$fileName]['error'];
-        }
-
-        if (empty($name) || empty($size) || empty($path)) {
-            return null;
-        }
-
-        return [
-            'name' => $name,
-            'extension' => $extension,
-            'size' => $size,
-            'path' => $path,
-            'error' => $error
-        ];
+        return $modelFormFileObject;
     }
 
     /**
@@ -171,6 +143,7 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
 
     /**
      * @param bool $status
+     * @return void
      */
     private function _setStatus(bool $status = false): void
     {

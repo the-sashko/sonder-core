@@ -2,20 +2,23 @@
 
 namespace Sonder\Core;
 
-final class AutoloadCore
+use Sonder\Core\Interfaces\IAutoloadCore;
+
+#[IAutoloadCore]
+final class AutoloadCore implements IAutoloadCore
 {
     /**
-     * @var array
+     * @var string[]
      */
     private array $_endpointPaths;
 
     /**
-     * @var array
+     * @var string[]
      */
     private array $_middlewarePaths;
 
     /**
-     * @var array
+     * @var string[]
      */
     private array $_controllerPaths;
 

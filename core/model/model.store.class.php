@@ -2,45 +2,38 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IModelStore;
-use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
-use Sonder\Plugins\Database\Exceptions\DatabaseCredentialsException;
-use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IModelStore;
+use Sonder\Plugins\Database\Interfaces\IDatabasePlugin;
 
+#[IModelStore]
 class ModelStore implements IModelStore
 {
-    /**
-     * @var object
-     */
-    private object $_db;
+    protected const SCOPE = null;
+
+    protected const TTL = null;
 
     /**
-     * @var string|null
+     * @var IDatabasePlugin
      */
-    public ?string $scope = null;
-
-    /**
-     * @var int|null
-     */
-    public ?int $ttl = null;
+    #[IDatabasePlugin]
+    private IDatabasePlugin $_db;
 
     /**
      * @param array|null $configData
-     * @throws DatabaseCacheException
-     * @throws DatabaseCredentialsException
-     * @throws DatabasePluginException
-     * @throws Exception
+     * @throws CoreException
      */
     public function __construct(?array $configData = null)
     {
-        $this->_db = CoreObject::getPlugin('database');
+        /* @var IDatabasePlugin $databasePlugin */
+        $databasePlugin = CoreObject::getPlugin('database');
+
+        $this->_db = $databasePlugin;
         $this->_db->connect($configData);
     }
 
     /**
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function start(): bool
     {
@@ -49,7 +42,6 @@ class ModelStore implements IModelStore
 
     /**
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function commit(): bool
     {
@@ -58,7 +50,6 @@ class ModelStore implements IModelStore
 
     /**
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function rollback(): bool
     {
@@ -69,20 +60,17 @@ class ModelStore implements IModelStore
      * @param string|null $sql
      * @param int|null $ttl
      * @return string|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final protected function getOne(
         ?string $sql = null,
-        ?int    $ttl = null
-    ): ?string
-    {
+        ?int $ttl = null
+    ): ?string {
         if (empty($sql)) {
             return null;
         }
 
         if (empty($ttl)) {
-            $ttl = $this->ttl;
+            $ttl = static::TTL;
         }
 
         $row = $this->getRow($sql, $ttl);
@@ -104,20 +92,17 @@ class ModelStore implements IModelStore
      * @param string|null $sql
      * @param int|null $ttl
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final protected function getRow(
         ?string $sql = null,
-        ?int    $ttl = null
-    ): ?array
-    {
+        ?int $ttl = null
+    ): ?array {
         if (empty($sql)) {
             return null;
         }
 
         if (empty($ttl)) {
-            $ttl = $this->ttl;
+            $ttl = static::TTL;
         }
 
         $rows = $this->getRows($sql, $ttl);
@@ -133,23 +118,20 @@ class ModelStore implements IModelStore
      * @param string|null $sql
      * @param int|null $ttl
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final protected function getRows(
         ?string $sql = null,
-        ?int    $ttl = null
-    ): ?array
-    {
+        ?int $ttl = null
+    ): ?array {
         if (empty($sql)) {
             return null;
         }
 
         if (empty($ttl)) {
-            $ttl = $this->ttl;
+            $ttl = static::TTL;
         }
 
-        $rows = $this->_db->select($sql, $this->scope, $ttl);
+        $rows = $this->_db->select($sql, static::SCOPE, $ttl);
 
         if (empty($rows) || !is_array($rows)) {
             return null;
@@ -162,13 +144,11 @@ class ModelStore implements IModelStore
      * @param string|null $table
      * @param array|null $row
      * @return bool
-     * @throws DatabasePluginException
      */
     final protected function addRow(
         ?string $table = null,
-        ?array  $row = null
-    ): bool
-    {
+        ?array $row = null
+    ): bool {
         if (empty($table) || empty($row)) {
             return false;
         }
@@ -192,7 +172,7 @@ class ModelStore implements IModelStore
 
         $sql = sprintf($sql, $table, $columns, $row);
 
-        return $this->_db->query($sql, $this->scope);
+        return $this->_db->query($sql, static::SCOPE);
     }
 
     /**
@@ -200,21 +180,19 @@ class ModelStore implements IModelStore
      * @param array|null $row
      * @param string|null $condition
      * @return bool
-     * @throws DatabasePluginException
      */
     final protected function updateRows(
         ?string $table = null,
-        ?array  $row = null,
+        ?array $row = null,
         ?string $condition = null
-    ): bool
-    {
+    ): bool {
         if (empty($table) || empty($row) || empty($condition)) {
             return false;
         }
 
         foreach ($row as $key => $value) {
             $value = $this->_getValueString($value);
-            $row[$key] = sprintf('"%s" = %s', (string)$key, (string)$value);
+            $row[$key] = sprintf('"%s" = %s', $key, $value);
         }
 
         $row = implode(',', $row);
@@ -227,7 +205,7 @@ class ModelStore implements IModelStore
 
         $sql = sprintf($sql, $table, $row, $condition);
 
-        return $this->_db->query($sql, $this->scope);
+        return $this->_db->query($sql, static::SCOPE);
     }
 
     /**
@@ -235,14 +213,12 @@ class ModelStore implements IModelStore
      * @param array|null $row
      * @param int|null $idRow
      * @return bool
-     * @throws DatabasePluginException
      */
     final protected function updateRowById(
         ?string $table = null,
-        ?array  $row = null,
-        ?int    $idRow = null
-    ): bool
-    {
+        ?array $row = null,
+        ?int $idRow = null
+    ): bool {
         if (empty($idRow)) {
             return false;
         }
@@ -256,13 +232,11 @@ class ModelStore implements IModelStore
      * @param string|null $table
      * @param string|null $condition
      * @return bool
-     * @throws DatabasePluginException
      */
     final protected function deleteRows(
         ?string $table = null,
         ?string $condition = null
-    ): bool
-    {
+    ): bool {
         if (empty($table) || empty($condition)) {
             return false;
         }
@@ -275,20 +249,18 @@ class ModelStore implements IModelStore
 
         $sql = sprintf($sql, $table, $condition);
 
-        return $this->_db->query($sql, $this->scope);
+        return $this->_db->query($sql, static::SCOPE);
     }
 
     /**
      * @param string|null $table
      * @param int|null $idRow
      * @return bool
-     * @throws DatabasePluginException
      */
     final protected function deleteRowById(
         ?string $table = null,
-        ?int    $idRow = null
-    ): bool
-    {
+        ?int $idRow = null
+    ): bool {
         if (empty($idRow)) {
             return false;
         }
@@ -299,7 +271,7 @@ class ModelStore implements IModelStore
     }
 
     /**
-     * @param null $value
+     * @param $value
      * @return string|null
      */
     private function _getValueString($value = null): ?string

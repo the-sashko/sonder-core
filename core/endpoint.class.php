@@ -2,25 +2,26 @@
 
 namespace Sonder\Core;
 
-use Exception;
 use ReflectionMethod;
-use Sonder\Core\Interfaces\IController;
-use Sonder\Core\Interfaces\IEndpoint;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Enums\CacheTypesEnum;
+use Sonder\Enums\EventTypesEnum;
+use Sonder\Enums\MiddlewaresEnum;
+use Sonder\Exceptions\CacheException;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Exceptions\RequestObjectException;
+use Sonder\Interfaces\ICacheObject;
+use Sonder\Interfaces\IController;
+use Sonder\Interfaces\IEndpoint;
+use Sonder\Interfaces\IMiddleware;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\EndpointException;
+use Sonder\Interfaces\IRequestObject;
+use Sonder\Interfaces\IResponseObject;
 
+#[IEndpoint]
 class CoreEndpoint implements IEndpoint
 {
-    const CACHE_TTL = 60 * 30;
-
-    const DEFAULT_MIDDLEWARES = [
-        'session'
-    ];
-
-    const SECURITY_MIDDLEWARE = 'security';
-
-    const ROUTER_MIDDLEWARE = 'router';
+    protected const CACHE_TTL = 1800; // 30 min
 
     /**
      * @var array
@@ -28,25 +29,32 @@ class CoreEndpoint implements IEndpoint
     protected array $middlewares;
 
     /**
-     * @var RequestObject
+     * @var IRequestObject
      */
-    private RequestObJect $_request;
+    #[IRequestObJect]
+    private IRequestObJect $_request;
 
     /**
-     * @var ResponseObject|null
+     * @var IResponseObject|null
      */
-    private ?ResponseObJect $_response;
-
-    private CacheObject $_cache;
+    #[IResponseObJect]
+    private ?IResponseObJect $_response;
 
     /**
-     * @throws Exception
+     * @var ICacheObject
+     */
+    #[ICacheObject]
+    private ICacheObject $_cache;
+
+    /**
+     * @throws RequestObjectException
      */
     public function __construct()
     {
-        $this->_cache = new CacheObject('app');
+        $this->_cache = new CacheObject(CacheTypesEnum::APP);
 
         $this->_request = new RequestObject();
+
         $this->_response = $this->_getResponseFromCache();
 
         if (empty($this->_response)) {
@@ -56,20 +64,14 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return void
-     * @throws Exception
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws EndpointException
+     * @throws RequestObjectException
      */
     final public function run(): void
     {
-        $values = (new CoreEvent)->run(
-            CoreEvent::TYPE_BEFORE_MIDDLEWARES,
-            [
-                'request' => $this->_request,
-                'response' => $this->_response
-            ]
-        );
-
-        $this->_request = $values['request'];
-        $this->_response = $values['response'];
+        $this->_runEvent(EventTypesEnum::BEFORE_MIDDLEWARES);
 
         if (!empty($this->_response)) {
             $this->_returnResponse();
@@ -77,16 +79,7 @@ class CoreEndpoint implements IEndpoint
 
         $this->_runMiddlewares();
 
-        $values = (new CoreEvent)->run(
-            CoreEvent::TYPE_AFTER_MIDDLEWARES,
-            [
-                'request' => $this->_request,
-                'response' => $this->_response
-            ]
-        );
-
-        $this->_request = $values['request'];
-        $this->_response = $values['response'];
+        $this->_runEvent(EventTypesEnum::AFTER_MIDDLEWARES);
 
         if (!empty($this->_response)) {
             $this->_returnResponse();
@@ -106,9 +99,9 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
-     * @return void
+     * @return never
      */
-    private function _returnResponse(): void
+    private function _returnResponse(): never
     {
         $this->_response->redirect->redirect();
 
@@ -124,11 +117,15 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
-     * @throws Exception
+     * @return void
      */
     private function _runMiddlewares(): void
     {
         foreach ($this->middlewares as $middleware) {
+            if (!is_string($middleware) && !empty($middleware)) {
+                $middleware = $middleware->value;
+            }
+
             $middleware = $this->_getMiddlewareInstance($middleware);
             $middleware->run();
 
@@ -141,7 +138,8 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws EndpointException
      */
     private function _runControllerMethod(): void
     {
@@ -154,7 +152,7 @@ class CoreEndpoint implements IEndpoint
             );
         }
 
-        $method = $this->_request->getMethod();
+        $method = $this->_request->getControllerMethod();
 
         $this->_response = $controller->$method();
     }
@@ -165,8 +163,7 @@ class CoreEndpoint implements IEndpoint
      */
     private function _getMiddlewareInstance(
         ?string $middleware = null
-    ): IMiddleware
-    {
+    ): IMiddleware {
         $middleware = sprintf(
             '\Sonder\Middlewares\%sMiddleware',
             mb_convert_case($middleware, MB_CASE_TITLE)
@@ -177,7 +174,7 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return IController
-     * @throws Exception
+     * @throws EndpointException
      */
     private function _getControllerInstance(): IController
     {
@@ -204,7 +201,7 @@ class CoreEndpoint implements IEndpoint
      */
     private function _isValidControllerMethod(IController $controller): bool
     {
-        $method = $this->_request->getMethod();
+        $method = $this->_request->getControllerMethod();
 
         if (empty($method)) {
             return false;
@@ -234,9 +231,12 @@ class CoreEndpoint implements IEndpoint
         $returnType = explode('\\', $returnType);
         $returnType = end($returnType);
 
-        return $returnType == 'ResponseObject';
+        return $returnType == 'IResponseObject';
     }
 
+    /**
+     * @return void
+     */
     private function _init(): void
     {
         if (defined('APP_MIDDLEWARES')) {
@@ -247,28 +247,28 @@ class CoreEndpoint implements IEndpoint
         }
 
         if (empty($this->middlewares)) {
-            $this->middlewares = static::DEFAULT_MIDDLEWARES;
+            $this->middlewares = MiddlewaresEnum::DEFAULT_MIDDLEWARES;
         }
 
         $this->middlewares = array_merge(
             [
-                static::SECURITY_MIDDLEWARE
+                MiddlewaresEnum::SECURITY
             ],
             $this->middlewares,
             [
-                static::ROUTER_MIDDLEWARE
+                MiddlewaresEnum::ROUTER
             ]
         );
     }
 
     /**
      * @return ResponseObject|null
-     * @throws Exception
+     * @throws RequestObjectException
      */
     private function _getResponseFromCache(): ?ResponseObject
     {
         if (
-            $this->_request->getHttpMethod() != 'get' ||
+            !$this->_request->getHttpMethod()->isGet() ||
             $this->_request->getNoCache()
         ) {
             return null;
@@ -287,12 +287,14 @@ class CoreEndpoint implements IEndpoint
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws RequestObjectException
+     * @throws CacheException
      */
     private function _saveResponseToCache(): void
     {
         if (
-            $this->_request->getHttpMethod() == 'get' &&
+            $this->_request->getHttpMethod()->isGet() &&
             !$this->_request->getNoCache()
         ) {
             $this->_cache->save(
@@ -307,7 +309,7 @@ class CoreEndpoint implements IEndpoint
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RequestObjectException
      */
     private function _getCacheIdent(): string
     {
@@ -322,5 +324,24 @@ class CoreEndpoint implements IEndpoint
             $userId,
             base64_encode($this->_request->getFullUrl())
         );
+    }
+
+    /**
+     * @param EventTypesEnum $eventType
+     * @return void
+     * @throws ConfigException
+     */
+    private function _runEvent(EventTypesEnum $eventType): void
+    {
+        $values = (new CoreEvent)->run(
+            $eventType,
+            [
+                'request' => $this->_request,
+                'response' => $this->_response
+            ]
+        );
+
+        $this->_request = $values['request'] ?? null;
+        $this->_response = $values['response'] ?? null;
     }
 }

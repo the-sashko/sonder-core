@@ -2,49 +2,47 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IUser;
+use Sonder\Enums\HttpMethodsEnum;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\RequestObjectException;
+use Sonder\Interfaces\IRequestObject;
+use Sonder\Interfaces\IHttpMethodsEnum;
+use Sonder\Interfaces\IUserModel;
+use Sonder\Exceptions\CoreException;
+use Sonder\Plugins\Session\Interfaces\ISessionPlugin;
 
-final class RequestObject
+#[IRequestObject]
+final class RequestObject implements IRequestObject
 {
-    const HTTP_METHOD_GET = 'get';
-    const HTTP_METHOD_HEAD = 'head';
-    const HTTP_METHOD_POST = 'post';
-    const HTTP_METHOD_PUT = 'put';
-    const HTTP_METHOD_DELETE = 'delete';
-    const HTTP_METHOD_CONNECT = 'connect';
-    const HTTP_METHOD_OPTIONS = 'options';
-    const HTTP_METHOD_TRACE = 'trace';
-    const HTTP_METHOD_PATCH = 'patch';
+    private const DEFAULT_URL = '/';
 
-    const DEFAULT_URL = '/';
-
-    const DEFAULT_LANGUAGE = 'en';
+    private const DEFAULT_LANGUAGE = 'en';
 
     /**
-     * @var string|null
+     * @var IHttpMethodsEnum
      */
-    private ?string $_httpMethod = null;
+    #[IHttpMethodsEnum]
+    private readonly IHttpMethodsEnum $_httpMethod;
 
     /**
-     * @var array|null
+     * @var array
      */
-    private ?array $_urlValues = null;
+    private array $_urlValues = [];
+
+    /**
+     * @var array
+     */
+    private array $_postValues = [];
 
     /**
      * @var array|null
      */
-    private ?array $_postValues = null;
+    private ?array $_apiValues = [];
 
     /**
      * @var array|null
      */
-    private ?array $_apiValues = null;
-
-    /**
-     * @var array|null
-     */
-    private ?array $_cliValues = null;
+    private ?array $_cliValues = [];
 
     /**
      * @var string|null
@@ -67,14 +65,15 @@ final class RequestObject
     private ?string $_userAgent = null;
 
     /**
-     * @var object|null
+     * @var ISessionPlugin|null
      */
-    private ?object $_session = null;
+    #[ISessionPlugin]
+    private ?ISessionPlugin $_session = null;
 
     /**
-     * @var IUser|null
+     * @var IUserModel|null
      */
-    private ?IUser $_user = null;
+    private ?IUserModel $_user = null;
 
     /**
      * @var string|null
@@ -89,7 +88,7 @@ final class RequestObject
     /**
      * @var string|null
      */
-    private ?string $_method = null;
+    private ?string $_controllerMethod = null;
 
     /**
      * @var bool
@@ -97,7 +96,7 @@ final class RequestObject
     private bool $_noCache = false;
 
     /**
-     * @var integer|null
+     * @var int|null
      */
     private ?int $_time = null;
 
@@ -106,6 +105,9 @@ final class RequestObject
      */
     private string $_language;
 
+    /**
+     * @throws RequestObjectException
+     */
     final public function __construct()
     {
         $this->_setHttpMethod();
@@ -126,28 +128,27 @@ final class RequestObject
     }
 
     /**
-     * @return string
+     * @return IHttpMethodsEnum
      */
-    final public function getHttpMethod(): string
+    final public function getHttpMethod(): IHttpMethodsEnum
     {
-        if (empty($this->_httpMethod)) {
-            return RequestObject::HTTP_METHOD_GET;
-        }
-
         return $this->_httpMethod;
     }
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RequestObjectException
      */
     final public function getHost(): string
     {
-        if (empty($this->_host)) {
-            throw new Exception('Host Is Not Set!');
+        if (!empty($this->_host)) {
+            return $this->_host;
         }
 
-        return $this->_host;
+        throw new RequestObjectException(
+            RequestObjectException::MESSAGE_REQUEST_HOST_NOT_SET,
+            AppException::CODE_REQUEST_HOST_NOT_SET
+        );
     }
 
     /**
@@ -164,7 +165,7 @@ final class RequestObject
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RequestObjectException
      */
     final public function getFullUrl(): string
     {
@@ -175,69 +176,41 @@ final class RequestObject
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    final public function getUrlValues(): ?array
+    final public function getUrlValues(): array
     {
         return $this->_urlValues;
     }
 
     /**
-     * @param string|null $valueName
+     * @param string $valueName
      * @return string|null
      */
-    final public function getUrlValue(?string $valueName = null): ?string
+    final public function getUrlValue(string $valueName): ?string
     {
-        if (empty($valueName)) {
-            return null;
-        }
+        $urlValue = $this->_urlValues[$valueName] ?? null;
 
-        if (empty($this->_urlValues)) {
-            return null;
-        }
-
-        if (!array_key_exists($valueName, $this->_urlValues)) {
-            return null;
-        }
-
-        if (empty($this->_urlValues[$valueName])) {
-            return null;
-        }
-
-        return (string)$this->_urlValues[$valueName];
+        return empty($urlValue) ? null : (string)$urlValue;
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    final public function getPostValues(): ?array
+    final public function getPostValues(): array
     {
         return $this->_postValues;
     }
 
     /**
-     * @param string|null $valueName
+     * @param string $valueName
      * @return string|null
      */
-    final public function getPostValue(?string $valueName = null): ?string
+    final public function getPostValue(string $valueName): ?string
     {
-        if (empty($valueName)) {
-            return null;
-        }
+        $postValue = $this->_postValues[$valueName] ?? null;
 
-        if (empty($this->_postValues)) {
-            return null;
-        }
-
-        if (!array_key_exists($valueName, $this->_postValues)) {
-            return null;
-        }
-
-        if (empty($this->_postValues[$valueName])) {
-            return null;
-        }
-
-        return (string)$this->_postValues[$valueName];
+        return empty($postValue) ? null : (string)$postValue;
     }
 
     /**
@@ -249,28 +222,14 @@ final class RequestObject
     }
 
     /**
-     * @param string|null $valueName
+     * @param string $valueName
      * @return string|null
      */
-    final public function getApiValue(?string $valueName = null): ?string
+    final public function getApiValue(string $valueName): ?string
     {
-        if (empty($valueName)) {
-            return null;
-        }
+        $apiValue = $this->_apiValues[$valueName] ?? null;
 
-        if (empty($this->_apiValues)) {
-            return null;
-        }
-
-        if (!array_key_exists($valueName, $this->_apiValues)) {
-            return null;
-        }
-
-        if (empty($this->_apiValues[$valueName])) {
-            return null;
-        }
-
-        return (string)$this->_apiValues[$valueName];
+        return empty($apiValue) ? null : (string)$apiValue;
     }
 
     /**
@@ -287,23 +246,9 @@ final class RequestObject
      */
     final public function getCliValue(?string $valueName = null): ?string
     {
-        if (empty($valueName)) {
-            return null;
-        }
+        $cliValue = $this->_cliValues[$valueName] ?? null;
 
-        if (empty($this->_cliValues)) {
-            return null;
-        }
-
-        if (!array_key_exists($valueName, $this->_cliValues)) {
-            return null;
-        }
-
-        if (empty($this->_cliValues[$valueName])) {
-            return null;
-        }
-
-        return (string)$this->_cliValues[$valueName];
+        return empty($cliValue) ? null : (string)$cliValue;
     }
 
     /**
@@ -339,9 +284,9 @@ final class RequestObject
     }
 
     /**
-     * @return IUser|null
+     * @return IUserModel|null
      */
-    final public function getUser(): ?IUser
+    final public function getUser(): ?IUserModel
     {
         return $this->_user;
     }
@@ -365,9 +310,9 @@ final class RequestObject
     /**
      * @return string|null
      */
-    final public function getMethod(): ?string
+    final public function getControllerMethod(): ?string
     {
-        return $this->_method;
+        return $this->_controllerMethod;
     }
 
     /**
@@ -388,6 +333,7 @@ final class RequestObject
 
     /**
      * @param string|null $ip
+     * @return void
      */
     final public function setIp(?string $ip = null): void
     {
@@ -398,22 +344,25 @@ final class RequestObject
 
     /**
      * @param array|null $urlValues
+     * @return void
      */
     final public function setUrlValues(?array $urlValues = null): void
     {
-        $this->_urlValues = $urlValues;
+        $this->_urlValues = $urlValues ?? [];
     }
 
     /**
      * @param array|null $postValues
+     * @return void
      */
     final public function setPostValues(?array $postValues = null): void
     {
-        $this->_postValues = $postValues;
+        $this->_postValues = $postValues ?? [];
     }
 
     /**
      * @param string|null $language
+     * @return void
      */
     final public function setLanguage(?string $language = null): void
     {
@@ -424,32 +373,39 @@ final class RequestObject
 
     /**
      * @param array|null $apiValues
+     * @return void
      */
     final public function setApiValues(?array $apiValues = null): void
     {
-        $this->_apiValues = $apiValues;
+        $this->_apiValues = $apiValues ?? [];
     }
 
     /**
      * @param array|null $cliValues
+     * @return void
      */
     final public function setCliValues(?array $cliValues = null): void
     {
-        $this->_cliValues = $cliValues;
+        $this->_cliValues = $cliValues ?? [];
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws CoreException
      */
     final public function setSession(): void
     {
-        $this->_session = CoreObject::getPlugin('session');
+        /* @var ISessionPlugin $sessionPlugin */
+        $sessionPlugin = CoreObject::getPlugin('session');
+
+        $this->_session = $sessionPlugin;
     }
 
     /**
-     * @param IUser $user
+     * @param IUserModel $user
+     * @return void
      */
-    final public function setUser(IUser $user): void
+    final public function setUser(IUserModel $user): void
     {
         $this->_user = $user;
     }
@@ -465,6 +421,7 @@ final class RequestObject
 
     /**
      * @param string|null $controller
+     * @return void
      */
     final public function setController(?string $controller = null): void
     {
@@ -472,15 +429,18 @@ final class RequestObject
     }
 
     /**
-     * @param string|null $method
+     * @param string|null $controllerMethod
+     * @return void
      */
-    final public function setMethod(?string $method = null): void
-    {
-        $this->_method = $method;
+    final public function setControllerMethod(
+        ?string $controllerMethod = null
+    ): void {
+        $this->_controllerMethod = $controllerMethod;
     }
 
     /**
      * @param bool $noCache
+     * @return void
      */
     final public function setNoCache(bool $noCache = false): void
     {
@@ -499,23 +459,39 @@ final class RequestObject
         return RequestObject::DEFAULT_LANGUAGE;
     }
 
+    /**
+     * @return void
+     * @throws RequestObjectException
+     */
     private function _setHttpMethod(): void
     {
-        $this->_httpMethod = RequestObject::HTTP_METHOD_GET;
+        $httpMethod = $_SERVER['REQUEST_METHOD'];
+        $httpMethod = mb_convert_case($httpMethod, MB_CASE_LOWER);
+        $httpMethod = HttpMethodsEnum::tryFrom($httpMethod);
 
-        $method = $_SERVER['REQUEST_METHOD'];
-        $method = mb_convert_case($method, MB_CASE_LOWER);
+        if (!empty($httpMethod)) {
+            $this->_httpMethod = $httpMethod;
 
-        if (!empty($method)) {
-            $this->_httpMethod = $method;
+            return;
         }
+
+        throw new RequestObjectException(
+            RequestObjectException::MESSAGE_REQUEST_UNSUPPORTED_HTTP_METHOD,
+            AppException::CODE_REQUEST_UNSUPPORTED_HTTP_METHOD
+        );
     }
 
+    /**
+     * @return void
+     */
     private function _setUrl(): void
     {
         $this->_url = $_SERVER['REQUEST_URI'];
     }
 
+    /**
+     * @return void
+     */
     private function _setHost(): void
     {
         $protocol = 'http';
@@ -527,16 +503,25 @@ final class RequestObject
         $this->_host = sprintf('%s://%s', $protocol, $_SERVER['HTTP_HOST']);
     }
 
+    /**
+     * @return void
+     */
     private function _setUserAgent(): void
     {
         $this->_userAgent = $_SERVER['HTTP_USER_AGENT'];
     }
 
+    /**
+     * @return void
+     */
     private function _setTime(): void
     {
         $this->_time = time();
     }
 
+    /**
+     * @return void
+     */
     private function _removeGlobalInputValues(): void
     {
         $_GET = [];

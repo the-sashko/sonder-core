@@ -2,32 +2,30 @@
 
 namespace Sonder\Core;
 
-use Exception;
+use Sonder\Enums\CacheTypesEnum;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\CacheException;
+use Sonder\Interfaces\ICacheObject;
+use Sonder\Interfaces\ICacheTypesEnum;
 
-final class CacheObject
+#[ICacheObject]
+final class CacheObject implements ICacheObject
 {
-    const DEFAULT_TYPE = 'common';
-
-    const DEFAULT_PROTECTED_DIR_PATH = __DIR__ . '/../..';
+    private const DEFAULT_PROTECTED_DIR_PATH = __DIR__ . '/../..';
 
     /**
      * @var string
      */
-    private string $_type;
+    private string $_directoryPath;
 
     /**
-     * @var string
+     * @param ICacheTypesEnum $_type
      */
-    private string $_dirPath;
-
-    /**
-     * @param string|null $type
-     */
-    final public function __construct(?string $type = null)
-    {
-        $this->_type = empty($type) ? self::DEFAULT_TYPE : $type;
-
-        $this->_setDirPath();
+    final public function __construct(
+        #[ICacheTypesEnum]
+        private ICacheTypesEnum $_type = CacheTypesEnum::DEFAULT
+    ) {
+        $this->_setDirectoryPath();
     }
 
     /**
@@ -62,17 +60,16 @@ final class CacheObject
      * @param string $name
      * @param array|null $values
      * @param int|null $ttl
-     * @return bool
-     * @throws Exception
+     * @return void
+     * @throws CacheException
      */
-    public function save(
+    final public function save(
         string $name,
         ?array $values = null,
-        ?int   $ttl = null
-    ): bool
-    {
+        ?int $ttl = null
+    ): void {
         if (!APP_CACHE) {
-            return false;
+            return;
         }
 
         $filePath = $this->_getFilePath($name);
@@ -92,15 +89,19 @@ final class CacheObject
 
         file_put_contents($filePath, $values);
 
-        if (!file_exists($filePath) || !is_file($filePath)) {
-            throw new Exception('Can Not Save Cache Values');
+        if (file_exists($filePath) && is_file($filePath)) {
+            return;
         }
 
-        return true;
+        throw new CacheException(
+            CacheException::MESSAGE_CACHE_CAN_NOT_SAVE_VALUES,
+            AppException::CODE_CACHE_CAN_NOT_SAVE_VALUES
+        );
     }
 
     /**
      * @param string $name
+     * @return void
      */
     final public function remove(string $name): void
     {
@@ -113,6 +114,7 @@ final class CacheObject
 
     /**
      * @param string|null $type
+     * @return void
      */
     final public function removeAll(?string $type = null): void
     {
@@ -120,9 +122,9 @@ final class CacheObject
 
         $this->_type = empty($type) ? $currentType : $type;
 
-        $this->_setDirPath();
+        $this->_setDirectoryPath();
 
-        $cacheFilePathPattern = sprintf('%s/*.json', $this->_dirPath);
+        $cacheFilePathPattern = sprintf('%s/*.json', $this->_directoryPath);
 
         foreach ((array)glob($cacheFilePathPattern) as $cacheFilePath) {
             if (is_file($cacheFilePath)) {
@@ -132,10 +134,13 @@ final class CacheObject
 
         $this->_type = $currentType;
 
-        $this->_setDirPath();
+        $this->_setDirectoryPath();
     }
 
-    private function _setDirPath(): void
+    /**
+     * @return void
+     */
+    private function _setDirectoryPath(): void
     {
         $protectedDirPath = CacheObject::DEFAULT_PROTECTED_DIR_PATH;
 
@@ -143,17 +148,17 @@ final class CacheObject
             $protectedDirPath = APP_PROTECTED_DIR_PATH;
         }
 
-        $dirPath = sprintf(
+        $directoryPath = sprintf(
             '%s/cache/%s',
             $protectedDirPath,
-            $this->_type
+            $this->_type->value
         );
 
-        if (!file_exists($dirPath) || !is_dir($dirPath)) {
-            mkdir($dirPath, 755, true);
+        if (!file_exists($directoryPath) || !is_dir($directoryPath)) {
+            mkdir($directoryPath, 755, true);
         }
 
-        $this->_dirPath = $dirPath;
+        $this->_directoryPath = $directoryPath;
     }
 
     /**
@@ -162,7 +167,7 @@ final class CacheObject
      */
     private function _getFilePath(string $fileName): string
     {
-        return sprintf('%s/%s.json', $this->_dirPath, $fileName);
+        return sprintf('%s/%s.json', $this->_directoryPath, $fileName);
     }
 
     /**
@@ -171,15 +176,11 @@ final class CacheObject
      */
     private function _validate(array $values): bool
     {
-        if (
-            !array_key_exists('timestamp', $values) ||
-            !array_key_exists('values', $values) ||
-            !is_array($values['values']) ||
-            $values['timestamp'] < time()
-        ) {
-            return false;
-        }
-
-        return true;
+        return (
+            array_key_exists('timestamp', $values) &&
+            array_key_exists('values', $values) &&
+            is_array($values['values']) &&
+            $values['timestamp'] >= time()
+        );
     }
 }

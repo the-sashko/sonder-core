@@ -2,23 +2,21 @@
 
 namespace Sonder\Core;
 
-use Exception;
+use Sonder\Interfaces\IValuesObject;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\ValuesObjectException;
 
-class ValuesObject
+#[IValuesObject]
+class ValuesObject implements IValuesObject
 {
-    /**
-     * @var array
-     */
-    private array $_values = [];
+    private array $_values;
 
     /**
      * @param array|null $values
      */
     public function __construct(?array $values = null)
     {
-        if (!empty($values)) {
-            $this->_values = $values;
-        }
+        $this->_values = $values ?? [];
     }
 
     /**
@@ -26,97 +24,109 @@ class ValuesObject
      */
     final public function __serialize(): array
     {
-        return (array)$this->exportRow();
+        return $this->exportRow();
     }
 
     /**
      * @param array $values
      * @return void
      */
-    public function __unserialize(array $values): void
+    final public function __unserialize(array $values): void
     {
         $this->_values = $values;
     }
 
     /**
-     * @param array|null $params
-     * @return array|null
+     * @return array
      */
-    public function exportRow(?array $params = null): ?array
+    final public function jsonSerialize(): array
     {
-        $row = $this->getAll();
-
-        foreach ($row as $param => $value) {
-            if (!is_scalar($value) && !is_null($value)) {
-                unset($row[$param]);
-            }
-        }
-
-        if (empty($params)) {
-            return $row;
-        }
-
-        foreach ($params as $param) {
-            if (array_key_exists($param, $row)) {
-                unset($row[$param]);
-            }
-        }
-
-        return $row;
+        return $this->exportRow();
     }
 
     /**
      * @return array
      */
-    final protected function getAll(): array
+    public function exportRow(): array
     {
-        return $this->_values;
-    }
+        $makeRow = function (mixed $value) use (&$makeRow): mixed {
+            if ($value instanceof ValuesObject) {
+                return $value->exportRow();
+            }
 
-    /**
-     * @param string|null $valueName
-     * @return mixed
-     * @throws Exception
-     */
-    final protected function get(?string $valueName = null): mixed
-    {
-        if (empty($valueName)) {
-            throw new Exception('Value Name Of ValuesObject Is Empty');
-        }
+            if (!is_array($value)) {
+                return $value;
+            }
 
-        if (!$this->has($valueName)) {
-            $errorMessage = sprintf(
-                'Value %s Not Found In ValuesObject',
-                $valueName
+            $value = array_filter(
+                $value,
+                fn(mixed $subValue): bool => (
+                    is_scalar($subValue) ||
+                    is_array($subValue) ||
+                    is_null($subValue) ||
+                    ($subValue instanceof ValuesObject)
+                )
             );
-            throw new Exception($errorMessage);
-        }
 
-        return $this->_values[$valueName];
+            return array_map($makeRow, $value);
+        };
+
+        return $makeRow($this->_values);
     }
 
     /**
-     * @param string|null $valueName
-     * @param mixed|null $value
-     * @throws Exception
+     * @param string $valueName
+     * @return mixed
+     * @throws ValuesObjectException
      */
-    final protected function set(
-        ?string $valueName = null,
-        mixed   $value = null
-    ): void
+    final protected function get(string $valueName): mixed
     {
-        if (empty($valueName)) {
-            throw new Exception('Value Name Of ValuesObject Is Empty');
+        if ($this->has($valueName)) {
+            return $this->_values[$valueName];
         }
 
-        $this->_values[$valueName] = $value;
+        $errorMessage = sprintf(
+            ValuesObjectException::MESSAGE_VALUES_OBJECT_VALUE_NOT_FOUND,
+            $valueName,
+            static::class
+        );
+
+        throw new ValuesObjectException(
+            $errorMessage,
+            AppException::CODE_VALUES_OBJECT_VALUE_NOT_FOUND
+        );
     }
 
     /**
-     * @param string|null $valueName
+     * @param string $valueName
+     * @param mixed|null $value
+     * @return void
+     * @throws ValuesObjectException
+     */
+    final protected function set(string $valueName, mixed $value = null): void
+    {
+        if (!empty($valueName)) {
+            $this->_values[$valueName] = $value;
+
+            return;
+        }
+
+        $errorMessage = sprintf(
+            ValuesObjectException::MESSAGE_VALUES_OBJECT_EMPTY_VALUE_NAME,
+            static::class
+        );
+
+        throw new ValuesObjectException(
+            $errorMessage,
+            AppException::CODE_VALUES_OBJECT_EMPTY_VALUE_NAME
+        );
+    }
+
+    /**
+     * @param string $valueName
      * @return bool
      */
-    final protected function has(?string $valueName = null): bool
+    final protected function has(string $valueName): bool
     {
         if (empty($valueName)) {
             return false;

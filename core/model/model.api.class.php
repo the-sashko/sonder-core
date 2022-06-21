@@ -2,63 +2,71 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IModelApi;
+use Sonder\Enums\ApiResponseStatusesEnum;
+use Sonder\Enums\ContentTypesEnum;
+use Sonder\Interfaces\IModel;
+use Sonder\Interfaces\IModelApi;
+use Sonder\Interfaces\IRequestObject;
+use Sonder\Interfaces\IResponseObject;
 
+#[IModelApi]
 abstract class ModelApiCore implements IModelApi
 {
     /**
-     * @var RequestObject|null
+     * @var IRequestObject|null
      */
-    protected ?RequestObject $request = null;
+    #[IRequestObject]
+    protected ?IRequestObject $request = null;
 
     /**
-     * @var ResponseObject|null
+     * @var IResponseObject|null
      */
-    protected ?ResponseObject $response = null;
+    #[IResponseObject]
+    protected ?IResponseObject $response = null;
 
     /**
-     * @var CoreModel|null
+     * @var IModel|null
      */
-    protected ?CoreModel $model = null;
+    #[IModel]
+    protected ?IModel $model = null;
 
     /**
-     * @return ResponseObject
+     * @return IResponseObject
      */
-    abstract public function actionCreate(): ResponseObject;
+    abstract public function actionCreate(): IResponseObject;
 
     /**
-     * @return ResponseObject
+     * @return IResponseObject
      */
-    abstract public function actionGet(): ResponseObject;
+    abstract public function actionGet(): IResponseObject;
 
     /**
-     * @return ResponseObject
+     * @return IResponseObject
      */
-    abstract public function actionUpdate(): ResponseObject;
+    abstract public function actionUpdate(): IResponseObject;
 
     /**
-     * @return ResponseObject
+     * @return IResponseObject
      */
-    abstract public function actionDelete(): ResponseObject;
+    abstract public function actionDelete(): IResponseObject;
 
     /**
-     * @param CoreModel $model
+     * @param IModel $model
      */
-    public function __construct(CoreModel $model)
+    public function __construct(IModel $model)
     {
         $this->model = $model;
     }
 
     /**
-     * @param RequestObject $request
-     * @param ResponseObject $response
+     * @param IRequestObject $request
+     * @param IResponseObject $response
+     * @return void
      */
     final public function init(
-        RequestObject  $request,
-        ResponseObject $response
-    ): void
-    {
+        IRequestObject $request,
+        IResponseObject $response
+    ): void {
         $this->request = $request;
         $this->response = $response;
     }
@@ -66,23 +74,25 @@ abstract class ModelApiCore implements IModelApi
     /**
      * @param array|null $data
      * @param bool $status
-     * @return ResponseObject
-     * @throws Exception
+     * @return IResponseObject
      */
     final public function getApiResponse(
         ?array $data = null,
-        bool   $status = true
-    ): ResponseObject
-    {
-        $responseContent = [];
+        bool $status = true
+    ): IResponseObject {
+        $responseContent = [
+            'status' => ApiResponseStatusesEnum::SUCCESS->value
+        ];
 
-        $responseContent['status'] = $status ? 'success' : 'error';
+        if (!$status) {
+            $responseContent['status'] = ApiResponseStatusesEnum::ERROR->value;
+        }
 
         if (!empty($data)) {
             $responseContent['data'] = $data;
         }
 
-        $this->response->setContentType('json');
+        $this->response->setContentType(ContentTypesEnum::JSON);
 
         $this->response->setContent(json_encode($responseContent));
 

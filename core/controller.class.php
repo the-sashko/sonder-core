@@ -2,30 +2,36 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IController;
+use Sonder\Enums\ConfigNamesEnum;
+use Sonder\Enums\EventTypesEnum;
+use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Exceptions\ControllerException;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IController;
+use Sonder\Interfaces\IRequestObject;
+use Sonder\Interfaces\IResponseObject;
 use Sonder\Plugins\TemplaterPlugin;
 
+#[IController]
 class CoreController extends CoreObject implements IController
 {
-    const DEFAULT_LANGUAGE = 'en';
+    final protected const DEFAULT_LANGUAGE = 'en';
 
-    const DEFAULT_RENDER_CACHE_TTL = 30 * 60;
+    final protected const DEFAULT_RENDER_CACHE_TTL = 1800; // 30 min
 
-    /**
-     * @var RequestObject
-     */
-    protected RequestObject $request;
+    private const THEME_CONFIG_VALUE = 'theme';
 
     /**
-     * @var ResponseObject
+     * @var IResponseObject
      */
-    protected ResponseObject $response;
+    #[IResponseObject]
+    protected IResponseObject $response;
 
     /**
      * @var string
      */
-    private string $_language;
+    private string $_language = CoreController::DEFAULT_LANGUAGE;
 
     /**
      * @var array
@@ -33,48 +39,42 @@ class CoreController extends CoreObject implements IController
     private array $_renderValues = [];
 
     /**
-     * @var string|mixed|null
+     * @var string|null
      */
     protected ?string $renderTheme = null;
 
     /**
-     * @param RequestObject $request
-     * @throws Exception
+     * @param IRequestObject $request
+     * @throws ConfigException
+     * @throws ControllerException
      */
-    public function __construct(RequestObject $request)
-    {
+    public function __construct(
+        #[IRequestObject]
+        protected IRequestObject $request
+    ) {
         parent::__construct();
-
-        $this->request = $request;
 
         $this->response = new ResponseObject();
 
-        $this->_language = static::DEFAULT_LANGUAGE;
-
-        $mainConfig = $this->config->get('main');
-        $seoConfig = $this->config->get('seo');
+        $mainConfig = $this->config->get(ConfigNamesEnum::MAIN);
+        $seoConfig = $this->config->get(ConfigNamesEnum::SEO);
 
         if (
             empty($this->renderTheme) &&
             !empty($mainConfig) &&
-            array_key_exists('theme', $mainConfig)
+            $this->config->hasValue(
+                ConfigNamesEnum::MAIN,
+                static::THEME_CONFIG_VALUE
+            )
         ) {
-            $this->renderTheme = (string)$mainConfig['theme'];
-        }
-
-        if (!empty($mainConfig)) {
-            $this->assign([
-                'meta' => $mainConfig
-            ]);
-        }
-
-        if (!empty($seoConfig)) {
-            $this->assign([
-                'meta' => $seoConfig
-            ]);
+            $this->renderTheme = $this->config->getValue(
+                ConfigNamesEnum::MAIN,
+                static::THEME_CONFIG_VALUE
+            );
         }
 
         $this->assign([
+            'meta' => array_merge_recursive($mainConfig, $seoConfig),
             'current_host' => $this->request->getHost(),
             'current_url' => $this->request->getUrl(),
             'current_full_url' => $this->request->getFullUrl(),
@@ -83,31 +83,53 @@ class CoreController extends CoreObject implements IController
         ]);
 
         $values = (new CoreEvent)->run(
-            CoreEvent::TYPE_INIT_CONTROLLER,
+            EventTypesEnum::INIT_CONTROLLER,
             [
                 'request' => $this->request,
                 'response' => $this->response,
-                'render_values' => $this->_renderValues,
-                'render_theme' => $this->renderTheme
+                'render_theme' => $this->renderTheme,
+                'render_values' => $this->_renderValues
             ]
         );
 
-        $this->request = $values['request'];
-        $this->response = $values['response'];
-        $this->_renderValues = $values['render_values'];
-        $this->renderTheme = $values['render_theme'];
+        /* @var IRequestObject|null $request */
+        $request = $values['request'] ?? null;
+
+        /* @var IResponseObject|null $request */
+        $response = $values['response'] ?? null;
+
+        $renderTheme = $values['render_theme'] ?? null;
+        $renderValues = $values['render_values'] ?? null;
+
+        if (empty($request)) {
+            throw new ControllerException(
+                ControllerException::MESSAGE_CONTROLLER_REQUEST_IS_EMPTY,
+                AppException::CODE_CONTROLLER_REQUEST_IS_EMPTY
+            );
+        }
+
+        if (empty($response)) {
+            throw new ControllerException(
+                ControllerException::MESSAGE_CONTROLLER_RESPONSE_IS_EMPTY,
+                AppException::CODE_CONTROLLER_RESPONSE_IS_EMPTY
+            );
+        }
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->renderTheme = empty($renderTheme) ? null : (string)$renderTheme;
+        $this->_renderValues = (array)$renderValues;
     }
 
     /**
      * @param string $url
      * @param bool $isPermanent
-     * @return ResponseObject
+     * @return IResponseObject
      */
     final protected function redirect(
         string $url,
-        bool   $isPermanent = false
-    ): ResponseObject
-    {
+        bool $isPermanent = false
+    ): IResponseObject {
         $this->response->redirect->setUrl($url);
         $this->response->redirect->setIsPermanent($isPermanent);
 
@@ -116,6 +138,7 @@ class CoreController extends CoreObject implements IController
 
     /**
      * @param array|null $values
+     * @return void
      */
     final protected function assign(?array $values = null): void
     {
@@ -129,13 +152,18 @@ class CoreController extends CoreObject implements IController
 
     /**
      * @param string|null $page
-     * @return ResponseObject
-     * @throws Exception
+     * @return IResponseObject
+     * @throws ControllerException
+     * @throws ConfigException
+     * @throws CoreException
      */
-    final protected function render(?string $page = null): ResponseObject
+    final protected function render(?string $page = null): IResponseObject
     {
         if (empty($page)) {
-            throw new Exception('View Page Is Not Set');
+            throw new ControllerException(
+                ControllerException::MESSAGE_CONTROLLER_VIEW_PAGE_IS_NOT_SET,
+                AppException::CODE_CONTROLLER_VIEW_PAGE_IS_NOT_SET
+            );
         }
 
         $ttl = static::DEFAULT_RENDER_CACHE_TTL;
@@ -154,7 +182,7 @@ class CoreController extends CoreObject implements IController
         $templaterPlugin = $this->getPlugin('templater', $themeName);
 
         $values = (new CoreEvent)->run(
-            CoreEvent::TYPE_BEFORE_RENDER,
+            EventTypesEnum::BEFORE_RENDER,
             [
                 'render_values' => $this->_renderValues
             ]
@@ -165,13 +193,13 @@ class CoreController extends CoreObject implements IController
         $content = $templaterPlugin->render($page, $this->_renderValues, $ttl);
 
         $values = (new CoreEvent)->run(
-            CoreEvent::TYPE_AFTER_RENDER,
+            EventTypesEnum::AFTER_RENDER,
             [
                 'content' => $content
             ]
         );
 
-        $content = $values['content'];
+        $content = $values['content'] ?? null;
 
         $this->response->setContent($content);
 
@@ -180,12 +208,15 @@ class CoreController extends CoreObject implements IController
 
     /**
      * @return string
-     * @throws Exception
+     * @throws ControllerException
      */
     private function _getRenderTheme(): string
     {
         if (empty($this->renderTheme)) {
-            throw new Exception('Frontend Theme Is Not Set');
+            throw new ControllerException(
+                ControllerException::MESSAGE_CONTROLLER_FRONTEND_THEME_IS_NOT_SET,
+                AppException::CODE_CONTROLLER_FRONTEND_THEME_IS_NOT_SET
+            );
         }
 
         return $this->renderTheme;

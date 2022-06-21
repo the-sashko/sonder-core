@@ -2,35 +2,30 @@
 
 namespace Sonder\Core;
 
-use Exception;
+use Sonder\Core\Interfaces\ICoreMiddleware;
+use Sonder\Interfaces\IRequestObject;
+use Sonder\Interfaces\IResponseObject;
 
-class CoreMiddleware extends CoreObject
+#[ICoreMiddleware]
+class CoreMiddleware extends CoreObject implements ICoreMiddleware
 {
     /**
-     * @var RequestObject
+     * @param IRequestObject $request
+     * @param IResponseObject|null $response
      */
-    protected RequestObject $request;
-
-    /**
-     * @var ResponseObject|null
-     */
-    protected ?ResponseObject $response = null;
-
-    /**
-     * @param RequestObject $request
-     * @throws Exception
-     */
-    public function __construct(RequestObject $request)
-    {
+    public function __construct(
+        #[IRequestObject]
+        protected IRequestObject $request,
+        #[IResponseObject]
+        protected ?IResponseObject $response = null
+    ) {
         parent::__construct();
-
-        $this->request = $request;
     }
 
     /**
-     * @return ResponseObject|null
+     * @return IResponseObject|null
      */
-    public function getResponse(): ?ResponseObject
+    public function getResponse(): ?IResponseObject
     {
         return $this->response;
     }

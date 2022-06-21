@@ -2,27 +2,19 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IHook;
+use Sonder\Interfaces\IHook;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\HookException;
 
+#[IHook]
 class CoreHook extends CoreObject implements IHook
 {
     /**
-     * @var array
+     * @param array $_values
      */
-    private array $_values;
-
-    /**
-     * @param array $values
-     * @throws Exception
-     */
-    final public function __construct(array $values)
+    final public function __construct(private array $_values)
     {
         parent::__construct();
-
-        $this->_values = $values;
     }
 
     /**
@@ -36,7 +28,7 @@ class CoreHook extends CoreObject implements IHook
     /**
      * @param string $valueName
      * @return mixed
-     * @throws Exception
+     * @throws HookException
      */
     final protected function get(string $valueName): mixed
     {
@@ -58,6 +50,7 @@ class CoreHook extends CoreObject implements IHook
     /**
      * @param string $valueName
      * @param mixed|null $value
+     * @return void
      */
     final protected function set(string $valueName, mixed $value = null): void
     {

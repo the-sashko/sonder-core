@@ -2,21 +2,18 @@
 
 namespace Sonder\Core;
 
-use Exception;
-use Sonder\Core\Interfaces\IModel;
+use Sonder\Core\Interfaces\ICoreObject;
+use Sonder\Interfaces\IConfigObject;
+use Sonder\Interfaces\IModel;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\CoreException;
 
-class CoreObject
+#[ICoreObject]
+class CoreObject implements ICoreObject
 {
-    /**
-     * @var ConfigObject
-     */
-    protected ConfigObject $config;
+    #[IConfigObject]
+    protected IConfigObject $config;
 
-    /**
-     * @throws Exception
-     */
     public function __construct()
     {
         $this->config = new ConfigObject();
@@ -26,13 +23,12 @@ class CoreObject
      * @param string $pluginName
      * @param mixed ...$pluginValues
      * @return object
-     * @throws Exception
+     * @throws CoreException
      */
     final public static function getPlugin(
         string $pluginName,
         mixed  ...$pluginValues
-    ): object
-    {
+    ): object {
         $pluginName = mb_convert_case($pluginName, MB_CASE_LOWER);
 
         $pluginClassName = sprintf(
@@ -113,7 +109,7 @@ class CoreObject
     /**
      * @param string $modelName
      * @return IModel
-     * @throws Exception
+     * @throws CoreException
      */
     final protected function getModel(string $modelName): IModel
     {
@@ -162,6 +158,8 @@ class CoreObject
                     is_file($modelInitFilePath)
                 ) {
                     require_once $modelInitFilePath;
+
+                    break;
                 }
 
                 foreach (glob($modelDirPath . '/*.php') as $filePath) {
