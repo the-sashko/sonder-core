@@ -2,28 +2,25 @@
 
 namespace Sonder\Models\User;
 
-use Exception;
-use Sonder\Core\Interfaces\IModelStore;
+use Sonder\Exceptions\ValuesObjectException;
+use Sonder\Interfaces\IModelStore;
 use Sonder\Core\ModelStore;
-use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
-use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Models\User\Interfaces\IUserStore;
+use Sonder\Models\User\Interfaces\IUserValuesObject;
 
-final class UserStore extends ModelStore implements IModelStore
+#[IModelStore]
+#[IUserStore]
+final class UserStore extends ModelStore implements IUserStore
 {
-    const USERS_TABLE = 'users';
+    final protected const SCOPE ='user';
 
-    /**
-     * @var string|null
-     */
-    public ?string $scope = 'user';
+    private const USERS_TABLE = 'users';
 
     /**
      * @param int|null $id
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserRowById(
         ?int $id = null,
@@ -63,8 +60,6 @@ final class UserStore extends ModelStore implements IModelStore
     /**
      * @param string|null $login
      * @return int|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserIdByLogin(?string $login = null): ?int
     {
@@ -94,8 +89,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserRowByLogin(
         ?string $login = null,
@@ -147,8 +140,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserRowByEmail(
         ?string $email = null,
@@ -196,16 +187,14 @@ final class UserStore extends ModelStore implements IModelStore
 
     /**
      * @param int $page
-     * @param int $itemsOnPage
+     * @param int $limit
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getAllUsers(
         int  $page = 1,
-        int  $itemsOnPage = 10,
+        int  $limit = 10,
         bool $excludeRemoved = true,
         bool $excludeInactive = true
     ): ?array
@@ -223,7 +212,7 @@ final class UserStore extends ModelStore implements IModelStore
             $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
         }
 
-        $offset = $itemsOnPage * ($page - 1);
+        $offset = $limit * ($page - 1);
 
         $sql = '
             SELECT *
@@ -238,7 +227,7 @@ final class UserStore extends ModelStore implements IModelStore
             $sql,
             UserStore::USERS_TABLE,
             $sqlWhere,
-            $itemsOnPage,
+            $limit,
             $offset
         );
 
@@ -248,8 +237,6 @@ final class UserStore extends ModelStore implements IModelStore
     /**
      * @param string|null $apiToken
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRowByApiToken(?string $apiToken = null): ?array
     {
@@ -284,8 +271,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param string|null $webToken
      * @param int|null $id
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRowByWebTokenAndId(
         ?string $webToken = null,
@@ -324,8 +309,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param string|null $login
      * @param string|null $passwordHash
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRowByLoginAndPasswordHash(
         ?string $login = null,
@@ -365,7 +348,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param int|null $id
      * @param int|null $lastLoginDate
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateWebTokenById(
         ?string $webToken = null,
@@ -392,7 +374,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param array|null $row
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateUserById(
         ?array $row = null,
@@ -410,7 +391,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param int|null $id
      * @param bool $isSoftDelete
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function deleteUserById(
         ?int $id = null,
@@ -436,7 +416,6 @@ final class UserStore extends ModelStore implements IModelStore
     /**
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function restoreUserById(?int $id = null): bool
     {
@@ -454,16 +433,14 @@ final class UserStore extends ModelStore implements IModelStore
 
     /**
      * @param int $page
-     * @param int $itemsOnPage
+     * @param int $limit
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserRowsByPage(
         int  $page = 1,
-        int  $itemsOnPage = 10,
+        int  $limit = 10,
         bool $excludeRemoved = true,
         bool $excludeInactive = true
     ): ?array
@@ -481,7 +458,7 @@ final class UserStore extends ModelStore implements IModelStore
             $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
         }
 
-        $offset = $itemsOnPage * ($page - 1);
+        $offset = $limit * ($page - 1);
 
         $sql = '
             SELECT *
@@ -496,7 +473,7 @@ final class UserStore extends ModelStore implements IModelStore
             $sql,
             UserStore::USERS_TABLE,
             $sqlWhere,
-            $itemsOnPage,
+            $limit,
             $offset
         );
 
@@ -507,8 +484,6 @@ final class UserStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return int
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getUserRowsCount(
         bool $excludeRemoved = true,
@@ -540,13 +515,12 @@ final class UserStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param UserValuesObject|null $userVO
+     * @param IUserValuesObject|null $userVO
      * @return bool
-     * @throws DatabasePluginException
-     * @throws Exception
+     * @throws ValuesObjectException
      */
     final public function insertOrUpdateUser(
-        ?UserValuesObject $userVO = null
+        ?IUserValuesObject $userVO = null
     ): bool
     {
         $id = $userVO->getId();
@@ -588,7 +562,6 @@ final class UserStore extends ModelStore implements IModelStore
     /**
      * @param array|null $row
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function insertUser(?array $row = null): bool
     {

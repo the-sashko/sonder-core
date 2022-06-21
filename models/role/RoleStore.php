@@ -2,37 +2,34 @@
 
 namespace Sonder\Models\Role;
 
-use Exception;
-use Sonder\Core\Interfaces\IModelStore;
+use Sonder\Exceptions\ValuesObjectException;
+use Sonder\Interfaces\IModelStore;
 use Sonder\Core\ModelStore;
-use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
-use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Models\Role\Interfaces\IRoleStore;
+use Sonder\Models\Role\Interfaces\IRoleValuesObject;
+use Sonder\Models\Role\Interfaces\IRoleActionValuesObject;
 
-final class RoleStore extends ModelStore implements IModelStore
+#[IModelStore]
+#[IRoleStore]
+final class RoleStore extends ModelStore implements IRoleStore
 {
-    const ROLES_TABLE = 'roles';
-    const ROLE_ACTIONS_TABLE = 'role_actions';
-    const ROLE_TO_ACTIONS_TABLE = 'role2action';
+    final protected const SCOPE = 'role';
 
-    /**
-     * @var string|null
-     */
-    public ?string $scope = 'role';
+    private const ROLES_TABLE = 'roles';
+    private const ROLE_ACTIONS_TABLE = 'role_actions';
+    private const ROLE_TO_ACTIONS_TABLE = 'role2action';
 
     /**
      * @param int|null $id
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleRowById(
         ?int $id = null,
         bool $excludeRemoved = true,
         bool $excludeInactive = true
-    ): ?array
-    {
+    ): ?array {
         if (empty($id)) {
             return null;
         }
@@ -68,16 +65,13 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleRowByName(
         ?string $name = null,
-        ?int    $excludeId = null,
-        bool    $excludeRemoved = true,
-        bool    $excludeInactive = true
-    ): ?array
-    {
+        ?int $excludeId = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?array {
         if (empty($name)) {
             return null;
         }
@@ -113,20 +107,17 @@ final class RoleStore extends ModelStore implements IModelStore
 
     /**
      * @param int $page
-     * @param int $itemsOnPage
+     * @param int $limit
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleRowsByPage(
-        int  $page = 1,
-        int  $itemsOnPage = 10,
+        int $page = 1,
+        int $limit = 10,
         bool $excludeRemoved = true,
         bool $excludeInactive = true
-    ): ?array
-    {
+    ): ?array {
         $sqlWhere = 'true';
 
         if ($excludeRemoved) {
@@ -140,7 +131,7 @@ final class RoleStore extends ModelStore implements IModelStore
             $sqlWhere = sprintf('%s AND "is_active" = true', $sqlWhere);
         }
 
-        $offset = $itemsOnPage * ($page - 1);
+        $offset = $limit * ($page - 1);
 
         $sql = '
             SELECT *
@@ -155,7 +146,7 @@ final class RoleStore extends ModelStore implements IModelStore
             $sql,
             RoleStore::ROLES_TABLE,
             $sqlWhere,
-            $itemsOnPage,
+            $limit,
             $offset
         );
 
@@ -164,8 +155,6 @@ final class RoleStore extends ModelStore implements IModelStore
 
     /**
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getAllRoleRows(): ?array
     {
@@ -195,15 +184,12 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleActionRowById(
         ?int $id = null,
         bool $excludeRemoved = true,
         bool $excludeInactive = true
-    ): ?array
-    {
+    ): ?array {
         if (empty($id)) {
             return null;
         }
@@ -236,13 +222,10 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $roleId
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getAllowedActionRowsByRoleId(
         ?int $roleId = null
-    ): ?array
-    {
+    ): ?array {
         if (empty($roleId)) {
             return null;
         }
@@ -253,13 +236,10 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $roleId
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getDeniedActionRowsByRoleId(
         ?int $roleId = null
-    ): ?array
-    {
+    ): ?array {
         if (empty($roleId)) {
             return null;
         }
@@ -271,14 +251,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param int|null $roleId
      * @param bool|null $isAllowed
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getActionRowsByRoleId(
-        ?int  $roleId = null,
+        ?int $roleId = null,
         ?bool $isAllowed = null
-    ): ?array
-    {
+    ): ?array {
         if (empty($roleId) || is_null($isAllowed)) {
             return null;
         }
@@ -324,16 +301,13 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleActionRowByName(
         ?string $name = null,
-        ?int    $excludeId = null,
-        bool    $excludeRemoved = true,
-        bool    $excludeInactive = true
-    ): ?array
-    {
+        ?int $excludeId = null,
+        bool $excludeRemoved = true,
+        bool $excludeInactive = true
+    ): ?array {
         if (empty($name)) {
             return null;
         }
@@ -374,8 +348,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param string|null $name
      * @return int|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleActionIdByName(?string $name = null): ?int
     {
@@ -402,8 +374,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param string|null $name
      * @return int|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleIdByName(?string $name = null): ?int
     {
@@ -429,17 +399,14 @@ final class RoleStore extends ModelStore implements IModelStore
 
     /**
      * @param int $page
-     * @param int $itemsOnPage
+     * @param int $limit
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleActionRowsByPage(
         int $page = 1,
-        int $itemsOnPage = 10
-    ): ?array
-    {
-        $offset = $itemsOnPage * ($page - 1);
+        int $limit = 10
+    ): ?array {
+        $offset = $limit * ($page - 1);
 
         $sql = '
             SELECT *
@@ -452,7 +419,7 @@ final class RoleStore extends ModelStore implements IModelStore
         $sql = sprintf(
             $sql,
             RoleStore::ROLE_ACTIONS_TABLE,
-            $itemsOnPage,
+            $limit,
             $offset
         );
 
@@ -463,14 +430,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return int
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleActionRowsCount(
         bool $excludeRemoved = true,
         bool $excludeInactive = true
-    ): int
-    {
+    ): int {
         $sqlWhere = 'true';
 
         if ($excludeRemoved) {
@@ -499,14 +463,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param bool $excludeRemoved
      * @param bool $excludeInactive
      * @return int
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getRoleRowsCount(
         bool $excludeRemoved = true,
         bool $excludeInactive = true
-    ): int
-    {
+    ): int {
         $sqlWhere = 'true';
 
         if ($excludeRemoved) {
@@ -533,8 +494,6 @@ final class RoleStore extends ModelStore implements IModelStore
 
     /**
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getAllRoleActionRows(): ?array
     {
@@ -563,13 +522,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param int|null $id
      * @param bool $isSoftDelete
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function deleteRoleById(
         ?int $id = null,
         bool $isSoftDelete = true
-    ): bool
-    {
+    ): bool {
         if (empty($id)) {
             return false;
         }
@@ -590,13 +547,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param int|null $id
      * @param bool $isSoftDelete
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function deleteRoleActionById(
         ?int $id = null,
         bool $isSoftDelete = true
-    ): bool
-    {
+    ): bool {
         if (empty($id)) {
             return false;
         }
@@ -618,7 +573,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function restoreRoleActionById(?int $id = null): bool
     {
@@ -640,13 +594,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param array|null $row
      * @param string|null $condition
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateRoleAction(
-        ?array  $row = null,
+        ?array $row = null,
         ?string $condition = null
-    ): bool
-    {
+    ): bool {
         if (empty($row) || empty($condition)) {
             return false;
         }
@@ -661,7 +613,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param string|null $condition
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function deleteRoleAction(?string $condition = null): bool
     {
@@ -678,7 +629,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function restoreRoleById(?int $id = null): bool
     {
@@ -687,7 +637,7 @@ final class RoleStore extends ModelStore implements IModelStore
         }
 
         $row = [
-            'ddate' => NULL,
+            'ddate' => null,
             'is_active' => true
         ];
 
@@ -695,15 +645,13 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param RoleActionValuesObject|null $roleActionVO
+     * @param IRoleActionValuesObject|null $roleActionVO
      * @return bool
-     * @throws DatabasePluginException
-     * @throws Exception
+     * @throws ValuesObjectException
      */
     final public function insertOrUpdateRoleAction(
-        ?RoleActionValuesObject $roleActionVO = null
-    ): bool
-    {
+        ?IRoleActionValuesObject $roleActionVO = null
+    ): bool {
         $id = $roleActionVO->getId();
 
         if (empty($id)) {
@@ -720,7 +668,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param array|null $row
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function insertRoleAction(?array $row = null): bool
     {
@@ -736,14 +683,12 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param int|null $roleActionId
      * @param bool $isAllowed
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function insertRoleToRoleAction(
         ?int $roleId = null,
         ?int $roleActionId = null,
         bool $isAllowed = true
-    ): bool
-    {
+    ): bool {
         if (empty($roleId) || empty($roleActionId)) {
             return false;
         }
@@ -760,10 +705,10 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param int|null $roleId
      * @return bool
-     * @throws DatabasePluginException
      */
-    final public function deleteRoleToRoleActionByRoleId(?int $roleId = null): bool
-    {
+    final public function deleteRoleToRoleActionByRoleId(
+        ?int $roleId = null
+    ): bool {
         if (empty($roleId)) {
             return false;
         }
@@ -776,7 +721,6 @@ final class RoleStore extends ModelStore implements IModelStore
     /**
      * @param array|null $row
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function insertRole(?array $row = null): bool
     {
@@ -791,13 +735,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param array|null $row
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateRoleActionById(
         ?array $row = null,
-        ?int   $id = null
-    ): bool
-    {
+        ?int $id = null
+    ): bool {
         if (empty($row) || empty($id)) {
             return false;
         }
@@ -813,13 +755,11 @@ final class RoleStore extends ModelStore implements IModelStore
      * @param array|null $row
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateRoleById(
         ?array $row = null,
-        ?int   $id = null
-    ): bool
-    {
+        ?int $id = null
+    ): bool {
         if (empty($row) || empty($id)) {
             return false;
         }
@@ -828,15 +768,13 @@ final class RoleStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param RoleValuesObject|null $roleVO
+     * @param IRoleValuesObject|null $roleVO
      * @return bool
-     * @throws DatabasePluginException
-     * @throws Exception
+     * @throws ValuesObjectException
      */
     final public function insertOrUpdateRole(
-        ?RoleValuesObject $roleVO = null
-    ): bool
-    {
+        ?IRoleValuesObject $roleVO = null
+    ): bool {
         $id = $roleVO->getId();
 
         if (empty($id)) {

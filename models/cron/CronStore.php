@@ -2,26 +2,23 @@
 
 namespace Sonder\Models\Cron;
 
-use Exception;
-use Sonder\Core\Interfaces\IModelStore;
+use Sonder\Exceptions\ValuesObjectException;
 use Sonder\Core\ModelStore;
-use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
-use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Interfaces\IModelStore;
+use Sonder\Models\Cron\Interfaces\ICronStore;
+use Sonder\Models\Cron\Interfaces\ICronValuesObject;
 
-final class CronStore extends ModelStore implements IModelStore
+#[IModelStore]
+#[ICronStore]
+final class CronStore extends ModelStore implements ICronStore
 {
-    const CRON_JOBS_TABLE = 'cron_jobs';
+    final protected const SCOPE ='cron';
 
-    /**
-     * @var string|null
-     */
-    public ?string $scope = 'cron';
+    private const CRON_JOBS_TABLE = 'cron_jobs';
 
     /**
      * @param int|null $id
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobRowById(?int $id = null): ?array
     {
@@ -47,14 +44,11 @@ final class CronStore extends ModelStore implements IModelStore
      * @param string|null $alias
      * @param int|null $excludeId
      * @return int|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobIdRowByAlias(
         ?string $alias = null,
-        ?int    $excludeId = null
-    ): ?int
-    {
+        ?int $excludeId = null
+    ): ?int {
         if (empty($alias)) {
             return null;
         }
@@ -89,16 +83,13 @@ final class CronStore extends ModelStore implements IModelStore
      * @param int|null $interval
      * @param int|null $excludeId
      * @return int|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobIdRowByControllerAndMethodAndInterval(
         ?string $controller = null,
         ?string $method = null,
-        ?int    $interval = null,
-        ?int    $excludeId = null
-    ): ?int
-    {
+        ?int $interval = null,
+        ?int $excludeId = null
+    ): ?int {
         if (empty($controller) || empty($method) || empty($interval)) {
             return null;
         }
@@ -106,7 +97,7 @@ final class CronStore extends ModelStore implements IModelStore
         $sqlWhere = sprintf(
             '
                 "controller" = \'%s\' AND
-                "method" = \'%s\' AND
+                "controller_method" = \'%s\' AND
                 "interval" = %d
             ',
             $controller,
@@ -138,17 +129,14 @@ final class CronStore extends ModelStore implements IModelStore
 
     /**
      * @param int $page
-     * @param int $itemsOnPage
+     * @param int $limit
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobRowsByPage(
         int $page = 1,
-        int $itemsOnPage = 10
-    ): ?array
-    {
-        $offset = $itemsOnPage * ($page - 1);
+        int $limit = 10
+    ): ?array {
+        $offset = $limit * ($page - 1);
 
         $sql = '
             SELECT *
@@ -161,7 +149,7 @@ final class CronStore extends ModelStore implements IModelStore
         $sql = sprintf(
             $sql,
             CronStore::CRON_JOBS_TABLE,
-            $itemsOnPage,
+            $limit,
             $offset
         );
 
@@ -170,8 +158,6 @@ final class CronStore extends ModelStore implements IModelStore
 
     /**
      * @return int
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobRowsCount(): int
     {
@@ -187,8 +173,6 @@ final class CronStore extends ModelStore implements IModelStore
 
     /**
      * @return array|null
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
      */
     final public function getCronJobRowsForRunning(): ?array
     {
@@ -218,13 +202,11 @@ final class CronStore extends ModelStore implements IModelStore
      * @param array|null $row
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function updateCronJobById(
         ?array $row = null,
-        ?int   $id = null
-    ): bool
-    {
+        ?int $id = null
+    ): bool {
         if (empty($row) || empty($id)) {
             return false;
         }
@@ -236,13 +218,11 @@ final class CronStore extends ModelStore implements IModelStore
      * @param int|null $id
      * @param bool $isSoftDelete
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function deleteCronJobById(
         ?int $id = null,
         bool $isSoftDelete = true
-    ): bool
-    {
+    ): bool {
         if (empty($id)) {
             return false;
         }
@@ -262,7 +242,6 @@ final class CronStore extends ModelStore implements IModelStore
     /**
      * @param int|null $id
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function restoreCronJobById(?int $id = null): bool
     {
@@ -271,7 +250,7 @@ final class CronStore extends ModelStore implements IModelStore
         }
 
         $row = [
-            'ddate' => NULL,
+            'ddate' => null,
             'is_active' => true
         ];
 
@@ -281,7 +260,6 @@ final class CronStore extends ModelStore implements IModelStore
     /**
      * @param array|null $row
      * @return bool
-     * @throws DatabasePluginException
      */
     final public function insertCronJob(?array $row = null): bool
     {
@@ -293,15 +271,13 @@ final class CronStore extends ModelStore implements IModelStore
     }
 
     /**
-     * @param CronValuesObject|null $cronVO
+     * @param ICronValuesObject|null $cronVO
      * @return bool
-     * @throws DatabasePluginException
-     * @throws Exception
+     * @throws ValuesObjectException
      */
     final public function insertOrUpdateCronJob(
-        ?CronValuesObject $cronVO = null
-    ): bool
-    {
+        ?ICronValuesObject $cronVO = null
+    ): bool {
         $id = $cronVO->getId();
 
         if (empty($id)) {
