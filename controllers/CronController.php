@@ -2,29 +2,31 @@
 
 namespace Sonder\Controllers;
 
-use Exception;
 use Sonder\Core\CoreController;
-use Sonder\Core\Interfaces\IController;
-use Sonder\Core\ResponseObject;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IController;
+use Sonder\Interfaces\ICronController;
+use Sonder\Interfaces\IResponseObject;
 use Sonder\Models\Cron;
 use Sonder\Models\Cron\CronValuesObject;
 use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
 use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
-use Sonder\Plugins\Language\Exceptions\LanguageException;
+use Sonder\Plugins\Language\LanguageException;
 use Sonder\Plugins\LanguagePlugin;
 use Sonder\Plugins\RouterPlugin;
 
-final class CronController extends CoreController implements IController
+#[IController]
+#[ICronController]
+final class CronController extends CoreController implements ICronController
 {
     /**
      * @no_cache true
-     *
-     * @return ResponseObject
+     * @return IResponseObject
+     * @throws CoreException
      * @throws DatabaseCacheException
      * @throws DatabasePluginException
-     * @throws Exception
      */
-    final public function displayRun(): ResponseObject
+    final public function displayRun(): IResponseObject
     {
         /* @var $cronModel Cron */
         $cronModel = $this->getModel('cron');
@@ -53,18 +55,20 @@ final class CronController extends CoreController implements IController
             }
         }
 
-        $this->response->setContent(sprintf(
-            "Successful Jobs: %d\nFailed Jobs: %d\n",
-            $successfulJobsCount,
-            $failedJobsCount
-        ));
+        $this->response->setContent(
+            sprintf(
+                "Successful Jobs: %d\nFailed Jobs: %d\n",
+                $successfulJobsCount,
+                $failedJobsCount
+            )
+        );
 
         return $this->response;
     }
 
     /**
      * @return void
-     * @throws Exception
+     * @throws CoreException
      */
     final public function jobRouter(): void
     {
@@ -76,6 +80,7 @@ final class CronController extends CoreController implements IController
 
     /**
      * @return void
+     * @throws CoreException
      * @throws LanguageException
      */
     final public function jobTranslations(): void

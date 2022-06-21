@@ -2,31 +2,39 @@
 
 namespace Sonder\Controllers;
 
-use Exception;
+use Sonder\Enums\ContentTypesEnum;
 use Sonder\Core\CoreController;
 use Sonder\Core\CoreModel;
-use Sonder\Core\Interfaces\IController;
-use Sonder\Core\Interfaces\IModel;
-use Sonder\Core\RequestObject;
+use Sonder\Enums\HttpMethodsEnum;
+use Sonder\Interfaces\IApiController;
+use Sonder\Interfaces\IController;
+use Sonder\Interfaces\IModel;
 use Sonder\Core\ResponseObject;
 use Sonder\Exceptions\ApiException;
 use Sonder\Exceptions\AppException;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IResponseObject;
 use Sonder\Plugins\LoggerPlugin;
 use Throwable;
 
-final class ApiController extends CoreController implements IController
+#[IController]
+#[IApiController]
+final class ApiController extends CoreController implements IApiController
 {
-    const CRUD_HTTP_ACTIONS = [
-        'create' => RequestObject::HTTP_METHOD_POST,
-        'get' => RequestObject::HTTP_METHOD_GET,
-        'update' => RequestObject::HTTP_METHOD_PUT,
-        'delete' => RequestObject::HTTP_METHOD_DELETE
+    private const API_METHODS = [
+        'create' => HttpMethodsEnum::POST,
+        'get' => HttpMethodsEnum::GET,
+        'update' => HttpMethodsEnum::PATCH,
+        'delete' => HttpMethodsEnum::DELETE
     ];
 
-    final public function displayRun(): ResponseObject
+    /**
+     * @return IResponseObject
+     * @throws CoreException
+     */
+    final public function displayRun(): IResponseObject
     {
-        $response = new ResponseObject();
-        $response->setContentType('json');
+        $response = new ResponseObject(ContentTypesEnum::JSON);
 
         try {
             $this->_checkUrlFormat();
@@ -61,12 +69,14 @@ final class ApiController extends CoreController implements IController
 
             $loggerPlugin->logError($errorMessage, 'api');
 
-            $response->setContent(json_encode([
-                'status' => 'error',
-                'data' => [
-                    'message' => $exp->getMessage()
-                ]
-            ]));
+            $response->setContent(
+                json_encode([
+                    'status' => 'error',
+                    'data' => [
+                        'message' => $exp->getMessage()
+                    ]
+                ])
+            );
 
             return $response;
         }
@@ -79,7 +89,7 @@ final class ApiController extends CoreController implements IController
     private function _checkUrlFormat(): void
     {
         if (!preg_match(
-            '/^\/api\/([a-z]+)\/([a-z]+)\/$/su',
+            '/^\/api\/([a-z]+)\/([a-z]+)\/$/u',
             $this->request->getUrl()
         )) {
             throw new ApiException(
@@ -91,7 +101,8 @@ final class ApiController extends CoreController implements IController
 
     /**
      * @return IModel
-     * @throws Exception
+     * @throws ApiException
+     * @throws CoreException
      */
     private function _getModelFromUrl(): IModel
     {
@@ -154,15 +165,12 @@ final class ApiController extends CoreController implements IController
     private function _getCrudActionFromUrl(): string
     {
         $crudAction = preg_replace(
-            '/^\/api\/([a-z]+)\/([a-z]+)\/$/su',
+            '/^\/api\/([a-z]+)\/([a-z]+)\/$/u',
             '$2',
             $this->request->getUrl()
         );
 
-        if (!array_key_exists(
-            $crudAction,
-            ApiController::CRUD_HTTP_ACTIONS
-        )) {
+        if (!array_key_exists($crudAction, ApiController::API_METHODS)) {
             throw new ApiException(
                 ApiException::MESSAGE_API_INVALID_CRUD_ACTION,
                 AppException::CODE_API_INVALID_CRUD_ACTION
@@ -171,7 +179,7 @@ final class ApiController extends CoreController implements IController
 
         $httpMethod = $this->request->getHttpMethod();
 
-        if (ApiController::CRUD_HTTP_ACTIONS[$crudAction] != $httpMethod) {
+        if (ApiController::API_METHODS[$crudAction] != $httpMethod) {
             throw new ApiException(
                 ApiException::MESSAGE_API_INVALID_HTTP_METHOD,
                 AppException::CODE_API_INVALID_HTTP_METHOD
