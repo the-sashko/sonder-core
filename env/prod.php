@@ -16,5 +16,5 @@ if (!defined('APP_CACHE')) {
 }
 
 if (!defined('APP_CACHE_TTL')) {
-    define('APP_CACHE_TTL', 60 * 30);
+    define('APP_CACHE_TTL', 1800); // 30 min
 }
