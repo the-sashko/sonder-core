@@ -3,16 +3,20 @@
 namespace Sonder\Endpoints;
 
 use Sonder\Core\CoreEndpoint;
-use Sonder\Core\Interfaces\IEndpoint;
+use Sonder\Enums\MiddlewaresEnum;
+use Sonder\Interfaces\IAppEndpoint;
+use Sonder\Interfaces\IEndpoint;
 
-final class AppEndpoint extends CoreEndpoint implements IEndpoint
+#[IEndpoint]
+#[IAppEndpoint]
+final class AppEndpoint extends CoreEndpoint implements IAppEndpoint
 {
-    const CACHE_TTL = 300;
+    protected const CACHE_TTL = 300;
 
     /**
      * @var array
      */
     protected array $middlewares = [
-        'session'
+        MiddlewaresEnum::SESSION
     ];
 }

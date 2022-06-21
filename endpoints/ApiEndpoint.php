@@ -3,14 +3,18 @@
 namespace Sonder\Endpoints;
 
 use Sonder\Core\CoreEndpoint;
-use Sonder\Core\Interfaces\IEndpoint;
+use Sonder\Enums\MiddlewaresEnum;
+use Sonder\Interfaces\IApiEndpoint;
+use Sonder\Interfaces\IEndpoint;
 
-final class ApiEndpoint extends CoreEndpoint implements IEndpoint
+#[IEndpoint]
+#[IApiEndpoint]
+final class ApiEndpoint extends CoreEndpoint implements IApiEndpoint
 {
     /**
      * @var array
      */
     protected array $middlewares = [
-        'api'
+        MiddlewaresEnum::API
     ];
 }

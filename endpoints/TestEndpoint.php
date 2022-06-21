@@ -3,14 +3,18 @@
 namespace Sonder\Endpoints;
 
 use Sonder\Core\CoreEndpoint;
-use Sonder\Core\Interfaces\IEndpoint;
+use Sonder\Enums\MiddlewaresEnum;
+use Sonder\Interfaces\IEndpoint;
+use Sonder\Interfaces\ITestEndpoint;
 
-final class TestEndpoint extends CoreEndpoint implements IEndpoint
+#[IEndpoint]
+#[ITestEndpoint]
+final class TestEndpoint extends CoreEndpoint implements ITestEndpoint
 {
     /**
      * @var array
      */
     protected array $middlewares = [
-        'session'
+        MiddlewaresEnum::SESSION
     ];
 }

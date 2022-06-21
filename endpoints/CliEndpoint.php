@@ -3,14 +3,18 @@
 namespace Sonder\Endpoints;
 
 use Sonder\Core\CoreEndpoint;
-use Sonder\Core\Interfaces\IEndpoint;
+use Sonder\Enums\MiddlewaresEnum;
+use Sonder\Interfaces\ICliEndpoint;
+use Sonder\Interfaces\IEndpoint;
 
-final class CliEndpoint extends CoreEndpoint implements IEndpoint
+#[IEndpoint]
+#[ICliEndpoint]
+final class CliEndpoint extends CoreEndpoint implements ICliEndpoint
 {
     /**
      * @var array
      */
     protected array $middlewares = [
-        'cli'
+        MiddlewaresEnum::CLI
     ];
 }
