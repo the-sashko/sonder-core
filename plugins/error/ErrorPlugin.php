@@ -11,7 +11,9 @@ final class ErrorPlugin implements IErrorPlugin
 
     private const TEXT_ERROR_TEMPLATE_PATH = __DIR__ . '/templates/error_text.phtml';
 
-    final public function __construct(private readonly string $_outputFormat) {}
+    final public function __construct(private readonly string $_outputFormat)
+    {
+    }
 
     /**
      * @param int $code

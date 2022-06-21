@@ -31,7 +31,8 @@ final class RouterEntity implements IRouterEntity
         private string $_controller,
         private string $_controllerMethod,
         private string $_controllerFilePath,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array
