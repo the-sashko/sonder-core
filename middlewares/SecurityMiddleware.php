@@ -2,14 +2,20 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IMiddleware;
+use Sonder\Interfaces\ISecurityMiddleware;
 
-final class SecurityMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[ISecurityMiddleware]
+final class SecurityMiddleware
+    extends CoreMiddleware
+    implements ISecurityMiddleware
 {
     /**
-     * @throws Exception
+     * @return void
+     * @throws CoreException
      */
     final public function run(): void
     {

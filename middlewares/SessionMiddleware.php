@@ -2,14 +2,18 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Interfaces\IMiddleware;
+use Sonder\Interfaces\ISessionMiddleware;
 
-final class SessionMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[ISessionMiddleware]
+final class SessionMiddleware
+    extends CoreMiddleware
+    implements ISessionMiddleware
 {
     /**
-     * @throws Exception
+     * @return void
      */
     final public function run(): void
     {

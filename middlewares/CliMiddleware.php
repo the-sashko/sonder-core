@@ -2,13 +2,16 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\ICliMiddleware;
+use Sonder\Interfaces\IMiddleware;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\MiddlewareException;
 
-final class CliMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[ICliMiddleware]
+final class CliMiddleware extends CoreMiddleware implements ICliMiddleware
 {
     /**
      * @var array
@@ -16,7 +19,9 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
     private array $_cliOptions;
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws CoreException
+     * @throws MiddlewareException
      */
     final public function run(): void
     {
@@ -27,7 +32,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
         ]);
 
         $controller = $this->_getController();
-        $method = $this->_getMethod();
+        $controllerMethod = $this->_getControllerMethod();
         $cliValues = $this->_getCliValues();
 
         if (empty($controller)) {
@@ -37,7 +42,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
             );
         }
 
-        if (empty($method)) {
+        if (empty($controllerMethod)) {
             throw new MiddlewareException(
                 MiddlewareException::MESSAGE_MIDDLEWARE_METHOD_IS_NOT_SET,
                 AppException::CODE_MIDDLEWARE_METHOD_IS_NOT_SET,
@@ -45,7 +50,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
         }
 
         $this->request->setController($controller);
-        $this->request->setMethod($method);
+        $this->request->setControllerMethod($controllerMethod);
         $this->request->setCliValues($cliValues);
     }
 
@@ -65,7 +70,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
         $controller = mb_convert_case($controller, MB_CASE_LOWER);
 
         $controller = preg_replace(
-            '/[^a-z]/su',
+            '/[^a-z]/u',
             '',
             $controller
         );
@@ -76,7 +81,7 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
     /**
      * @return string|null
      */
-    private function _getMethod(): ?string
+    private function _getControllerMethod(): ?string
     {
         if (
             !array_key_exists('method', $this->_cliOptions) ||
@@ -85,18 +90,20 @@ final class CliMiddleware extends CoreMiddleware implements IMiddleware
             return null;
         }
 
-        $method = $this->_cliOptions['method'];
-        $method = mb_convert_case($method, MB_CASE_LOWER);
-        $method = preg_replace('/[^a-z]/su', '', $method);
-        $method = mb_convert_case($method, MB_CASE_TITLE);
+        $controllerMethod = $this->_cliOptions['method'];
+        $controllerMethod = mb_convert_case($controllerMethod, MB_CASE_LOWER);
+        $controllerMethod = preg_replace('/[^a-z]/u', '', $controllerMethod);
+        $controllerMethod = mb_convert_case($controllerMethod, MB_CASE_TITLE);
 
-        return empty($method) ? null : sprintf('display%s', $method);
+        return empty($controllerMethod) ? null : sprintf(
+            'display%s',
+            $controllerMethod
+        );
     }
 
     /**
      * @return array|null
-     *
-     * @throws Exception
+     * @throws CoreException
      */
     private function _getCliValues(): ?array
     {

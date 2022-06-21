@@ -2,17 +2,21 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IApiMiddleware;
+use Sonder\Interfaces\IMiddleware;
 
-final class ApiMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[IApiMiddleware]
+final class ApiMiddleware extends CoreMiddleware implements IApiMiddleware
 {
-    const API_CONTROLLER = 'api';
-    const API_CONTROLLER_METHOD = 'displayRun';
+    private const API_CONTROLLER = 'api';
+    private const API_CONTROLLER_METHOD = 'displayRun';
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws CoreException
      */
     final public function run(): void
     {
@@ -38,6 +42,9 @@ final class ApiMiddleware extends CoreMiddleware implements IMiddleware
         $this->request->setPostValues();
 
         $this->request->setController(ApiMiddleware::API_CONTROLLER);
-        $this->request->setMethod(ApiMiddleware::API_CONTROLLER_METHOD);
+
+        $this->request->setControllerMethod(
+            ApiMiddleware::API_CONTROLLER_METHOD
+        );
     }
 }

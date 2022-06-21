@@ -2,25 +2,34 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\IMiddleware;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\MiddlewareException;
+use Sonder\Interfaces\IRouterMiddleware;
+use Sonder\Plugins\Annotation\AnnotationException;
+use Sonder\Plugins\Router\RouterException;
 use Sonder\Plugins\RouterPlugin;
 
-final class RouterMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[IRouterMiddleware]
+final class RouterMiddleware extends CoreMiddleware implements IRouterMiddleware
 {
-    const DEFAULT_ROUTING_TYPE = 'default';
+    private const DEFAULT_ROUTING_TYPE = 'default';
 
-    const DEFAULT_CONTROLLER = 'main';
+    private const DEFAULT_CONTROLLER = 'main';
 
-    const DEFAULT_METHOD = 'displayNotFound';
+    private const DEFAULT_CONTROLLER_METHOD = 'displayNotFound';
 
-    const ANNOTATIONS_ROUTING_TYPE = 'annotations';
+    private const ANNOTATIONS_ROUTING_TYPE = 'annotations';
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws AnnotationException
+     * @throws CoreException
+     * @throws MiddlewareException
+     * @throws RouterException
      */
     final public function run(): void
     {
@@ -42,7 +51,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         if (
             (
                 empty($this->request->getController()) ||
-                empty($this->request->getMethod())
+                empty($this->request->getControllerMethod())
             ) &&
             APP_ROUTING_TYPE == 'annotations'
         ) {
@@ -52,7 +61,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         if (
             (
                 empty($this->request->getController()) ||
-                empty($this->request->getMethod())
+                empty($this->request->getControllerMethod())
             ) &&
             APP_ROUTING_TYPE == 'default'
         ) {
@@ -61,7 +70,10 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws AnnotationException
+     * @throws CoreException
+     * @throws RouterException
      */
     private function _setRouteByAnnotations(): void
     {
@@ -85,7 +97,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         $routerPlugin->cleanCache();
 
         $controller = RouterMiddleware::DEFAULT_CONTROLLER;
-        $method = RouterMiddleware::DEFAULT_METHOD;
+        $controllerMethod = RouterMiddleware::DEFAULT_CONTROLLER_METHOD;
 
         $route = $routerPlugin->getRoute($this->request->getUrl());
 
@@ -106,7 +118,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
                 $controller
             );
 
-            $method = $route->getMethod();
+            $controllerMethod = $route->getControllerMethod();
 
             $urlValues = (array)$route->getParams();
 
@@ -129,7 +141,7 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
         }
 
         $this->request->setController($controller);
-        $this->request->setMethod($method);
+        $this->request->setControllerMethod($controllerMethod);
     }
 
     /**
@@ -138,12 +150,12 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
     private function _setRouteByUrlParams(): void
     {
         $controller = $this->request->getUrlValue('controller');
-        $method = $this->request->getUrlValue('method');
+        $controllerMethod = $this->request->getUrlValue('method');
 
-        if (!empty($method)) {
-            $method = sprintf(
+        if (!empty($controllerMethod)) {
+            $controllerMethod = sprintf(
                 'display%s',
-                mb_convert_case($method, MB_CASE_TITLE)
+                mb_convert_case($controllerMethod, MB_CASE_TITLE)
             );
         }
 
@@ -151,11 +163,11 @@ final class RouterMiddleware extends CoreMiddleware implements IMiddleware
             $controller = RouterMiddleware::DEFAULT_CONTROLLER;
         }
 
-        if (empty($method)) {
-            $method = RouterMiddleware::DEFAULT_METHOD;
+        if (empty($controllerMethod)) {
+            $controllerMethod = RouterMiddleware::DEFAULT_CONTROLLER_METHOD;
         }
 
         $this->request->setController($controller);
-        $this->request->setMethod($method);
+        $this->request->setControllerMethod($controllerMethod);
     }
 }

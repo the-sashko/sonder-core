@@ -2,19 +2,28 @@
 
 namespace Sonder\Middlewares;
 
-use Exception;
 use Sonder\Core\CoreMiddleware;
-use Sonder\Core\Interfaces\IMiddleware;
-use Sonder\Core\RequestObject;
+use Sonder\Enums\ConfigNamesEnum;
+use Sonder\Exceptions\ConfigException;
+use Sonder\Exceptions\CoreException;
+use Sonder\Interfaces\ICsrfMiddleware;
+use Sonder\Interfaces\IMiddleware;
 use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\MiddlewareException;
 
-final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
+#[IMiddleware]
+#[ICsrfMiddleware]
+final class CsrfMiddleware extends CoreMiddleware implements ICsrfMiddleware
 {
-    const CSRF_TOKEN_NAME = 'csrf_token';
+    private const CSRF_TOKEN_NAME = 'csrf_token';
+
+    private const SALT_CONFIG_VALUE = 'salt';
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ConfigException
+     * @throws CoreException
+     * @throws MiddlewareException
      */
     final public function run(): void
     {
@@ -32,7 +41,11 @@ final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
         $url = $this->request->getFullUrl();
 
         $uniqueUserString = sprintf('%s+%s+%s', $url, $ip, $userAgent);
-        $salt = $this->config->getValue('crypt', 'salt');
+
+        $salt = $this->config->getValue(
+            ConfigNamesEnum::CRYPT,
+            CsrfMiddleware::SALT_CONFIG_VALUE
+        );
 
         $csrfTokenFromSession = (string)$this->request->getSession()->get(
             CsrfMiddleware::CSRF_TOKEN_NAME
@@ -42,12 +55,10 @@ final class CsrfMiddleware extends CoreMiddleware implements IMiddleware
             CsrfMiddleware::CSRF_TOKEN_NAME
         );
 
-        $httpMethod = $this->request->getHttpMethod();
-
         $postValues = $this->request->getPostValues();
 
         if (
-            $httpMethod == RequestObject::HTTP_METHOD_POST &&
+            $this->request->getHttpMethod()->isPost()
             (
                 empty($csrfTokenFromSession) ||
                 $csrfTokenFromSession != $csrfTokenFromRequest
