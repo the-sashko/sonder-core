@@ -17,7 +17,8 @@ final class RedirectObject implements IRedirectObject
     public function __construct(
         private ?string $_url = null,
         private bool $_isPermanent = false
-    ) {}
+    ) {
+    }
 
     /**
      * @return array
