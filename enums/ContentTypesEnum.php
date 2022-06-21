@@ -9,9 +9,9 @@ use Sonder\Interfaces\IContentTypesEnum;
 #[IContentTypesEnum]
 enum ContentTypesEnum: string implements IContentTypesEnum
 {
-    case TEXT = 'text/plain';
-    case HTML = 'text/html';
-    case JSON = 'application/json';
+case TEXT = 'text/plain';
+case HTML = 'text/html';
+case JSON = 'application/json';
 
     final public const DEFAULT = ContentTypesEnum::HTML;
 
@@ -27,4 +27,4 @@ enum ContentTypesEnum: string implements IContentTypesEnum
             $this->value
         );
     }
-}
+    }

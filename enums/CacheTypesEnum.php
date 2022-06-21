@@ -9,8 +9,8 @@ use Sonder\Interfaces\ICacheTypesEnum;
 #[ICacheTypesEnum]
 enum CacheTypesEnum: string implements ICacheTypesEnum
 {
-    case APP = 'app';
-    case CONFIG = 'config';
+case APP = 'app';
+case CONFIG = 'config';
 
     final public const DEFAULT = CacheTypesEnum::APP;
-}
+    }

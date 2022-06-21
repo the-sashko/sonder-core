@@ -9,15 +9,15 @@ use Sonder\Interfaces\IHttpMethodsEnum;
 #[IHttpMethodsEnum]
 enum HttpMethodsEnum: string implements IHttpMethodsEnum
 {
-    case CONNECT = 'connect';
-    case DELETE = 'delete';
-    case GET = 'get';
-    case HEAD = 'head';
-    case OPTIONS = 'options';
-    case PATCH = 'patch';
-    case POST = 'post';
-    case PUT = 'put';
-    case TRACE = 'trace';
+case CONNECT = 'connect';
+case DELETE = 'delete';
+case GET = 'get';
+case HEAD = 'head';
+case OPTIONS = 'options';
+case PATCH = 'patch';
+case POST = 'post';
+case PUT = 'put';
+case TRACE = 'trace';
 
     final public const DEFAULT = HttpMethodsEnum::GET;
 
@@ -65,4 +65,4 @@ enum HttpMethodsEnum: string implements IHttpMethodsEnum
     {
         return $this == HttpMethodsEnum::TRACE;
     }
-}
+    }

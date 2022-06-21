@@ -9,6 +9,6 @@ use Sonder\Interfaces\IApiResponseStatusesEnum;
 #[IApiResponseStatusesEnum]
 enum ApiResponseStatusesEnum: string implements IApiResponseStatusesEnum
 {
-    case SUCCESS = 'success';
-    case ERROR = 'error';
-}
+case SUCCESS = 'success';
+case ERROR = 'error';
+    }

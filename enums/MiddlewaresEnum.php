@@ -9,13 +9,13 @@ use Sonder\Interfaces\IMiddlewaresEnum;
 #[IMiddlewaresEnum]
 enum MiddlewaresEnum: string implements IMiddlewaresEnum
 {
-    case API = 'api';
-    case CLI = 'cli';
-    case ROUTER = 'router';
-    case SECURITY = 'security';
-    case SESSION = 'session';
+case API = 'api';
+case CLI = 'cli';
+case ROUTER = 'router';
+case SECURITY = 'security';
+case SESSION = 'session';
 
     final public const DEFAULT_MIDDLEWARES = [
-        MiddlewaresEnum::SESSION
+    MiddlewaresEnum::SESSION
     ];
-}
+    }
