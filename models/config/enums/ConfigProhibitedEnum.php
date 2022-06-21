@@ -9,9 +9,9 @@ use Sonder\Models\Config\Interfaces\IConfigProhibitedEnum;
 #[IConfigProhibitedEnum]
 enum ConfigProhibitedEnum: string implements IConfigProhibitedEnum
 {
-    case CRYPT = 'crypt';
-    case DATABASE = 'database';
-    case HOOKS = 'hooks';
-    case LOCALE = 'locale';
-    case SHARE = 'share';
-}
+case CRYPT = 'crypt';
+case DATABASE = 'database';
+case HOOKS = 'hooks';
+case LOCALE = 'locale';
+case SHARE = 'share';
+    }
