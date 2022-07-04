@@ -13,9 +13,4 @@ interface IRoleActionSimpleValuesObject extends IModelSimpleValuesObject
      * @return string
      */
     public function getName(): string;
-
-    /**
-     * @return array
-     */
-    public function exportRow(): array;
 }

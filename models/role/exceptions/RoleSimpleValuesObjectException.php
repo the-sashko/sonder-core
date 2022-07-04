@@ -4,9 +4,10 @@ namespace Sonder\Models\Role\Exceptions;
 
 use Attribute;
 use Sonder\Core\Interfaces\ICoreException;
+use Sonder\Models\Role\Interfaces\IRoleException;
 
-#[RoleException]
 #[ICoreException]
+#[IRoleException]
 #[Attribute(Attribute::TARGET_CLASS)]
 final class RoleSimpleValuesObjectException extends RoleException
 {

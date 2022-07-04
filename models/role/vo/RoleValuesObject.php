@@ -19,25 +19,13 @@ final class RoleValuesObject
     extends ModelValuesObject
     implements IRoleValuesObject, IRoleModelValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $editLinkPattern = '/admin/users/role/%d/';
+    final protected const EDIT_LINK_PATTERN = '/admin/users/role/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $removeLinkPattern = '/admin/users/roles/remove/%d/';
+    final protected const REMOVE_LINK_PATTERN = '/admin/users/roles/remove/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $restoreLinkPattern = '/admin/users/roles/restore/%d/';
+    final protected const RESTORE_LINK_PATTERN = '/admin/users/roles/restore/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $adminViewLinkPattern = '/admin/users/roles/view/%d/';
+    final protected const ADMIN_VIEW_LINK_PATTERN = '/admin/users/roles/view/%d/';
 
     /**
      * @return string
@@ -133,18 +121,12 @@ final class RoleValuesObject
      * @return string
      * @throws ValuesObjectException
      */
-    final public function getEditLink(): string
-    {
-        return sprintf($this->editLinkPattern, $this->getId());
-    }
-
-    /**
-     * @return string
-     * @throws ValuesObjectException
-     */
     final public function getAdminViewLink(): string
     {
-        return sprintf($this->adminViewLinkPattern, $this->getId());
+        return sprintf(
+            RoleValuesObject::ADMIN_VIEW_LINK_PATTERN,
+            $this->getId()
+        );
     }
 
     /**

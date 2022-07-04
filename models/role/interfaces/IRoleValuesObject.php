@@ -43,11 +43,6 @@ interface IRoleValuesObject extends IModelValuesObject
     /**
      * @return string
      */
-    public function getEditLink(): string;
-
-    /**
-     * @return string
-     */
     public function getAdminViewLink(): string;
 
     /**
@@ -72,7 +67,8 @@ interface IRoleValuesObject extends IModelValuesObject
      * @param IRoleValuesObjectFramework|null $parentVO
      * @return void
      */
-    public function setParentVO(?IRoleValuesObjectFramework $parentVO = null): void;
+    public function setParentVO(?IRoleValuesObjectFramework $parentVO = null
+    ): void;
 
     /**
      * @param array|null $allowedActions
@@ -85,9 +81,4 @@ interface IRoleValuesObject extends IModelValuesObject
      * @return void
      */
     public function setDeniedActions(?array $deniedActions = null): void;
-
-    /**
-     * @return array
-     */
-    public function exportRow(): array;
 }

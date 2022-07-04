@@ -22,11 +22,6 @@ interface IRoleActionValuesObject extends IModelValuesObject
     /**
      * @return string
      */
-    public function getEditLink(): string;
-
-    /**
-     * @return string
-     */
     public function getAdminViewLink(): string;
 
     /**

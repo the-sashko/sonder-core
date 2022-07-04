@@ -59,9 +59,4 @@ interface IRoleSimpleValuesObject extends IModelSimpleValuesObject
      * @return void
      */
     public function setDeniedActions(?array $deniedActions = null): void;
-
-    /**
-     * @return array
-     */
-    public function exportRow(): array;
 }

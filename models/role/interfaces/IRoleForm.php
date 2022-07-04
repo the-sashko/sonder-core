@@ -10,11 +10,6 @@ use Sonder\Interfaces\IModelFormObject;
 interface IRoleForm extends IModelFormObject
 {
     /**
-     * @return void
-     */
-    public function checkInputValues(): void;
-
-    /**
      * @return int|null
      */
     public function getId(): ?int;

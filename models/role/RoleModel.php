@@ -25,6 +25,7 @@ use Sonder\Models\Role\ValuesObjects\RoleValuesObject;
 use Throwable;
 
 /**
+ * @property null $api
  * @property IRoleStore $store
  */
 #[IModel]

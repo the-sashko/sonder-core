@@ -113,9 +113,9 @@ interface IRoleModel extends IModel
     public function getGuestVO(): IRoleValuesObjectFramework;
 
     /**
-     * @return IRoleValuesObject
+     * @return IRoleSimpleValuesObject
      */
-    public function getGuestSimpleVO(): IRoleValuesObject;
+    public function getGuestSimpleVO(): IRoleSimpleValuesObject;
 
     /**
      * @param int|null $roleId
