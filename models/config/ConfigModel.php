@@ -13,6 +13,10 @@ use Sonder\Models\Config\Interfaces\IConfigModel;
 use Sonder\Models\Config\Interfaces\IConfigValuesObject;
 use Throwable;
 
+/**
+ * @property null $api
+ * @property null $store
+ */
 #[IModel]
 #[IConfigModel]
 final class ConfigModel extends CoreModel implements IConfigModel

@@ -19,15 +19,9 @@ final class ConfigValuesObject
     extends ModelValuesObject
     implements IConfigValuesObject
 {
-    /**
-     * @var string
-     */
-    private string $_editLinkPattern = '/admin/settings/configs/edit/%s/';
+    final protected const EDIT_LINK_PATTERN = '/admin/settings/configs/edit/%s/';
 
-    /**
-     * @var string
-     */
-    private string $_viewLinkPattern = '/admin/settings/configs/view/%s/';
+    final protected const VIEW_LINK_PATTERN = '/admin/settings/configs/view/%s/';
 
     /**
      * @return string
@@ -68,16 +62,10 @@ final class ConfigValuesObject
      */
     final public function getViewLink(): string
     {
-        return sprintf($this->_viewLinkPattern, $this->getName());
-    }
-
-    /**
-     * @return string
-     * @throws ValuesObjectException
-     */
-    final public function getEditLink(): string
-    {
-        return sprintf($this->_editLinkPattern, $this->getName());
+        return sprintf(
+            ConfigValuesObject::VIEW_LINK_PATTERN,
+            $this->getName()
+        );
     }
 
     /**

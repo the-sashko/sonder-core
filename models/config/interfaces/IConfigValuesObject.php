@@ -30,11 +30,6 @@ interface IConfigValuesObject extends IModelValuesObject
     public function getViewLink(): string;
 
     /**
-     * @return string
-     */
-    public function getEditLink(): string;
-
-    /**
      * @param string|null $name
      * @return void
      */
@@ -51,9 +46,4 @@ interface IConfigValuesObject extends IModelValuesObject
      * @return void
      */
     public function setValues(?array $values = null): void;
-
-    /**
-     * @return array
-     */
-    public function exportRow(): array;
 }
