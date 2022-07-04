@@ -4,13 +4,13 @@ namespace Sonder\Controllers;
 
 use Sonder\Core\CoreController;
 use Sonder\Exceptions\CoreException;
+use Sonder\Exceptions\ModelException;
+use Sonder\Exceptions\ValuesObjectException;
 use Sonder\Interfaces\IController;
 use Sonder\Interfaces\ICronController;
 use Sonder\Interfaces\IResponseObject;
-use Sonder\Models\Cron;
-use Sonder\Models\Cron\CronValuesObject;
-use Sonder\Plugins\Database\Exceptions\DatabaseCacheException;
-use Sonder\Plugins\Database\Exceptions\DatabasePluginException;
+use Sonder\Models\Cron\ValuesObjects\CronValuesObject;
+use Sonder\Models\CronModel;
 use Sonder\Plugins\Language\LanguageException;
 use Sonder\Plugins\LanguagePlugin;
 use Sonder\Plugins\RouterPlugin;
@@ -20,15 +20,14 @@ use Sonder\Plugins\RouterPlugin;
 final class CronController extends CoreController implements ICronController
 {
     /**
-     * @no_cache true
      * @return IResponseObject
      * @throws CoreException
-     * @throws DatabaseCacheException
-     * @throws DatabasePluginException
+     * @throws ModelException
+     * @throws ValuesObjectException
      */
     final public function displayRun(): IResponseObject
     {
-        /* @var $cronModel Cron */
+        /* @var $cronModel CronModel */
         $cronModel = $this->getModel('cron');
 
         /* @var $cronJobs CronValuesObject[] */
