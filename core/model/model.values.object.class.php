@@ -16,20 +16,24 @@ abstract class ModelValuesObject
     extends ModelSimpleValuesObject
     implements IModelValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $editLinkPattern = null;
+    protected const EDIT_LINK_PATTERN = null;
+
+    protected const REMOVE_LINK_PATTERN = null;
+
+    protected const RESTORE_LINK_PATTERN = null;
 
     /**
-     * @var string|null
+     * @return string|null
+     * @throws ValuesObjectException
      */
-    protected ?string $removeLinkPattern = null;
+    final public function getEditLink(): ?string
+    {
+        if (empty(static::EDIT_LINK_PATTERN) || empty($this->getId())) {
+            return null;
+        }
 
-    /**
-     * @var string|null
-     */
-    protected ?string $restoreLinkPattern = null;
+        return sprintf(static::EDIT_LINK_PATTERN, $this->getId());
+    }
 
     /**
      * @return string|null
@@ -37,11 +41,11 @@ abstract class ModelValuesObject
      */
     final public function getRemoveLink(): ?string
     {
-        if (empty($this->removeLinkPattern)) {
+        if (empty(static::REMOVE_LINK_PATTERN) || empty($this->getId())) {
             return null;
         }
 
-        return sprintf($this->removeLinkPattern, $this->getId());
+        return sprintf(static::REMOVE_LINK_PATTERN, $this->getId());
     }
 
     /**
@@ -50,11 +54,11 @@ abstract class ModelValuesObject
      */
     final public function getRestoreLink(): ?string
     {
-        if (empty($this->restoreLinkPattern)) {
+        if (empty(static::RESTORE_LINK_PATTERN) || empty($this->getId())) {
             return null;
         }
 
-        return sprintf($this->restoreLinkPattern, $this->getId());
+        return sprintf(static::RESTORE_LINK_PATTERN, $this->getId());
     }
 
     /**

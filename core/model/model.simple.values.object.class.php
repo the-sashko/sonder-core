@@ -14,10 +14,7 @@ class ModelSimpleValuesObject
     extends ValuesObject
     implements IModelSimpleValuesObject, IReferencedValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $linkPattern = null;
+    protected const LINK_PATTERN = null;
 
     /**
      * @return int|null
