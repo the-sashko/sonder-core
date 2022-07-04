@@ -58,7 +58,7 @@ final class CsrfMiddleware extends CoreMiddleware implements ICsrfMiddleware
         $postValues = $this->request->getPostValues();
 
         if (
-            $this->request->getHttpMethod()->isPost()
+            $this->request->getHttpMethod()->isPost() &&
             (
                 empty($csrfTokenFromSession) ||
                 $csrfTokenFromSession != $csrfTokenFromRequest

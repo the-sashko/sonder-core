@@ -94,7 +94,9 @@ final class RouterMiddleware extends CoreMiddleware implements IRouterMiddleware
         /* @var RouterPlugin $routerPlugin */
         $routerPlugin = $this->getPlugin('router', $controllersPaths);
 
-        $routerPlugin->cleanCache();
+        if (APP_MODE == 'dev' | APP_MODE == 'test') {
+            $routerPlugin->cleanCache();
+        }
 
         $controller = RouterMiddleware::DEFAULT_CONTROLLER;
         $controllerMethod = RouterMiddleware::DEFAULT_CONTROLLER_METHOD;
