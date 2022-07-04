@@ -2,10 +2,10 @@
 
 namespace Sonder;
 
+require_once __DIR__ . '/core/utils/load.directory.function.php';
+
 use Sonder\Core\AutoloadCore;
 use function Sonder\Core\Utils\loadDirectory;
-
-require_once __DIR__ . '/core/tools/autoloader.class.php';
 
 loadDirectory(__DIR__ . '/core/interfaces');
 
