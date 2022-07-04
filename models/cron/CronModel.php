@@ -23,6 +23,7 @@ use Sonder\Plugins\LoggerPlugin;
 use Throwable;
 
 /**
+ * @property null $api
  * @property ICronStore $store
  */
 #[IModel]
@@ -32,7 +33,7 @@ final class CronModel
     extends CoreModel
     implements ICronModel, ICronModelFramework
 {
-    const ITEMS_ON_PAGE = 100;
+    final protected const ITEMS_ON_PAGE = 100;
 
     private const JOB_METHOD_NAME_PATTERN = '/^job(.*?)$/su';
 

@@ -21,30 +21,15 @@ final class CronValuesObject
     extends ModelValuesObject
     implements ICronValuesObject, ICronModelValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $editLinkPattern = '/admin/settings/cron/job/%d/';
+    final protected const EDIT_LINK_PATTERN = '/admin/settings/cron/job/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $removeLinkPattern = '/admin/settings/cron/job/remove/%d/';
+    final protected const REMOVE_LINK_PATTERN = '/admin/settings/cron/job/remove/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $restoreLinkPattern = '/admin/settings/cron/job/restore/%d/';
+    final protected const RESTORE_LINK_PATTERN = '/admin/settings/cron/job/restore/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $adminViewLinkPattern = '/admin/settings/cron/job/view/%d/';
+    final protected const ADMIN_VIEW_LINK_PATTERN = '/admin/settings/cron/job/view/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $adminRunLinkPattern = '/admin/settings/cron/job/run/%d/';
+    final protected const ADMIN_RUN_LINK_PATTERN = '/admin/settings/cron/job/run/%d/';
 
     /**
      * @return string
@@ -213,18 +198,12 @@ final class CronValuesObject
      * @return string
      * @throws ValuesObjectException
      */
-    final public function getEditLink(): string
-    {
-        return sprintf($this->editLinkPattern, $this->getId());
-    }
-
-    /**
-     * @return string
-     * @throws ValuesObjectException
-     */
     final public function getAdminViewLink(): string
     {
-        return sprintf($this->adminViewLinkPattern, $this->getId());
+        return sprintf(
+            CronValuesObject::ADMIN_VIEW_LINK_PATTERN,
+            $this->getId()
+        );
     }
 
     /**
@@ -233,7 +212,10 @@ final class CronValuesObject
      */
     final public function getAdminRunLink(): string
     {
-        return sprintf($this->adminRunLinkPattern, $this->getId());
+        return sprintf(
+            CronValuesObject::ADMIN_RUN_LINK_PATTERN,
+            $this->getId()
+        );
     }
 
     /**
