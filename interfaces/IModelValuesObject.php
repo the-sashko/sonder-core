@@ -3,6 +3,7 @@
 namespace Sonder\Interfaces;
 
 use Attribute;
+use Sonder\Exceptions\ValuesObjectException;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 interface IModelValuesObject

@@ -8,6 +8,11 @@ use Attribute;
 interface IModelFormObject
 {
     /**
+     * @return void
+     */
+    public function checkInputValues(): void;
+
+    /**
      * @return bool
      */
     public function getStatus(): bool;
