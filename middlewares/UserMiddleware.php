@@ -9,6 +9,7 @@ use Sonder\Exceptions\AppException;
 use Sonder\Exceptions\MiddlewareException;
 use Sonder\Interfaces\IUserModel;
 use Sonder\Interfaces\IUserMiddleware;
+use Sonder\Models\UserModel;
 
 #[IMiddleware]
 #[IUserMiddleware]
@@ -28,7 +29,7 @@ final class UserMiddleware extends CoreMiddleware implements IUserMiddleware
             );
         }
 
-        /* @var IUserModel $userModel */
+        /* @var $userModel UserModel */
         $userModel = $this->getModel('user');
 
         $this->request->setUser($userModel);
