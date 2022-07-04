@@ -198,6 +198,7 @@ class CoreModel extends CoreObject implements IModel
     private function _setStore(): void
     {
         $modelClass = get_called_class();
+        $modelClass = preg_replace('/^(.*?)Model$/sui', '$1', $modelClass);
 
         $modelName = explode('\\', $modelClass);
         $modelName = end($modelName);
@@ -217,6 +218,7 @@ class CoreModel extends CoreObject implements IModel
     private function _setValuesObjectClasses(): void
     {
         $modelClass = get_called_class();
+        $modelClass = preg_replace('/^(.*?)Model$/sui', '$1', $modelClass);
 
         $modelName = explode('\\', $modelClass);
         $modelName = end($modelName);
@@ -248,6 +250,7 @@ class CoreModel extends CoreObject implements IModel
     private function _setApi(): void
     {
         $modelClass = get_called_class();
+        $modelClass = preg_replace('/^(.*?)Model$/sui', '$1', $modelClass);
 
         $modelName = explode('\\', $modelClass);
         $modelName = end($modelName);

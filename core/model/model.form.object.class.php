@@ -25,7 +25,7 @@ abstract class ModelFormObject extends ValuesObject implements IModelFormObject
     /**
      * @return void
      */
-    abstract protected function checkInputValues(): void;
+    abstract public function checkInputValues(): void;
 
     /**
      * @param array|null $values

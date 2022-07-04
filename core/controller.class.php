@@ -20,7 +20,7 @@ class CoreController extends CoreObject implements IController
 
     final protected const DEFAULT_RENDER_CACHE_TTL = 1800; // 30 min
 
-    private const THEME_CONFIG_VALUE = 'theme';
+    protected const THEME_CONFIG_VALUE = 'theme';
 
     /**
      * @var IResponseObject

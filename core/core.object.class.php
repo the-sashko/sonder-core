@@ -116,7 +116,7 @@ class CoreObject implements ICoreObject
         $modelName = mb_convert_case($modelName, MB_CASE_LOWER);
 
         $modelClassName = sprintf(
-            '\Sonder\Models\%s',
+            '\Sonder\Models\%sModel',
             mb_convert_case($modelName, MB_CASE_TITLE)
         );
 
@@ -125,7 +125,7 @@ class CoreObject implements ICoreObject
         }
 
         $modelFileName = sprintf(
-            '%s.php',
+            '%sModel.php',
             mb_convert_case($modelName, MB_CASE_TITLE)
         );
 
