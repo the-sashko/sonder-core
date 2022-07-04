@@ -5,22 +5,30 @@ namespace Sonder;
 require_once __DIR__ . '/core/utils/load.directory.function.php';
 
 use Sonder\Core\AutoloadCore;
+
 use function Sonder\Core\Utils\loadDirectory;
 
 loadDirectory(__DIR__ . '/core/interfaces');
+
+require_once __DIR__ . '/interfaces/IEndpoint.php';
+require_once __DIR__ . '/interfaces/IMiddleware.php';
+require_once __DIR__ . '/interfaces/IController.php';
+require_once __DIR__ . '/interfaces/IModel.php';
 
 loadDirectory(__DIR__ . '/interfaces');
 
 loadDirectory(__DIR__ . '/enums');
 
-require_once(__DIR__ . '/core/values.object.class.php');
-require_once(__DIR__ . '/core/cache.object.class.php');
-require_once(__DIR__ . '/core/config.object.class.php');
-require_once(__DIR__ . '/core/core.object.class.php');
+require_once __DIR__ . '/core/values.object.class.php';
+require_once __DIR__ . '/core/cache.object.class.php';
+require_once __DIR__ . '/core/config.object.class.php';
+require_once __DIR__ . '/core/core.object.class.php';
 
 loadDirectory(__DIR__ . '/core');
 
-require_once(__DIR__ . '/exceptions/AppException.php');
+require_once __DIR__ . '/exceptions/BaseException.php';
+
+require_once __DIR__ . '/exceptions/AppException.php';
 
 loadDirectory(__DIR__ . '/exceptions');
 
