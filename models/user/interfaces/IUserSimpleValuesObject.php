@@ -35,9 +35,4 @@ interface IUserSimpleValuesObject extends IModelSimpleValuesObject
      * @return void
      */
     function setRoleVO(?IRoleSimpleValuesObject $roleVO = null): void;
-
-    /**
-     * @return array
-     */
-    public function exportRow(): array;
 }

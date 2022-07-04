@@ -27,6 +27,7 @@ use Sonder\Plugins\TranslitPlugin;
 use Throwable;
 
 /**
+ * @property null $api
  * @property IUserStore $store
  */
 #[IModel]

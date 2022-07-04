@@ -4,10 +4,12 @@ namespace Sonder\Models\User\Forms;
 
 use Sonder\Core\ModelFormObject;
 use Sonder\Exceptions\ValuesObjectException;
+use Sonder\Interfaces\IModelFormObject;
+use Sonder\Models\User\Interfaces\ICredentialsForm;
 
 #[IModelFormObject]
-#[IRoleActionForm]
-final class CredentialsForm extends ModelFormObject
+#[ICredentialsForm]
+final class CredentialsForm extends ModelFormObject implements ICredentialsForm
 {
     final public const LOGIN_EMPTY_ERROR_MESSAGE = 'Login is empty';
 

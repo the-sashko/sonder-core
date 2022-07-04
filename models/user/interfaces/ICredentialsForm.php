@@ -10,11 +10,6 @@ use Sonder\Interfaces\IModelFormObject;
 interface ICredentialsForm extends IModelFormObject
 {
     /**
-     * @return void
-     */
-    public function checkInputValues(): void;
-
-    /**
      * @return int|null
      */
     public function getId(): ?int;

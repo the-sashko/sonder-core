@@ -18,30 +18,15 @@ final class UserValuesObject
     extends ModelValuesObject
     implements IUserValuesObject
 {
-    /**
-     * @var string|null
-     */
-    protected ?string $editLinkPattern = '/admin/user/%d/';
+    final protected const EDIT_LINK_PATTERN = '/admin/user/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $removeLinkPattern = '/admin/users/remove/%d/';
+    final protected const REMOVE_LINK_PATTERN = '/admin/users/remove/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $restoreLinkPattern = '/admin/users/restore/%d/';
+    final protected const RESTORE_LINK_PATTERN = '/admin/users/restore/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $adminViewLinkPattern = '/admin/users/view/%d/';
+    private const ADMIN_VIEW_LINK_PATTERN = '/admin/users/view/%d/';
 
-    /**
-     * @var string|null
-     */
-    protected ?string $adminCredentialsLinkPattern = '/admin/users/credentials/%d/';
+    private const ADMIN_CREDENTIALS_LINK_PATTERN = '/admin/users/credentials/%d/';
 
     /**
      * @return string
@@ -121,8 +106,7 @@ final class UserValuesObject
      */
     final public function getLastSignInDate(
         ?string $format = null
-    ): string|int|null
-    {
+    ): string|int|null {
         $ddate = (int)$this->get('last_login_date');
 
         if (empty($ddate)) {
@@ -140,18 +124,12 @@ final class UserValuesObject
      * @return string
      * @throws ValuesObjectException
      */
-    final public function getEditLink(): string
-    {
-        return sprintf($this->editLinkPattern, $this->getId());
-    }
-
-    /**
-     * @return string
-     * @throws ValuesObjectException
-     */
     final public function getAdminViewLink(): string
     {
-        return sprintf($this->adminViewLinkPattern, $this->getId());
+        return sprintf(
+            UserValuesObject::ADMIN_VIEW_LINK_PATTERN,
+            $this->getId()
+        );
     }
 
     /**
@@ -160,7 +138,10 @@ final class UserValuesObject
      */
     public function getAdminCredentialsLink(): string
     {
-        return sprintf($this->adminCredentialsLinkPattern, $this->getId());
+        return sprintf(
+            UserValuesObject::ADMIN_CREDENTIALS_LINK_PATTERN,
+            $this->getId()
+        );
     }
 
     /**
