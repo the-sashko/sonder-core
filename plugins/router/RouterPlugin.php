@@ -370,7 +370,7 @@ final class RouterPlugin implements IRouterPlugin
         $routeArea = $this->_annotationPlugin->getAnnotation(
             $className,
             $methodName,
-            RouterAnnotationNamesEnum::AREA->name
+            RouterAnnotationNamesEnum::AREA->value
         );
 
         $routeArea = mb_convert_case((string)$routeArea, MB_CASE_LOWER);
