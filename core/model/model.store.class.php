@@ -223,7 +223,27 @@ class ModelStore implements IModelStore
             return false;
         }
 
-        $condition = sprintf('id = %d', $idRow);
+        $condition = sprintf('"id" = %d', $idRow);
+
+        return $this->updateRows($table, $row, $condition);
+    }
+
+    /**
+     * @param string|null $table
+     * @param array|null $row
+     * @param int|null $reference
+     * @return bool
+     */
+    final protected function updateRowByReference(
+        ?string $table = null,
+        ?array $row = null,
+        ?int $reference = null
+    ): bool {
+        if (empty($reference)) {
+            return false;
+        }
+
+        $condition = sprintf('"reference" = \'%s\'', $reference);
 
         return $this->updateRows($table, $row, $condition);
     }
@@ -265,7 +285,25 @@ class ModelStore implements IModelStore
             return false;
         }
 
-        $condition = sprintf('id = %d', $idRow);
+        $condition = sprintf('"id" = %d', $idRow);
+
+        return $this->deleteRows($table, $condition);
+    }
+
+    /**
+     * @param string|null $table
+     * @param string|null $reference
+     * @return bool
+     */
+    final protected function deleteRowByReference(
+        ?string $table = null,
+        ?string $reference = null
+    ): bool {
+        if (empty($reference)) {
+            return false;
+        }
+
+        $condition = sprintf('"reference" = \'%s\'', $reference);
 
         return $this->deleteRows($table, $condition);
     }

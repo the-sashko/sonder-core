@@ -37,7 +37,7 @@ class CoreObject implements ICoreObject
         );
 
         if (class_exists($pluginClassName, false)) {
-            return new $pluginClassName($pluginValues);
+            return new $pluginClassName(...$pluginValues);
         }
 
         $pluginFileName = sprintf(

@@ -30,13 +30,13 @@ class ModelSimpleValuesObject
     }
 
     /**
-     * @return int|string|null
+     * @return string|null
      * @throws ValuesObjectException
      */
-    final public function getReference(): int|string|null
+    final public function getReference(): ?string
     {
         if (!$this->has('reference')) {
-            return $this->getId();
+            return (string)$this->getId();
         }
 
         return (string)$this->get('reference');
