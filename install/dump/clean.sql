@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS "references";
 DROP TABLE IF EXISTS "users";
 DROP TABLE IF EXISTS "role2action";
 DROP TABLE IF EXISTS "role_actions";

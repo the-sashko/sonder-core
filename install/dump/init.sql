@@ -4,6 +4,12 @@ CREATE SEQUENCE "role2action_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 92233720368
 CREATE SEQUENCE "users_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 CREATE SEQUENCE "cron_jobs_id_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
 
+CREATE TABLE "references"
+(
+    "reference" uuid NOT NULL,
+    CONSTRAINT "references_reference" PRIMARY KEY ("reference")
+) WITH (oids = false);
+
 CREATE TABLE "role_actions"
 (
     "id"        integer DEFAULT nextval('role_actions_id_seq') NOT NULL,
