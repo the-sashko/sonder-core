@@ -69,7 +69,7 @@ final class App
         $loggerPlugin = CoreObject::getPlugin('logger', APP_RESPONSE_FORMAT);
 
         /* @var $errorPlugin ErrorPlugin */
-        $errorPlugin = CoreObject::getPlugin('error');
+        $errorPlugin = CoreObject::getPlugin('error', APP_RESPONSE_FORMAT);
 
         $debugBacktrace = $this->_getDebugBacktrace();
 
