@@ -11,7 +11,6 @@ use Sonder\Interfaces\IRoleValuesObject;
 use Sonder\Core\ModelValuesObject;
 
 #[IValuesObject]
-#[IModelSimpleValuesObject]
 #[IModelValuesObject]
 #[IRoleValuesObject]
 #[IRoleModelValuesObject]

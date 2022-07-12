@@ -4,7 +4,6 @@ namespace Sonder\Models\Config\ValuesObjects;
 
 use Sonder\Core\ModelValuesObject;
 use Sonder\Exceptions\ValuesObjectException;
-use Sonder\Interfaces\IModelSimpleValuesObject;
 use Sonder\Interfaces\IModelValuesObject;
 use Sonder\Interfaces\IValuesObject;
 use Sonder\Model\Config\Exceptions\ConfigException;
@@ -12,7 +11,6 @@ use Sonder\Model\Config\Exceptions\ConfigValuesObjectException;
 use Sonder\Models\Config\Interfaces\IConfigValuesObject;
 
 #[IValuesObject]
-#[IModelSimpleValuesObject]
 #[IModelValuesObject]
 #[IConfigValuesObject]
 final class ConfigValuesObject

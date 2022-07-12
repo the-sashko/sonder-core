@@ -3,7 +3,6 @@
 namespace Sonder\Models\Role\ValuesObjects;
 
 use Sonder\Exceptions\ValuesObjectException;
-use Sonder\Interfaces\IModelSimpleValuesObject;
 use Sonder\Interfaces\IModelValuesObject;
 use Sonder\Interfaces\IRoleActionValuesObject;
 use Sonder\Interfaces\IValuesObject;
@@ -11,7 +10,6 @@ use Sonder\Models\Role\Interfaces\IRoleActionValuesObject as IRoleModelActionVal
 use Sonder\Core\ModelValuesObject;
 
 #[IValuesObject]
-#[IModelSimpleValuesObject]
 #[IModelValuesObject]
 #[IRoleActionValuesObject]
 #[IRoleModelActionValuesObject]

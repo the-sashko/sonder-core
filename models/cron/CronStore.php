@@ -22,22 +22,7 @@ final class CronStore extends ModelStore implements ICronStore
      */
     final public function getCronJobRowById(?int $id = null): ?array
     {
-        if (empty($id)) {
-            return null;
-        }
-
-        $sqlWhere = sprintf('"id" = \'%d\'', $id);
-
-        $sql = '
-            SELECT *
-            FROM "%s"
-            WHERE %s
-            LIMIT 1;
-        ';
-
-        $sql = sprintf($sql, CronStore::CRON_JOBS_TABLE, $sqlWhere);
-
-        return $this->getRow($sql);
+        return $this->getRowById(self::CRON_JOBS_TABLE, $id);
     }
 
     /**

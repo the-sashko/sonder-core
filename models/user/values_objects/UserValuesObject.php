@@ -11,7 +11,6 @@ use Sonder\Models\Role\Interfaces\IRoleValuesObject;
 use Sonder\Models\User\Interfaces\IUserValuesObject;
 
 #[IValuesObject]
-#[IModelSimpleValuesObject]
 #[IModelValuesObject]
 #[IUserValuesObject]
 final class UserValuesObject
