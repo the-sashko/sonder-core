@@ -8,7 +8,7 @@ use Attribute;
 interface IReferencedValuesObject
 {
     /**
-     * @return int|string|null
+     * @return string|null
      */
-    public function getReference(): int|string|null;
+    public function getReference(): ?string;
 }
