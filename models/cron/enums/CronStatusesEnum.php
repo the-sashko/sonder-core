@@ -9,10 +9,10 @@ use Sonder\Models\Cron\Interfaces\ICronStatusesEnum;
 #[ICronStatusesEnum]
 enum CronStatusesEnum: string implements ICronStatusesEnum
 {
-case SCHEDULED = 'scheduled';
-case RUNNING = 'running';
-case ERROR = 'error';
-case UNKNOWN = 'unknown';
+    case SCHEDULED = 'scheduled';
+    case RUNNING = 'running';
+    case ERROR = 'error';
+    case UNKNOWN = 'unknown';
 
     final public const DEFAULT = CronStatusesEnum::UNKNOWN;
-    }
+}
